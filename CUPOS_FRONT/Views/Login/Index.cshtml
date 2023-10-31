@@ -1,0 +1,71 @@
+﻿
+@model Web.Models.LoginRequest
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+<div class="container">
+    <div class="row">
+        <div class="login-form">
+            <h2>Inicio de sesión</h2>
+            <form asp-controller="Login" asp-action="Ingresar" method="post" id="formulario-ingreso">
+                <div class="form-group row mb-3">
+                    <label class="col-sm-12 col-form-label">Usuario</label>
+                    <div class="col-sm-12">
+                        <input type="text" id="login-ingreso" asp-for="user" class="form-control" title="Usuario" maxlength="25" onkeypress="return check(event)">
+                    </div>
+                </div>
+                <div class="form-group row mb-3">
+                    <label for="inputPassword" id="pass-ingreso" class="col-12 col-form-label">Contraseña</label>
+                    <div class="col-12">
+                        <input type="password" id="pass-ingresada" asp-for="password" class="form-control" title="Contraseña" maxlength="25">
+                    </div>
+                </div>
+                <div class="form-group row mb-3">
+                    <input type="hidden" id="siteKey" class="form-control" value="@ViewBag.SecretKeySite">
+                    <div id="recaptcha" class="g-recaptcha" title="Recaptcha"></div>
+                    @if (ViewBag.Alert != null)
+                    {
+                        <div class="recaptcha-error-message text-danger">@ViewBag.Alert</div>
+                    }
+                </div>
+                <div>
+                    <button type="submit" id="btn-ingreso" class="btn btn-primary" title="Ingresar">Ingresar</button>
+                </div>
+            </form>
+            <div>
+                <a type="button" id="btn-olvidar-contrasena" title="Olvidé su contraseña" alt="Olvidé su contraseña">Olvidé mi contraseña</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$("#btn-olvidar-contrasena").click(function () {
+    document.location.href = "/Login/EnvioCorreo";
+});
+
+$(document).ready(function () {
+    $('.barnav-box').addClass('d-none');
+    $('.MenuSuperior ').addClass('d-none');
+
+    var siteKey = $('#siteKey').val();
+    $("#recaptcha").attr("data-sitekey", siteKey);
+});
+
+function check(e) {
+    tecla = (document.all) ? e.keyCode : e.which;
+
+    //Tecla de retroceso para borrar, siempre la permite
+    if (tecla == 8) {
+        return true;
+    }
+
+    // Patrón de entrada, en este caso solo acepta numeros y letras
+    patron = /[A-Za-z0-9]/;
+    tecla_final = String.fromCharCode(tecla);
+    return patron.test(tecla_final);
+}
+
+</script>

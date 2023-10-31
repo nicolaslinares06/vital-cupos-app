@@ -1,0 +1,59 @@
+﻿
+
+<div class="container">
+          <div class="row mt-2">
+            <div class="col-md-4 mb-1">
+                <label for="InventoryAvailability" class="control-label required">Cantidad de especímenes comprados</label>
+                <input type="number" id="inventoryAvailability" class="form-control disabledField" disabled/>
+                <span id="ValidateInventoryAvailability" class="span-advertencia d-none">Campo Obligatorio</span>                        
+            </div>
+            <div class="col-md-4 mb-1">
+                <label for="TypeSpecimenShopper" class="form-label">Tipo espécimen</label> 
+                <input type="text" class="form-control disabledField" id="TypeSpecimenShopperTxt" maxlength="50">
+            </div>                
+            <div class="col-md-4 mb-1">
+                <label for="Shopper" class="control-label required">¿Quién realiza la compra?</label>
+                <select name="Shopper" id="Shopper" class="form-control disabledField">
+                    <option value="">Seleccione</option>
+                    <option value="60">Zoocriadero</option>
+                    <option value="61">Comerzializadora</option>
+                    <option value="62">Manofacturera</option>
+                    <option value="63">Curtiembre</option>
+                </select>   
+                <span id="ValidateShopper" class="span-advertencia d-none">Campo Obligatorio</span>                        
+            </div>
+            <div class="col-md-4 mb-1">
+                <label for="TypeDocumentShopper" class="control-label required">Tipo de documento</label>
+                <select name="TypeDocumentShopper" id="TypeDocumentShopper" class="form-control disabledField">
+                    <option value="">Seleccione</option>
+                    <option value="1">Cédula</option>
+                    <option value="95">Nit</option> 
+                </select>
+                <span id="ValidateTypeDocumentShopper" class="span-advertencia d-none">Campo Obligatorio</span>                        
+            </div>
+            <div class="col-md-3 mb-1" id="divNumeroDocShopper">
+                <label for="DocumentNumberShopper" class="control-label required">Número de documento</label>
+                <input id="DocumentNumberShopper" class="form-control disabledField" onkeypress="return OnlyNumberKey(event)" maxlength="20"/>
+                <span id="ValidateDocumentNumberShopper" class="span-advertencia d-none">Campo Obligatorio</span>                        
+            </div>
+            <div class="col-md-1 mb-1" id="divBtnSearchCompanyShopper">
+                <button type="button" class="bt btn-primary disabledField" onclick="SearchCompany('shopper')" id="btnSearchCompanyShopper" data-bs-toggle="tooltip" data-bs-placement="top" title="Buscar empresa o representante legal"><span class="fas fa-search"></span></button>                
+            </div>
+            <div class="col-md-4 mb-1">
+                <label for="ReasonSocialShopper" class="control-label required">Nombre/razón social</label>
+                <input id="ReasonSocialShopper" class="form-control disabledField" disabled/>
+                <span id="ValidateReasonSocialShopper" class="span-advertencia d-none">Campo Obligatorio</span>                        
+            </div>
+            <div class="col-md-4 mb-1" id="divBtnConsultarSUNL">
+                <h6 class="titulosModalControl">Control de Inventarios</h6>
+              
+                <button  class="btn btn-primary disabledField" id="btnSUNL" title="Consultar SUNL">Consultar SUNL</button>                       
+                                
+            </div>           
+            <div class="col-md-12 mb-1">       
+                <label for="ObservationsShopper" class="control-label required">Observaciones</label>
+                <textarea type="text" class="form-control disabledField" id="ObservationsShopper" maxlength="200"></textarea>                        
+                <span id="ValidateObservationsShopper" class="span-advertencia d-none">Campo Obligatorio</span>                        
+            </div>                                             
+          </div>        
+</div>

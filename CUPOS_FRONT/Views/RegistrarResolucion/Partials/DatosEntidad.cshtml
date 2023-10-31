@@ -1,0 +1,90 @@
+﻿@using Repository.Helpers.Models;
+@model Entidad
+
+<div class="container">
+    <div class="row mb-3" id="divDatosEntidad">
+        <input type="hidden" asp-for="nit" />
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtPais" class="form-label">País</label>
+            <input type="text" class="form-control" asp-for="pais" id="txtPais" placeholder="Pais" readonly>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtDepartamento" class="form-label">Departamento</label>
+            <input type="text" class="form-control" id="txtDepartamento" asp-for="departamento" placeholder="Departamento" readonly>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtCiudad" class="form-label">Ciudad/Municipio</label>
+            <input type="text" class="form-control" id="txtCiudad" asp-for="ciudad" placeholder="Ciudad/Municipio" readonly>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtTelefono" class="form-label">Teléfono</label>
+            <input type="number" class="form-control" id="txtTelefono" asp-for="telefono" placeholder="Telefono" readonly>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtCorreo" class="form-label">Correo</label>
+            <input type="text" class="form-control" id="txtCorreo" asp-for="correo" placeholder="Correo" readonly>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtDireccion" class="form-label">Dirección</label>
+            <input type="text" class="form-control" id="txtDireccion" asp-for="direccion" placeholder="Direccion" readonly>
+        </div>
+    </div>
+    <div class="mb-1 w-100 cetrarItems text-end" id="divBtnHistorialCuposDatosEntidad">
+        <a type="button" class="text-decoration-none cetrarItems" id="btnHistorialCupos" onclick="controlCupos()" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="Revisar historial de cupos otorgados">
+            HISTORIAL DE CUPOS 
+            <span class="fas fa-exclamation-circle fa-2x text-primary"></span>
+        </a>
+    </div>
+
+    <div class="d-block" id="divModalHistorialCupos">
+        <h1 class="mb-4 mt-4">Historial de cupos</h1>
+        <div id="divCupos" class="mb-2">
+            <h2 class="mb-3">Cupos</h2>
+            <table id="TableCupos" class="table w-100" aria-describedby="Tabla cupos">
+                <caption class="d-none">Table Description</caption>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="th-mediumText">Número de resolución</th>
+                        <th class="th-mediumText">Fecha de resolución</th>
+                        <th class="th-mediumText">Fecha de registo de resolución</th>
+                        <th class="th-bigText">Autoridad ambiental que emite la resolución</th>
+                        <th class="th-mediumText">Nombre de especie</th>
+                        <th class="th-mediumText">Año de producción</th>
+                        <th class="th-bigText">Cupos de aprovechamiento y comercialización</th>
+                        <th class="th-mediumText">Cuota de repoblación</th>
+                        <th class="th-mediumText">Total cupos asignados</th>
+                        <th class="th-mediumText">Cupos Disponibles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div id="divInventario" class="mb-2">
+            <h2 class="mb-3">Inventario</h2>
+            <table id="TableInventario" class="table w-100" aria-describedby="Tabla inventario">
+                <caption class="d-none">Table Description</caption>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Número de carta de venta y/o factura</th>
+                        <th>Quien Vende (Nombre/Razón Social)</th>
+                        <th>Fecha de Venta</th>
+                        <th>Disponibilidad de Inventario</th>
+                        <th>Nombre de especie</th>
+                        <th>Año de Producción</th>
+                        <th>Inventario Disponible</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div id="divEstadisticas" class="mb-2 col-12">
+            
+        </div>
+    </div>
+
+</div>

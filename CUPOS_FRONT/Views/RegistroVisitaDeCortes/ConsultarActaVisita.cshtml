@@ -1,0 +1,390 @@
+﻿@model Web.Models.ConsultActaVisitaModelView
+
+@{
+    ViewData["Title"] = "Consulta Acta Visita";
+}
+
+
+<div class="container">
+    <div>
+        <a asp-controller="Home" asp-action="Index">Modulo de Cupos </a>  > <a asp-controller="RegistroVisitaDeCortes" asp-action="Index">Inicio Registro Acta Visita</a> > <strong>Consulta Acta Visita</strong>
+    </div>
+    <partial name="Partials/_SeccionBotonAyuda"></partial>
+    <div>
+        @{
+            if (Model.DatosActaVisita.TipoActaVisita == 1)
+            {
+                <h3>Acta de control  y seguimiento de corte de Pieles para pieles identificables</h3>
+
+            }
+
+            if (Model.DatosActaVisita.TipoActaVisita == 2)
+            {
+                <h3>Acta de control  y seguimiento de corte de Pieles para pieles irregulares</h3>
+
+            }
+        }
+    </div>
+
+    <div class="col-sm-12">
+        <label>Visita Nro</label>
+    </div>
+
+    <fieldset class="form-group mb-3">
+        <legend class="d-none">Fieldset Description</legend>
+        <div class="row">
+            <div class="col-sm-10">
+
+
+                <input type="hidden" id="HiddenVisitaNro" value="@Model.DatosActaVisita.">
+                <div class="form-check">
+                    @{
+                        var valorseleccionado = "";
+                        if (Model.DatosActaVisita.VisitaNumero1)
+                            valorseleccionado = "checked";
+                    }
+                    <input class="form-check-input" type="checkbox" name="radioVisita" id="radioVisita1" disabled @valorseleccionado>
+                    <label class="form-check-label" for="radioVisita1">
+                        1
+                    </label>
+                </div>
+                <div class="form-check">
+                    @{
+                        valorseleccionado = "";
+                        if (Model.DatosActaVisita.VisitaNumero2)
+                            valorseleccionado = "checked";
+                    }
+                    <input class="form-check-input" type="checkbox" name="radioVisita" id="radioVisita2" disabled @valorseleccionado>
+                    <label class="form-check-label" for="radioVisita2">
+                        2
+                    </label>
+                </div>
+
+            </div>
+        </div>
+    </fieldset>
+    <div class="row mb-3">
+        <div class="form-group col-md-6">
+            <label for="TipoEstablecimiento">Tipo de Establecimiento</label>
+            <div>
+                <p>@Model.DatosActaVisita.TipoEstablecimientoNombre</p>
+                @*<select class="form-control inputValidation" asp-for="TipoEstablecimiento" asp-items="Model.TiposEstablecimientos">   </select>*@
+            </div>
+            <span class="SPANValidation" id="SPANTipoEstablecimiento"></span>
+
+        </div>
+        <div class="form-group col-md-6">
+            <label for="NombreEstablecimiento">Nombre</label>
+            <p>@Model.DatosActaVisita.NombreEstablecimiento</p>
+        </div>
+    </div>
+    <div class="row mb-3 ">
+        <div class="form-group col-md-6" id="divOrigenPielNroDoc_0">
+            <label for="DocumentoOrigenPiel">Documento de origen de las pieles</label>
+            @{
+                @if (Model.DocumentoOrigenPiel.Count() > 0)
+                {
+                    @foreach (var item in Model.DocumentoOrigenPiel)
+                    {
+                        <div name="divOrigenPielNroDoc">
+                            <p>@item.NumeroDocumento</p>
+                        </div>
+                    }
+
+                }
+
+            }
+
+        </div>
+        <div class="form-group col-md-3" name="divOrigenPielNroResolucion" id="divOrigenPielNroResolucion_0">
+            <label for="ResolucionNroOrigenPiel">Resolución Nro</label>
+            <div>
+                @{
+                    @if (Model.ResolucionorigenPiel.Count() > 0)
+                    {
+                        @foreach (var item in Model.ResolucionorigenPiel)
+                        {
+                            <p>@item.NumeroDocumento</p>
+                        }
+                    }
+                }
+            </div>
+        </div>
+        <div class="form-group col-md-3" id="divOrigenPielNroSalvoConducto_0">
+            <label for="SalvoConductoNro">Salvoconducto Nro</label>
+            <div>
+                @{
+                    @if (Model.SalvoCondcutoNumeroOrigenPiel.Count() > 0)
+                    {
+                        @foreach (var item in Model.SalvoCondcutoNumeroOrigenPiel)
+                        {
+                            <p>@item.NumeroDocumento</p>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3 col-md-12">
+        <div class="form-group col-md-6">
+            <label for="CantidadPielCorte">Cantidad de pieles a cortar</label>
+            <p>@Model.DatosActaVisita.CantidadPielACortar</p>
+        </div>
+        <div class="col-md-6">
+            <div class="row w-100 mt-2 contenerAdjuntos col-md-6" id="divAdjunto">
+                <div class="col-11">
+                    <div class="btnPrevisualizar" onclick="AbrirDocumentoConsulta('@Model.DatosActaVisita.ArchivoExcelPrecinto.Base64String')">@Model.DatosActaVisita.ArchivoExcelPrecinto.FileName</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="row col-md-11">
+        <label for="EstadoPiel">Estados de las pieles</label>
+    </div>
+    <div class="row  mb-3">
+        <div class="form-check form-check-inline col-md-3">
+            <input type="hidden" id="HiddenEstadoPiel" value="@Model.DatosActaVisita.EstadoPielInt" />
+            <input class="form-check-input" type="radio" name="radioEstadosPielCorte" disabled id="EstadoPiel0" value="0">
+            <label class="form-check-label" for="EstadoPiel1">Crudas</label>
+        </div>
+        <div class="form-check form-check-inline col-md-3">
+            <input class="form-check-input" type="radio" name="radioEstadosPielCorte" disabled id="EstadoPiel1" value="1">
+            <label class="form-check-label" for="EstadoPiel2">Azul Humedo</label>
+        </div>
+        <div class="form-check form-check-inline col-md-3">
+            <input class="form-check-input" type="radio" name="radioEstadosPielCorte" disabled id="EstadoPiel2" value="2">
+            <label class="form-check-label" for="EstadoPiel3">Curtidas</label>
+        </div>
+        <div class="form-check form-check-inline col-md-2">
+            <input class="form-check-input" type="radio" name="radioEstadosPielCorte" disabled id="EstadoPiel3" value="3">
+            <label class="form-check-label" for="EstadoPiel4">Terminadas</label>
+        </div>
+    </div>
+
+
+
+
+    <div class="divCantidadPieles col-md-12  mb-3">
+
+        @{
+            if (Model.DatosActaVisita.TipoActaVisita == 1)
+            {
+                <div class="divContenedorCantidadPieles col-md-6" id="divContenedorCantidadPieles">
+                    <table class="table">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th>Tipo de Piel</th>
+                                <th>Cantidad de pieles</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TipoCortesPielIdentificable.Count() > 0)
+                            {
+                                @foreach (var item in Model.TipoCortesPielIdentificable)
+                                {
+                                    <tr>
+                                        <td>@item.TipoPiel</td>
+                                        <td>@item.Cantidad.ToString()</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="divContenedorCantidadPieles col-md-6" id="divContenedorCantidadPieles">
+                    <table class="table">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th>Tipo de Partes Obtenidas</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TipoPartesIdentificables.Count() > 0)
+                            {
+                                @foreach (var item in Model.TipoPartesIdentificables)
+                                {
+                                    <tr>
+                                        <td>@item.TipoParte</td>
+                                        <td>@item.Cantidad.ToString()</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            }
+            @if (Model.DatosActaVisita.TipoActaVisita == 2)
+            {
+                <div class="col-md-12">
+                    <h6>Primer Control y seguimiento</h6>
+                    <table class="table">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th>Tallas en rangos de 5cm</th>
+                                <th>Área promedio (dm2)</th>
+                                <th>Cantidad pieles</th>
+                                <th>Área Total (dm2)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TipoCortesPielIrregulares.Count() > 0)
+                            {
+                                @foreach (var item in Model.TipoCortesPielIrregulares)
+                                {
+                                    <tr>
+                                        <td>@item.TipoPielIrregular</td>
+                                        <td>@item.AreaPromedioTipoPiel</td>
+                                        <td>@item.CantidadTipoPiel.ToString()</td>
+                                        <td>@item.AreaTotalTipoPiel.ToString()</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-12">
+                    <h6>Segundo Control y Seguimiento</h6>
+                    <table class="table">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th>Tipo de fracciones</th>
+                                <th>Cantidad</th>
+                                <th>Área Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TipoPartesIrregulares.Count() > 0)
+                            {
+                                @foreach (var item in Model.TipoPartesIrregulares)
+                                {
+                                    <tr>
+                                        <td>@item.TipoParte</td>
+                                        <td>@item.CantidadTipoParte.ToString()</td>
+                                        <td>@item.AreaTotalTipoParte.ToString()</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+
+                </div>
+            }
+
+
+        }
+    </div>
+
+
+    <div class="row divContenedorDatoCITES  mb-3 col-md-12">
+        <div class="form-group col-md-6">
+            <label class="form-label" for="FuncionarioCITES">Funcionario Autoridad CITES</label>
+            <div>
+                <p>@Model.DatosActaVisita.FuncionarioAutoridadCitesNombre</p>
+            </div>
+
+        </div>
+        @*    <div class="form-group col-md-6">
+            <div class="mb-3">
+            <label for="FileFirma" class="form-label">Firma</label>
+            <input class="form-control" type="file" id="FileFirma">
+            <span class="SPANValidation" id="SPANFileFirma"></span>
+            </div>
+            </div>*@
+    </div>
+    <div class="row col-12 mb-3">
+        <div class="form-group col-md-6">
+            <label class="form-label" for="NombreRepresentante">Nombre de representante del establecimiento</label>
+            <p>@Model.DatosActaVisita.RepresentanteEstablecimiento</p>
+
+        </div>
+        <div class="form-group col-md-6">
+            <label class="form-label" for="FechaVisitaCorte">Fecha Visita</label>
+            <p>@Model.DatosActaVisita.FechaFormat</p>
+        </div>
+    </div>
+
+    <div class="row col-12 mb-3">
+        <div class="form-group col-md-6">
+            <label class="form-label" for="Ciudad">Ciudad, Departamento</label>
+            <p>@Model.DatosActaVisita.NombreCiudadDepartamento</p>
+        </div>
+    </div>
+    <div class="row col-md-12 mb-3">
+        <div class="col-md-2">
+            <p>Archivos Soportes:</p>
+        </div>
+        <div class="col-md-4">
+            @{
+                if (Model.Archivos.Count > 0)
+                {
+                    @foreach (var item in Model.Archivos)
+                    {
+                        <div class="row w-100 mt-2 contenerAdjuntos" id="divAdjunto">
+                            <div class="col-11">
+                                <div class="btnPrevisualizar" onclick="AbrirDocumentoConsulta('@item.Base64String')">@item.FileName</div>
+                            </div>
+
+                        </div>
+
+
+
+                        //<div class="col-md-12 fa-regular fa-file-pdf" onclick="AbrirDocumentoConsulta('@item.Base64string')">
+                        //    @item.NombreArchivo
+                        //</div>
+                    }
+
+
+                }
+            }
+        </div>
+
+    </div>
+
+    <div class="mt-1 row justify-content-center">
+        <div class="col-2">
+            <a class="btn btn-primary w-100" asp-action="Index" asp-controller="RegistroVisitaDeCortes">
+                Regresar
+            </a>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+
+<script>
+
+
+      document.addEventListener("DOMContentLoaded", () => {
+          let hiddenRadioEstadoPiel = parseInt(document.getElementById('HiddenEstadoPiel').value);
+          let radioButtonEstadoPiel = document.getElementById(`EstadoPiel${hiddenRadioEstadoPiel}`);
+          radioButtonEstadoPiel.checked = true;
+
+        //let hiddenRadioNumeroVisita = parseInt(document.getElementById('HiddenVisitaNro').value);
+        //let radioButtonNumeroVisita = document.getElementById(`radioVisita${hiddenRadioNumeroVisita}`);
+        //radioButtonNumeroVisita.checked = true;
+
+
+      });
+
+    function AbrirDocumentoConsulta(archivo) {
+
+      let pdf_newTab = window.open("");
+      pdf_newTab.document.write("<iframe title='Documento PDF'  width='100%' height='100%' src='" + archivo + "'></iframe>");
+    }
+</script>
+
+}

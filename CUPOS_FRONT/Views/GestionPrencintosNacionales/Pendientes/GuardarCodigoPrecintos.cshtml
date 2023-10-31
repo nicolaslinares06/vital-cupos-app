@@ -1,0 +1,108 @@
+<head>
+    <meta charset="utf-8">
+    <title>Guardar Codigo Precintos</title>
+</head>
+<body>
+    <div class="row">
+        <hr size="5" />
+        <h1 id="tituloGuardarrSolicitud"></h1>
+        <div class="col-md-3 mb-1">
+            <label for="nombreEspecie" class="form-label">Nombre de la Especie</label>
+            <input type="text" class="form-control" value="@ViewBag.speciesName" readonly>
+            <input type="hidden" class="form-control" id="nombreEspecie" value="@ViewBag.codeSpecies">
+        </div>
+        <div class="col-md-3 mb-1">
+            <label for="color" class="form-label required">Color</label>
+            <input type="text" class="form-control" value="@ViewBag.colorName" readonly>
+            <input type="hidden" class="form-control" id="color" value="@ViewBag.color">
+        </div>
+        <div class="col-md-3 mb-1">
+            <label for="cantidad" class="form-label required">Cantidad</label>
+            <input type="number" class="form-control" id="cantidad" value="@ViewBag.amount" readonly>
+        </div>
+        <div class="col-md-3 mb-1">
+            <label for="numeracionIncial" class="form-label required">Código Inicial</label>
+            <input type="text" class="form-control" id="numeracionIncial" readonly>
+        </div>
+        <div class="col-md-3 mb-1">
+            <label for="numeracionFinal" class="form-label required">Código Final</label>
+            <input type="text" class="form-control" id="numeracionFinal" readonly>
+        </div>
+        <div class="col-md-3 mb-1">
+            <label for="valorConsignacion" class="form-label required">Valor Consignación</label>
+            <input type="text" class="form-control" id="valorConsignacion" value="@ViewBag.worth" readonly>
+        </div>
+    </div>
+    <div class="mt-4 row justify-content-center">
+        <div class="col-2">
+            <a class="btn btn-primary" type="button" href="javascript: history.go(-1)" title="Volver">VOLVER</a>
+        </div>
+        <div class="col-2">
+            <button type="button" id="GenerarCartaSolicitantePendiente" class="btn btn-primary col-12" title="Generar carta al solicitante">GENERAR CARTA AL SOLICITANTE</button>
+        </div>
+    </div>
+</body>
+<partial name="./../Modales/Modales.cshtml" />
+<script>
+    let tipoSolicitud;
+    let tituloGuardarrSolicitud=document.getElementById('tituloGuardarrSolicitud');
+    let especimenesCientificos;
+    let especie;
+
+    $(document).ready(async function () {
+        //Si es acutus
+        tipoSolicitud = '@Html.Raw(ViewBag.tipoSolicitud)';;
+        especie = @ViewBag.codeSpecies;
+        await traerEspecimenes();
+        var today = new Date();
+        var year = today.getFullYear();
+        
+        if (tipoSolicitud == "Precintos") {
+            tituloGuardarrSolicitud.innerText="Generar Código de Precintos";
+            // Convierte el nombre en mayúsculas para una comparación sin distinción entre mayúsculas y minúsculas.
+            if (especimenesCientificos[0] != null){
+                var nombreEnMayusculas = especimenesCientificos[0].name.toUpperCase();
+
+                var prefijo = "MMAINT";
+
+                if (nombreEnMayusculas.includes("FUSCUS") || nombreEnMayusculas === "CAIMAN CROCODILUS") {
+                    prefijo = "MMAFUS";
+                } else if (nombreEnMayusculas.includes("APAPORIENSIS")) {
+                    prefijo = "MMAAPA";
+                } else if (nombreEnMayusculas.includes("AMAZONICUS")) {
+                    prefijo = "MMAAMA";
+                } else if (nombreEnMayusculas.includes("ACUTUS")) {
+                    prefijo = "MMAACU";
+                }
+
+                $('#numeracionIncial').val(prefijo + year + "" + @ViewBag.initialNumber);
+                $('#numeracionFinal').val(prefijo + year + "" + @ViewBag.finalNumber);
+            }
+        }else{
+            tituloGuardarrSolicitud.innerText="Generar Código de Marquillas";
+            $('#numeracionIncial').val("CO" + @ViewBag.initialNumber);
+            $('#numeracionFinal').val("CO" + @ViewBag.finalNumber);
+        }
+        
+    });
+
+    async function traerEspecimenes() {
+        let url = '@Url.Action("GetEspecimen", "GestionPrencintosNacionales")';
+        especimenesCientificos = await Get(url, { code: especie });
+    }
+
+    $("#GenerarCartaSolicitantePendiente").click(async function () {
+
+        var id = @ViewBag.idSolicitud;
+        var cantidad = @ViewBag.amount;
+        var color = '@ViewBag.colorName';
+        var colorCode = @ViewBag.color;
+        var codeIni = @ViewBag.initialNumber;
+        var codeFin = @ViewBag.finalNumber;
+        var nameSpecie = $('#nombreEspecie').val();
+        var valueConsignment = $('#valorConsignacion').val();
+        var observations = '@Html.Raw(ViewBag.observations)';
+
+        window.location.href = "GenerarCartaSolicitantePendiente?code=" + id + "&amount=" + cantidad + "&color=" + color + "&colorCode=" + colorCode + "&codeIni=" + codeIni + "&codeFin=" + codeFin + "&nameSpecie=" + nameSpecie + "&valueConsignment=" + valueConsignment + "&observations=" + observations + "&tipoSolicitud=" + tipoSolicitud;
+    })
+</script>

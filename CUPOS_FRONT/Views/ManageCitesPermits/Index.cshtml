@@ -1,0 +1,82 @@
+﻿@model Web.Models.CvModel;
+@{
+    Layout = "_LayoutRegistrarResolucion";
+}
+<div class="container2">
+    <div>
+        <a asp-controller="ManageCitesPermits" asp-action="Index">Cites</a> > <strong>
+            Gestionar solicitudes de permisos CITES
+        </strong>
+    </div>
+
+    <div class="row">
+
+        <h1> Bandeja de trabajo</h1>
+
+            <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab1" id="tab-1"
+                   onclick="loadpendientes()">Pendientes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab2" id="tab-2"
+                   onclick="">Aprobadas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab3" id="tab-3"
+                   onclick="">Requerimiento</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab4" id="tab-4"
+                   onclick="">Negadas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab5" id="tab-5"
+                   onclick="">Desistimiento</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab6" id="tab-6"
+                   onclick="">Anular</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane container active p-2" id="tab1">
+                <partial name="Partials/Pendientes" />
+            </div>
+             <div class="tab-pane container fade p-2" id="tab2">
+                <partial name="Partials/Aprobadas" />
+            </div>
+            <div class="tab-pane container fade p-2" id="tab3">
+                <partial name="Partials/Requerimiento" />
+            </div>
+            <div class="tab-pane container fade p-2" id="tab4">
+                <partial name="Partials/Negadas" />
+            </div>
+            <div class="tab-pane container fade p-2" id="tab5">
+                <partial name="Partials/Desistimiento" />
+            </div>
+            <div class="tab-pane container fade p-2" id="tab6">
+                <partial name="Partials/Anular" />
+            </div>
+        </div>
+
+
+   
+
+    </div>
+        <div class="row justify-content-center">
+    <button type="button" onclick="" id=""
+                class="col-1 btn btn-primary m-2 d-none">
+            Anterior
+        </button>
+        <button type="button" onclick="" id=""
+                class="col-1 btn btn-primary m-2">
+            Siguiente
+        </button>
+        <button type="button" onclick="" id="" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion4"
+                class="col-1 btn btn-primary m-2 d-none">
+            Salir
+        </button>
+    </div>
+</div>
+<partial name="Scripts\IndexScripts" />

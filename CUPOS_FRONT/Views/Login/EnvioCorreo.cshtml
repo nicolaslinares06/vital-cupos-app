@@ -1,0 +1,92 @@
+﻿@model Web.Models.UsuarioSimpleRequest;
+
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<div class="tab-pane container active p-2" id="form-EnvioCorreoRecuperacion">
+    <form asp-controller="Login" asp-action="EnvioCorreo" method="post" id="EnvioCorreoRecuperacion">
+        <div class="col-form-label mt-1 mb-1">
+            <h1>Correo De Recuperacion</h1>
+        </div>
+        <div class="mt-1 mb-1">
+            <p>A continuación, escriba su nombre de usuario</p>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 mb-1">
+                <label class="form-label">Usuario</label>
+                <input type="text" asp-for="User" id="user-recuperacion" class="form-control" placeholder="&#xf007 Usuario" required/>
+            </div>
+            <div class="mt-2 row justify-content-center">
+                <div class="col-2">
+                    <button type="button" class="btn-aceptar-olv-contrasena btn btn-primary">Continuar</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn-volver-olv-contrasena btn btn-secondary">Volver</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal mensaje de enlace de recuperacion enviado -->
+<div class="modal fade" id="mensaje-enlace-recuperacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Información</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="modalText-mensaje-recuperacion"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="cerrar-modal-mensaje-recuperacion btn btn-primary w-100" data-bs-dismiss="modal">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".btn-volver-olv-contrasena").click(function() {
+    document.location.href = "/Login/Index"
+});
+
+$("#cerrar-alert-password").click(function() {
+    $("#alerta-olv-contrasena").css("display","none");
+});
+
+$(".btn-aceptar-olv-contrasena").click(async function() {
+    var usuario = $("#user-recuperacion").val();
+    var modalText = document.getElementById("modalText-mensaje-recuperacion");
+
+    let url = "@Url.Action("EnvioCorreo","Login")";
+    let resp = await Get(url, { user: usuario });
+    sessionStorage.setItem("ErrorCorreo", resp[1]);
+
+    if (resp[0] != null) {
+        modalText.innerHTML = resp[0];
+        $("#mensaje-enlace-recuperacion").modal("show");
+    }
+});
+
+$(".cerrar-modal-mensaje-recuperacion").click(function() {
+    $("#mensaje-enlace-recuperacion").modal("hide");
+    var error = sessionStorage.getItem("ErrorCorreo");
+
+    if(error == "false"){
+        document.location.href = "/Login/Index"
+    }
+});
+
+$(document).ready(function() {
+    $('.barnav-box').addClass('d-none');
+    $('.MenuSuperior ').addClass('d-none');
+});
+</script>

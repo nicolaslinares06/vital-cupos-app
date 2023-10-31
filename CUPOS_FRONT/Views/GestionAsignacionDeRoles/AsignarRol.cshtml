@@ -1,0 +1,160 @@
+﻿@model Web.Models.VitalReq
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<div class="tab-pane container active p-2">
+    <form asp-controller="GestionAsignacionDeRoles" asp-action="SolicitarRol" method="post" id="">
+        <div class="col-form-label mt-1 mb-1">
+            <h1>Solicitar Rol</h1>
+        </div>
+        <div class="mt-1 mb-1">
+            <p align="left">
+                Estimado @Model.Name, le damos la bienvenida a la ventanilla de CITES.
+            </p>
+            <p align="left">
+                Para iniciar con el uso de la ventanilla de CITES, por favor seleccione el tipo de usuario que va a utilizar
+                (Está información será validada por el administrador del sistema).
+            </p>
+        </div>
+        <br />
+        <div class="row mt-2">
+            <div class="col-md-3 mb-1 d-none">
+                <input type="text" asp-for="code" id="" class="" placeholder="" readonly />
+                <input type="text" asp-for="status" id="" class="" placeholder="" readonly />
+                <input type="text" asp-for="permissions" id="" class="" placeholder="" readonly />
+                <input type="text" asp-for="message" id="" class="" placeholder="" readonly />
+                <input type="text" asp-for="ID" id="" class="" placeholder="" readonly />
+                <input type="text" asp-for="User" id="" class="" placeholder="" readonly />
+                <input type="text" asp-for="LastLogin" id="" class="" placeholder="" readonly />
+                <input type="text" asp-for="Active" id="" class="" placeholder="" readonly />
+                <input type="text" asp-for="Enabled" id="" class="" placeholder="" readonly />
+                <input type="text" asp-for="Module" id="" class="" placeholder="" readonly />
+                <input type="text" asp-for="Url" id="" class="" placeholder="" readonly />
+                <input type="text" asp-for="UrlError" id="" class="" placeholder="" readonly />
+                <input type="text" asp-for="Token" id="" class="" placeholder="" readonly />
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="" class="">Correo Electrónico</label>
+                <input type="text" asp-for="EMail" id="" class="" placeholder="" readonly />
+                <span id="" class="d-none"></span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="" class="">Nombre</label>
+                <input type="text" asp-for="Name" id="" class="" placeholder="" readonly />
+                <span id="" class="d-none"></span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="" class="">N° Identificación</label>
+                <input type="number" asp-for="Document" id="" class="" placeholder="" readonly />
+                <span id="" class="d-none"></span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="" class="">Rol Solicitado</label>
+                <select asp-for="rol" asp-items="@Model.rols"></select>
+                @*<input type="text" asp-for="rol" id="" class="" placeholder="" readonly />*@
+                <span id="" class="d-none"></span>
+            </div>
+        </div>
+        <div class="mt-2 row justify-content-center">
+            <div class="col-2">
+                <button type="submit" class="btn btn-primary w-100">Guardar</button>
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-secondary w-100">Cancelar</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal fade" id="confirmarSolicitud" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>@ViewBag.mensajeSolicitud</p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn-aceptar btn btn-primary w-100" data-bs-dismiss="modal" >aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="alertaUsuario" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fas fa-exclamation-circle i-modal-alerta"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Alerta</p>
+					</div>
+                    <div class="col-12">
+                        <p>@ViewBag.mensajeModal</p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal" >aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="alertaCorreo" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fas fa-exclamation-circle i-modal-alerta"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Alerta</p>
+					</div>
+                    <div class="col-12">
+                        <p>@ViewBag.mensajeModal</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <a type="button" class="btn btn-primary w-100" data-bs-dismiss="modal" asp-controller="Login" asp-action="Index" >Login</a>
+                        </div>
+                        <div class="col-6">
+                            <a type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal" asp-controller="" asp-action="" >Enviar Correo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    $('.barnav-box').addClass('d-none');
+    $('.MenuSuperior ').addClass('d-none');
+
+    if ('@ViewBag.mostrarModal' == 'true') {
+        $("#confirmarSolicitud").modal("show");
+    }
+    if ('@ViewBag.mostrarModalAlerta' == 'true') {
+        $("#alertaUsuario").modal("show");
+    }
+    if ('@ViewBag.mostrarModalCorreo' == 'true') {
+        $("#alertaCorreo").modal("show");
+    }
+});
+
+$(".btn-aceptar").click(function() {
+    document.location.href = "/Login/Index";
+});
+</script>

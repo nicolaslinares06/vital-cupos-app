@@ -1,0 +1,144 @@
+﻿@model Web.Models.ReqAdminEstados
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<div class="tab-pane container active p-2" id="form-agregarEstado">
+    <form asp-controller="AdministrarEstados" asp-action="Crear" method="post" id="form-creacion-estado">
+        <div class="col-form-label mt-1 mb-1">
+            <h1>Crear Actividad</h1>
+        </div>
+        <div class="col-form-label mt-1 mb-1">
+            <h2>Información de la actividad</h2>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 mb-1">
+                <label for="nombreEtapa" class="form-label">Actividad</label>
+                <input type="text" asp-for="etapa" class="form-control" id="nombreEtapa"/>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="nombreDescripcion" class="form-label">Descripción</label>
+                <input type="text" asp-for="descripcion" class="form-control" id="nombreDescripcion"/>
+            </div>
+            <div class="col-md-3 mb-1" id="divtipodoc">
+                <label for="tipodoc" class="form-label">Estado</label>
+                <select class="form-control" asp-for="estado" id="estadoCert" required>
+                </select>
+                <span id="validaciontipodoc" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mt-2 row justify-content-center">
+                <div class="col-2">
+                    <button type="button" class="btn-aceptar-crear-estado btn btn-primary w-100">GUARDAR</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn-volver-crear-estado btn btn-secondary w-100">VOLVER</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal confirmacion creación de estado -->
+<div class="modal fade" id="creacion-estado" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro que desea crear la actividad?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="boton-si-crear-estado btn btn-primary w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal respuesta creación estado -->
+<div class="modal fade" id="resp-creacion-estado" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>@ViewBag.RespuestaCreacionEstado</p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="cerrar-modal-actualizar btn btn-primary w-100">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
+<script>
+$(".btn-volver-crear-estado").click(function() {
+    document.location.href = "/AdministrarEstados/Index";
+});
+
+$(".btn-aceptar-crear-estado").click(function() {
+    $("#creacion-estado").modal("show");
+});
+
+//$(".boton-no-crear-tabla").click(function() {
+//    $("#creacion-tabla").modal("hide");
+//});
+
+$(".boton-si-crear-estado").click(function() {
+    $("#creacion-estado").modal("hide");
+    $("#form-creacion-estado").submit();
+});
+
+$(document).ready(function() {
+    if ('@ViewBag.ErrorCreacionEstado' == 'false') {
+        $("#resp-creacion-estado").modal("show");
+    }
+
+    //Realizar funcion autocomplete
+    $('#nombreEtapa').autocomplete({
+        source: '/AdministrarEstados/BuscarEstados',
+        select: function (event, ui) {
+            $("#nombreEtapa").val(ui.item.label);
+            return false;
+        }
+    });
+});
+
+$(".cerrar-modal-actualizar").click(function() {
+    document.location.href = "/AdministrarEstados/Index";
+});
+
+var estadoCert = document.getElementById("estadoCert");
+
+$(async function() {
+    visualizarFondoProcesando();
+    let url = "@Url.Action("ConsultarEstadosCertificado","AdministrarEstados")";
+    let resp = await Get(url);
+
+    estadoCert.innerHTML = "<option value = '' selected>Seleccione el estado</option>"
+    resp.forEach(el => {
+        estadoCert.innerHTML += `<option value='${el.codigo}'>${el.nombre}</option>`;
+    });
+    ocultarFondoProcesando();
+});
+</script>

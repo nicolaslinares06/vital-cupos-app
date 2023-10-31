@@ -1,0 +1,61 @@
+﻿@using System.Globalization
+
+<div class="MenuSuperior col-md-7">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm mb-3">
+        <div class="navbar-collapse collapse row">
+            <ul class="user-menu row">
+                <li class="col-12">
+                    <span>Entidad: Ministerio de Ambiente y Desarrollo Sostenible</span> 
+                </li>
+                <li class="col-12">
+                    <span class="username fw-bold" id="spanUsario"></span>
+                </li>
+                <li class="col-12">
+                    <a class="nav-link fw-bold" data-bs-toggle="modal"
+                        data-bs-target="#modalCerrarSesion" onclick="cerrarSesion()" type="button">Cerrar sesión</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+<div class="modal fade" id="modalCerrarSesion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body text-center row">
+                <div class="text-center col-12">
+                    <span class="fa-solid fa-circle-check i-modal"></span>
+                </div>
+                <div class="text-center col-12 titulo-modal">
+                    <p>Confirmación</p>
+                </div>
+                <div id="header" class="d-block col-12 mensajes-modal">
+                    <p id="mensajeModalCerrarSesion"></p>
+                </div>
+                <div id="buttons-modal" class="row">
+                    <div id="btnSiNoCerrarSsesion" class="row">
+                        <div class="col-6">
+                            <a type="button" class="col btn btn-primary" data-bs-dismiss="modal">No</a>
+                        </div>
+                        <div class="col-6">
+                            <a type="button" class="col btn btn-secondary" asp-controller="Login"
+                               asp-action="CerrarSesion">Si</a>
+                        </div>
+                    </div>
+                    <div class="col-12" id="btnAceptarCerrarSsesion">
+                        <a type="button" class="btn btn-primary w-100" asp-controller="Login"
+                           asp-action="CerrarSesion">aceptar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        let userLogin = sessionStorage.getItem("userLogin");
+        if (userLogin != null) {
+            $('#spanUsario').html('Usuario: ' + userLogin);
+        }
+    });
+</script>

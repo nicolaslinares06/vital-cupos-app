@@ -1,0 +1,13 @@
+node {
+  stage('SCM') {
+    checkout scm
+  }
+  stage('SonarQube Analysis') {
+    def scannerHome = tool 'dotNET5'
+    withSonarQubeEnv() {
+      sh "/usr/share/dotnet/dotnet ${scannerHome}/SonarScanner.MSBuild.dll begin /k:\"vital-cupos-app\""
+      sh "/usr/share/dotnet/dotnet build Web.sln"
+      sh "/usr/share/dotnet/dotnet ${scannerHome}/SonarScanner.MSBuild.dll end"
+    }
+  }
+}

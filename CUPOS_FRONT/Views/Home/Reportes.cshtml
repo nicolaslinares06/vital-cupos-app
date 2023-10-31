@@ -1,0 +1,61 @@
+﻿@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<div class="container">
+    <div class="row home-opciones">
+        <h1>Reportes</h1>
+         @if (Context.Session.GetString("consultReporteEmpresa") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="ReportesCuposEmpresasMarcaje" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreconsultReporteEmpresa")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+         @if (Context.Session.GetString("consultReportePrecintos") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="ReportesPrecintos" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreconsultReportePrecintos")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+         @if (Context.Session.GetString("consultReportesMarquillas") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="ReportesMarquillas" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreconsultReportesMarquillas")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+         @if (Context.Session.GetString("consultReportesCupos") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="QuotasReports" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreconsultReportesCupos")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    let spanUsario=document.getElementById('spanUsario');
+
+    $(document).ready(function(){
+        var usuario = '@ViewBag.user';
+        spanUsario.innerText=`Usuario: ${usuario}`;
+
+        //localizacion barra de navegacion
+        $(`.Reportes #padre`).addClass("active-within");
+    });
+</script>

@@ -1,0 +1,467 @@
+﻿@model Web.Models.ListaUsuarios;
+
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<body>
+    <div class="row content">
+        <div class="col-md-8 resume">
+            <a asp-controller="Home" asp-action="Index">Modulo de CUPOS</a> > <a asp-controller="Home"
+                asp-action="Administracion">Administración</a> > <strong>@Context.Session.GetString("NombreUsuario")</strong>
+        </div>
+        <div class="col-md-4 iconos">
+            <a type="button" class="btn btn-secondary" title="Ayuda" asp-controller="Usuarios" asp-action="Ayuda">AYUDA</a>
+            <a type="button" class="btn btn-secondary" title="Inicio" asp-controller="Home" asp-action="Index">INICIO</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content-fluid">
+            <h2>@Context.Session.GetString("NombreUsuario")</h2>
+            <form method="post">
+                <div class="form-group row">
+                    <label class="col-form-label">Digitar el nombre de usuario</label>
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <input type="text" class="col-12" id="busqueda-gestion" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" id="boton-consultar-scr" class="btn btn-primary">Consultar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<!-- data table -->
+<div class="tab-pain container" id="datatable">
+    <div class="mt-2 table-responsive">
+        <table id="tabla-solicitudes-guardadas-cu02" class="table tables-gestion-usu w-100">
+            <caption class="d-none">Table Description</caption>
+            <thead>
+                <tr>
+                    <th class="d-none"></th>
+                    <th class="th-mediumText encTable">Usuario</th>
+                    <th class="th-mediumText encTable">Roles</th>
+                    <th class="th-shortText encTable">Estado</th>
+                    <th class="th-mediumText encTable">Contraseña</th>
+                    <th class="th-shortText encTable">Vencimiento Contraseña</th>
+                    <th class="th-mediumText encTable">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    if (Model.Usuarios.Any())
+                    {
+                        foreach(var item in Model.Usuarios)
+                        {
+                                                <tr>
+                                                    <td class="d-none">@item.pkT012codigo</td>
+                                                    <td>@item.a012login</td>
+                                                    <td>@item.roles</td>
+                                                    <td>@item.a008valor</td>
+                                                    <td><input class='form-control' type='password' id='pass-datatable' value='@item.a012contrasena' disabled/></td>
+                                                    <td>@(String.Format("{0:yyyy-MM-dd}", item.a012fechaExpiracontraseña))</td>
+                                                    <td><a type='button' class='boton-editar'>EDITAR</a> / <a type='button' class='boton-actualizar'>CAMBIAR CONTRASEÑA</a></td>
+                                                </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- modal pregunta confirmacion actualizacion Datos -->
+<div class="modal fade" id="confirmacion-actualizar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro de que desea guardar la informacion?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-primary w-100 boton-si">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal mensaje cambio respuesta Actualizacion -->
+<div class="modal fade" id="mensaje-Actualizacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Información</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="modalText-actualizacion"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn-aceptar btn btn-primary" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var datatable = document.getElementById("datatable");
+
+    $(".btn-aceptar").click(function() {
+        $("#boton-consultar-scr").click();
+    });
+
+    $(document).ready(async function () {
+        construirDataTable();
+        $(`.Administracion #padre`).addClass("active-within");
+        $(`#GestionUsuario a`).addClass("active");
+    });
+
+    $("#boton-consultar-scr").click(async function () {
+        
+        var nombre = $("#busqueda-gestion").val();
+        filtrarDataTable(nombre);
+    });
+
+    $(".boton-cu02-crearusuario").click(async function () {
+        document.location.href = "/CrearUsuario/CreacionUsuario";
+    });
+
+    $(".boton-si").click(async function () {
+        var codigo = sessionStorage.getItem("codigoAct");
+        var login = sessionStorage.getItem("loginAct");
+        var estado = sessionStorage.getItem("estadoAct");
+        var rols = sessionStorage.getItem("roles");
+        var modal = document.getElementById("modalText-actualizacion");
+        
+        json = {
+            code: codigo,
+            login: login,
+            registrationStatus: estado,
+            rol: rols
+        }
+        $("#confirmacion-actualizar").modal("hide");
+
+        let url = "@Url.Action("Actualizar","Usuarios")";
+        let resp = await Get(url, json);
+
+        if (resp != null) {
+            modal.innerHTML = resp;
+            $("#mensaje-Actualizacion").modal("show");
+        }
+    });
+
+    async function filtrarDataTable(usu) {
+        let urlrol = "@Url.Action("ConsultarRoles","Usuarios")";
+        let r = await Get(urlrol);
+
+        let url = "@Url.Action("FiltrarUsuarios","Usuarios")";
+        let resp = await Get(url, { nombre: usu })
+        $tblPendientes = $('#tabla-solicitudes-guardadas-cu02').DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom: "<'row'<'col-md-6 mt-1'B><'col-md-6 text-end'<'d-flex align-items-center mt-1'<'col-md-9'l><'col-md-3'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            buttons: [
+                {
+                    title: "formulario de crear usuario",
+                    tag: "button",
+                    className: "btn btn-primary btn-redireccionar",
+                    text: `<span class="fa fa-external-link"></span> Crear Usuario`,
+                },
+            ],
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: '<p>Buscar:</p>',
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                    previous: 'Anterior',
+                    next: 'Siguiente'
+                }
+            },
+            data: resp,
+            columns: [
+                {
+                    "data": "pkT012codigo",
+                    className: "d-none"
+                },
+                {
+                    "data": "a012login"
+                },
+                {
+                    "data": "roles",
+                    render: function(data, type, row) {
+                        //var select = `<select id="sltRoles${row.pkT012codigo}" class="select2" name="states[]" multiple="multiple"><option selected>${data}</option>`;
+                        cantidad = 0;
+                        var rols = data.split("|");
+                        //var select = `<select class="select2" name="states[]" multiple="multiple" disabled>`;
+                        var select = "<p id='rol'>"
+                        var cantidad;
+                        r.forEach(el => {
+                            if (rols.includes(el.id.toString())) {
+                                select += `${el.name}`;
+                                if (cantidad > 0) {
+                                    select += ", ";
+                                }
+                            }
+                            cantidad += 1;
+                        })
+                        select += `</p>`;
+                        return select;
+                    }
+                },
+                {
+                    "data": "a008valor"
+                },
+                {
+                    "data": "a012contrasena",
+                    render: function(data) {
+                        return `<input class='form-control' type='password' id='pass-datatable' value='${data}' disabled></input>`
+                    },
+                },
+                {
+                    "data": "a012fechaExpiracontraseña",
+                    render: function(data) {
+                        return moment(data).format('yyyy-MM-DD');
+                    },
+                },
+                {
+                    render: function(data, type, row) {
+                        return `<a type='button' class='boton-editar'>EDITAR</a> / <a type='button' class='boton-actualizar'>CAMBIAR CONTRASEÑA</a>`
+                    },
+
+                }
+            ],
+            columnDefs: [{
+                targets: 6
+            }]
+        });
+    };
+
+    async function construirDataTable(usu) {
+        $tblPendientes = $('#tabla-solicitudes-guardadas-cu02').DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom: "<'row'<'col-md-6 mt-1'B><'col-md-6 text-end'<'d-flex align-items-center mt-1'<'col-md-9'l><'col-md-3'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            buttons: [
+                {
+                  title: "formulario de crear usuario",
+                  tag: "button",
+                  className: "btn btn-primary btn-redireccionar",
+                  text: `<span class="fa fa-external-link"></span> Crear Usuario`,
+                },
+            ],
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: '<p>Buscar:</p>',
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                    previous: 'Anterior',
+                    next: 'Siguiente'
+                }
+            }
+        });
+
+        var idDatatable = "#tabla-solicitudes-guardadas-cu02";
+        agregarClasesDatatable(idDatatable);
+
+        $(".btn-redireccionar").click(function() {
+            document.location.href = "/CrearUsuario/CreacionUsuario";
+        });
+
+        //$('#tabla-solicitudes-guardadas-cu02 tbody').on('click', '.boton-cancelar', function() {
+        //    var data = $(this).parents("tr").find("td")[0].innerText;            
+        //    $(`#txtlogin${data}`).val(sessionStorage.getItem('users'));
+        //    $(`.estado${data}`).val(sessionStorage.getItem('estate'));
+
+        //    var btnActualizar = document.getElementsByClassName("boton-actualizar");
+        //    var btnEditar = document.getElementsByClassName("boton-editar");
+        //    var btnGuardarUno = document.getElementById(`boton-guardar${data}`);
+        //    var btnAyudaUno = document.getElementById(`boton-cancelar${data}`);
+
+        //    ocultarElemento(btnActualizar, false);
+        //    ocultarElemento(btnEditar, false);
+        //    ocultarElemento(btnGuardarUno, true);
+        //    ocultarElemento(btnAyudaUno, true);
+
+        //    var input = document.getElementById(`txtlogin${data}`);
+        //    input.setAttribute('readonly', 'readonly');
+
+        //    var lista = document.getElementById(`estado${data}`);
+        //    lista.setAttribute('disabled', 'readonly');
+
+        //    var select = document.getElementById(`opcion2${data}`);
+        //    select.setAttribute('disabled', 'readonly');
+            
+        //    var listado = document.getElementById(`sltRoles${data}`);
+        //    listado.setAttribute('disabled', 'readonly');
+
+        //    var select1 = document.getElementById(`opcion3${data}`);
+        //    select1.setAttribute('disabled', 'readonly');
+
+        //    for (var i = 0; i < cantidad; i++) {
+        //        var selectrol = document.getElementById(`rol${i}${data}`);
+        //        selectrol.setAttribute('disabled', 'readonly');
+        //    }
+        //    //$(`#sltRoles${data} .select2-selection__choice__remove`).click();
+        //    //$(`#sltRoles${data}`).val(sessionStorage.getItem('roles'));
+        //});
+
+        $('#tabla-solicitudes-guardadas-cu02 tbody').on('click', '.boton-editar', function () {
+            var data = $(this).parents("tr").find("td")[0].innerText;
+            document.location.href = "/Usuarios/EditarUsuario?id=" + data;
+
+            //var btnGuardarUno = document.getElementById(`boton-guardar${data}`);
+            //var btnAyudaUno = document.getElementById(`boton-cancelar${data}`);
+            //var btnEditar = document.getElementsByClassName("boton-editar");
+            //var btnActualizar = document.getElementsByClassName("boton-actualizar");
+
+            //var user = $(`#txtlogin${data}`).val();
+            //var rols = $(`#sltRoles${data}`).val();
+            //var estado = $(`.estado${data}`).val();
+
+            //sessionStorage.setItem('users', user);
+            //sessionStorage.setItem('roles', rols);
+            //sessionStorage.setItem('estate', estado);
+
+            //ocultarElemento(btnEditar, true);
+            //ocultarElemento(btnActualizar, true);
+            //ocultarElemento(btnGuardarUno, false);
+            //ocultarElemento(btnAyudaUno, false);
+
+            //var listado = document.getElementById(`sltRoles${data}`);
+            //listado.removeAttribute('disabled');
+            
+            //var input = document.getElementById(`txtlogin${data}`);
+            //input.removeAttribute('readonly');
+
+            //var lista = document.getElementById(`estado${data}`);
+            //lista.removeAttribute('disabled');
+
+            //var select = document.getElementById(`opcion2${data}`);
+            //select.removeAttribute('disabled');
+            
+            //var select1 = document.getElementById(`opcion3${data}`);
+            //select1.removeAttribute('disabled');
+
+            //for (var i = 0; i < cantidad; i++) {
+            //    var selectrol = document.getElementById(`rol${i}${data}`);
+            //    selectrol.removeAttribute('disabled');
+            //}
+        });
+
+        //$('#tabla-solicitudes-guardadas-cu02 tbody').on('click', '.boton-guardar', function () {
+        //    var data = $(this).parents("tr").find("td")[0].innerText;
+        //    var login = $("#txtlogin" + data).val();
+        //    var prueba = $("#estado" + data).val();
+        //    var sel = $(".estado" + data).val();
+        //    var roles = $("#sltRoles" + data).val().join('|');
+
+        //    if (roles != null && roles != "") {
+        //        rols = roles;
+        //    }
+        //    if (sel == "INACTIVO") {
+        //        estado1 = false;
+        //    }
+
+        //    if (sel == "ACTIVO") {
+        //        estado1 = true;
+        //    }
+
+        //    sessionStorage.setItem("codigoAct", data);
+        //    sessionStorage.setItem("loginAct", login);
+        //    sessionStorage.setItem("estadoAct", estado1);
+        //    sessionStorage.setItem("roles", rols);
+
+        //    var btnActualizar = document.getElementsByClassName("boton-actualizar");
+        //    var btnEditar = document.getElementsByClassName("boton-editar");
+        //    var btnGuardarUno = document.getElementById(`boton-guardar${data}`);
+        //    var btnAyudaUno = document.getElementById(`boton-cancelar${data}`);
+
+        //    ocultarElemento(btnActualizar, false);
+        //    ocultarElemento(btnEditar, false);
+        //    ocultarElemento(btnGuardarUno, true);
+        //    ocultarElemento(btnAyudaUno, true);
+
+        //    var input = document.getElementById(`txtlogin${data}`);
+        //    input.setAttribute('readonly', 'readonly');
+
+        //    var lista = document.getElementById(`estado${data}`);
+        //    lista.setAttribute('disabled', 'readonly');
+
+        //    var select = document.getElementById(`opcion2${data}`);
+        //    select.setAttribute('disabled', 'readonly');
+            
+        //    var listado = document.getElementById(`sltRoles${data}`);
+        //    listado.setAttribute('disabled', 'readonly');
+
+        //    var select1 = document.getElementById(`opcion3${data}`);
+        //    select1.setAttribute('disabled', 'readonly');
+
+        //    for (var i = 0; i < cantidad; i++) {
+        //        var selectrol = document.getElementById(`rol${i}${data}`);
+        //        selectrol.setAttribute('disabled', 'readonly');
+        //    }
+
+        //    $("#confirmacion-actualizar").modal("show");
+        //});
+
+        $('#tabla-solicitudes-guardadas-cu02 tbody').on('click', '.boton-actualizar', function () {
+            var data = $(this).parents("tr").find("td")[0].innerText;
+            document.location.href = "/Usuarios/CambiarContrasena?id=" + data;
+        });
+
+        $(".select2").select2();
+
+        $(".custom-select").click(function() {
+            $(".select2").select2();
+        });
+
+        $(".dataTables_paginate").click(function() {
+            $(".select2").select2();
+        });
+        
+        $(".encTable").click(function() {
+            $(".select2").select2();
+        });
+
+        $(".select2-search--inline").addClass("d-none");
+    }
+</script>

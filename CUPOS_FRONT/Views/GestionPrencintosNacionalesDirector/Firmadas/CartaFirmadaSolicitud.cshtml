@@ -1,0 +1,36 @@
+﻿<body>
+    <div class="row">
+        <hr size="5" />
+        <h1>Formato carta al solicitante</h1>
+        <iframe title="Document" src="" id="visualizarDocumento" type="application/pdf" width="100" height="800">
+        </iframe>
+    </div>
+    <div class="mt-4 row justify-content-center">
+        <div class="col-2">
+            <a class="btn btn-primary" id="salirCartaSolicitud" title="Regresar">REGRESAR</a>
+        </div>
+    </div>
+</body>
+<partial name="./../Modales/Modales.cshtml" />
+<script>
+    $(document).ready(async function () {
+        var id = @ViewBag.idSolicitud;
+
+        let url = "@Url.Action("TraerDocumentosPrecintos","GestionPrencintosNacionales")";
+        let resp = await Get(url, {
+            code: id,
+            type: 10170
+        });
+        resp.forEach((elemento) => {
+            $("#visualizarDocumento").attr("src", elemento.adjuntoBase64);
+        });
+    });
+
+    $("#salirCartaSolicitud").click(async function () {
+        $('#confirmacionSalirFirmaCartaSolicitud').modal('show');
+    })
+    
+    $("#volverInicioFirmada").click(async function () {
+        location.replace('/GestionPrencintosNacionalesDirector');
+    })
+</script>

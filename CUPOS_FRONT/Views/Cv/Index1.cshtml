@@ -1,0 +1,101 @@
+﻿@model Web.Models.CvModel;
+@{
+    Layout = "_LayoutRegistrarResolucion";
+}
+<div class="container">
+    <div>
+        <a asp-controller="Home" asp-action="Index">Inicio</a> > <a asp-controller="Home" asp-action="FlujoNegocio">Flujo de negocio</a> > <strong>
+            Hoja de vida entidad
+        </strong>
+    </div>
+    <div class="text-end">
+        <a class="btn btn-secondary" asp-controller="Cv" target="_blank" asp-action="Ayuda" title="Ayuda">ayuda</a>
+        <a type="button" class="btn btn-secondary" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip"
+           data-bs-placement="top" title="Inicio">Inicio</a>
+    </div>
+
+
+    <div class="row">
+
+        <h1>Hoja de vida</h1>
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#tab1" id="tab-1"
+                   onclick="loadDatosEmpresahj()">Datos del Establecimiento</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab2" id="tab-2"
+                   onclick="loadsituacion()">Situación</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab3" id="tab-3"
+                   onclick="documentoventa()">Documentos de Compra y venta</a>
+            </li>
+
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane container active p-2" id="tab1">
+                <partial name="Partials/datos_de_la_empresa" />
+            </div>
+            <div class="tab-pane container fade p-2" id="tab2">
+                <partial name="Partials/situacion" />
+            </div>
+            <div class="tab-pane container fade p-2" id="tab3">
+                <partial name="Partials/documento_de_venta" />
+            </div>
+        </div>
+
+    </div>
+    <div class="row justify-content-center">
+        <button type="button" onclick="loadDatosEmpresahj()" id="btnSalirControl"
+                class="col-1 btn btn-primary m-2 d-none">
+            Salir
+        </button>
+        <button type="button" onclick="Anterior3()" id="btnAnterior3"
+                class="col-1 btn btn-primary m-2 d-none">
+            Anterior
+        </button>
+        <button type="button" onclick="siguiente3()" id="btnSiguiente3"
+                class="col-1 btn btn-primary m-2">
+            Siguiente
+        </button>
+        <button type="button" onclick="cerrarSesion2()" id="salir" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion2"
+                class="col-1 btn btn-primary m-2 d-none">
+            Salir
+        </button>
+    </div>
+</div>
+
+<div class="modal fade" id="modalCerrarSesion2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="text-center col-12">
+                    <span class="fa-solid fa-circle-check i-modal"></span>
+                </div>
+                <div class="text-center col-12 titulo-modal">
+                    <p>Confirmación</p>
+                </div>
+                <div id="header" class="d-block mensajes-modal">
+                    <p id="mensajeModalCerrarSesion2"></p>
+                </div>
+                <div class="row">
+                    <div id="btnSiNoCerrarSsesion2" class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                        <div class="col-6">
+                            <a type="button" class="btn btn-secondary w-100" asp-controller="Home"
+                               asp-action="Index">SI</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="Scripts\IndexScripts" />

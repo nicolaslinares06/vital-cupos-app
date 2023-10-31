@@ -1,0 +1,55 @@
+﻿<div class="container">
+    <div class="row mt-2">
+        <div class="col-md-4 mb-1">
+            <label for="InventoryAvailability" class="control-label">Disponibilidad de Inventario</label>
+            <input readonly id="InventoryAvailability" class="form-control" />
+            <span id="ValidateInventoryAvailability" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-4 mb-1">
+            <label for="Shopper" class="control-label">¿Quién realiza la compra?</label>
+            <select name="Shopper" id="Shopper" class="form-control" disabled>
+                <option value="">Seleccione</option>
+                <option value="60">Zoocriadero</option>
+                <option value="61">Comerzializadora</option>
+                <option value="62">Manofacturera</option>
+                <option value="63">Curtiembre</option>
+            </select>
+            <span id="ValidateShopper" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-4 mb-1">
+            <label for="TypeDocumentShopper" class="control-label">Tipo de documento</label>
+            <select name="TypeDocumentShopper" id="TypeDocumentShopper" class="form-control" disabled>
+                <option value="">Seleccione</option>
+                <option value="1">Cédula</option>
+                <option value="95">Nit</option>
+            </select>
+            <span id="ValidateTypeDocumentShopper" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-3 mb-1">
+            <label for="DocumentNumberShopper" class="control-label">Número de documento</label>
+            <input readonly id="DocumentNumberShopper" class="form-control" />
+            <span id="ValidateDocumentNumberShopper" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-4 mb-1">
+            <label for="ReasonSocialShopper" class="control-label">Nombre Zoocriadero / Razón Social</label>
+            <input readonly id="ReasonSocialShopper" class="form-control" disabled />
+            <span id="ValidateReasonSocialShopper" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-2 mb-1">
+            <label for="InitialBalanceBusinessShopper" class="control-label">Saldo inicial empresa</label>
+            <input readonly id="InitialBalanceBusinessShopper" class="form-control" placeholder="Saldo inicial" disabled />
+            <span id="ValidateInitialBalanceBusinessShopper" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-2 mb-3">
+            <label for="InitialBalanceBusinessShopper" class="control-label">Saldo final</label>
+            <input readonly id="FinalBalanceBusinessShopper" class="form-control" placeholder="Saldo final" disabled />
+            <span id="ValidateFinalBalanceBusinessShopper" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+
+        <div class="col-md-12 mb-1">
+            <label for="ObservationsShopper" class="control-label">Observaciones</label>
+            <textarea type="text" class="form-control" readonly id="ObservationsShopper"></textarea>
+            <span id="ValidateObservationsShopper" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,1020 @@
+﻿@model Web.Models.Roles;
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+<body>
+    <div class="row content">
+        <div class="col-md-8 resume">
+            <a asp-controller="Home" asp-action="Index">Inicio</a>  >  <a asp-controller="Home" asp-action="FlujoNegocio">Cupos Precintos y Marquillas</a>  >  <strong>Gestionar empresa</strong>
+        </div>
+        <div class="col-md-4 iconos">
+            <a type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Ayuda">ayuda</a>
+            <a type="button" class="btn btn-secondary" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top" title="Inicio">inicio</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content-fluid">
+            <h2>Gestionar Establecimiento</h2>
+            <div class="row border border-secondary rounded p-4 mb-3">
+                <div class="col-md-3 mb-1">
+                    <label for="ddlTipoEntidad" class="form-label">Establecimiento </label>
+                    <select class="form-control" id="ddlTipoEntidad"></select>
+                </div>
+                <div class="col-md-3 mb-1">
+                    <label class="form-label">Tipo de documento</label>
+                    <select class="form-control" id="tipodoc" required>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-1">
+                    <label class="form-label">Número de documento</label>
+                    <input type="number" id="numdoc" class="form-control" placeholder="&#xf2c2 0000000000" required maxlength="20"/>
+                </div>
+                <div class="col-md-2">
+                    <br/>
+                    <button id="boton-consultar-entidad" type="button" class="btn btn-primary" onclick="llenadoDatosEntidad()">Buscar</button>
+                    <button id="boton-cancelar" type="button" class="btn btn-secondary" onclick="Cancelar()" style="display:none;">Limpiar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DataTable Entidades-->
+    <div class="tab-pane container border border-secondary rounded p-4 mb-3" id="datatableEntidades" style="display:none;">
+        <div class="mt-2 table-responsive">
+            <table id="tabla-entidades" class="table w-100">
+                <caption class="d-none">Table Description</caption>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="th-mediumText">NIt</th>
+                        <th class="th-mediumText">Establecimiento</th>
+                        <th class="th-mediumText">Nombre</th>
+                        <th class="th-mediumText">Estado Establecimiento</th>
+                        <th class="th-mediumText">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>   
+    </div>
+
+    <!-- DataTable Novedades-->
+    <div class="tab-pane container border border-secondary rounded p-4" id="datatableNovedades" style="display:none;">
+        <h3>Registro de novedades</h3>
+        <div class="table-responsive">
+            <table id="tabla-novedades" class="table w-100">
+                <caption class="d-none">Table Description</caption>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="th-mediumText">Tipo Novedad</th>
+                        <th class="th-mediumText">Fecha</th>
+                        <th class="th-mediumText">Estado establecimiento</th>
+                        <th class="th-mediumText">Estado para emisión permisos CITES</th>
+                        <th class="th-mediumText">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div> 
+    </div>
+
+    <!-- container Registro Novedad -->
+    <div id="containerRegistroNovedad" class="border border-secondary rounded p-4" style="display:none;">
+        <h3 id="title-Novedad">Registrar Novedad</h3>
+        <input id="idNovedad" type="hidden" value="0" />
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#tab1" id="tab-1">Información Novedad</a>
+            </li>
+            <li class="nav-item" style="display:none;">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab2" id="tab-2">Detalles</a>
+            </li>
+        </ul>
+        <div class="tab-content border border-secondary rounded p-4">
+            <div class="tab-pane container active p-2" id="tab1">
+                <div class="container">
+                    <div class="row mb-3">
+                        <div class="mb-1 mt-1 col-6">
+                            <label for="tiponovedad" class="form-label">Tipo Novedad <span id="reqtiponovedad" style='Color:red;'>*</span></label>
+                            <select class="form-control" id="tiponovedad" onchange="seleccionTipoNovedad()" required>
+                            </select>
+                        </div>
+                        <div class="mb-1 mt-1 col-6">
+                            <label for="txtFecha" class="form-label">Fecha <span id="reqtxtFecha" style='Color:red;'>*</span></label>
+                            <input type="date" id="txtFecha" class="form-control" placeholder="&#xf073 dd/mm/aaaa" readonly/>
+                        </div>
+                        <div class="mb-1 mt-1 col-6">
+                            <label for="ddlEstadoEmpresa" class="form-label">Estado Establecimiento <span id="reqddlEstadoEmpresa" style='Color:red;'>*</span></label>
+                            <select class="form-control" id="ddlEstadoEmpresa" required>
+                            </select>
+                        </div>
+                        <div class="mb-1 mt-1 col-6">
+                            <label class="form-label">Estado para emisión de permisos CITES <span id="reqcheck_EstadoCITES" style='Color:red;'>*</span></label>
+                            <div class="row">
+                                <div class="col-3">
+                                    <input class="form-check-input check" name="check_EstadoCITES" type="radio" value="72" id="checkEstadoActivo">
+                                    <label class="form-check-label" for="checkEstadoActivo">Activo</label>
+                                </div>
+                                <div class="col-3">
+                                    <input class="form-check-input check" name="check_EstadoCITES" type="radio" value="73" id="checkEstadoInactivo">
+                                    <label class="form-check-label" for="checkEstadoInactivo">Inactivo</label>
+                                </div>
+                             </div>
+                        </div>
+                        <div class="mb-1 mt-1 col-6">
+                            <label for="txtObservaciones" class="form-label">Observaciones </label>
+                            <textarea class="form-control" id="txtObservaciones" rows="5" maxlength="200"></textarea>
+                        </div>
+                         <div class="mb-1 mt-1 col-6">
+
+                            <label for="formFileSoporte" class="form-label">Documento de Soporte <span id="reqformFileSoporte" style='Color:red;'>*</span></label>
+                            <label type="button" class="file text-center" for="formFileSoporte" id="fileContenedorMultipleFile">
+                                <p id="placeHolderMultipleFile"><span class="fas fa-paperclip"></span> Adjunte o arrastre aquí uno o varios
+                                    documentos.</p>
+                                <input type="file" id="formFileSoporte">
+                            </label>
+                            <div id="divAdjunto">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane container fade p-2" id="tab2">
+                <div class="container">
+                    <div class="row mb-3" id="divDatosNovedadDetalle">
+                        <div class="mb-1 mt-1 col-4">
+                            <label for="txtCuposDisponibles" class="form-label">Cupos disponibles <span id="reqtxtCuposDisponibles" style='Color:red;'>*</span></label>
+                            <input type="text" class="form-control" id="txtCuposDisponibles" placeholder="Cupos disponibles" value="0" readonly>
+                        </div>
+                        <div class="mb-1 mt-1 col-4">
+                            <label for="txtInventarioDisponible" class="form-label">Inventario Disponible <span id="reqtxtInventarioDisponible" style='Color:red;'>*</span></label>
+                            <input type="text" class="form-control" id="txtInventarioDisponible" placeholder="Inventario Disponible" value="0" readonly>
+                        </div>
+                        <div class="mb-1 mt-1 col-4">
+                            <label for="txtNumeroCuposPendientesTramitar" class="form-label">Número de cupos pendientes por tramitar <span id="reqtxtNumeroCuposPendientesTramitar" style='Color:red;'>*</span></label>
+                            <input type="text" class="form-control" id="txtNumeroCuposPendientesTramitar" placeholder="Número de cupos pendientes por tramitar" value="0" readonly>
+                        </div>
+                        <div class="mb-1 mt-1 col-12">
+                            <label for="ddlDisposicionEspecimenes" class="form-label">Disposición de especímenes <span id="reqddlDisposicionEspecimenes" style='Color:red;'>*</span></label>
+                            <select class="form-control" id="ddlDisposicionEspecimenes" onchange="seleccionDisposicionEspecimenes()"></select>
+                        </div>
+                        <div class="containerZoocriadero mt-3 mb-3 border border-secondary rounded p-4" style="display:none;">
+                            <div class="row mb-3" id="divBuscarEntidadZoo">
+                                <div class="row">
+                                    <div class="mb-1 mt-1 col-6">
+                                        <label for="txtNitZoo" class="form-label">Nit zoocriadero de destino <span style='Color:red;'>*</span></label>
+                                        <input type="number" class="form-control" id="txtNitZoo" placeholder="Nit zoocriadero de destino" maxlength="20"> 
+                                    </div>
+                                    <div class="mb-1 mt-1 col-6">
+                                        <br/>
+                                        <button id="boton-consultar-entidadZoo" type="button" class="btn btn-primary" onclick="llenadoDatosEntidadZoo(true)">Buscar</button>
+                                        <button id="boton-cancelar-buscarZoo" type="button" class="btn btn-primary" onclick="cancelarBuscarZoo()" style="display:none;">Cancelar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class="row mb-3" id="divDatosEntidadZoo" style="display:none;">
+                                <div class="mb-1 mt-1 col-6">
+                                    <label for="txtNombreZoo" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="txtNombreZoo" placeholder="Nombre" readonly>
+                                </div>
+                                <div class="mb-1 mt-1 col-6">
+                                    <label for="txtPaisZoo" class="form-label">País</label>
+                                    <input type="text" class="form-control" id="txtPaisZoo" placeholder="Pais" readonly>
+                                </div>
+                                <div class="mb-1 mt-1 col-6">
+                                    <label for="txtDepartamentoZoo" class="form-label">Departamento</label>
+                                    <input type="text" class="form-control" id="txtDepartamentoZoo" placeholder="Departamento" readonly>
+                                </div>
+                                <div class="mb-1 mt-1 col-6">
+                                    <label for="txtCiudadZoo" class="form-label">Ciudad/Municipio</label>
+                                    <input type="text" class="form-control" id="txtCiudadZoo" placeholder="Ciudad/Municipio" readonly>
+                                </div>
+                                <div class="mb-1 mt-1 col-6">
+                                    <label for="txtDireccionZoo" class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" id="txtDireccionZoo" placeholder="Direccion" readonly>
+                                </div>
+                                <div class="mb-1 mt-1 col-6">
+                                    <label for="txtTelefonoZoo" class="form-label">Teléfono</label>
+                                    <input type="number" class="form-control" id="txtTelefonoZoo" placeholder="Telefono" readonly>
+                                </div>
+                                <div class="mb-1 mt-1 col-6">
+                                    <label for="txtCorreoZoo" class="form-label">Correo</label>
+                                    <input type="text" class="form-control" id="txtCorreoZoo" placeholder="Correo" readonly>
+                                </div>
+                                <div class="mb-1 w-100 cetrarItems text-end" id="divBtnHistorialCuposDatosEntidad" onclick="controlCupos();">
+                                    <label class="text-primary" style="cursor:pointer;">HISTORIAL DE CUPOS</label>
+                                    <a type="button" id="btnHistorialCupos">
+                                        <span class="fas fa-exclamation-circle fa-2x text-primary" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Revisar historial de cupos otorgados"></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-1 mt-1 col-12 OtroCual" style="display:none;">
+                            <label for="txtOtroCual" class="form-label">¿Cuál? <span style='Color:red;'>*</span></label>
+                            <input type="text" class="form-control" id="txtOtroCual" placeholder="¿Cuál?" maxlength="200">
+                        </div>
+                        <div class="mb-1 mt-1 col-12">
+                            <label for="txtObservacionesDetalle" class="form-label">Observaciones </label>
+                            <textarea class="form-control" id="txtObservacionesDetalle" rows="5" maxlength="200"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <button type="button" onclick="ConfirGuardarNovedad()" id="btnGuardarNovedad"
+                class="col-1 btn btn-primary m-2">Guardar Novedad</button>
+            <button type="button" onclick="ConfirVolverNovedad()" id="btnVolverNovedad"
+                class="col-1 btn btn-primary m-2">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- container Datos Entidad -->
+    <div id="containerDatosEntidad" style="display:none;">
+        <partial name="Partials/DatosEntidad" />
+    </div>
+
+    @*<partial name="Partials/HistorialCupos" />*@
+
+    <partial name="Partials/_Messages" />
+    <partial name="Partials/_Scripts" />
+</body>
+
+<script>
+    var codigoEmpresa = 0;
+    var idEmpresaZoo = null;
+    var idTipoEmpresa = 0;
+    var dtRow = null;
+    var tipodoc = document.getElementById("tipodoc");
+    var numdoc = document.getElementById("numdoc");
+    var nitEmpresa = "";
+    var nitEmpresaZoo = ""
+    var nitzoo = document.getElementById("txtNitZoo");
+    let cuposPorEspecies;
+    var totalDisponibles = 0;
+    var totalOtorgadosControlCupos = 0;
+    let inventarioEspecies;
+    var especies = [];
+    var codigoEspecie = 0;
+
+    $(document).ready(async function() {
+        $("#boton-cancelar").hide();
+        //Cargar Combos
+        ConsultParametrica("tipodoc", "TIPO DE DOCUMENTO", "Seleccione tipo documento");
+        ConsultParametrica("tiponovedad", "TIPO DE NOVEDAD", "Seleccione tipo novedad");
+        ConsultParametrica("ddlTipoEntidad", "TIPO EMPRESA", "Seleccione tipo entidad");
+        ConsultParametrica("ddlEntidad", "TIPO EMPRESA", "Seleccione tipo entidad");
+        ConsultParametrica("ddlEstadoEmpresa", "ESTADO", "Seleccione estado");
+        ConsultParametrica("ddlDisposicionEspecimenes", "TIPO DISPOSICIÓN DE ESPECÍMENES", "Seleccione disposición de especímenes");
+        ConsultPaises();
+    });
+
+    //Redireccion historial de cupos
+    function controlCupos(){
+        document.location.href = "/GestionEntidades/HistorialCupos?nit=" + nitEmpresaZoo;
+    }
+
+	//llenado de los controles para datos de entidad
+    async function llenadoDatosEntidad() {
+        let tipoEmpresa = $("#ddlTipoEntidad").val();
+        let tipoDocumento = tipodoc.value;
+        nitEmpresa = numdoc.value;
+
+        if (tipoEmpresa== "" || tipoDocumento == "" || nitEmpresa == "") {
+            MostrarMensajeAdver("Establecimiento, Tipo documento y Número de documento requeridos.");
+            return;
+        }
+        
+        let url = `@Url.Action("ConsultEntityDates", "RegistrarResolucion")` + `?documentType=${tipoDocumento}&nitBussines=${nitEmpresa}&entityType=${tipoEmpresa}`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+
+        if (r.length > 0){
+            $("#ddlTipoEntidad").prop("disabled", true);
+            $("#tipodoc").prop("disabled", true);
+            $("#numdoc").prop("disabled", true);
+            $("#boton-consultar-entidad").hide();
+            $("#boton-cancelar").show();
+            dtRow = r[0];
+            codigoEmpresa = dtRow.codigoEmpresa;
+            idTipoEmpresa = dtRow.idtipoEntidad;
+            llenadoDatosNovedades();
+            llenadoGrillaEntidad(r);
+        }
+        else{
+            MostrarMensajeAdver("No se encontro establecimiento");
+        }
+    }
+
+    //llenado de las novedades
+    async function llenadoDatosNovedades() {
+        let url = `@Url.Action("ConsultNovedades", "GestionEntidades")` + `?codigoEmpresa=${codigoEmpresa}`;
+        let rr = await Get(url);
+        
+        if(rr.volverInicio !=undefined || rr == undefined){
+            cerrarSesionCaducada();
+            return;
+        }
+        
+        llenadoGrillaNovedades(rr);
+    }
+
+    async function llenarDatos() {
+        if (dtRow != null){
+            $("#ddlEntidad").val(dtRow.idtipoEntidad);
+            $("#txtNit").val(dtRow.nit);
+            $("#txtNombre").val(dtRow.nombreEmpresa);
+            $("#ddlPais").val(dtRow.idpais);
+            ConsultDepartamentos(dtRow.idpais, dtRow.iddepartamento);
+            ConsultCiudades(dtRow.iddepartamento, dtRow.idciudad);
+            $("#txtTelefono").val(dtRow.telefono);
+            $("#txtCorreo").val(dtRow.correo);
+            $("#txtDireccion").val(dtRow.direccion);
+        }
+    }
+
+    //llenado de los controles para datos de entidad Zoocriadero
+    async function llenadoDatosEntidadZoo(ver) {
+        let tipoDocumento = 95 //Nit;
+        nitEmpresaZoo = nitzoo.value;
+
+        if (nitEmpresaZoo == "") {
+            MostrarMensajeAdver("Nit zoocriadero de destino requerido.");
+            return;
+        }
+        
+        let url = `@Url.Action("ConsultEntityDates", "RegistrarResolucion")` + `?documentType=${tipoDocumento}&nitBussines=${nitEmpresaZoo}&entityType=60`;
+        let r = await Get(url);
+        
+        if(r.volverInicio !=undefined){
+            cerrarSesionCaducada();
+            return;
+        }
+        
+        if (r.length > 0){
+            idEmpresaZoo = r[0].codigoEmpresa;
+            $("#txtNombreZoo").val(r[0].nombreEmpresa);
+            $("#txtPaisZoo").val(r[0].pais);
+            $("#txtDepartamentoZoo").val(r[0].departamento);
+            $("#txtCiudadZoo").val(r[0].ciudad);
+            $("#txtTelefonoZoo").val(r[0].telefono);
+            $("#txtCorreoZoo").val(r[0].correo);
+            $("#txtDireccionZoo").val(r[0].direccion);
+            $("#txtNitZoo").prop("disabled", true); 
+            $("#boton-consultar-entidadZoo").hide(); 
+            if (ver){
+                $("#boton-cancelar-buscarZoo").show(); 
+            }
+            else{
+                $("#boton-cancelar-buscarZoo").hide(); 
+            }            
+            $("#divDatosEntidadZoo").show();
+        }
+        else{
+            MostrarMensajeAdver("Número de documento no existe o Establecimiento no es Zoocriadero.");
+        }
+    }
+
+    async function Cancelar() { 
+        $("#ddlTipoEntidad").val("0");
+        $("#tipodoc").val("0");
+        $("#numdoc").val("");
+        $("#txtNitZoo").val("");
+        $("#ddlTipoEntidad").prop("disabled", false);
+        $("#tipodoc").prop("disabled", false);
+        $("#numdoc").prop("disabled", false);
+        $("#txtNitZoo").prop("disabled", false);
+        $("#boton-consultar-entidad").show();
+        $("#boton-cancelar").hide();
+        codigoEmpresa = 0;
+        nitEmpresa = "";
+        nitEmpresaZoo = "";
+        idTipoEmpresa = 0;
+        idEmpresaZoo = null;
+        dtRow = null;
+        Ocultar();
+    }
+
+    async function Editar() {
+        Ocultar();
+        llenarDatos();
+        DisabledEntidad(false);
+        $("#btnGuardarEntidad").show(); 
+        $("#btnVolver").html("Cancelar"); 
+        $("#containerDatosEntidad").show();
+    }
+
+    async function Ver() {
+        Ocultar();
+        llenarDatos();
+        DisabledEntidad(true);
+        $("#btnGuardarEntidad").hide(); 
+        $("#btnVolver").html("Salir"); 
+        $("#containerDatosEntidad").show();
+    }
+
+    async function DisabledEntidad(sw) {
+        $("#ddlEntidad").prop("disabled", sw);
+        $("#txtNit").prop("disabled", sw);
+        $("#txtNombre").prop("disabled", sw);
+        $("#ddlPais").prop("disabled", sw);
+        $("#ddlDepartamento").prop("disabled", sw);
+        $("#ddlCiudad").prop("disabled", sw);
+        $("#txtTelefono").prop("disabled", sw);
+        $("#txtCorreo").prop("disabled", sw);
+        $("#txtDireccion").prop("disabled", sw);
+    }
+
+    async function RegistrarNovedad() {
+        Ocultar();
+        DisabledNovedad(false);
+        accionEditar = false;
+        $("#idNovedad").val(0);
+        $("#title-Novedad").html("Registrar Novedad");
+        $("#ddlEstadoEmpresa").val(dtRow.idestado); 
+        $("#txtFecha").val(moment(new Date()).format('YYYY-MM-DD')); 
+        $("#btnVolverNovedad").html("Cancelar");
+        $("#btnGuardarNovedad").show(); 
+        $("#containerRegistroNovedad").show();
+    }
+
+    async function Ocultar() { 
+        $("#datatableEntidades").hide();
+        $("#datatableNovedades").hide();
+        $("#containerDatosEntidad").hide();
+        $("#containerRegistroNovedad").hide();
+        $(".containerZoocriadero").hide();
+        $(".OtroCual").hide();
+        $("span[id^=req]").html("*");
+        $("#tab-2").parent().hide();
+        LimpiarNovedad();
+    }
+
+    async function GuardarEntidad() { 
+        if (validarRequeridos(["ddlEntidad", "txtNombre", "ddlCiudad", "txtDireccion", "txtTelefono", "txtCorreo"])){
+            MostrarMensajeAdver("Campos con (<span style='Color:red;'>*</span>) requeridos.");
+            return;
+        }
+
+        if (!validarEmail($("#txtCorreo").val())){
+            MostrarMensajeAdver("Correo electrónico no válido.");
+            return;
+        }
+        
+        MostrarMensajeConfir("¿Está seguro de que desea guardar la información?", "Actualizar();");
+    }
+
+    async function ConfirVolver() { 
+        MostrarMensajeConfir("¿Está seguro de que desea " + $("#btnVolver").html() + "?", "Volver();");
+    }
+
+    async function ConfirVolverNovedad() { 
+        MostrarMensajeConfir("¿Está seguro de que desea " + $("#btnVolverNovedad").html() + "?", "Volver();");
+    }
+
+    async function Volver() { 
+        $("#mensaje-confirmacion").modal("hide");
+        $("#containerDatosEntidad").hide();
+        $("#containerRegistroNovedad").hide();
+        $("#datatableEntidades").show();
+        $("#datatableNovedades").show();
+    }
+
+    async function llenadoGrillaEntidad(datos) {
+        $tblentidades=$('#tabla-entidades').DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu:[5,10,20,50,100],
+            filter: false,
+            info: false,
+            ordering: false,
+            paging: false,
+            dom: "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-9'l><'col-md-3'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: { 
+                lengthMenu:"Resultados pág. _MENU_",
+                search: '', 
+                info:"_START_ de _TOTAL_ Resultados",
+                searchPlaceholder: "Buscar" ,
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty:"No se encontraron resultados",
+                paginate: {
+                    previous: 'Anterior',
+                    next:     'Siguiente'
+                }
+            },
+            data:datos,
+            columns:[
+                {
+                    "data":"codigoEmpresa",
+                    className:"d-none"
+                },
+                {
+                    "data":"nit"
+                },
+                {
+                    "data":"nombreEntidad"
+                },
+                {
+                    "data":"nombreEmpresa"
+                },
+                {
+                    "data":"estado"
+                },
+                {
+                    render: function(data, type, row) {
+                        return `<a id="btnEditar" href="javascript:void(0);" onclick='Editar()' title="EDITAR">EDITAR</a> / 
+                                <a id="btnVer" href="javascript:void(0);" onclick='Ver()' title="VER">VER</a> / 
+                                <a id="btnRegistrarNovedad" href="javascript:void(0);" onclick='RegistrarNovedad()' title="REGISTRAR NOVEDAD">REGISTRAR NOVEDAD</a>`;
+                    }
+                }
+              ],
+            columnDefs: [{
+                targets: 5
+            }]
+        });
+        $("#datatableEntidades").show();
+    }
+
+    async function llenadoGrillaNovedades(datos) {
+        $tblentidades=$('#tabla-novedades').DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu:[10,20,50,100],
+            filter: false,
+            info: true,
+            ordering: false,
+            paging: true,
+            dom: "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-9'l><'col-md-3'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: { 
+                lengthMenu:"Resultados pág. _MENU_",
+                search: '', 
+                info:"_START_ de _TOTAL_ Resultados",
+                searchPlaceholder: "Buscar" ,
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty:"No se encontraron resultados",
+                paginate: {
+                    previous: 'Anterior',
+                    next:     'Siguiente'
+                }
+            },
+            data:datos,
+            columns:[
+                {
+                    "data":"codigo",
+                    className:"d-none"
+                },
+                {
+                    "data":"nombreTipoNovedad"
+                },
+                {
+                    render: function(data, type, row) {
+                        return `${moment(row.fechaRegistroNovedad).format('DD-MM-yyyy')}`;
+                    }
+                },
+                {
+                    "data":"estadoEmpresa"
+                },
+                {
+                    "data":"estadoEmisionCITES"
+                },
+                {
+                    render: function(data, type, row) {
+                        return `<a id="btnVerNovedad" href="javascript:void(0);" onclick='VerNovedad(${row.codigo})' title="VER NOVEDAD">VER</a>`;
+                    }
+                }
+              ],
+            columnDefs: [{
+                targets: 5
+            }]
+        });
+        $("#datatableNovedades").show();
+    }
+
+    async function Actualizar() {
+        visualizarFondoProcesando();
+        $("#mensaje-confirmacion").modal("hide");
+        json = {
+            codigoEmpresa: codigoEmpresa,
+            idtipoEntidad: $("#ddlEntidad").val(),
+            nombreEmpresa: $("#txtNombre").val(),
+            idciudad: $("#ddlCiudad").val(),
+            direccion: $("#txtDireccion").val(),
+            telefono: $("#txtTelefono").val(),
+            correo: $("#txtCorreo").val()
+        }
+        let url = "@Url.Action("Actualizar","GestionEntidades")";
+        let resp = await Get(url, json);
+        ocultarFondoProcesando();
+        if (resp.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+
+        if (resp != null) {
+            MostrarMensajeInfo(resp);
+            llenadoDatosEntidad();
+            Volver();
+        }
+        else{
+            MostrarMensajeError("Se ha producido un error");
+        }
+    }
+
+    async function seleccionTipoNovedad(){
+        if ($("#tiponovedad").val() == "71"){
+            consultarTotalCupos();
+            $("#tab-2").parent().show();
+        }
+        else{
+            $("#tab-2").parent().hide();
+        }
+    }
+
+    async function seleccionDisposicionEspecimenes(){
+        $(".containerZoocriadero").hide();
+        $(".OtroCual").hide();
+        if ($("#ddlDisposicionEspecimenes").val() == "39"){
+            $(".containerZoocriadero").show();
+        }
+        if($("#ddlDisposicionEspecimenes").val() == "40"){
+            $(".OtroCual").show();
+        }
+    }
+
+    async function ConfirGuardarNovedad() { 
+        var arrayVal = ["tiponovedad", "txtFecha", "ddlEstadoEmpresa", "check_EstadoCITES"];
+        /*Se valida requiere archivo*/
+        if (($("#idNovedad").val() == "0" && adjuntosNuevo.length == 0) || ($("#idNovedad").val() != "0" && adjuntosNuevo.length == 0 && adjuntos.length == 0))
+            arrayVal.push("formFileSoporte");
+        if (validarRequeridos(arrayVal)){
+            MostrarMensajeAdver("Campos con (<span style='Color:red;'>*</span>) requeridos.");
+            return;
+        }
+
+        /*Cierre y Abandono 71*/
+        if ($("#tiponovedad").val() == "71"){
+            /*Cupos disponibles, Inventario Disponible, Número de cupos disponibles para comercializar */
+            if (validarRequeridos(["ddlDisposicionEspecimenes"])){
+                MostrarMensajeAdver("Campos Disposición de especímenes es requerido.");
+                loadTabs(2);
+                return;
+            }
+            /*Disposición de especímenes– Para Traslado  a otro zoocriadero (39) Nit zoocriadero de destino obligatorio */
+            if ($("#ddlDisposicionEspecimenes").val() == "39"){
+                if (validarRequeridos(["txtNitZoo"]) || idEmpresaZoo == null){
+                    MostrarMensajeAdver("Zoocriadero de destino obligatorio.");
+                    loadTabs(2);
+                    return;
+                }
+                if (nitEmpresa == nitEmpresaZoo){
+                    MostrarMensajeAdver("No se puede hacer el Traslado a el mismo Establecimiento.");
+                    loadTabs(2);
+                    return;
+                }
+                if (idTipoEmpresa != 60){
+                    MostrarMensajeAdver("Establecimiento de Origen no es Zoocriadero.");
+                    loadTabs(2);
+                    return;
+                }
+            }
+            /*Disposición de especímenes– Otro (40) ¿Cuál? obligatorio */
+            if ($("#ddlDisposicionEspecimenes").val() == "40"){
+                 if (validarRequeridos(["txtOtroCual"])){
+                    MostrarMensajeAdver("Campo ¿Cuál? para Disposición de especímenes es obligatorio.");
+                    loadTabs(2);
+                    return;
+                }
+            }
+        }
+
+        MostrarMensajeConfir("¿Está seguro de que desea guardar la información?", "GuardarNovedad();");
+    }
+
+    async function GuardarNovedad() {
+        $("#mensaje-confirmacion").modal("hide");
+        visualizarFondoProcesando();
+        json = {
+            codigo : $("#idNovedad").val(),
+            codigoEmpresa : codigoEmpresa,
+            idTipoNovedad : $("#tiponovedad").val(),
+            fechaRegistroNovedad : $("#txtFecha").val(),
+            idEstadoEmpresa : parseInt($("#ddlEstadoEmpresa").val()),
+            idEstadoEmisionCITES : parseInt($('input[name="check_EstadoCITES"]:checked').val()),
+            observaciones : $("#txtObservaciones").val(),
+            cuposDisponibles : $("#txtCuposDisponibles").val(),
+            inventarioDisponible : $("#txtInventarioDisponible").val(),
+            numeroCupospendientesportramitar : $("#txtNumeroCuposPendientesTramitar").val(),    
+            idDisposicionEspecimen : ($("#ddlDisposicionEspecimenes").val() == 0? null: $("#ddlDisposicionEspecimenes").val()),
+            idEmpresaZoo : idEmpresaZoo,
+            otroCual : $("#txtOtroCual").val(),
+            observacionesDetalle : $("#txtObservacionesDetalle").val(), 
+            documentos: adjuntosNuevo,
+            documentosAeliminar: adjuntosEliminar
+        }
+
+        let url = "@Url.Action("GuardarNovedad","GestionEntidades")";
+        let resp = await Get(url, json);
+        ocultarFondoProcesando();
+
+        if (resp.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+
+        if (resp) {
+            MostrarMensajeInfo("Su información ha sido guardada con éxito");
+            llenadoDatosNovedades();
+            llenadoDatosEntidad();
+            Volver();
+        }
+        else{
+            MostrarMensajeError("Se ha producido un error");
+        }
+    }
+
+    //Consultar Novedad
+    async function consultarDatosNovedad(codNovedad, ver) {
+        let url = `@Url.Action("ConsultNovedades", "GestionEntidades")` + `?codigoEmpresa=${codigoEmpresa}&idNovedad=${codNovedad}`;
+        let dtnovedad = await Get(url);
+        
+        if(dtnovedad.volverInicio !=undefined || dtnovedad == undefined){
+            cerrarSesionCaducada();
+            return;
+        }
+        
+        if (dtnovedad.length > 0){
+            var d = dtnovedad[0]; 
+            $("#idNovedad").val(d.codigo)
+            $("#tiponovedad").val(d.idTipoNovedad);
+            if ($("#tiponovedad").val() == "71"){
+                $("#tab-2").parent().show();
+            }
+            else{
+                $("#tab-2").parent().hide();
+            }
+
+            $("#txtFecha").val(moment(d.fechaRegistroNovedad).format('yyyy-MM-DD'));
+            $("#ddlEstadoEmpresa").val(d.idEstadoEmpresa);
+            $('input[name="check_EstadoCITES"][value=' + d.idEstadoEmisionCITES + ']').prop('checked', true);
+            $("#txtObservaciones").val(d.observaciones);
+            $("#txtNumeroCuposPendientesTramitar").val(d.numeroCupospendientesportramitar);   
+            $("#ddlDisposicionEspecimenes").val((d.idDisposicionEspecimen == null? 0 : d.idDisposicionEspecimen));
+            if ($("#ddlDisposicionEspecimenes").val() == "39"){
+                 $("#ddlDisposicionEspecimenes").prop("disabled", true);
+            }
+            idEmpresaZoo = d.idEmpresaZoo;
+            if(idEmpresaZoo > 0){
+                nitEmpresaZoo = d.nitEmpresaZoo;
+                $("#txtNitZoo").val(d.nitEmpresaZoo);
+                llenadoDatosEntidadZoo(false);
+            }
+            $("#txtOtroCual").val(d.otroCual);
+            seleccionDisposicionEspecimenes();
+            $("#txtObservacionesDetalle").val(d.observacionesDetalle);
+            if (d.documentos != null){
+                divAdjunto.innerHTML = '';
+                adjuntos = d.documentos;
+                adjuntosOriginal = d.documentos;
+                d.documentos.forEach(el => {
+                    if (ver) {
+                        divAdjunto.innerHTML +=
+                            `<div class="row w-100 mt-2 contenerAdjuntos" id="divAdjunto${el.codigo}">
+                                <div class="col-12">
+                                    <a type="buttton" class="btnPrevisualizar" id="btnPrevisualizar${el.codigo}">${el.nombreAdjunto}</a>
+                                </div>
+                            <div>`;
+                    } else {
+                        divAdjunto.innerHTML +=
+                            `<div class="row w-100 mt-2 contenerAdjuntos" id="divAdjunto${el.codigo}">
+                                <div class="col-11">
+                                    <a type="buttton" class="btnPrevisualizar" id="btnPrevisualizar${el.codigo}">${el.nombreAdjunto}</a>
+                                </div>
+                                <div class="text-end col-1">
+                                    <a type="button" class="btnEliminarAdjunto" id="btnEliminarAdjunto${el.codigo}"><span class="fas fa-times"></span></a>
+                                <div>
+                            <div>`;
+                    }
+                });
+            }
+        }
+    }
+
+    //Consultar Totales Cupos 
+    async function consultarTotalCupos() {
+        let url = `@Url.Action("ConsultCupos", "GestionEntidades")` + `?idEmpresa=${codigoEmpresa}`;
+        let dtTotales = await Get(url);
+        
+        if(dtTotales.volverInicio !=undefined){
+            cerrarSesionCaducada();
+            return;
+        }
+        
+        if (dtTotales != undefined){
+            $("#txtCuposDisponibles").val(dtTotales.availableQuotas);
+            $("#txtInventarioDisponible").val(dtTotales.availableInventory);
+            $("#txtNumeroCuposPendientesTramitar").val(dtTotales.pendingQuotasForProcessing);
+        }
+    }
+
+    //Eliminar Documento Novedad
+    async function eliminarDocumento() {
+        adjuntoBase64 = '';
+        $(divAdjunto).removeClass("col-2");
+        divAdjunto.innerHTML = '';
+        nombreAdjunto = '';
+        tipoAdjunto = '';
+        $("#formFileSoporte").prop("disabled", false);
+        $("#formFileSoporte").val("");
+        MostrarMensajeAdver("Debe Guardar Novedad para persistir la información");
+        $("#mensaje-confirmacion").modal("hide");
+    }
+
+    async function EditarNovedad(codNovedad) {
+        $("#idNovedad").val(codNovedad);
+        $("#title-Novedad").html("Editar Novedad");
+        $("#btnVolverNovedad").html("Cancelar");
+        accionEditar = true;
+        Ocultar();
+        consultarDatosNovedad(codNovedad, false);
+        DisabledNovedad(false);
+        $("#tiponovedad").prop("disabled", true);
+        $("#btnGuardarNovedad").show(); 
+        $("#containerRegistroNovedad").show();
+    }
+
+    async function VerNovedad(codNovedad) {
+        $("#idNovedad").val(codNovedad);
+        $("#title-Novedad").html("Ver Novedad");
+        $("#btnVolverNovedad").html("Salir");
+        Ocultar();
+        consultarDatosNovedad(codNovedad, true);
+        DisabledNovedad(true);
+        $("#btnGuardarNovedad").hide(); 
+        $("#containerRegistroNovedad").show();
+    }
+
+    async function LimpiarNovedad() {
+        loadTabs(1);
+        $("#tiponovedad").val(0);
+        $("#idNovedad").val(0);
+        $("#txtFecha").val("");
+        $("#ddlEstadoEmpresa").val(0);
+        $('input[name="check_EstadoCITES"]').prop('checked', false);
+        $("#txtObservaciones").val("");
+        $("#txtCuposDisponibles").val("0");
+        $("#txtInventarioDisponible").val("0");
+        $("#txtNumeroCuposPendientesTramitar").val("0");   
+        $("#ddlDisposicionEspecimenes").val(0);
+        idEmpresaZoo = null;
+        $("#txtNitZoo").val("");
+        $("#txtOtroCual").val("");
+        $("#txtObservacionesDetalle").val("");
+        $("#formFileSoporte").val("");
+        adjuntoBase64 = '';
+        nombreAdjunto = '';
+        tipoAdjunto = '';
+        $(divAdjunto).removeClass("col-2");
+        divAdjunto.innerHTML = '';
+        adjuntos = [];
+        adjuntosNuevo = [];
+        adjuntosEliminar = [];
+        adjuntosOriginal = [];
+        limpiarDatosEntidadZoo();
+    }
+
+    async function limpiarDatosEntidadZoo(){
+        idEmpresaZoo = null;
+        $("#txtNombreZoo").val("");
+        $("#txtPaisZoo").val("");
+        $("#txtDepartamentoZoo").val("");
+        $("#txtCiudadZoo").val("");
+        $("#txtTelefonoZoo").val("");
+        $("#txtCorreoZoo").val("");
+        $("#txtDireccionZoo").val("");
+        $("#txtNitZoo").prop("disabled", false); 
+        $("#boton-consultar-entidadZoo").show(); 
+        $("#boton-cancelar-buscarZoo").hide(); 
+        $("#divDatosEntidadZoo").hide();
+    }
+
+    async function DisabledNovedad(sw) {
+        $("#tiponovedad").prop("disabled", sw);
+        $("#txtFecha").prop("disabled", sw);
+        $("#ddlEstadoEmpresa").prop("disabled", sw);
+        $("#checkEstadoActivo").prop("disabled", sw);
+        $("#checkEstadoInactivo").prop("disabled", sw);
+        $("#txtObservaciones").prop("disabled", sw);
+        $("#txtCuposDisponibles").prop("disabled", sw);
+        $("#txtInventarioDisponible").prop("disabled", sw);
+        $("#txtNumeroCuposPendientesTramitar").prop("disabled", sw);   
+        $("#ddlDisposicionEspecimenes").prop("disabled", sw);
+        if(idEmpresaZoo != null){
+            $("#txtNitZoo").prop("disabled", sw);
+        }
+        $("#txtOtroCual").prop("disabled", sw);
+        $("#txtObservacionesDetalle").prop("disabled", sw);
+        $("#formFileSoporte").prop("disabled", sw);
+        if (sw) {  
+            $("#fileContenedorMultipleFile").hide();
+        }
+        else{
+            $("#fileContenedorMultipleFile").show();
+        }
+    }
+
+    async function cancelarBuscarZoo() {
+        limpiarDatosEntidadZoo();
+    }
+
+    //cargar la tabal de cupos en modal control de cupos
+    async function cargarHistorialCupos() {
+        await loadTablaCupos();
+        await loadTablaInventario();
+        await cargarTotales();
+    }
+
+    function cargarTotales() {
+        const especiesAgrupadas = [];
+        var cupos = [], sumaCupos = 0;
+        var inventario = [], sumaInventarios = 0;
+        if (cuposPorEspecies != null && cuposPorEspecies != undefined && cuposPorEspecies.length > 0) {
+            cuposPorEspecies.forEach(el => {
+                const found = especiesAgrupadas.findIndex(element => element.especie === el.codigoEspecie);
+                if (found === -1) {
+                    especiesAgrupadas.push({
+                        "especie": el.codigoEspecie,
+                        "totalCuposOtorgadosEspecie": el.cuposDisponibles,
+                        "totalInventarioEspecie": 0
+                    });
+                } else {
+                    especiesAgrupadas[found].totalCuposOtorgadosEspecie += el.cuposDisponibles;
+                }
+            });
+        }
+        if (inventarioEspecies != null && inventarioEspecies != undefined && inventarioEspecies.length > 0) {
+            inventarioEspecies.forEach(el => {
+                const found = especiesAgrupadas.findIndex(element => parseInt(element.especie) === el.speciesCode);
+                if (found != -1) {
+                    especiesAgrupadas[found].totalInventarioEspecie += el.availableInventory;
+                }
+            });
+        }
+        if (especiesAgrupadas != null && especiesAgrupadas != undefined && especiesAgrupadas.length > 0) {
+            especiesAgrupadas.forEach(el => {
+                var especieNombre;
+                especies.forEach(ele => {
+                    if (ele.id == parseInt(el.especie)) {
+                        especieNombre = ele.text;
+                    }
+                });
+
+                cupos.push(el.totalCuposOtorgadosEspecie);
+                inventario.push(el.totalInventarioEspecie);
+            });
+        }
+
+        cupos.forEach(function (cup) {
+            sumaCupos += cup;
+        });
+
+        inventario.forEach(function (inv) {
+            sumaInventarios += inv;
+        });
+
+        $("#txtCuposDisponibles").val(sumaCupos);
+        $("#txtInventarioDisponible").val(sumaInventarios);
+    }
+
+    //cargar la tabal de cupos en modal control de cupos
+    async function loadTablaCupos() {
+        let url = `@Url.Action("ConsultQuotas", "RegistrarResolucion")` + `?nitBussines=${nitEmpresa}`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        cuposPorEspecies = r;
+    }
+
+    //cargar la tabal de inventario en modal control de cupos
+    async function loadTablaInventario() {
+        let url = `@Url.Action("GetInventory","SaleDocument")` + `?documentNumber=${nitEmpresa}`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        inventarioEspecies = r;
+    }
+
+</script>

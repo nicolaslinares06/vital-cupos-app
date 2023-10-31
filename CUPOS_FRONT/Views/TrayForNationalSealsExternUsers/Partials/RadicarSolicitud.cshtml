@@ -1,0 +1,404 @@
+﻿<div class="container">
+    <div id="divContenidoRadicar">
+        <h1 id="tituloRadicarSolicitud" class="mt-2"></h1>
+        <div class="row mt-2">
+            <div class="col-md-4 mb-1" id="divSltCiudad">
+                <label for="sltCiudad" class="form-label required">Ciudad</label>
+                <select class="select2" name="states[]" id="sltCiudad">
+                </select>
+                <span id="validacionsltCiudad" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-4 mb-1">
+                <label for="txtFecha" class="form-label required">Fecha</label>
+                <input type="date" class="form-control" id="txtFecha" placeholder="Fecha" readonly />
+                <span id="validaciontxtFecha" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-4 mb-1">
+                <label for="txtEstablecimiento" class="form-label required">Establecimiento</label>
+                <select type="text" class="form-select" id="txtEstablecimiento">
+                </select>
+                <span id="validaciontxtEstablecimiento" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-12 mt-4 mb-4">
+                <h2>Representante legal</h2>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="txtPrimerNombre" class="form-label required">Primer nombre</label>
+                <input type="text" class="form-control" id="txtPrimerNombre" placeholder="Primer nombre" value="@ViewBag.consulRepresen.primerNombre" readonly/>
+                <span id="validaciontxtPrimerNombre" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="txtSegundoNombre" class="form-label">Segundo nombre</label>
+                <input type="text" class="form-control" id="txtSegundoNombre" placeholder="Segundo nombre" value="@ViewBag.consulRepresen.segundoNombre" readonly/>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="txtPrimerApellido" class="form-label required">Primer apellido</label>
+                <input type="text" class="form-control" id="txtPrimerApellido" placeholder="Primer apellido" value="@ViewBag.consulRepresen.primerApellido" readonly/>
+                <span id="validaciontxtPrimerApellido" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="txtSegundoApellido" class="form-label required">Segundo apellido</label>
+                <input type="text" class="form-control" id="txtSegundoApellido" placeholder="Segundo apellido" value="@ViewBag.consulRepresen.segundoApellido" readonly/>
+                <span id="validaciontxtSegundoApellido" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="sltTipoIdentificacion" class="form-label required">Tipo de identificación</label>
+                <select class="form-select" id="sltTipoIdentificacion">
+                   @foreach (var item in @ViewBag.tipoDocument)
+                   {
+                        <option value="@item.code">@item.name</option>
+                   }
+                </select>
+                <span id="validacionsltTipoIdentificacion" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="txtNumeroIdentifiacion" class="form-label required">Numero de identifiación</label>
+                <input type="number" class="form-control" id="txtNumeroIdentifiacion"
+                       placeholder="Numero de identifiación" value="@ViewBag.consulRepresen.numeroIdentificacion" readonly/>
+                <span id="validaciontxtNumeroIdentifiacion" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="txtTelefono" class="form-label required">Teléfono</label>
+                <input type="number" class="form-control" id="txtTelefono" placeholder="Telefono" value="@ViewBag.consulRepresen.telefono" readonly/>
+                <span id="validaciontxtTelefono" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="txtFax" class="form-label">Correo electrónico</label>
+                <input type="text" class="form-control" id="txtFax" placeholder="Correo" value="@ViewBag.consulRepresen.fax" readonly/>
+            </div>
+            <div class="col-md-12 mt-4 mb-4">
+                <h2>Solicitud</h2>
+            </div>
+            <div class="col-md-6 mb-1">
+                <label for="sltTipoSolicitud" class="form-label required">Tipo de solicitud</label>
+                <select class="form-select" id="sltTipoSolicitud">
+                    @foreach (var item in @ViewBag.tipoDato)
+                    {
+                        <option value="@item.code">@item.name</option>
+                    }
+                </select>
+                <span id="validacionsltTipoSolicitud" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="d-none col-md-12 mb-1" id="divBuscarEspecie">
+                <label for="sltEspecimes" class="form-label required">Especies o subespecies</label>
+                <div class="row">
+                    <div class="col-md-10" id="divTxtCodigoFinalPieles">
+                        <select class="form-select" id="sltEspecimes">
+                        </select>
+                    </div>
+                    <div class="col-md-2" id="divBtnBuscarCupo">
+                        <button class="btn btn-primary w-100" onclick="BuscarCupo()">
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinnerButton"></span>
+                            Buscar
+                        </button>
+                    </div>
+                </div>
+                <span id="validacionsltEspecimes" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="d-none col-md-12 mb-1" id="divTipoActa">
+                <div id="divtableTipoActa">
+                    <table id="tableTipoActa" class="table w-100" aria-describedby="tabla de tipos de acta">
+                        <thead>
+                            <tr>
+                                <th class="d-none"></th>
+                                <th class="th-bigText">Tipo de acta</th>
+                                <th class="th-bigText">Fecha de visita</th>
+                                <th class="th-bigText">Fecha de registro</th>
+                                <th class="th-bigText">Visita Nro</th>
+                                <th class="th-bigText">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-2 d-none" id="divTableSelected">
+                    <h2>Fracciones seleccionadas</h2>
+                    <table id="tableFractionsSelected" class="table w-100" aria-describedby="tabla de fracciones seleccionadas">
+                        <thead>
+                            <tr>
+                                <th class="th-bigText">Tipo de fracción</th>
+                                <th class="th-bigText">Cantidad</th>
+                                <th class="th-bigText">Área total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div id="tableSafeguardSelected" class="mt-3 row">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 d-none mb-3 mt-3" id="divNumeraciones">
+                <table id="tableNumeraciones" class="table w-100" aria-describedby="tabla de numeraciones">
+                    <thead>
+                        <tr>
+                            <th class="th-bigText">Especie</th>
+                            <th class="th-bigText">Numeración Interna Inicial</th>
+                            <th class="th-bigText">Numeración Interna Final</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="txtDireccionEntrega" class="form-label required">Dirección de entrega</label>
+                <input type="text" class="form-control" id="txtDireccionEntrega" placeholder="Direccion de entrega" />
+                <span id="validaciontxtDireccionEntrega" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1" id="divSltDepartamentoRepresentante">
+                <label for="sltDepartamentoRepresentante" class="form-label required">Departamento</label>
+                <select class="select2" name="departments[]" id="sltDepartamentoRepresentante">
+                    @foreach (var item in @ViewBag.ConsultDepartment)
+                    {
+                        <option value="@item.id">@item.text</option>    
+                    }
+                    
+                </select>
+                <span id="validacionsltDepartamentoRepresentante" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1" id="divSltCiudadRepresentante">
+                <label for="sltCiudadRepresentante" class="form-label required">Ciudad</label>
+                <select class="select2" name="states[]" id="sltCiudadRepresentante">
+                </select>
+                <span id="validacionsltCiudadRepresentante" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="txtCantidad" class="form-label required">Cantidad</label>
+                <input type="number" class="form-control" id="txtCantidad" placeholder="Cantidad" readonly />
+                <span id="validaciontxtCantidad" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="txtLongitudMenor" class="form-label required">Longitud menor (cm)</label>
+                <input type="number" class="form-control" id="txtLongitudMenor" placeholder="Longitud menor" />
+                <span id="validaciontxtLongitudMenor" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="txtLongitudMayor" class="form-label required">Longitud mayor (cm)</label>
+                <input type="number" class="form-control" id="txtLongitudMayor" placeholder="Longitud mayor" />
+                <span id="validaciontxtLongitudMayor" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="txtFechaRepresentante" class="form-label required">fecha consignación precintos - marquillas</label>
+                <input type="date" class="form-control" id="txtFechaRepresentante" placeholder="fecha consignación precintos - marquillas" />
+                <span id="validaciontxtFechaRepresentante" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            
+            <div class="col-md-12 mb-1">
+                <div class="row">
+                    <div class="col-md-6" id="divDocFactura">
+                        <label class="form-label required">Soporte consignación precintos - marquillas</label>
+                        <label type="button" for="fileFactura" class="file text-center" id="fileContenedorFactura">
+                            <p id="placeHolderFactura">
+                                <span class="fas fa-paperclip"></span> Adjunte o arrastre aquí un
+                                documento.
+                            </p>
+                            <input type="file" id="fileFactura">
+                        </label>
+                        <span id="spanFileFactura" class="span-advertencia d-none"></span>
+                        <div id="contenedorFactura">
+                        </div>
+                    </div>
+                    <div class="col-md-6" id="divDocAnexos">
+                        <label class="form-label">Anexos</label>
+                        <label type="button" class="file text-center" for="fileAnexos" id="fileContenedorAnexos">
+                            <p id="placeHolderAnexos">
+                                <span class="fas fa-paperclip"></span> Adjunte o arrastre aquí uno
+                                o varios
+                                documentos.
+                            </p>
+                            <input type="file" id="fileAnexos">
+                        </label>
+                        <span id="spanFileAnexos" class="span-advertencia d-none"></span>
+                        <div id="contenedorAnexos">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 mb-3 row d-none" id="divRespuesta">
+                <div class="col-md-6 mb-1">
+                    <label for="txtObservaciones" class="form-label">Observaciones</label>
+                    <textarea class="form-control" id="txtObservaciones" rows="4" readonly></textarea>
+                </div>
+                <div class="col-md-6 mb-1" id="divTxtRespuesta">
+                    <label for="txtRespuesta" class="form-label required">Respuesta</label>
+                    <textarea class="form-control" id="txtRespuesta" rows="4"></textarea>
+                    <span id="validaciontxtRespuesta" class="span-advertencia d-none">Campo Obligatorio</span>
+                </div>
+                <div class="col-md-6" id="divDocSoporte">
+                    <label class="form-label required">Documeto soporte</label>
+                    <label type="button" class="file text-center" for="fileSoporteRespuesta"
+                           id="fileContenedorSoporteRespuesta">
+                        <p id="placeHolderAnexos">
+                            <span class="fas fa-paperclip"></span> Adjunte o arrastre aquí uno o
+                            varios
+                            documentos.
+                        </p>
+                        <input type="file" id="fileSoporteRespuesta">
+                    </label>
+                    <span id="spanFileSoporteRespuesta" class="span-advertencia d-none"></span>
+                    <div id="contenedorSoporteRespuesta">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-2 d-none" id="divBtnEditarSolicitud">
+                <button class="btn btn-primary" onclick="EditarSolicitud()">Guardar</button>
+            </div>
+            <div class="col-md-2 d-none" id="divBtnSalirVer">
+                <button class="btn btn-primary" onclick="salirVer()">Regresar</button>
+            </div>
+        </div>
+    </div>
+    <div id="divCuposSeleccionar" class="d-none">
+        <div id="divTablesCuposInv">
+            <h2 class="mt-3">Cupos</h2>
+            <table id="TableCuposSeleccionar" class="table w-100" aria-describedby="Tabla cupos">
+                <thead>
+                    <tr>
+                        <th class="d-none"></th>
+                        <th class="th-mediumText">Número de resolución</th>
+                        <th class="d-none"></th>
+                        <th class="th-mediumText">Especie</th>
+                        <th class="th-mediumText">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <h2 class="mt-5">Inventario</h2>
+            <table id="TableInventarioSeleccionar" class="table w-100" aria-describedby="Tabla inventario">
+                <thead>
+                    <tr>
+                        <th class="d-none"></th>
+                        <th class="th-mediumText">Número carta venta</th>
+                        <th class="d-none"></th>
+                        <th class="th-mediumText">Especie</th>
+                        <th class="th-mediumText">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div class="text-end mt-2">
+                <button class="btn btn-secondary" onclick="volverBuscarCupo()">Volver</button>
+                <button class="btn btn-primary" onclick="GuardarDatsNumeraciones()" id="btnGuardarPreseleccionados">Guardar</button>
+            </div>
+        </div>
+        <div id="divSeleccionarNumeros" class="d-none">
+            <div class="mb-2 mt-2 row">
+                <div class="row">
+                    <p class="col">Rango de numeracion aprovechamiento <span id="initialNumber"></span>-<span id="finalNumber"></span></p>
+                    <p id="txtRep" class="col d-none">Rango de numeracion reploblación <span id="initialNumberRep"></span>-<span id="finalNumberRep"></span></p>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <label for="txtNumeroInicialSelected" class="form-label">N° Inicial</label>
+                    <input type="text" class="form-control" id="txtNumeroInicialSelected" placeholder="N° Inicial">
+                </div>
+                <div class="col-md-8 col-sm-12">
+                    <label for="txtNumerofinalSelected" class="form-label">N° Final</label>
+                    <div class="row d-flex">
+                        <div class="col-md-6 col-sm-12">
+                            <input type="text" class="form-control" id="txtNumerofinalSelected"
+                                placeholder="N° Final">
+                        </div>
+                        <div class="col-md-6 col-sm-12" id="divBtn">
+                            <button type="button" class="btn btn-primary w-100" id="btnValidarNumeraciones" onclick="ValidarNumeraciones()">
+                                <span class="spinner-border spinner-border-sm d-none" role="status"
+                                    aria-hidden="true" id="spinnerButton"></span>
+                                Seleccionar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-2 mt-2 d-none" id="divNumSelected">    
+                <h2>Numeraciones Seleccionadas</h2>
+                <table id="TableCuposSeleccionados" class="table w-100" aria-describedby="Tabla cupos seleccionados">
+                    <thead>
+                        <tr>
+                            <th class="d-none"></th>       
+                            <th class="th-shortText">N° Interna Inicial</th>
+                            <th class="th-shortText">N° Interna Final</th>
+                            <th class="th-shortText">Cantidad</th>
+                            <th class="th-shortText">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mb-2 mt-2">    
+                <h2 id="tituloNoDisp">Numeraciones no disponibles</h2>
+                <table id="TableCuposOcupados" class="table w-100" aria-describedby="Tabla cupos ocupados">
+                    <thead>
+                        <tr>       
+                            <th>N° inicial</th>
+                            <th>N° final</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-secondary mt-3 mb-3" onclick="volverResoluciones(true)">volver</button>
+            <button class="btn btn-primary mt-3 mb-3" id="btnGuardarPreseleccionadosRangos" onclick="guardarPreseleccionados(true)">Guardar</button>
+        </div>
+    </div>
+    <div id="divCortes" class="d-none">
+        <div class="mb-2">
+            <table id="tableCortes" class="table w-100" aria-describedby="tabla de cortes">
+                <thead>
+                    <tr>
+                        <th class="d-none"></th>
+                        <th class="th-bigText">Tipo de fracción</th>
+                        <th class="th-bigText">Cantidad</th>
+                        <th class="th-bigText">Area total</th>
+                        <th class="th-bigText">Seleccionar cantidad</th>
+                        <th class="th-bigText">Seleccionar Area</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <h2>Numeros salvoconductos</h2>
+        <div id="tableSafeguard" class="mt-3 row">
+
+        </div>
+        <button class="btn btn-secondary mt-3 mb-3" onclick="volverCortes()">volver</button>
+        <button class="btn btn-primary mt-3 mb-3" onclick="guardarCortes()">guardar</button>
+    </div>
+</div>
+<div class="modal fade" id="modalAlertaNumeraciones" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fas fa-exclamation-circle i-modal-alerta"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal-alerta">
+                        <p>Alerta</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="textAlertaNumeraciones"></p>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                ACEPTAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

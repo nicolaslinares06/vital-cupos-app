@@ -1,0 +1,138 @@
+﻿@model Web.Models.CoordinadorAsignacionViewModel;
+@{
+    ViewData["Title"] = "Asignacion Solicitud Analista";
+}
+
+<div>
+    <a asp-controller="Home" asp-action="Index">Inicio </a>  >  <a asp-controller="CoordinadorGestionPrecintosNacionales" asp-action="Index">Gestionar Precintos Nacionales y marquillas</a> > <strong> Asignacion Analista</strong>
+</div>
+<partial name="Partials/_SeccionBotonesAyuda"></partial>
+
+<div class="container">
+
+    <input type="hidden" asp-for="@Model.InfoSolicitud.IdSolicitud">
+    <partial name="Partials/_PartialInfoSolicitud" model="Model.InfoSolicitud"></partial>
+</div>
+
+<div class="mt-1 row justify-content-center">
+    <div class="col-2">
+        @{
+            string visualizacionBoton = "Asignar";
+            if(Model.InfoSolicitud.Analista > 0)
+            {
+                visualizacionBoton = "Reasignar";
+            }
+        }
+        <button type="button"
+                class="btn btn-primary w-100"
+                id="btnModalTablaAsignacion">
+            @visualizacionBoton
+        </button>
+    </div>
+    <div class="col-2">
+        <a class="btn btn-primary w-100" asp-action="Index" asp-controller="CoordinadorGestionPrecintosNacionales">Regresar</a>
+    </div>
+</div>
+
+<div class="modal fade"
+     id="modalTablaAnalistas"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Asignación de analista</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <input type="hidden" id="HiddenTRSeleccionado" value="0" />
+                        <table class="col-12 scroll-table" id="tablaAnalistasAsignacion">
+                            <caption class="d-none">Table Description</caption>
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Asignacion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @{
+                                    if (Model.ListadoAnalistas.Count() > 0)
+                                    {
+                                        foreach (var item in Model.ListadoAnalistas)
+                                        {
+                                            <tr class="tr-anls" id="@item.CodigoAnalista">
+                                                <td>@item.NombresApellidos</td>
+                                                <td>@item.CantidadSolicitudes</td>
+                                            </tr>
+                                        }
+                                    }
+                                }                               
+                            </tbody>
+                        </table>
+                        <span id="spanTablaAnalistaSeleccion" class="span-advertencia d-none"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" id="btnAceptarAsignacion" class="btn btn-primary">Aceptar</button>
+                        </div>
+                         <div class="col-6">
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade"
+     id="modalMensajeAsignacion"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Datos procesados</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="PmensajeProcesado"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" id="btnAceptarModal" class="btn btn-primary">Aceptar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+
+<script src="~/js/CoordinadorGestionPrecintosNacionales/CoordinandorGPNAsignacion.js" asp-append-version="true"></script>
+<script src="~/js/CoordinadorGestionPrecintosNacionales/CoordinadorGPNGeneric-min.js" asp-append-version="true"></script>
+
+
+}

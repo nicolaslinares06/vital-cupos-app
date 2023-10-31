@@ -1,0 +1,326 @@
+﻿@using Web.Models;
+@model List<SaleDocumentModel>
+
+@{
+    Layout = "_LayoutSaleDocuments";
+}
+<div class="container">
+    <div id="SaleDocumentTable">
+        <div class="row content">
+            <div class="col-md-8 resume">
+                <a asp-controller="Home" asp-action="Index">Inicio</a> > <strong>Documentos de venta</strong>
+            </div>
+            <div class="col-md-4 iconos">
+                <button type="submit" class="btn btn-secondary" title="Ayuda">AYUDA</button>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">INICIO</a>
+            </div>
+        </div>
+        <div id="divBuscador">
+            <h3 class="titulos-h3">Documento de Venta</h3>
+            <div class="mb-2 mt-2 ">
+                <div class="row">
+                    <div class="col-3">
+                        <label for="txtNumeroCartaVenta" class="form-label">N° carta venta y/o factura</label>
+                    </div>
+                    <div class="col-3">
+                        <label for="typeDocumentSelect" class="form-label">Tipo documento</label>
+                    </div>
+                    <div class="col-3">
+                        <label for="documentNumberTxt" class="form-label">Número documento</label>
+                    </div>
+                    <div class="col-3"></div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <input type="text" class="form-control" id="txtNumeroCartaVenta" placeholder="N° carta venta y/o factura">
+                    </div>
+                    <div class="col-3">
+                        <select name="typeDocumentSelect" id="typeDocumentSelect" class="form-control">
+                            <option value="0">Seleccione</option>
+                            <option value="1">Cédula</option>
+                            <option value="95">Nit</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <input type="text" class="form-control" id="documentNumberTxt" placeholder="Número documento">
+                    </div>
+                    <div class="col-3">
+                        <button type="button" class="btn btn-primary btnBuscar" onclick="GetSaleDocuments('search')" title="Realiza una busqueda">Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form method="post">
+            <button asp-controller="SaleDocument" asp-action="ValidateCompanyForm" class="btn btn-primary bordesButon mb-2" title="Ir a registrar documento de venta">Registrar Documento de Venta</button>
+        </form>
+        <div class="mt-2">
+            <table id="TableSaleDocuments" class="table w-100" aria-describedby="Tabla documentos de venta">
+                <thead>
+                    <tr>
+                        <th class="d-none">Codigo</th>
+                        <th class="th-shortText">Numeración</th>
+                        <th class="th-mediumText">N° carta de venta y/o factura</th>
+                        <th class="th-mediumText">Quien vende (N° Documento)</th>
+                        <th class="th-mediumText">Quien vende (Nombre / Razón Social)</th>
+                        <th class="th-mediumText">Quien compra (N° Documento)</th>
+                        <th class="th-mediumText">Quien compra (Nombre / Razón Social)</th>
+                        <th class="th-mediumText">Fecha venta</th>
+                        <th class="th-mediumText">Fecha registro carta de venta</th>
+                        <th class="th-shortText">N° cupos vendidos</th>
+                        <th class="th-mediumText">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        if (Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="d-none">@item.Code</td>
+                                    <td>@item.Numeration</td>
+                                    <td>@item.CarteNumber</td>
+                                    <td>@item.NitCompanySeller</td>
+                                    <td>@item.ReasonSocial</td>
+                                    <td>@item.NitCompanyShopper</td>
+                                    <td>@item.ReasonSocialShopper</td>
+                                    <td>
+                                        @item.SaleDate.ToString("dd-MM-yyyy")  
+                                    </td>
+                                    <td>
+                                        @item.RegistrationDateCarteSale.ToString("dd-MM-yyyy")
+                                    </td>
+                                    <td>@item.QuotasSold</td>
+                                    <td>
+                                        <a type="button" id="btnViewDetail" class="text-primary" title="Ver detalle">VER</a> /
+                                        <a type="button" id="btnEdit" class="text-primary" title="Editar">EDITAR</a> /
+                                        <a type="button" id="btnDelete" class="text-primary" title="Eliminar">ELIMINAR</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <div id="EditDiv">
+        <div class="row content">
+            <div class="col-md-8 resume">
+                <a asp-controller="Home" asp-action="Index">Inicio</a> > <a asp-controller="SaleDocument" asp-action="SaleDocuments">Documentos de venta</a> > <strong id="TitleSaveDivPanel">Editar Documento de venta</strong>
+            </div>
+            <div class="col-md-4 iconos">
+                <button type="submit" class="btn btn-secondary" title="Ayuda">AYUDA</button>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">INICIO</a>
+            </div>
+        </div>
+        <h3 id="TitleSaveDiv" class="titulos-h3">Editar Documento de Venta</h3>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#tab1" id="tab-1" onclick="SellerFormShow()">Quien vende</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab2" id="tab-2" onclick="ShopperFormShow()">Quien compra</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab3" id="tab-3" onclick="DocumentSupportShow()">Documento soporte</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane container active p-2" id="tab1">
+                <partial name="Partials/SellerForm" />
+            </div>
+            <div class="tab-pane container fade p-2" id="tab2">
+                <partial name="Partials/ShopperForm" />
+            </div>
+            <partial name="Partials/QuotasInventoryTableEdit" />
+            <div class="tab-pane container fade p-2" id="tab3">
+                <partial name="Partials/DocumentSupport" />
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <button type="button" id="btnReturn" class="btn btn-primary btn-bandeja-regresar m-2" onclick="Return()" title="Regresar">Regresar</button>
+            <button type="button" id="btnPrevious" class="btn btn-primary btn-bandeja-regresar m-2" onclick="NextOrPrevious('previous')" title="Ir a la pestaña anterior">Anterior</button>
+            <button type="button" id="btnCancel" class="btn btn-primary btn-bandeja-regresar m-2" onclick="ConfirmCancelSave()" title="Cancelar el guardado del documento de venta">Cancelar</button>
+            <button type="button" id="btnNext" class="btn btn-primary btn-bandeja-regresar m-2" onclick="NextOrPrevious('next')" title="Ir a la siguiente pestaña">Siguiente</button>
+            <button type="button" id="btnSave" class="btn btn-primary btn-bandeja-regresar m-2" onclick="ConfirmSave()" title="Guardar documento de venta">Guardar</button>
+        </div>
+    </div>
+    <div id="ViewDetailsDiv">
+        <div class="row content">
+            <div class="col-md-8 resume">
+                <a asp-controller="Home" asp-action="Index">Inicio</a> > <a asp-controller="SaleDocument" asp-action="SaleDocuments">Documentos de venta</a> > <strong id="TitleSaveDivPanel">Ver detalle</strong>
+            </div>
+            <div class="col-md-4 iconos">
+                <button type="submit" class="btn btn-secondary" title="Ayuda">AYUDA</button>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">INICIO</a>
+            </div>
+        </div>
+        <h3 id="TitleSaveDiv" class="titulos-h3">Documento de Venta</h3>
+        <h3 class="titulos-h3">Quien vende</h3>
+        <partial name="Partials/SellerForm" />
+        <h3 class="titulos-h3">Quien compra</h3>
+        <partial name="Partials/ShopperForm" />
+        <h3 class="titulos-h3">Control de cupos/Control de inventario</h3>
+        <partial name="Partials/QuotasInventoryTableDetails" />
+        <div class="row justify-content-center">
+            <button type="button" id="btnReturn" class="btn btn-primary btn-bandeja-regresar m-2" onclick="ConfirmExit()" title="Salir a documentos de venta">Salir</button>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="MessageTextModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="messageText"></p>
+                    </div>
+                    <div id="divBotonesConfirmacion" class="text-center col-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnAccept" onclick="RedirectSaleDocumen()">Aceptar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ConfirmModalDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center row" id="divConfirmacionMensaje">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-md-12 mensajes-modal">
+                        <p id="MessageTextConfirmDelete"></p>
+                    </div>
+                </div>
+                <div class="text-center d-none" id="divSpinner3">
+                    <div class="spinner-border text-primary mb-2 spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="divBotonesConfirmacion" class="text-center col-12">
+                    <div class="row">
+                        <div class="col-6" class="d-none" id="divBtnSiModal">
+                            <a type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnSiModal" onclick="ConfirmDelete(true)">Si</a>
+                        </div>
+                        <div class="col-6" class="d-none" id="divBtnNoModal">
+                            <a type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnNoModal" onclick="ConfirmDelete(false)">No</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ConfirmModalSave" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center row" id="divConfirmacionMensaje">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-md-12 mensajes-modal">
+                        <p id="MessageTextConfirmSave"></p>
+                    </div>
+                </div>
+                <div class="text-center d-none" id="divSpinner3">
+                    <div class="spinner-border text-primary mb-2 spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="divBotonesConfirmacion" class="text-center col-12">
+                    <div class="row">
+                        <div class="col-6" class="d-none" id="divBtnSiModal">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnSiModal" onclick="SaveSaleDocument(true)">Si</button>
+                        </div>
+                        <div class="col-6" class="d-none" id="divBtnNoModal">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnNoModal" onclick="SaveSaleDocument(false)">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ConfirmModalExit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center row" id="divConfirmacionMensaje">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-md-12 mensajes-modal">
+                        <p id="MessageTextConfirmCancelSave"></p>
+                    </div>
+                </div>
+                <div class="text-center d-none" id="divSpinner3">
+                    <div class="spinner-border text-primary mb-2 spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="divBotonesConfirmacion" class="text-center col-12">
+                    <div class="row">
+                        <div class="col-6" class="d-none" id="divBtnSiModal">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnSiModal" onclick="Exit(true)">Si</button>
+                        </div>
+                        <div class="col-6" class="d-none" id="divBtnNoModal">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnNoModal" onclick="Exit(false)">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="MessageTextAlert" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Alerta</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="textAlert"></p>
+                    </div>
+                    <div id="divBotonesConfirmacion" class="text-center col-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnAccept">Aceptar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<partial name="Scripts\SaleDocumentScripts" />

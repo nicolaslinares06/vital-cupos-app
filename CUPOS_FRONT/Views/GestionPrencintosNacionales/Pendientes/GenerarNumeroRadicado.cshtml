@@ -1,0 +1,87 @@
+<body>
+    <div class="row">
+        <h1>Radicar solicitud</h1>
+        <div class="col-md-3 mb-1">
+            <label for="numeroRadicado" class="form-label required">Número Radicado</label>
+            <input type="text" class="form-control" id="numeroRadicado" placeholder=" Número Radicado" maxlength="15">
+        </div>
+        <div class="col-md-3 mb-1">
+            <label for="fechaRadicado" class="form-label required">Fecha de Radicación</label>
+            <input type="date" class="form-control" id="fechaRadicado">
+        </div>
+    </div>
+    <div class="mt-4 row justify-content-center">
+        <div class="col-2">
+            <button type="button" id="guardarNumeroRadicado" class="btn btn-primary col-12" title="Guardar">GUARDAR</button>
+        </div>
+        <div class="col-2">
+            <a class="btn btn-secondary" type="button" asp-controller="GestionPrencintosNacionales" asp-action="Index" title="Volver">VOLVER</a>
+        </div>
+    </div>
+</body>
+<partial name="./../Modales/Modales.cshtml" />
+<script>
+    $( document ).ready(function() {
+        var today = new Date();
+        var date = today.getFullYear() + "-" + today.getMonth() + 1 + "-" + today.getDate();
+        $("#fechaRadicado").prop("max", date);
+    });
+
+    $("#guardarNumeroRadicado").click(async function() {
+        var numeroRadicado = $('#numeroRadicado').val();
+        var fechaRadicado = $('#fechaRadicado').val();
+        
+        if (numeroRadicado == "" || fechaRadicado == "") {
+            $('.mensaje-datos-obligatorio').html('');
+            numeroRadicado == "" ? $('.mensaje-datos-obligatorio').append("<p>Numero radicado<p>") : '';
+            fechaRadicado == "" ? $('.mensaje-datos-obligatorio').append("<p>Fecha de radicado<p>") : '';
+
+            $('#datos-obligatorios').modal('show');
+        }
+        else
+        {
+            var fecha = new Date();
+            var año = fecha.getFullYear();
+            var dia = fecha.getDate();
+            var mes = fecha.getMonth() + 1;
+            var hoy = año + "-" + mes + "-" + dia;
+            var fechaRadicado = $("#fechaRadicado").val().split('-');
+
+            var f1 = new Date(año, mes, dia);
+            var f2 = new Date(fechaRadicado[0], fechaRadicado[1], fechaRadicado[2]);
+
+            if (f1 < f2) {
+                $("#fechaRadicado").val('');
+                $('.mensaje-datos-obligatorio').html('');
+                $('.mensaje-datos-obligatorio').html('La fecha ingresada no puede superior a la fecha actual');
+                $('#datos-obligatorios').modal('show');
+            }else{
+                $('#datos-obligatorios').modal('hide');
+                $("#confirmacionNumeroRadicado").modal('show');
+            }
+        }
+    });
+    
+    $("#confirmarGuardarNumeroRadicado").click(async function() {
+        visualizarFondoProcesando();
+        var id = @ViewBag.idSolicitud;
+        var numeroRadicado = $('#numeroRadicado').val();
+        var fechaRadicado = $('#fechaRadicado').val();
+
+        $("#confirmacionNumeroRadicado").modal('hide');
+
+        json = {
+            code: id,
+            codeSettled: numeroRadicado,
+            date: fechaRadicado
+        }
+
+        let url = "@Url.Action("RadicarSolicitud","GestionPrencintosNacionales")";
+        let resp = await Get(url, json);
+
+        if (resp != null) {
+            $("#creacionNumeroRadicado").modal('show');
+        }
+        ocultarFondoProcesando();
+    });        
+</script>

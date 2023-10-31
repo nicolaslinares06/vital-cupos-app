@@ -1,0 +1,288 @@
+﻿@model Web.Models.Auditoria;
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+<body>
+    <div class="row content">
+        <div class="col-md-8 resume">
+            <a asp-controller="Home" asp-action="Index">Modulo de CUPOS</a>  >   <a asp-controller="Home" asp-action="Administracion">Administración</a>  >   <strong>@Context.Session.GetString("NombreAuditoria")</strong>
+        </div>
+        <div class="col-md-4 iconos">
+            <a type="button" class="btn btn-secondary" title="Ayuda" asp-controller="Auditoria" asp-action="Ayuda">AYUDA</a>
+            <a type="button" class="btn btn-secondary" title="Inicio" asp-controller="Home" asp-action="Index">INICIO</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content-fluid">
+            <h2>@Context.Session.GetString("NombreAuditoria")</h2>
+            <form method="post">
+                <div class="form-group row">
+                    <label class="col-sm-5">Desde</label>
+                    <label class="col-sm-7">Hasta</label>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <input type="date" id="fecha-desde" class="input-fechas col-12"/>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="date" id="fecha-hasta" class="input-fechas col-12" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" id="boton-consultar-auditoria" class="btn btn-primary">Consultar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<!-- DataTable -->
+<div class="tab-pane container" id="datatable">
+    <label class="col-12">Registro de auditoria</label>
+    <div class="table-responsive">
+        <table id="tabla-gestion-auditoria-cu06" class="table table-auditoria w-100">
+            <caption class="d-none">Table Description</caption>
+            <thead class="tb-gestion-auditoria-head">
+                <tr>
+                    <th class="th-mediumText">Usuario</th>
+                    <th class="th-mediumText">Rol</th>
+                    <th class="th-shortText">Acción</th>
+                    <th class="th-bigText">Submódulo</th>
+                    <th class="th-bigText">Fecha</th>
+                    <th class="th-bigText">Hora</th>
+                    <th class="th-mediumText">IP</th>
+                    <th class="th-veryShortText">Detalle</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div> 
+</div>
+
+<!-- Modal Mensaje Error Busqueda -->
+<div class="modal fade" id="fechas-incorrectas-auditoria" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="msjError"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary cerrar-modal w-100" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal confirmacion exportar informacion -->
+<div class="modal fade" id="confirmar-exportacion-info" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro que desea exportar la información?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-primary confirmar-exportar-info w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal informacion exportada exito -->
+<div class="modal fade" id="modal-mensaje-exito-exportar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>La información ha sido exportada con éxito</p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var datatable = document.getElementById("datatable");
+
+$(document).ready(async function() {
+    //datatableAuditoria();
+    $(`.Administracion #padre`).addClass("active-within");
+    $(`#Auditoria a`).addClass("active");
+});
+
+$("#boton-consultar-auditoria").click(async function() {
+    var msjError = document.getElementById("msjError");
+    var fechaDesde = $("#fecha-desde").val();
+    var fechaHasta = $("#fecha-hasta").val();
+
+
+    var today = new Date();
+    var hoy = today.toISOString();
+
+    if (fechaDesde > hoy) {
+        msjError.innerHTML = `La fecha ingresada en el campo "desde", no puede ser posterior a la fecha actual`;
+        $("#fechas-incorrectas-auditoria").modal("show");
+    }
+    else if (fechaHasta > hoy) {
+        msjError.innerHTML = `La fecha ingresada en el campo "hasta", no puede ser posterior a la fecha actual`;
+        $("#fechas-incorrectas-auditoria").modal("show");
+    }
+    else {
+        if (fechaHasta < fechaDesde) {
+            msjError.innerHTML = `La fecha ingresada en el campo "hasta" no puede ser anterior a la ingresada en el campo "desde"`;
+            $("#fechas-incorrectas-auditoria").modal("show");
+        }
+        else{
+            datatableAuditoria(fechaDesde, fechaHasta);
+        }
+    }
+});
+
+$(".confirmar-exportar-info").click(function() {
+    $("#modal-mensaje-exito-exportar").modal("show");
+    $("#confirmar-exportacion-info").modal("hide");
+});
+
+$('#tabla-gestion-auditoria-cu06 tbody').on('click', '.btn-detalles-gestion-auditoria', async function () {
+    var data = $(this).parents("tr").find("td")[8].innerText;
+    //var data = "2022-07-31 21:59:30.507";
+    
+    document.location.href = "/Auditoria/DetalleAuditoria?fecha=" + data;
+});
+
+async function datatableAuditoria(fechaDesde, fechaHasta) {
+    visualizarFondoProcesando();
+    let url = "@Url.Action("Consultar","Auditoria")";
+    let resp = await Get(url, {fechaInicio: fechaDesde, fechaFinal: fechaHasta})
+    ocultarFondoProcesando();
+
+    $tblPendientes = $('#tabla-gestion-auditoria-cu06').DataTable({
+        destroy: true,
+        scrollX: true,
+        lengthChange: true,
+        lengthMenu: [5, 10, 20, 50, 100],
+        paging: true,
+        info: true,
+        dom: "<'row'<'col-md-6 mt-1'B><'col-md-6 text-end'<'d-flex align-items-center mt-1'<'col-md-9'l><'col-md-3'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+        buttons: [
+            {
+                extend: 'excel',
+                title: 'Archivo',
+                filename: 'Export_File',
+                tag: 'button',
+                className: "btn btn-primary",
+                text: `<span class="fa-solid fa-download"></span> Descargar`
+            },
+        ],
+        language: {
+            lengthMenu: "Resultados pág. _MENU_",
+            info: "_START_ al _TOTAL_ Resultados",
+            search: '', 
+            searchPlaceholder: "Buscar" ,
+            zeroRecords: "No se encontraron resultados",
+            infoEmpty:"0 al 0 Resultados",
+            paginate: {
+                previous: 'Anterior',
+                next:     'Siguiente'
+            }
+        },
+        data:resp,
+        columns:[
+            {
+                "data":"nombre",
+                className:"tb-consulta-auditoria-body-tr-td"
+            },
+            {
+                "data":"rol",
+                className:"tb-consulta-auditoria-body-tr-td"
+            },
+            {
+                "data":"accion",
+                className:"tb-consulta-auditoria-body-tr-td"
+            },
+            {
+                "data":"subModulo",
+                className:"tb-consulta-auditoria-body-tr-td"
+            },
+            {
+                "data":"fecha",
+                render: function(data, type, row) {
+                    var fecha = moment(data).format('yyyy-MM-DD');
+                    return fecha
+                },
+                className:"tb-consulta-auditoria-body-tr-td"
+            },
+            {
+                "data":"fecha",
+                render: function (data, type, row){
+                    var hora = moment(data).format('H:mm:ss');
+                    return hora
+                },
+                className:"tb-consulta-auditoria-body-tr-td"
+            },
+            {
+                "data":"ip",
+                className:"tb-consulta-auditoria-body-tr-td"
+            },
+            { 
+                render: function() { 
+                    return '<a type="button" class="btn-detalles-gestion-auditoria" >DETALLES</button> '
+                },
+                orderable: false
+            },
+            {
+                "data":"fecha",
+                className: "d-none"
+            }
+        ],
+        columnDefs: [{
+            targets: 8
+        }]
+    });
+
+    $("#tabla-gestion-auditoria-cu06_filter label").addClass("col-md-12 label-datatable");
+    $("#tabla-gestion-auditoria-cu06_filter input").addClass("input-datatable");
+
+    if ($(`#tabla-gestion-auditoria-cu06`).find("tbody tr").length < 5) {
+        $("#tabla-gestion-auditoria-cu06_paginate").hide();
+    } else {
+        $("#tabla-gestion-auditoria-cu06_paginate").show();
+    }
+}
+</script>

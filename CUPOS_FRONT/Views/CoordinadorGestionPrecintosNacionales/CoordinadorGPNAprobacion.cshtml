@@ -1,0 +1,229 @@
+﻿@model Web.Models.ActualizacionAprobacionViewModel;
+
+@{
+    ViewData["Title"] = "Aprobacion Solicitud Analista";
+}
+
+<div class="container">
+
+    <div>
+        <a asp-controller="Home" asp-action="Index">Inicio </a>  >  <a asp-controller="CoordinadorGestionPrecintosNacionales" asp-action="Index">Gestionar Precintos Nacionales y marquillas</a> > <strong> Aprobacion Solicitud Analista</strong>
+    </div>
+    <partial name="Partials/_SeccionBotonesAyuda"></partial>
+    <div class="container">
+        <div class="col-12" style="height: 700px;">
+            @{
+                var base64 = "";
+                var nombreAdjunto = "";
+                if (Model?.ArchivoAprobacionAnalista?.adjuntoBase64 != "")
+                {
+                    base64 = Model?.ArchivoAprobacionAnalista?.adjuntoBase64;
+                    nombreAdjunto = Model?.ArchivoAprobacionAnalista?.nombreAdjunto;
+                }
+
+            }
+            <iframe title="@nombreAdjunto" width="100%;" height="100%;" src="@base64"></iframe>
+            <input type="hidden" id="SolicitudAprobada" value="0" />
+        </div>
+
+
+    </div>
+
+
+    <div class="mt-1 row justify-content-center">
+        <div class="col-6 d-flex justify-content-end" id="divBotonesSolicitud">
+            @{
+                if (Model.SolicitudAprobada)
+                {
+                    <div class="col-4">
+                        <button type="button"
+                            class="btn btn-primary w-100"
+                            id="btnMostrarModalCorreo">
+                            Enviar correo para generar Precintos
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-3">
+                        <button type="button"
+                            class="btn btn-primary w-100"
+                            id="btnAprobarsSolicitud">
+                            Aprobar
+                        </button>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="col-6">
+            <a class="btn btn-primary w-100" asp-action="Index" asp-controller="CoordinadorGestionPrecintosNacionales">Regresar</a>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="modal fade"
+     id="modalFormAprobacion"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Gestionar Solicitud de Precintos Nacionales</p>
+                    </div>
+                    <div class="col-12 row mensajes-modal">
+                        <form id="formAprobacionSolicitud" class="col-12 row">
+                            <div class="col-6">
+                                <label for="EstadoSolicitud">Estado</label>
+                            </div>
+                            <div class="col-6">
+                                <select id="EstadoSolicitud" name="EstadoSolicitud">
+                                    <option value="1">No Aprobado</option>
+                                    <option value="2">Aprobado</option>
+                                </select>
+                                <span class="SPANValidation" id="SPANEstadoSolicitud"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="CargoAsignacion">Asignado a </label>
+                            </div>
+                            <div class="col-6">
+                                <input type="text" id="CargoAsignacion" value="@Model.AnlistaAsignado.NombresApellidos" disabled />
+                                <span class="SPANValidation" id="SPANCargoAsignacion"></span>
+                            </div>
+                            <div class="col-6">
+                                <label for="FechaAprobacion">Fecha </label>
+                            </div>
+                            <div class="col-6">
+                                <input type="date" asp-for="AnlistaAsignado.Fecha" disabled />
+                                <span class="SPANValidation"></span>
+                            </div>                         
+                            <input type="hidden" asp-for="IdSolicitud">
+                            <div class="row mt-4">
+                                <div class="col-6">
+                                    <button type="submit" class="btn btn-primary">Enviar</button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button"
+                                            class="btn btn-secondary"
+                                            data-bs-dismiss="modal">
+                                        Volver
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade"
+     id="modalConfirmacionAprobacion"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal" id="DivMensajeModalpregunta">
+                        @{
+                            var mensajeConfirmacion = "Desea aprobar esta solicitud?";
+                            if (Model.SolicitudAprobada)
+                                mensajeConfirmacion = "Esta seguro de enviar correo para generar precintos";
+                        }
+                        <p id="DivModalParrafoMensaje">@mensajeConfirmacion</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6" id="divBotonConfirmar">
+
+                            @{
+                                if (Model.SolicitudAprobada)
+                                {
+                                    <button type="button" id="btnConfirmarCorreoEnvio" class="btn btn-primary">SI</button>
+                                }
+                                else
+                                {
+                                    <button type="button" id="btnConfirmarGuardar" class="btn btn-primary">SI</button>
+                                }
+                            }
+
+                        </div>
+                        <div class="col-6">
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+                                NO
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade"
+     id="modalMensaje"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Datos procesados</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="PmensajeProcesado"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="button" id="btnAceptarModal" class="btn btn-primary">Aceptar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+
+<script src="~/js/CoordinadorGestionPrecintosNacionales/CoordinadorGPNAprobacion.js" asp-append-version="true"></script>
+<script src="~/js/CoordinadorGestionPrecintosNacionales/CoordinadorGPNGeneric-min.js" asp-append-version="true"></script>
+
+
+}

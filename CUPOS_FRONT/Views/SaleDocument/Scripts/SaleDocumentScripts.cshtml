@@ -1,0 +1,1824 @@
+﻿<script>
+var tab1Content = document.getElementById('tab1');
+var tab2Content = document.getElementById('tab2');
+var tab3Content = document.getElementById('tab3');
+var messageText=document.getElementById('messageText');
+var messageTextConfirmDelete = document.getElementById('MessageTextConfirmDelete');
+var messageTextConfirmSave = document.getElementById('MessageTextConfirmSave');
+var messageTextConfirmCancelSave = document.getElementById('MessageTextConfirmCancelSave');
+var saleDocumentTable = document.getElementById('SaleDocumentTable');
+var editDiv = document.getElementById('EditDiv');
+var saleDate = document.getElementById("SaleDate"); 
+var businessSale = document.getElementById("BusinessSale"); 
+var typeDocumentSeller = document.getElementById("TypeDocumentSeller"); 
+var shopper = document.getElementById("Shopper"); 
+var typeDocumentShopper = document.getElementById("TypeDocumentShopper"); 
+var carteNumber = document.getElementById("CarteNumber");
+var numberSold = document.getElementById("numberSold");
+var documentNumberSeller = document.getElementById("DocumentNumberSeller");
+var reasonSocial = document.getElementById("ReasonSocial");
+var initialBalanceBusiness = document.getElementById("InitialBalanceBusiness");
+var finalBalanceBusiness = document.getElementById("FinalBalanceBusiness"); 
+var observations = document.getElementById("Observations");    
+var inventoryAvailability =  document.getElementById("inventoryAvailability");    
+var documentNumberShopper = document.getElementById("DocumentNumberShopper");    
+var reasonSocialShopper = document.getElementById("ReasonSocialShopper");    
+var initialBalanceBusinessShopper = document.getElementById("InitialBalanceBusinessShopper");    
+var finalBalanceBusinessShopper = document.getElementById("FinalBalanceBusinessShopper"); 
+var observationsShopper = document.getElementById("ObservationsShopper"); 
+var titleSaveDiv = document.getElementById('TitleSaveDiv');    
+var titleSaveDivPanel = document.getElementById('TitleSaveDivPanel');    
+var viewDetailsDiv = document.getElementById('ViewDetailsDiv');
+var messageTextAlert = "Los siguiente campos son requeridos: \n";
+var fileMultipleFile = document.getElementById('fileMultipleFile');
+var contenedorMultipleFile = document.getElementById('contenedorMultipleFile');
+var contenedorMultipleFileViewDetails = document.getElementById('contenedorMultipleFileViewDetails');
+var spanFileMultipleFile = document.getElementById('spanFileMultipleFile');
+var fileContenedorMultipleFile = document.getElementById('fileContenedorMultipleFile');    
+var listAvailableQuotas = document.getElementById('ListAvailableQuotas');
+var quotasInventoryTableDiv = document.getElementById('QuotasInventoryTableDiv');
+var quotasInventoryTableDetailsDiv = document.getElementById('QuotasInventoryTableDetailsDiv');
+var quotasInventoryTableEditDiv = document.getElementById('QuotasInventoryTableEditDiv');
+var messageTextInformative = document.getElementById('MessageTextInformative');
+var titleModalConfirmation = document.getElementById("TitleModalConfirmation");
+var btnSearchCompanySeller = document.getElementById("btnSearchCompanySeller");
+let divBtnSearchCompanySeller=document.querySelectorAll('#divBtnSearchCompanySeller');
+var btnSearchCompanyShopper = document.querySelectorAll("#btnSearchCompanyShopper");
+let divBtnSearchCompanyShopper=document.querySelectorAll('#divBtnSearchCompanyShopper');
+let divInventarioComprar =document.getElementById('divInventarioComprar');
+let divCuposComprar =document.getElementById('divCuposComprar');
+let ulCamposOblgatorios=document.getElementById('ulCamposOblgatorios');
+let btnAddQuota=document.querySelectorAll('#btnAddQuota');
+let divBtnConsultarSUNL=document.querySelectorAll('#divBtnConsultarSUNL');
+let divNumeroDocSeller=document.querySelectorAll('#divNumeroDocSeller');
+let divNumeroDocShopper=document.querySelectorAll('#divNumeroDocShopper');
+let SaleDateRegistrationTxt=document.querySelectorAll('#SaleDateRegistrationTxt');
+let lblSeleccionCupos=document.querySelectorAll('#lblSeleccionCupos');
+let textAlert=document.getElementById('textAlert');
+
+var codeDelete = 0;
+var codeEdit = 0;
+var saveEdit = false;
+var companySellerCode = 0;
+var companyShopperCode = 0;
+var codeDetailsViewId = 0;
+var carteTypes=[];
+var multipleAttachments = [];
+var multipleAttachmentsRemoved = [];
+var inc = 0;
+var totalQuotasSold = 0;
+let validarVista=false;
+let responseJsonSpecies=[];
+
+$(document).ready(async function(){
+    DatatableGenericoSinDatos('#TableSaleDocuments');
+    await traerEspecies();
+    HiddeElement(document.getElementById('btnReturn'),false); 
+    HiddeElement(document.getElementById('btnPrevious'),true); 
+    HiddeElement(document.getElementById('btnCancel'),true);   
+    HiddeElement(document.getElementById('btnNext'),false);   
+    HiddeElement(document.getElementById('btnSave'),true);  
+    HiddeElement(saleDocumentTable,false);     
+    HiddeElement(editDiv,true); 
+    HiddeElement(viewDetailsDiv,true);       
+    document.getElementById('SaleDateRegistrationTxt').valueAsDate = new Date();    
+    if(sessionStorage.getItem("tab") == "shopper"){
+        ShopperFormShow();        
+    }
+
+    if(sessionStorage.getItem("QuotaListTemp") != null || sessionStorage.getItem("InventoryListTemp") != null){
+        let quotaListTemp = JSON.parse(sessionStorage.getItem("QuotaListTemp"));
+        validarVista=true;
+        LoadQuotas(quotaListTemp);
+        if(quotaListTemp ==null || quotaListTemp ==undefined || quotaListTemp.length==0){
+            HiddeElement(divCuposComprar,true);
+        }else{
+            HiddeElement(divCuposComprar,false);
+        }
+        
+        let inventoryListTemp = JSON.parse(sessionStorage.getItem("InventoryListTemp"));
+        LoadInventory(inventoryListTemp);
+        if(inventoryListTemp ==null || inventoryListTemp ==undefined || inventoryListTemp.length==0){
+            HiddeElement(divInventarioComprar,true);
+        }else{
+            HiddeElement(divInventarioComprar,false);
+        }
+    }else{
+        HiddeElement(quotasInventoryTableDiv,true);
+    }
+
+    if(sessionStorage.getItem("SaleDocumentTemp") != null){
+        let saleDocumentTemp = sessionStorage.getItem("SaleDocumentTemp");
+        validarVista=true;
+        LoadSaleDocumentFormControls(JSON.parse(saleDocumentTemp),null, null, null,"AddQuotas");         
+    }
+
+    cargarDatosCompradorSession() 
+
+});
+
+async function traerEspecies(){
+    let urlGetSpecies = `@Url.Action("GetSpecies", "SaleDocument")`;
+    responseJsonSpecies = await Get(urlGetSpecies);
+    if (responseJsonSpecies.volverInicio != undefined) {
+          cerrarSesionCaducada();
+          return;
+    }
+}
+
+//Muestra el formulario de vendedor
+function SellerFormShow(){
+    SellerFormNavigationControls();
+    loadTabs(1);    
+}
+
+//Muestra el formulario de comprador
+function ShopperFormShow(){
+    ShopperFormNavigationControls();
+    loadTabs(2);
+}
+
+//Muestra el formulario de documento
+function DocumentSupportShow(){
+    DocumentFormNavigationControls();
+    loadTabs(3);
+}   
+
+//obtiene los documentos de venta
+async function GetSaleDocuments(search = null){
+    let url = ""; 
+    if(search == null){
+        url = `@Url.Action("GetSaleDocuments","SaleDocument")`;
+        
+    }else{
+        var txtNumeroCartaVenta=$('#txtNumeroCartaVenta').val();
+        var typeDocument = $(typeDocumentSelect).val();
+        var documentNumber = $(documentNumberTxt).val();
+        if(txtNumeroCartaVenta=='' && typeDocument=='0' && documentNumber==''){
+            textAlert.innerText='Debe usar almenos un filtro';
+            $('#MessageTextAlert').modal('show');
+            return;
+        }else if(txtNumeroCartaVenta!='' && typeDocument!='0' && documentNumber!=''){
+            url = `@Url.Action("GetSaleDocuments", "SaleDocument")` + `?typeDocument=${typeDocument}&documentNumber=${documentNumber}&numberCartaVenta=${txtNumeroCartaVenta}`;
+        }else if(txtNumeroCartaVenta!='' && (typeDocument=='0' || documentNumber=='')){
+            url = `@Url.Action("GetSaleDocuments", "SaleDocument")` + `?numberCartaVenta=${txtNumeroCartaVenta}`;
+        }else if(txtNumeroCartaVenta=='' && typeDocument!='0' && documentNumber!=''){
+            url = `@Url.Action("GetSaleDocuments", "SaleDocument")` + `?typeDocument=${typeDocument}&documentNumber=${documentNumber}`;
+        }
+    }
+    
+    let response = await Get(url);
+    if(response.length==0){
+        if(search != null){
+            url = `@Url.Action("GetSaleDocuments","SaleDocument")`;
+            response=await Get(url);
+            messageText.innerText='Número de registro no existe';
+            $('#MessageTextModal').modal('show');   
+        }     
+    }
+    $(`#TableSaleDocuments`).DataTable({
+        destroy: true,
+        scrollX: true,            
+        lengthChange: true,
+        lengthMenu: [5, 10, 20, 50, 100],
+        paging:true,
+        info: true,
+        dom:
+            "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+            "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",            
+        language: {
+            lengthMenu: "Resultados pág. _MENU_",
+            info: "_START_ al _TOTAL_ Resultados",
+            search: "",
+            searchPlaceholder: "Buscar",
+            zeroRecords: "No se encontraron resultados",
+            infoEmpty: "0 al 0 Resultados",
+            paginate: {
+            previous: "Anterior",
+            next: "Siguiente",
+            },
+        },
+        data:response,
+        columns:[
+            {
+                "data": "code",
+                className: "d-none"
+            },             
+            {
+                "data": "numeration",
+            },              
+            {
+                "data": "carteNumber",
+            },           
+            {
+                "data": "nitCompanySeller",
+            },
+            {
+                "data": "reasonSocial",
+            },
+            {
+                "data": "nitCompanyShopper",
+            },           
+            {
+                "data": "reasonSocialShopper",
+            },
+            {
+                "data": "saleDate",
+                render: function (data) {
+                    if (data != null) {
+                    return moment(data).format("DD-MM-yyyy");
+                    }
+                    return data;
+                },                      
+            },
+            {
+                "data": "registrationDateCarteSale",
+                render: function (data) {
+                    if (data != null) {
+                    return moment(data).format("DD-MM-yyyy");
+                    }
+                    return data;
+                },                      
+            },                
+            {
+                "data": "quotasSold",
+            },
+            {
+                render: function () {
+                    return '<a type="button" id="btnViewDetail" class="text-primary" title="Ver detalle">VER</a> / <a type="button" id="btnEdit" class="text-primary" title="Editar">EDITAR</a> / <a type="button" id="btnDelete" class="text-primary" title="Eliminar">ELIMINAR</a>';
+                },
+            }            
+            ],
+        columnDefs: [{
+            targets: 8
+        }]  
+    });   
+    agregarClasesDatatable(`#TableSaleDocuments`);
+       
+}
+
+//muestra el modal de confirmacion para guardar documento de venta
+function ConfirmSave(){
+    if(ValidateFields()){
+        messageTextConfirmSave.innerText='¿Esta seguro de guardar la información?';
+        $('#ConfirmModalSave').modal('show');        
+    }
+}
+
+//guarda el documento de venta
+async function SaveSaleDocument(validate){
+    if(validate){
+        let quotaListTempJson = sessionStorage.getItem("QuotaListTemp"); 
+        let quotaListTemp = JSON.parse(quotaListTempJson);
+        let inventoryListTempJson = sessionStorage.getItem("InventoryListTemp"); 
+        let inventoryListTemp = JSON.parse(inventoryListTempJson);
+        let frmData;
+        let url = '';
+        if(saveEdit){
+            url = `@Url.Action("UpdateSaleDocument", "SaleDocument")`;        
+            frmData={
+                'Code': codeEdit,
+                'CarteNumber': $(CarteNumber).val(),  
+                'SaleDate':$(SaleDate).val(), 
+                'NumberSold': $(numberSold).val(), 
+                'BusinessSale': $(BusinessSale).val(), 
+                'TypeDocumentSeller': $(TypeDocumentSeller).val(),
+                'DocumentNumberSeller':$(DocumentNumberSeller).val(),
+                'ReasonSocial':$(ReasonSocial).val(),
+                'InitialBalanceBusiness':"0", 
+                'FinalBalanceBusiness':"0",                 
+                'Observations':$(Observations).val(), 
+                'InventoryAvailability':$(inventoryAvailability).val(),
+                'BusinessShopper':$(Shopper).val(),
+                'TypeDocumentShopper':$(TypeDocumentShopper).val(),
+                'DocumentNumberShopper':$(DocumentNumberShopper).val(),
+                'ReasonSocialShopper':$(ReasonSocialShopper).val(),
+                'InitialBalanceBusinessShopper':"0", 
+                'FinalBalanceBusinessShopper':"0",                 
+                'ObservationsShopper':$(ObservationsShopper).val(), 
+                'TypeCarte':67, //QUEMADO
+                'CompanySellerCode': companySellerCode,
+                'CompanyShopperCode': companyShopperCode,
+                'RegistrationDateCarteSale': $(SaleDateRegistrationTxt).val(), 
+                'TypeSpecimenSeller': $(TypeSpecimenSellerTxt).val(),
+                'TypeSpecimenShopper': $(TypeSpecimenShopperTxt).val(),
+                'SupportDocuments': multipleAttachments,
+                'SupportDocumentsRemoved' : multipleAttachmentsRemoved,
+                'Quotas' : quotaListTemp,
+                'QuotasInventory' : inventoryListTemp
+            };
+        }else{
+            url = `@Url.Action("SaveSaleDocument", "SaleDocument")`;
+            frmData={
+                'Code': 0,      
+                'CarteNumber': $(CarteNumber).val(),  
+                'SaleDate':$(SaleDate).val(), 
+                'NumberSold': $(numberSold).val(), 
+                'BusinessSale': $(BusinessSale).val(), 
+                'TypeDocumentSeller': $(TypeDocumentSeller).val(),
+                'DocumentNumberSeller':$(DocumentNumberSeller).val(),
+                'ReasonSocial':$(ReasonSocial).val(),
+                'InitialBalanceBusiness':"0", 
+                'FinalBalanceBusiness':"0",                   
+                'Observations':$(Observations).val(), 
+                'InventoryAvailability':$(inventoryAvailability).val(),
+                'BusinessShopper':$(Shopper).val(),
+                'TypeDocumentShopper':$(TypeDocumentShopper).val(),
+                'DocumentNumberShopper':$(DocumentNumberShopper).val(),
+                'ReasonSocialShopper':$(ReasonSocialShopper).val(),
+                'InitialBalanceBusinessShopper':"0", 
+                'FinalBalanceBusinessShopper':"0",                 
+                'ObservationsShopper':$(ObservationsShopper).val(), 
+                'TypeCarte': 67, //QUEMADO
+                'CompanySellerCode': companySellerCode,
+                'CompanyShopperCode': companyShopperCode,
+                'RegistrationDateCarteSale': $(SaleDateRegistrationTxt).val(), 
+                'TypeSpecimenSeller': $(TypeSpecimenSellerTxt).val(),
+                'TypeSpecimenShopper': $(TypeSpecimenShopperTxt).val(),
+                'SupportDocuments': multipleAttachments,
+                'Quotas' : quotaListTemp,
+                'QuotasInventory' : inventoryListTemp
+            };
+        }
+        let response = await Get(url, frmData);
+        if(response){
+            messageText.innerText='La información se guardo con éxito';
+            sessionStorage.removeItem("QuotaListTemp");    
+            sessionStorage.removeItem("InventoryListTemp");    
+            sessionStorage.removeItem("SaleDocumentTemp");        
+            sessionStorage.removeItem("ShopperDocumentTemp");        
+            CleanFields();
+            $('#MessageTextModal').modal('show');
+        }else{
+            messageText.innerText='No se pudo guardar la información';
+            $('#MessageTextModal').modal('show');
+        }
+    }else{
+        $('#ConfirmModalSave').modal('hidde');        
+    }  
+}
+
+function RedirectSaleDocumen(){
+   window.location.href = '@Url.Action("SaleDocuments", "SaleDocument")'
+}
+
+//evento muestra confirmacion para eliminar documento de venta
+$('#TableSaleDocuments tbody').on('click', '#btnDelete', async function () { 
+    codeDelete = $(this).parents("tr").find("td")[0].innerText;   
+    messageTextConfirmDelete.innerText='¿Esta seguro que desea eliminar la información?';
+    $('#ConfirmModalDelete').modal('show');
+} );
+
+//eliminar documento de venta
+async function ConfirmDelete(rta){
+    if(rta){
+        let url = `@Url.Action("DeleteSaleDocument", "SaleDocument")` + `?id=${codeDelete}`;       
+        let response = await Get(url);
+        if (response.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        if(response){
+                document.getElementById("btnAccept").onclick = function() {ConfirmAcceptDeleteModal()};  
+                messageText.innerText='Su información ha sido eliminada con éxito';
+                $('#MessageTextModal').modal('show');
+        }else{
+                messageText.innerText='No se pudo eliminar la información';
+                $('#MessageTextModal').modal('show');
+        }    
+    }else{
+        $('#ConfirmModalDelete').modal('hidde');                
+    }
+}
+
+//Redirige al confirmar a la pantalla de documentos de venta
+function ConfirmAcceptDeleteModal(){
+    window.location.href = '@Url.Action("SaleDocuments", "SaleDocument")'
+}
+
+//valida campos del formulario de registro documento de venta
+function ValidateFields(){
+    var validateSaleDate = Validate($(SaleDate).val(), document.getElementById('ValidateSaleDate'));
+    var validateNumberSold = Validate($(numberSold).val(), document.getElementById('ValidateNumberSold'));
+    var validateReasonSocial = Validate($(ReasonSocial).val(), document.getElementById('ValidateReasonSocial'));
+    var validateBusinessSale = Validate($(BusinessSale).val(), document.getElementById('ValidateBusinessSale'));
+    var validateTypeDocumentSeller = Validate($(TypeDocumentSeller).val(), document.getElementById('ValidateTypeDocumentSeller'));
+    var validateDocumentNumberSeller = Validate($(DocumentNumberSeller).val(), document.getElementById('ValidateDocumentNumberSeller'));
+    var validateObservations = Validate($(Observations).val(), document.getElementById('ValidateObservations'));   
+    var validateInventoryAvailability = Validate($(inventoryAvailability).val(), document.getElementById('ValidateInventoryAvailability'));    
+    var validateShopper = Validate($(Shopper).val(), document.getElementById('ValidateShopper'));    
+    var validateTypeDocumentShopper = Validate($(TypeDocumentShopper).val(), document.getElementById('ValidateTypeDocumentShopper'));    
+    var validateDocumentNumberShopper = Validate($(DocumentNumberShopper).val(), document.getElementById('ValidateDocumentNumberShopper'));    
+    var validateReasonSocialShopper = Validate($(ReasonSocialShopper).val(), document.getElementById('ValidateReasonSocialShopper'));    
+    var validateObservationsShopper = Validate($(ObservationsShopper).val(), document.getElementById('ValidateObservationsShopper'));
+    var validateSaleDateRegistration = Validate($(SaleDateRegistrationTxt).val(), document.getElementById('ValidateSaleDateRegistration'));
+
+    var validateFileMultipleFile = false;
+    if(multipleAttachments.length > 0){
+        validateFileMultipleFile = true;
+        HiddeElement(spanFileMultipleFile, true);               
+    }else{
+        spanFileMultipleFile.innerText = 'Campo Obligatorio';
+        HiddeElement(spanFileMultipleFile, false);   
+    }    
+
+    if(validateSaleDate && validateNumberSold && validateObservations && validateObservationsShopper && validateReasonSocial 
+        && validateBusinessSale && validateTypeDocumentSeller && validateDocumentNumberSeller && validateInventoryAvailability && validateInventoryAvailability 
+        && validateShopper && validateTypeDocumentShopper && validateDocumentNumberShopper && validateReasonSocialShopper && validateFileMultipleFile && validateSaleDateRegistration){
+        return true;
+    }
+    var camposObligatorios=[];
+    if(!validateSaleDate){
+        camposObligatorios.push("Fecha de carta de venta y/o factura");                 
+    }
+    if(!validateSaleDateRegistration){
+        camposObligatorios.push("Fecha de registro carta de venta y/o factura");                 
+    }     
+    if(!validateNumberSold){
+        camposObligatorios.push("Cupos vendidos");                 
+    }
+    if(!validateBusinessSale){
+        camposObligatorios.push("¿Quién realiza la venta?");                 
+    }    
+    if(!validateTypeDocumentSeller){
+        camposObligatorios.push("Tipo de documento");                 
+    }
+    if(!validateDocumentNumberSeller){
+        camposObligatorios.push("Número documento");                 
+    }     
+    if(!validateReasonSocial){
+        camposObligatorios.push("Nombre / Razón Social");                 
+    }
+    if(!validateObservations){
+        camposObligatorios.push("Observaciones");                 
+    }
+    if(!validateInventoryAvailability){
+        camposObligatorios.push("Cantidad de especímenes comprados");                 
+    }   
+    if(!validateShopper){
+        camposObligatorios.push("¿Quién realiza la compra?");                 
+    }
+    if(!validateTypeDocumentShopper){
+        camposObligatorios.push("Tipo de documento (Quien compra)");                 
+    }    
+    if(!validateDocumentNumberShopper){
+        camposObligatorios.push("Número de documento (Quien compra)");                 
+    }
+    if(!validateReasonSocialShopper){
+        camposObligatorios.push("Nombre Zoocriadero / Razón Social");                 
+    }   
+    if(!validateObservationsShopper){
+        camposObligatorios.push("Observaciones(Quien compra)");                 
+    }
+    if(!validateFileMultipleFile){
+        camposObligatorios.push("Documento soporte");                 
+    }       
+
+    if(camposObligatorios.length>0){
+        alertasValidacionesControles('#modalAlerta', ulCamposOblgatorios, camposObligatorios);
+    }
+
+    return false;
+}
+
+//valida campos vacios
+function Validate(elemento, span){
+    if(elemento){
+        ShowAlert(span, false);
+        return true;
+    }else{
+        ShowAlert(span,true);
+        return false;
+    }
+}
+
+//oculta elementos html
+function ShowAlert(elemento,validar){
+    if(validar){
+        if($(elemento).hasClass('d-none')){
+            $(elemento).removeClass('d-none')
+        }              
+    }else{ 
+        if (!$(elemento).hasClass('d-none')) {
+            $(elemento).addClass('d-none')
+        }                 
+    }
+}
+
+//filtro buscar empresa
+function SearchCompany(form){
+    if(form == "seller"){
+        if($(DocumentNumberSeller).val()!='' && $(TypeDocumentSeller).val() != '' && $(BusinessSale).val() != ''){
+            GetCompany($(DocumentNumberSeller).val(), $(TypeDocumentSeller).val(), $(BusinessSale).val(), form);
+            return;
+        }
+    }else{
+        if($(DocumentNumberShopper).val()!='' && $(TypeDocumentShopper).val() != '' && $(Shopper).val() != ''){
+            GetCompany($(DocumentNumberShopper).val(),$(TypeDocumentShopper).val(), $(Shopper).val(), form);
+            return;
+        }
+    }
+}
+
+//carga controles de la empresa que vende o compra
+async function GetCompany(number=null,typeDocument=null, company=null, form) {
+    let url;
+    if(number != null && typeDocument != null && company != null){
+        url = `@Url.Action("SearchCompany", "SaleDocument")` + `?number=${number}` + `&typeDocument=${typeDocument}` + `&companyCode=${company}`;
+        r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+    }
+
+    let response = await Get(url);
+    if(form == "seller"){
+        response.forEach((element) => {
+            companySellerCode = element["code"];
+            document.getElementById("ReasonSocial").value = element["reasonSocial"];
+        });
+    }else{
+        response.forEach((element) => {
+            companyShopperCode = element["code"];
+            document.getElementById("ReasonSocialShopper").value = element["reasonSocial"];
+        });        
+    }
+}
+
+//boton sigueinte o anterior
+function NextOrPrevious(param){
+    if(param == 'next'){
+        if ($(tab1Content).is(":visible")){
+            ShopperFormNavigationControls();
+            loadTabs(2);
+            return;
+        }else{
+            if ($(tab2Content).is(":visible")){
+                DocumentFormNavigationControls();
+                loadTabs(3);
+                return;
+            }
+        }
+    }else{
+        if ($(tab3Content).is(":visible")){
+            ShopperFormNavigationControls();
+            loadTabs(2);
+            return;
+        }else{
+            if ($(tab2Content).is(":visible")){
+                SellerFormNavigationControls();
+                loadTabs(1);
+                return;
+            }
+        }
+    }
+}
+
+//limpia o restablece los campos del formulario
+function CleanFields(){
+    document.getElementById("CarteNumber").value = "";
+    document.getElementById("numberSold").value = "";
+    document.getElementById("DocumentNumberSeller").value = "";
+    document.getElementById("ReasonSocial").value = "";
+    document.getElementById("Observations").value = "";    
+    document.getElementById("inventoryAvailability").value = "";    
+    document.getElementById("DocumentNumberShopper").value = "";    
+    document.getElementById("ReasonSocialShopper").value = "";    
+    document.getElementById("ObservationsShopper").value = ""; 
+}
+
+$('#TableSaleDocuments tbody').on('click', '#btnEdit', async function () {
+    saveEdit = true;
+    codeEdit = $(this).parents("tr").find("td")[0].innerText; 
+    HiddeElement(saleDocumentTable,true);     
+    HiddeElement(editDiv,false);  
+    HiddeElement(viewDetailsDiv,true);   
+    let id = $(this).parents("tr").find("td")[0].innerText;   
+    let url = `@Url.Action("GetSaleDocumentId", "SaleDocument")` + `?code=${id}`;
+    let response = await Get(url);
+    if (response.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+    }
+
+    let getQuotas = `@Url.Action("GetQuotasByCode", "SaleDocument")` + `?code=${codeEdit}`;
+    let responseQuotas = await Get(getQuotas);      
+    if (responseQuotas.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+    }
+
+    let documentNumberSellerCompany = $(this).parents("tr").find("td")[5].innerText;
+    let getInventoryUrl = `@Url.Action("GetInventory","SaleDocument")` + `?documentNumber=${documentNumberSellerCompany}&code=${codeEdit}`;
+    let responseJsonInventory = await Get(getInventoryUrl); 
+    if (responseJsonInventory.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+    }
+    
+    let getDocumentsUrl = `@Url.Action("GetSupportDocument", "SaleDocument")` + `?code=${codeEdit}`;
+    let responseDocuments = await Get(getDocumentsUrl);   
+    if (responseJsonInventory.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+    }   
+    if(response != null && responseDocuments != null){
+        validarVista=true;
+       LoadSaleDocumentFormControls(response,responseDocuments,responseQuotas, responseJsonInventory, "Edit");
+    }    
+} );
+
+//se llenan los controles al editar o ver detalles documento de venta 
+function LoadSaleDocumentFormControls(data, responseDocuments, responseQuotas, responseJsonInventory,  form){
+    if(form == "AddQuotas"){
+        $(CarteNumber).val(data.carteNumber);
+        $(SaleDate).val(moment(data.saleDate).format('yyyy-MM-DD'));
+        $(BusinessSale).val(data.businessSale); 
+        $(TypeDocumentSeller).val(data.typeDocumentSeller); 
+        $(DocumentNumberSeller).val(data.documentNumberSeller);
+        $(ReasonSocial).val(data.reasonSocial);
+        $(Observations).val(data.observations);
+        $(Shopper).val(data.businessShopper); 
+        $(TypeDocumentShopper).val(data.typeDocumentShopper); 
+        $(DocumentNumberShopper).val(data.documentNumberShopper);
+        $(ReasonSocialShopper).val(data.reasonSocialShopper);
+        $(ObservationsShopper).val(data.observationsShopper);
+        companySellerCode = data.companySellerCode;
+        companyShopperCode = data.companyShopperCode;  
+        $(TypeSpecimenSellerTxt).val(data.typeSpecimenSeller);
+        $(TypeSpecimenShopperTxt).val(data.typeSpecimenShopper);        
+    }else{
+        $(CarteNumber).val(data[0].carteNumber);
+        $(SaleDate).val(moment(data[0].saleDate).format('yyyy-MM-DD'));
+        $(document.querySelectorAll('#numberSold')).val(data[0].numberSold);
+        $(BusinessSale).val(data[0].businessSale);
+        $(TypeDocumentSeller).val(data[0].typeDocumentSeller); 
+        $(DocumentNumberSeller).val(data[0].documentNumberSeller);
+        $(ReasonSocial).val(data[0].reasonSocial);
+        $(Observations).val(data[0].observations);
+        $(document.querySelectorAll('#inventoryAvailability')).val(data[0].inventoryAvailability);
+        $(SaleDateRegistrationTxt).val(moment(data[0].registrationDateCarteSale).format('yyyy-MM-DD'));
+        $(Shopper).val(data[0].businessShopper);
+        $(TypeDocumentShopper).val(data[0].typeDocumentShopper);
+        $(DocumentNumberShopper).val(data[0].documentNumberShopper);
+        $(ReasonSocialShopper).val(data[0].reasonSocialShopper);
+        $(ObservationsShopper).val(data[0].observationsShopper);
+        companySellerCode = data[0].companySellerCode;
+        companyShopperCode = data[0].companyShopperCode;
+        $(TypeSpecimenSellerTxt).val(data[0].typeSpecimenSeller);
+        $(TypeSpecimenShopperTxt).val(data[0].typeSpecimenShopper);
+    }
+
+    if(responseQuotas != null){
+        LoadQuotas(responseQuotas, form);        
+    }
+
+    if(responseJsonInventory != null){
+        LoadInventory(responseJsonInventory, form);
+    }
+
+    validarVista=true;
+    
+    if(responseDocuments != null){
+        multipleAttachments = responseDocuments;
+        multipleAttachments.forEach(element => {
+        UploadAttachments(element.codigo, element.tipoAdjunto, element.adjuntoBase64, form, element.nombreAdjunto)
+        }); 
+    }
+    SaleDocumentDisabledForm(form);   
+}
+
+//oculta elementos html
+function HiddeElement(element,validate){
+    if(validate){
+        if (!$(element).hasClass('d-none')) {
+            $(element).addClass('d-none')
+        }                      
+    }else{ 
+        if($(element).hasClass('d-none')){
+            $(element).removeClass('d-none')
+        }                 
+    }
+}
+
+//Devuelve a documentos de venta
+function Return(){
+    sessionStorage.removeItem("QuotaListTemp");
+    sessionStorage.removeItem("InventoryListTemp");   
+    sessionStorage.removeItem("SaleDocumentTemp");
+    sessionStorage.removeItem("ShopperDocumentTemp");
+    window.location.href = '@Url.Action("SaleDocuments", "SaleDocument")'
+}
+
+//Muestra modal de confirmacion para cancelar el guardado
+function ConfirmCancelSave(){
+    messageTextConfirmCancelSave.innerText='¿Esta seguro que desea cancelar?';
+    $('#ConfirmModalCancelSave').modal('show');        
+}
+
+//Redirecciona a documentos de venta
+function RedirectCancelSave(param){
+    if(param){
+        window.location.href = '@Url.Action("SaleDocuments", "SaleDocument")'
+        sessionStorage.removeItem("QuotaListTemp");   
+        sessionStorage.removeItem("InventoryListTemp");        
+    }
+}
+
+//Muestra Modal confirmacion de salir
+function ConfirmExit(){
+    messageTextConfirmCancelSave.innerText='¿Esta seguro que desea salir?';
+    $('#ConfirmModalExit').modal('show');        
+}
+
+//Redirecciona a documentos de venta
+function Exit(param){
+    if(param){
+        window.location.href = '@Url.Action("SaleDocuments", "SaleDocument")'
+    }
+}
+
+//Muestra o oculta los controles de navegacion para la seccion de vendendor
+function SellerFormNavigationControls(){
+    HiddeElement(document.getElementById('btnReturn'),false); 
+    HiddeElement(document.getElementById('btnPrevious'),true); 
+    HiddeElement(document.getElementById('btnCancel'),true);   
+    HiddeElement(document.getElementById('btnNext'),false);   
+    HiddeElement(document.getElementById('btnSave'),true); 
+
+    if(sessionStorage.getItem("QuotaListTemp") != null){
+        if(quotasInventoryTableDiv){
+            HiddeElement(quotasInventoryTableDiv, false);  
+        }  
+
+        if(quotasInventoryTableDetailsDiv){
+            HiddeElement(quotasInventoryTableDetailsDiv, false);  
+        }
+
+        if(quotasInventoryTableEditDiv){
+            HiddeElement(quotasInventoryTableEditDiv, false);  
+        }      
+    }  
+
+    if(saveEdit === true){
+        if(quotasInventoryTableDiv){
+            HiddeElement(quotasInventoryTableDiv, false);  
+        }  
+
+        if(quotasInventoryTableDetailsDiv){
+            HiddeElement(quotasInventoryTableDetailsDiv, false);  
+        }
+
+        if(quotasInventoryTableEditDiv){
+            HiddeElement(quotasInventoryTableEditDiv, false);  
+        }           
+    }
+
+    $(document.querySelectorAll("#numberSold")).val($(document.querySelectorAll("#inventoryAvailability")).val());
+}
+
+//Muestra o oculta los controles de navegacion para la seccion de comprador
+function ShopperFormNavigationControls(){
+    HiddeElement(document.getElementById('btnReturn'),true); 
+    HiddeElement(document.getElementById('btnPrevious'),false); 
+    HiddeElement(document.getElementById('btnCancel'),true);   
+    HiddeElement(document.getElementById('btnNext'),false);   
+    HiddeElement(document.getElementById('btnSave'),true);  
+ 
+    if(sessionStorage.getItem("QuotaListTemp") != null){
+        if(quotasInventoryTableDiv){
+            HiddeElement(quotasInventoryTableDiv, false);  
+        }  
+
+        if(quotasInventoryTableDetailsDiv){
+            HiddeElement(quotasInventoryTableDetailsDiv, false);  
+        }
+
+        if(quotasInventoryTableEditDiv){
+            HiddeElement(quotasInventoryTableEditDiv, false);  
+        }     
+    }
+
+    if(saveEdit === true){
+        if(quotasInventoryTableDiv){
+            HiddeElement(quotasInventoryTableDiv, false);  
+        }  
+
+        if(quotasInventoryTableDetailsDiv){
+            HiddeElement(quotasInventoryTableDetailsDiv, false);  
+        }
+
+        if(quotasInventoryTableEditDiv){
+            HiddeElement(quotasInventoryTableEditDiv, false);  
+        }               
+    }    
+
+    $(document.getElementById("inventoryAvailability")).val($(document.getElementById("numberSold")).val());
+}
+
+//Muestra o oculta los controles de navegacion para la seccion de documento
+function DocumentFormNavigationControls(){
+    HiddeElement(document.getElementById('btnReturn'),true); 
+    HiddeElement(document.getElementById('btnPrevious'),false); 
+    HiddeElement(document.getElementById('btnCancel'),false);   
+    HiddeElement(document.getElementById('btnNext'),true);   
+    HiddeElement(document.getElementById('btnSave'),false);  
+    if(sessionStorage.getItem("QuotaListTemp") != null){
+        if(quotasInventoryTableDiv){
+            HiddeElement(quotasInventoryTableDiv, true);  
+        }  
+
+        if(quotasInventoryTableDetailsDiv){
+            HiddeElement(quotasInventoryTableDetailsDiv, true);  
+        }
+        if(quotasInventoryTableEditDiv){
+            HiddeElement(quotasInventoryTableEditDiv, true);  
+        }       
+    }     
+
+    if(saveEdit === true){
+        if(quotasInventoryTableDiv){
+            HiddeElement(quotasInventoryTableDiv, true);  
+        }  
+
+        if(quotasInventoryTableDetailsDiv){
+            HiddeElement(quotasInventoryTableDetailsDiv, true);  
+        }
+        if(quotasInventoryTableEditDiv){
+            HiddeElement(quotasInventoryTableEditDiv, true);  
+        }                
+    }      
+}
+
+//Redirecciona la pantalla de venta de cupos
+async function AddQuotas(){
+    let saleDocumentTemp ={
+        'code': 0,      
+        'carteNumber': $(CarteNumber).val(),  
+        'saleDate':$(SaleDate).val(), 
+        'businessSale': $(BusinessSale).val(), 
+        'typeDocumentSeller': $(TypeDocumentSeller).val(),
+        'documentNumberSeller':$(DocumentNumberSeller).val(),
+        'reasonSocial':$(ReasonSocial).val(),
+        'initialBalanceBusiness':"0", 
+        'finalBalanceBusiness':"0",                   
+        'observations':$(Observations).val(), 
+        'businessShopper':$(Shopper).val(),
+        'typeDocumentShopper':$(TypeDocumentShopper).val(),
+        'documentNumberShopper':$(DocumentNumberShopper).val(),
+        'reasonSocialShopper':$(ReasonSocialShopper).val(),
+        'initialBalanceBusinessShopper':"0", 
+        'finalBalanceBusinessShopper':"0",                 
+        'observationsShopper':$(ObservationsShopper).val(), 
+        'typeCarte': 67, //QUEMADO
+        'companySellerCode': companySellerCode,
+        'companyShopperCode': companyShopperCode,
+        'registrationDateCarteSale': $(SaleDateRegistrationTxt).val(), 
+        'typeSpecimenSeller': $(TypeSpecimenSellerTxt).val(),
+        'typeSpecimenShopper': $(TypeSpecimenShopperTxt).val(),
+        'inventoryAvailability' : $(inventoryAvailability).val(),     
+             
+    };    
+    sessionStorage.setItem("SaleDocumentTemp", JSON.stringify(saleDocumentTemp));
+    let url = `@Url.Action("Quotas", "SaleDocument")` + `?typeDocument=${$(TypeDocumentSeller).val()}&documentNumber=${$(DocumentNumberSeller).val()}&company=${$(BusinessSale).val()}`;
+    window.location = url;
+}
+
+//evento acepta de modal informativo 
+function ConfirmAcceptModal(){
+    window.location.href = '@Url.Action("SaleDocuments", "SaleDocument")'
+}
+
+$('#TableSaleDocuments tbody').on('click', '#btnViewDetail', async function () { 
+    codeDetailsViewId = $(this).parents("tr").find("td")[0].innerText;     
+    HiddeElement(saleDocumentTable,true);   
+    HiddeElement(editDiv,true);     
+    HiddeElement(viewDetailsDiv,false);
+    let id = $(this).parents("tr").find("td")[0].innerText;   
+    let url = `@Url.Action("GetSaleDocumentId", "SaleDocument")` + `?code=${id}`;
+    let response = await Get(url);
+    if (response.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+    }
+
+    let getQuotas = `@Url.Action("GetQuotasByCode", "SaleDocument")` + `?code=${codeDetailsViewId}`;
+    let responseQuotas = await Get(getQuotas);  
+    if (responseQuotas.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+    }
+
+    let documentNumberSellerCompany = $(this).parents("tr").find("td")[5].innerText;
+    let getInventoryUrl = `@Url.Action("GetInventory","SaleDocument")` + `?documentNumber=${documentNumberSellerCompany}&code=${codeDetailsViewId}`;
+    let responseJsonInventory = await Get(getInventoryUrl); 
+    if (responseJsonInventory.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+    }
+
+    let getDocumentsUrl = `@Url.Action("GetSupportDocument", "SaleDocument")` + `?code=${codeDetailsViewId}`;
+    let responseDocuments = await Get(getDocumentsUrl);   
+    if (responseJsonInventory.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+    } 
+
+    if(response != null && responseDocuments != null){
+        validarVista=false;
+        LoadSaleDocumentFormControls(response, responseDocuments, responseQuotas, responseJsonInventory, "ViewDetails");
+    }  
+    
+
+} );
+
+function ocultarBotones(validar){
+    if(validar){
+        if($(divNumeroDocSeller).hasClass('col-md-3')){
+            $(divNumeroDocSeller).removeClass('col-md-3');
+            $(divNumeroDocSeller).addClass('col-md-4')
+        }
+        if($(divNumeroDocShopper).hasClass('col-md-3')){
+            $(divNumeroDocShopper).removeClass('col-md-3');
+            $(divNumeroDocShopper).addClass('col-md-4')
+        }
+    }else{
+        if($(divNumeroDocSeller).hasClass('col-md-4')){
+            $(divNumeroDocSeller).removeClass('col-md-4');
+            $(divNumeroDocSeller).addClass('col-md-3')
+        }
+        if($(divNumeroDocShopper).hasClass('col-md-4')){
+            $(divNumeroDocShopper).removeClass('col-md-4');
+            $(divNumeroDocShopper).addClass('col-md-3')
+        }
+    }
+    HiddeElement(divBtnSearchCompanySeller, validar);
+    HiddeElement(btnAddQuota, validar);
+    HiddeElement(lblSeleccionCupos, validar);
+    HiddeElement(divBtnSearchCompanyShopper, validar);
+    HiddeElement(divBtnConsultarSUNL, validar);
+}
+
+//Deshabilita controles de formulario documento de venta
+function SaleDocumentDisabledForm(form){
+    ocultarBotones(false);    
+    if(form == 'ViewDetails'){
+        var fields = document.getElementsByClassName('disabledField')
+        for(var i=0;i<fields.length;i++){
+            fields[i].disabled = true;
+        }     
+        ocultarBotones(true);     
+    }else if(form == "Edit"){
+        businessSale.disabled = true;
+        typeDocumentSeller.disabled = true;
+        documentNumberSeller.disabled = true;
+        shopper.disabled = true;
+        typeDocumentShopper.disabled = true;
+        documentNumberShopper.disabled = true;
+        btnSearchCompanySeller.disabled = true;
+        btnSearchCompanyShopper.disabled = true;
+        ocultarBotones(true); 
+    }
+          
+}
+
+//Muestra el adjunto Html
+function AttachHTML(contenedor, Base64, tipoAdjunto, nombre, inputFile, codigo = null) {
+    if (codigo != null) {
+        contenedor.innerHTML +=
+            `<div class="row w-100 mt-2 contenerAdjuntos" id="contenedorMultipleFile${codigo}">
+                            <div class="col-11">
+                                <a type="buttton" class="btnPrevisualizar" id="btnPrevisualizar${codigo}">${nombre}</a>
+                            </div>
+                            <div class="text-end col-1">
+                                <a type="button" class="btnEliminarAdjunto" id="btnEliminarAdjunto${codigo}"><span class="fas fa-times"></span></a>
+                            <div>
+                        <div>`;
+        return;
+    }
+    contenedor.innerHTML =
+        `<div class="row w-100 mt-2 contenerAdjuntos">
+                        <div class="col-11">
+                            <a type="buttton" id="btnPrevisualizar">${nombre}</a>
+                        </div>
+                        <div class="text-end col-1">
+                            <a type="button" id="btnEliminarAdjunto"><span class="fas fa-times"></span></a>
+                        <div>
+                    <div>`;
+    if (inputFile != null) {
+        HiddeElement(inputFile, true);
+    }
+    $('#btnPrevisualizar').on('click', function () {
+        var newWindow = window.open();
+        newWindow.document.write('<iframe src=' + Base64 + ' style="height:100%; width:100%;"></iframe>');
+    });
+    $('#btnEliminarAdjunto').on('click', function () {
+        contenedor.innerHTML = '';
+        HiddeElement(inputFile, false);
+    });
+    var adjunto = {
+        'adjuntoBase64': Base64,
+        'tipoAdjunto': tipoAdjunto,
+        'nombre': nombre
+    }
+    return adjunto;
+}
+
+//Muestra archivos adjuntos
+async function ShowAttachments(file, contenedor, span, extencionesPermitidas, strExtenciones, inputFile = null, adjuntoMultiple = []) {
+    const sizeFile = Math.round((file.size / 1024));
+    if (sizeFile > 2048) {
+        span.innerText = 'Tamaño maximo permitido es de 2MB';
+        HiddeElement(span, false);
+        file = '';
+        return;
+    }
+    if (extencionesPermitidas.includes(file.type)) {
+        Base64 = await toBase64(file);
+        if (inputFile == null) {
+            inc++;
+            var codigo = 0;
+            if (multipleAttachments.length > 0) {
+                multipleAttachments.forEach(el => {
+                    if (codigo < el.codigo) {
+                        codigo = el.codigo;
+                    }
+                });
+            }
+            adjuntoMultiple.push({
+                'codigo': codigo == 0 ? inc : codigo + 1,
+                'adjuntoBase64': Base64,
+                'nombreAdjunto': file.name,
+                'tipoAdjunto': file.type,
+                'actionTemp': 'add'
+            });
+            contenedor.innerHTML = "";
+            adjuntoMultiple.forEach(el => {
+                AttachHTML(contenedor, el.Base64, el.tipoAdjunto, el.nombreAdjunto, inputFile, el.codigo);
+            });
+            return;
+        }
+        return AttachHTML(contenedor, Base64, file.type, file.name, inputFile);
+    }
+    span.innerText = 'Solo se admiten tipos de documentos ' + strExtenciones;
+    HiddeElement(span, false);
+    file = '';
+}
+
+fileContenedorMultipleFile.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    HiddeElement(spanFileMultipleFile, true);
+    $(fileContenedorMultipleFile).addClass('activeFile');
+});
+
+fileContenedorMultipleFile.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    HiddeElement(spanFileMultipleFile, true);
+    $(fileContenedorMultipleFile).removeClass('activeFile');
+});
+
+fileContenedorMultipleFile.addEventListener('drop', (e) => {
+    e.preventDefault();
+    HiddeElement(spanFileMultipleFile, true);
+    $(fileContenedorMultipleFile).removeClass('activeFile');
+    var files = e.dataTransfer.files;
+    var extencionesPermitidas = ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","image/png","image/jpeg","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/pdf"];
+    var strExtenciones = ".pdf, .docx,.xlsx , .jpeg y .png"; 
+    for (const file of files) {
+        ShowAttachments(file, contenedorMultipleFile, spanFileMultipleFile, extencionesPermitidas, strExtenciones, null, multipleAttachments);
+    };
+});
+
+$('#fileMultipleFile').on('change', async function () {
+    HiddeElement(spanFileMultipleFile, true);
+    var dato_archivo = $('#fileMultipleFile').prop("files")[0];
+    var extencionesPermitidas = ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","image/png","image/jpeg","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/pdf"];
+    var strExtenciones = ".pdf, .docx, .xlsx , .jpeg y .png"; 
+    await ShowAttachments(dato_archivo, contenedorMultipleFile, spanFileMultipleFile, extencionesPermitidas, strExtenciones, null, multipleAttachments);
+});
+
+$(contenedorMultipleFile).on('click', '.btnPrevisualizar', function (e) {
+    var cadenaViewId = e.target.parentElement.firstElementChild.id;
+    var id = "0";
+
+    if(cadenaViewId != ""){
+        id = cadenaViewId.replace(/btnPrevisualizar/i, "");
+    }else{
+        var cadenaEditId = e.target.parentElement.id;    
+        id = cadenaEditId.replace(/btnPrevisualizar/i, "");
+    }
+
+    var adjunto = multipleAttachments.find(p => p.codigo == parseInt(id));
+    var newWindow = window.open();
+    newWindow.document.write('<iframe src=' + adjunto.adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+});
+
+$(contenedorMultipleFile).on('click', '.btnEliminarAdjunto', function (e) {
+    var cadena = e.target.parentElement.id;
+    var id = cadena.replace(/btnEliminarAdjunto/i, "");
+    var adjunto = multipleAttachments.find(p => p.codigo == parseInt(id));
+    multipleAttachments = multipleAttachments.filter(p => p.codigo != adjunto.codigo);
+    multipleAttachmentsRemoved.push(adjunto);
+    var hijoA = document.getElementById(`contenedorMultipleFile${adjunto.codigo}`);
+    var hijoB = document.getElementById(`doc${adjunto.codigo}`);
+
+    if(hijoA != null){
+        contenedorMultipleFile.removeChild(hijoA);
+    }else{
+        contenedorMultipleFile.removeChild(hijoB);
+    }
+});
+
+$(contenedorMultipleFileViewDetails).on('click', '.btnPrevisualizar', function (e) {
+    var cadenaViewId = e.target.parentElement.firstElementChild.id;
+    var id = "0";
+
+    if(cadenaViewId != ""){
+        id = cadenaViewId.replace(/btnPrevisualizar/i, "");
+    }else{
+        var cadenaEditId = e.target.parentElement.id;    
+        id = cadenaEditId.replace(/btnPrevisualizar/i, "");
+    }
+
+    var adjunto = multipleAttachments.find(p => p.codigo == parseInt(id));
+    var newWindow = window.open();
+    newWindow.document.write('<iframe src=' + adjunto.adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+});
+
+//Carga documentos soporte adjuntos
+function UploadAttachments(codigo, tipoAdjunto, adjuntoBase64, action, attachmentName) {
+    if (action == 'ViewDetails') {
+        contenedorMultipleFileViewDetails.innerHTML +=
+            `<div class="row w-100 mt-2 contenerAdjuntos" id="contenedorMultipleFileViewDetails${codigo}">
+                <div class="col-11">
+                    <a type="buttton" class="btnPrevisualizar" id="btnPrevisualizar${codigo}">${attachmentName}</a>
+                </div>
+            <div>`;
+    } else {
+        contenedorMultipleFile.innerHTML +=
+            `<div class="row w-100 mt-2 contenerAdjuntos" id="contenedorMultipleFile${codigo}">
+                <div class="col-11">
+                    <a type="buttton" class="btnPrevisualizar" id="btnPrevisualizar${codigo}">${attachmentName}</a>
+                </div>
+                <div class="text-end col-1">
+                    <a type="button" class="btnEliminarAdjunto" id="btnEliminarAdjunto${codigo}"><span class="fas fa-times"></span></a>
+                <div>
+            <div>`;
+    }            
+}
+
+// Permite campos solo numeros
+function OnlyNumberKey(evt) {        
+    var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+    if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+        return false;
+    return true;
+}
+
+//Carga los cupos de la venta
+async function LoadQuotas(responseJsonQuotas, form/*, typeDocument, documentNumber*/) {
+
+    var duplicatedQuotasNot = [];
+    totalAvailable = 0;
+    responseJsonQuotas.forEach(element => {
+        var quota = duplicatedQuotasNot.find(p => p.numberResolution == element.numberResolution);
+        if (quota == null || quota == undefined) {
+            duplicatedQuotasNot.push(element);
+        }
+        totalQuotasSold += parseInt(element.quotasSold);
+    });
+        
+    if (duplicatedQuotasNot.length > 0) {
+        duplicatedQuotasNot.forEach(el => {
+            totalAvailable = totalAvailable + el.quotasAvailable;
+        });
+    }
+
+    if(form != 'ViewDetails' && validarVista){
+        $(numberSold).val(totalQuotasSold);    
+        $(inventoryAvailability).val(totalQuotasSold);
+    }
+
+    tableQuotas = $(`#TableCuposShow`).DataTable({
+    destroy: true,
+    scrollX: true,
+    lengthChange: true,
+    lengthMenu: [5, 10, 20, 50, 100],
+    paging: true,
+    info: true,
+    dom:
+        "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+        "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+    language: {
+        lengthMenu: "Resultados pág. _MENU_",
+        info: "_START_ al _TOTAL_ Resultados",
+        search: "",
+        searchPlaceholder: "Buscar",
+        zeroRecords: "No se encontraron resultados",
+        infoEmpty: "0 al 0 Resultados",
+        paginate: {
+        previous: "Anterior",
+        next: "Siguiente",
+        },
+    },
+    data:responseJsonQuotas,
+    columns:[
+        {
+            "data":"code",
+            className:"d-none"
+        },                
+        {
+            "data":"numberResolution",
+        },
+        {
+            "data": "speciesCode",
+            className:"d-none"
+        },
+        {
+            "data": "speciesCode",
+            render: function (data) {
+                var especieNombre;
+                responseJsonSpecies.forEach(el => {
+                    if (el.code == data) {
+                        especieNombre = el.scientificName;
+                    }
+                });
+                return especieNombre;
+            } 
+        },    
+        {
+            "data": "yearProduction",
+        },   
+        {
+            "data": "quotasAdvantageCommercialization",
+        },
+        {
+            "data": "quotasRePoblation",
+        },
+        {
+            "data": "quotasGrant",
+        },
+        {
+            "data": "quotasAvailable",
+        }, 
+        {
+            "data": "quotasSold",
+        },                        
+        {
+            "data": "initialNumeration",
+        },
+        {
+            "data": "finalNumeration",
+        },                 
+        {
+            "data": "initialNumerationSeal",
+            render: function(data){
+                if(data!=null){
+                    return data;
+                }
+                return '';
+            }
+        },                
+        {
+            "data": "finalNumerationSeal",
+            render: function(data){
+                if(data!=null){
+                    return data;
+                }
+                return '';
+            }
+        }         
+        ],
+        columnDefs: [{
+            targets: 13
+        }]  
+    });
+    agregarClasesDatatable(`#TableCuposShow`);
+    HiddeElement(document.querySelectorAll('#divCupos'), true);
+    HiddeElement(document.querySelectorAll('#divCuposShow'), false);
+
+    tableQuotas = $(`#TableCuposDetails`).DataTable({
+    destroy: true,
+    scrollX: true,
+    lengthChange: true,
+    lengthMenu: [5, 10, 20, 50, 100],
+    paging: true,
+    info: true,
+    dom:
+        "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+        "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+    language: {
+        lengthMenu: "Resultados pág. _MENU_",
+        info: "_START_ al _TOTAL_ Resultados",
+        search: "",
+        searchPlaceholder: "Buscar",
+        zeroRecords: "No se encontraron resultados",
+        infoEmpty: "0 al 0 Resultados",
+        paginate: {
+        previous: "Anterior",
+        next: "Siguiente",
+        },
+    },
+    data:responseJsonQuotas,
+    columns:[
+        {
+            "data":"code",
+            className:"d-none"
+        },                
+        {
+            "data":"numberResolution",
+        },
+        {
+            "data": "quotasGrant",
+        },
+
+        {
+            "data": "quotasAdvantageCommercialization",
+        },
+        {
+            "data": "quotasRePoblation",
+        },
+        {
+            "data": "quotasAvailable",
+        },    
+        {
+            "data": "yearProduction",
+        },
+        {
+            "data": "speciesCode",
+            className:"d-none"
+        },             
+        {
+            "data": "speciesCode",
+            render: function (data) {
+                var especieNombre;
+                responseJsonSpecies.forEach(el => {
+                    if (el.code == data) {
+                        especieNombre = el.scientificName;
+                    }
+                });
+                return especieNombre;
+            } 
+        },      
+        {
+            "data": "quotasSold",
+        },                        
+        {
+            "data": "initialNumeration",
+        },
+        {
+            "data": "finalNumeration",
+        },                    
+        {
+            "data": "initialNumerationSeal",
+            render: function(data){
+                if(data!=null){
+                    return data;
+                }
+                return '';
+            }
+        },                
+        {
+            "data": "finalNumerationSeal",
+            render: function(data){
+                if(data!=null){
+                    return data;
+                }
+                return '';
+            }
+        }
+        ],
+        columnDefs: [{
+            targets: 13
+        }]  
+    });  
+    
+    tableQuotas = $(`#TableCuposEdit`).DataTable({
+    destroy: true,
+    scrollX: true,
+    lengthChange: true,
+    lengthMenu: [5, 10, 20, 50, 100],
+    paging: true,
+    info: true,
+    dom:
+        "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+        "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+    language: {
+        lengthMenu: "Resultados pág. _MENU_",
+        info: "_START_ al _TOTAL_ Resultados",
+        search: "",
+        searchPlaceholder: "Buscar",
+        zeroRecords: "No se encontraron resultados",
+        infoEmpty: "0 al 0 Resultados",
+        paginate: {
+        previous: "Anterior",
+        next: "Siguiente",
+        },
+    },
+    data:responseJsonQuotas,
+    columns:[
+        {
+            "data":"code",
+            className:"d-none"
+        },                
+        {
+            "data":"numberResolution",
+        },
+        {
+            "data": "quotasGrant",
+        },
+
+        {
+            "data": "quotasAdvantageCommercialization",
+        },
+        {
+            "data": "quotasRePoblation",
+        },
+        {
+            "data": "quotasAvailable",
+        },    
+        {
+            "data": "yearProduction",
+        },
+        {
+            "data": "speciesCode",
+            className:"d-none"
+        },             
+        {
+            "data": "speciesCode",
+            render: function (data) {
+                var especieNombre;
+                responseJsonSpecies.forEach(el => {
+                    if (el.code == data) {
+                        especieNombre = el.scientificName;
+                    }
+                });
+                return especieNombre;
+            } 
+        },      
+        {
+            "data": "quotasSold",
+        },                        
+        {
+            "data": "initialNumeration",
+        },
+        {
+            "data": "finalNumeration",
+        },                        
+        {
+            "data": "initialNumerationSeal",
+            render: function(data){
+                if(data!=null){
+                    return data;
+                }
+                return '';
+            }
+        },                
+        {
+            "data": "finalNumerationSeal",
+            render: function(data){
+                if(data!=null){
+                    return data;
+                }
+                return '';
+            }
+        }       
+        ],
+    columnDefs: [{
+        targets: 13
+    }]  
+});      
+}
+
+//Carga el Inventario de la venta
+async function LoadInventory(responseJsonInventory, form) {     
+    responseJsonInventory.forEach(element => {
+        totalQuotasSold += parseInt(element.inventorySold);
+    }); 
+
+    if(form != 'ViewDetails' && validarVista){
+        $(numberSold).val(totalQuotasSold);    
+        $(inventoryAvailability).val(totalQuotasSold);
+    }
+
+    let columns=[
+        {
+            "data": "code",
+            className:"d-none"
+        },                  
+        {
+            "data": "numberSaleCarte",
+        },
+        {
+            "data": "reasonSocial",
+        },
+        {
+            "data": "saleDate",           
+        },
+        {
+            "data": "availabilityInventory",
+        },
+        {
+            "data": "year",
+        },
+        {
+            "data": "speciesCode",
+            className:"d-none"
+        },               
+        {
+            "data": "speciesCode",
+            render: function (data) {
+                var especieNombre;
+                responseJsonSpecies.forEach(el => {
+                    if (el.code == data) {
+                        especieNombre = el.scientificName;
+                    }
+                });
+                return especieNombre;
+            } 
+        },            
+        {
+            "data": "availableInventory",
+        },
+        {
+            "data": "inventorySold",
+        },
+        {
+            "data": "initialNumeration",
+        },
+        {
+            "data": "finalNumeration",
+        },   
+        {
+            "data": "initialNumerationSeal",
+            render: function(data){
+                if(data!=null){
+                    return data;
+                }
+                return '';
+            }
+        },                
+        {
+            "data": "finalNumerationSeal",
+            render: function(data){
+                if(data!=null){
+                    return data;
+                }
+                return '';
+            }
+        }, 
+        {
+            "data":"quotaCode",
+            className:"d-none"
+        }                                               
+    ];
+    DataTableGenerico('#TableInventoryShow', columns, responseJsonInventory, 14);
+    HiddeElement(document.querySelectorAll('#divInventory'), true);
+    HiddeElement(document.querySelectorAll('#divInventoryShow'), false);
+
+    tableInventory = $(`#TableInventoryDetails`).DataTable({
+    destroy: true,
+    scrollX: true,
+    lengthChange: true,
+    lengthMenu: [5, 10, 20, 50, 100],
+    paging: true,
+    info: true,
+    dom:
+    "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+    "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+    language: {
+    lengthMenu: "Resultados pág. _MENU_",
+    info: "_START_ al _TOTAL_ Resultados",
+    search: "",
+    searchPlaceholder: "Buscar",
+    zeroRecords: "No se encontraron resultados",
+    infoEmpty: "0 al 0 Resultados",
+    paginate: {
+        previous: "Anterior",
+        next: "Siguiente",
+    },
+    },
+    data:responseJsonInventory,
+    columns:[
+        {
+            "data": "code",
+            className:"d-none"
+        },                  
+        {
+            "data": "numberSaleCarte",
+        },
+        {
+            "data": "reasonSocial",
+        },
+        {
+            "data": "saleDate",
+            render: function (data) {
+                if (data != null) {
+                return moment(data).format("DD-MM-yyyy");
+                }
+                return data;
+            },             
+        },
+        {
+            "data": "availabilityInventory",
+        },
+        {
+            "data": "year",
+        },
+        {
+            "data": "speciesCode",
+            render: function (data) {
+                var especieNombre;
+                responseJsonSpecies.forEach(el => {
+                    if (el.code == data) {
+                        especieNombre = el.scientificName;
+                    }
+                });
+                return especieNombre;
+            } 
+        }, 
+        {
+            "data": "availableInventory",
+        },
+        {
+            "data": "inventorySold",
+        },
+        {
+            "data": "initialNumeration",
+        },
+        {
+            "data": "finalNumeration",
+        },   
+        {
+            "data": "initialNumerationSeal",
+            render: function(data){
+                if(data!=null){
+                    return data;
+                }
+                return '';
+            }
+        },                
+        {
+            "data": "finalNumerationSeal",
+            render: function(data){
+                if(data!=null){
+                    return data;
+                }
+                return '';
+            }
+        }                                           
+        ],
+        columnDefs: [{
+            targets: 11
+        }]
+    });
+    agregarClasesDatatable(`#TableInventoryDetails`);
+    
+    tableInventory = $(`#TableInventoryEdit`).DataTable({
+    destroy: true,
+    scrollX: true,
+    lengthChange: true,
+    lengthMenu: [5, 10, 20, 50, 100],
+    paging: true,
+    info: true,
+    dom:
+    "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+    "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+    language: {
+    lengthMenu: "Resultados pág. _MENU_",
+    info: "_START_ al _TOTAL_ Resultados",
+    search: "",
+    searchPlaceholder: "Buscar",
+    zeroRecords: "No se encontraron resultados",
+    infoEmpty: "0 al 0 Resultados",
+    paginate: {
+        previous: "Anterior",
+        next: "Siguiente",
+    },
+    },
+    data:responseJsonInventory,
+    columns:[
+        {
+            "data": "code",
+            className:"d-none"
+        },                  
+        {
+            "data": "numberSaleCarte",
+        },
+        {
+            "data": "reasonSocial",
+        },
+        {
+            "data": "saleDate",
+            render: function (data) {
+                if (data != null) {
+                return moment(data).format("DD-MM-yyyy");
+                }
+                return data;
+            },             
+        },
+        {
+            "data": "availabilityInventory",
+        },
+        {
+            "data": "year",
+        },
+        {
+            "data": "speciesCode",
+            render: function (data) {
+                var especieNombre;
+                responseJsonSpecies.forEach(el => {
+                    if (el.code == data) {
+                        especieNombre = el.scientificName;
+                    }
+                });
+                return especieNombre;
+            } 
+        }, 
+        {
+            "data": "availableInventory",
+        },
+        {
+            "data": "inventorySold",
+        },
+        {
+            "data": "initialNumeration",
+        },
+        {
+            "data": "finalNumeration",
+        },  
+        {
+            "data": "initialNumerationSeal",
+            render: function(data){
+                if(data!=null){
+                    return data;
+                }
+                return '';
+            }
+        },                
+        {
+            "data": "finalNumerationSeal",
+            render: function(data){
+                if(data!=null){
+                    return data;
+                }
+                return '';
+            }
+        }                                          
+        ],
+        columnDefs: [{
+            targets: 11
+        }]    
+    });
+
+    
+    agregarClasesDatatable(`#TableInventoryEdit`);  
+
+}
+
+
+    const almacenarDataShopperSession = () =>{
+            const shopperFormDocuments = {  
+                'inventoryAvailability' : $(inventoryAvailability).val(),
+                'typeDocumentShopper': $(TypeDocumentShopper).val(),
+                'businessShopper': $(Shopper).val(),              
+                'typeSpecimenShopper': $(TypeSpecimenShopperTxt).val(),
+                'documentNumberShopper': $(DocumentNumberShopper).val(),
+                'reasonSocialShopper': $(ReasonSocialShopper).val(),
+                'observationsShopper': $(ObservationsShopper).val(),
+            };
+            sessionStorage.setItem("ShopperDocumentTemp", JSON.stringify(shopperFormDocuments));
+    }
+
+    const direccionarASeccionSUNL = () =>{        
+            almacenarDataShopperSession();
+            let url = `@Url.Action("ExceptConduitMobilization", "SaleDocument")`;
+            window.location = url;
+    }
+
+    const btnSUNL = document.querySelector('#btnSUNL');
+
+    btnSUNL.addEventListener('click', () =>{
+        direccionarASeccionSUNL();
+    });
+
+    const cargarDatosCompradorSession = () => {
+
+        let shopperDocumentTemp = sessionStorage.getItem("ShopperDocumentTemp");
+        if(shopperDocumentTemp !== null)
+        {
+            const dataTemporalShopper = JSON.parse(shopperDocumentTemp);
+            $(inventoryAvailability).val(dataTemporalShopper.inventoryAvailability);
+            $(TypeDocumentShopper).val(dataTemporalShopper.typeDocumentShopper);
+            $(Shopper).val(dataTemporalShopper.businessShopper);
+            $(TypeSpecimenShopperTxt).val(dataTemporalShopper.typeSpecimenShopper);
+            $(DocumentNumberShopper).val(dataTemporalShopper.documentNumberShopper);
+            $(ReasonSocialShopper).val(dataTemporalShopper.reasonSocialShopper);
+            $(ObservationsShopper).val(dataTemporalShopper.observationsShopper);
+
+        }
+
+       
+    }
+</script>

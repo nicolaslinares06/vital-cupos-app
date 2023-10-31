@@ -1,0 +1,175 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h2 id="tituloAccionEspecieExportar"></h2>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="sltEspecimen" class="form-label required">Nombre de especie</label>
+            <select class="select2" name="states[]" id="sltEspecimen" disabled>
+            </select>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtNombreEspecie" class="form-label">Tipo de espécimen válido para
+                exportar</label>
+            <input type="text" class="form-control" name="txtNombreEspecie" readonly id="txtNombreEspecie"
+                placeholder="Nombre de especie" />
+            <span id="validacionNombreEspecie" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtAnioProduccionEspecimen" class="form-label required">Año de Producción</label>
+            <input type="text" class="form-control" name="txtAnioProduccionEspecimen" id="txtAnioProduccionEspecimen"
+                placeholder="Año de Produccion" readonly />
+            <span id="validacionAnioProduccionEspecimen" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtMarcaLote" class="form-label">Marca del lote</label>
+            <input type="text" class="form-control" name="txtMarcaLote" id="txtMarcaLote"
+                placeholder="Marca del lote" readonly/>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label class="form-label required">Tipo de marcaje</label>
+            <div class="marginL-25">
+                <div id="divChecksTipoMarcaje" >
+                </div>
+            </div>
+            <span id="validacionTipoMarcaje" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtCondicionesMarcaje" class="form-label">Condiciones de marcaje</label>
+            <textarea class="form-control" readonly id="txtCondicionesMarcaje" rows="4"></textarea>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtMarcaLote" class="form-label">Población parental</label>
+            <div class="d-flex">
+                <div class="col-4 p-1">
+                    <label for="txtMachos" class="form-label required">Machos</label>
+                    <input type="number" class="form-control" name="txtMachos" readonly id="txtMachos" placeholder="Machos" />
+                </div>
+                <div class="col-4 p-1">
+                    <label for="txtHembras" class="form-label required">Hembras</label>
+                    <input type="number" class="form-control" name="txtHembras" readonly id="txtHembras" placeholder="Hembras" />
+                </div>
+                <div class="col-4 p-1">
+                    <label for="txtTotalPoblacion" class="form-label required">Total</label>
+                    <input type="number" class="form-control" name="txtTotalPoblacion"  readonly id="txtTotalPoblacion"
+                        placeholder="Total" readonly />
+                    <span id="validacionTotalPoblacion" class="span-advertencia d-none">Campo Poblacion de Hembras o
+                        Machos Obligatorio</span>
+                </div>
+            </div>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtSalioIncubadora" class="form-label">Población que salio de incubadora y supero con exito los
+                15 DDE</label>
+            <input type="number" class="form-control" name="txtSalioIncubadora" readonly id="txtSalioIncubadora"
+                placeholder="Poblacion que salio de incubadora y supero con exito los 15 DDE" />
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtPoblacionDispCupos" class="form-label required">Poblaciòn disponible para cupos</label>
+            <input type="number" class="form-control" name="txtPoblacionDispCupos" readonly id="txtPoblacionDispCupos"
+                placeholder="Poblacion disponible para cupos" />
+            <span id="validacionPoblacionDispCupos" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtIndividuasRepoblacion" class="form-label required">Individuos destinados a
+                repoblaciòn</label>
+            <input type="number" class="form-control" name="txtIndividuasRepoblacion" id="txtIndividuasRepoblacion"
+                placeholder="Individuos destinados a repoblacion" readonly />
+            <span id="validacionIndividuasRepoblacion" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtCuposAprovechamientoOtorgados" class="form-label required">Cupos de Aprovechamiento y
+                Comercialización</label>
+            <input type="number" class="form-control" name="txtCuposAprovechamientoOtorgados"
+                readonly id="txtCuposAprovechamientoOtorgados" placeholder="Cupos de aprovechamiento otorgados" readonly />
+            <span id="validacionCuposAprovechamientoOtorgados" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtTasaReposicion" class="form-label">Individuos de reposición (%)</label>
+            <input type="number" class="form-control" name="txtTasaReposicion" readonly id="txtTasaReposicion"
+                placeholder="Tasa de reposicion" />
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtNumeroMortalidad" class="form-label">número de mortalidad</label>
+            <input type="number" class="form-control" name="txtNumeroMortalidad" readonly id="txtNumeroMortalidad"
+                placeholder="número de mortalidad" />
+            <span id="validaciontxtNumeroMortalidad" class="span-advertencia d-none">Numero de mortalidad no debe ser mayor a la cantidad de cupos que se otorgaron</span>
+        </div>
+        <div class="mb-1 mt-1 col-12">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" readonly id="CheckSeRealizoPagoCuotaRepoblacion">
+                <label class="form-check-label" for="flexSwitchCheckChecked">Se realizo pago de cuota de
+                    repoblacion</label>
+            </div>
+        </div>
+        <div class="row" id="divCuotaRepoblacion">
+            <h2>Datos para cuota de repoblacion</h2>
+            <div class="mb-1 mt-1 col-6">
+                <label class="form-label required" for="chksEsAprovechamiento">Cuota de repoblaciòn es para
+                    aprovechamiento</label>
+                <div id="chksEsAprovechamiento" class="text-center">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="chkSiEsAprovechamiento"
+                            id="chkSiEsAprovechamiento" value="1" disabled>
+                        <label class="form-check-label" for="chkSiEsAprovechamiento">Si</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="chkNoEsAprovechamiento"
+                            id="chkNoEsAprovechamiento" value="0" disabled>
+                        <label class="form-check-label" for="chkNoEsAprovechamiento">No</label>
+                    </div>
+                </div>
+                <span id="validacionEsAprovechamiento" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="sltPagoCuotaRepoblacion" class="form-label required">Pago de cuota de repoblación</label>
+                <select class="form-select" id="sltPagoCuotaRepoblacion" disabled>
+                </select>
+                <span id="validarsltPagoCuotaRepoblacion" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtCuposAprovOtorgPagada" class="form-label required">Cupos de aprovechamiento otorgados
+                    pagada la
+                    cuota
+                    de repoblación</label>
+                <input type="number" class="form-control" name="txtCuposAprovOtorgPagada" readonly id="txtCuposAprovOtorgPagada"
+                    placeholder="Cupos de aprovechamiento otorgados pagada la cuota de repoblacion" disabled />
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtFechaRadicado" class="form-label required">Fecha de pago de couta de repoblación</label>
+                <input type="date" class="form-control" name="txtFechaRadicado" readonly id="txtFechaRadicado"
+                    placeholder="Fecha radicado" />
+                <span id="validartxtFechaRadicado" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtnumeroInternoInicialCuotaRepoblacion" class="form-label required">N° Interno inicial
+                    cuota de repoblación</label>
+                <input type="number" class="form-control" name="txtnumeroInternoInicialCuotaRepoblacion"
+                    readonly id="txtnumeroInternoInicialCuotaRepoblacion"
+                    placeholder="N° Interno inicial cuota de repoblación" readonly/>
+                <span id="validartxtnumeroInternoInicialCuotaRepoblacion" class="span-advertencia d-none">Campo
+                    Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtnumeroInternoFinalCuotaRepoblacion" class="form-label required">N° Interno final cuota de
+                    repoblación</label>
+                <input type="number" class="form-control" name="txtnumeroInternoFinalCuotaRepoblacion"
+                   readonly  id="txtnumeroInternoFinalCuotaRepoblacion" placeholder="N° Interno final cuota de repoblación" readonly/>
+                <span id="validartxtnumeroInternoFinalCuotaRepoblacion" class="span-advertencia d-none">Campo
+                    Obligatorio</span>
+            </div>
+        </div>
+        <div class="mb-1 mt-3 col-6">
+            <label class="form-label required">Documentos de Soporte</label>
+            
+            
+            <div id="divAdjuntoespecie">
+
+            </div>
+        </div>
+        <div class="mb-1 mt-1 col-12" id="divObservacionesEspecieExportar">
+            <label for="txtObservacionesEspecieExportar" class="form-label">Observaciones</label>
+            <textarea class="form-control" id="txtObservacionesEspecieExportar" rows="4" readonly></textarea>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,153 @@
+﻿@model Web.Models.RegistroVisitaDeCortesModels
+
+
+
+
+<div class="container">
+
+    <div>
+        <a asp-controller="Home" asp-action="Index">Modulo de Cupos </a>  >  <strong>Registrar visita de Cortes</strong>
+    </div>
+    <partial name="Partials/_SeccionBotonAyuda"></partial>
+    <div class="row">
+        <div class="container">
+            <div id="divBuscador" class="w-100">
+                <h4 class="titulosModalControl">Registrar visita de cortes</h4>
+                <div class="mb-2 mt-2 ">
+                   
+                    <div class="d-flex col-12 justify-content-around">
+                        <div class="col-3">  
+                            <label for="SelectTipoEstablecimiento" class="form-label">Tipo de Establecimiento</label>
+                            <select asp-for="IdTipoEstablecimiento" asp-items="Model.TipoEstablecimientos" class="form-select"></select>
+                        </div>
+                         <div class="col-3">
+                            <label for="@Model.IdEstablecimiento" class="form-label">Establecimientos</label>
+                            <select asp-for="IdEstablecimiento" class="form-select"></select>
+                        </div>
+                        <div class="col-2">
+                            <label for="@Model.FechaVisita" class="form-label">Fecha Visita</label>
+                            <input asp-for="FechaVisita" class="form-control">
+                        </div>
+                        <div class="col-2 d-flex align-items-end">
+                            <button type="button" id="btnBuscarActasEstablecimiento" class="btn btn-primary btnBuscar">Consultar</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <br />
+
+            <a asp-controller="RegistroVisitaDeCortes" asp-action="CreateTipoActaCorte" class="btn btn-primary bordesButon mb-2">Agregar Registro</a>
+
+
+
+            <div class="mt-3">
+                <!--<h4 class="titulosModalControl">Resoluciones Registradas</h4>-->
+                <div class="mt-2 mb-2 divTabla">
+                    <div class="table-responsive">
+                        <table id="TablaActas" class="table w-100">
+                            <caption class="d-none">Table Description</caption>
+                            <thead>
+                                <tr>
+                                    <th class="table-pendientes-th-td">Tipo de Acta</th>
+                                    <th class="table-pendientes-th-td">Visita Nro</th>
+                                    <th class="table-pendientes-th-td">Establecimiento</th>
+                                    <th class="table-pendientes-th-td">Tipo de Establecimiento</th>
+                                    <th class="table-pendientes-th-td">Fecha Visita</th>
+                                    <th class="table-pendientes-th-td">Fecha Registro</th>
+                                    <th class="table-pendientes-th-td">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="modal fade ModalConfirmacioneliminacion"
+     id="ModalConfirmacioneliminacion"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <input type="hidden" id="HiddenIdActavisita" value="" />
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro de que desea inhabilitar la informacion?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btnModalConfirmacion btn btn-primary">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+                                NO
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade"
+     id="ModalMensajeError"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="labelConfirmacionProceso">¿Está seguro de que desea inhabilitar la informacion?</p>
+                    </div>
+                    <div class="row row d-flex justify-content-center">
+                        <div class="col-6">
+                            <button type="button" id="btnExitoInhabilitado" class="btn btn-primary">Aceptar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script src="~/js/RegistroDeVisitaDeCortes/ActaVisitaIndex.js" asp-append-version="true"></script>
+
+}
+

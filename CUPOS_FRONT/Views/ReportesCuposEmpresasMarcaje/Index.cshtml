@@ -1,0 +1,222 @@
+﻿@model CUPOS_FRONT.Models.ReportesCuposEmpresasMarcajeModels.PropsViewModel;
+
+<div class="container">
+
+    <div>
+        <a asp-controller="Home" asp-action="Reportes">Modulo de Reportes </a>  >  <strong>Reportes de Establecimientos</strong>
+    </div>
+    <div class="receptor-buttons-ayuda-inicio text-end">
+        <button type="submit" class="btn-Ayuda-AdminActividades btn btn-secondary" title="Ayuda">AYUDA</button>
+        <button type="submit" class="btn btn-secondary" title="Inicio">INICIO</button>
+    </div>
+    <div class="row">
+        <div class="container">
+            <div class="w-100">
+                <h2>Reportes cupos por Establecimientos</h2>
+                <div class="row mt-2">
+                    @*<div class="d-flex col-12 justify-content-around">*@
+                    <div class="col-md-3 mb-1">  
+                        <label for="@Model.TipoEmpresa" class="form-label">Tipo de Establecimiento</label>
+                        <select asp-for="TipoEmpresa" asp-items="Model.TipoEstablecimientos" class="form-select"></select>                          
+                    </div>
+                        <div class="col-md-3 mb-1">
+                        <label for="@Model.NIT" class="form-label">Nit Establecimiento</label>
+                        <input type="text" asp-for="NIT" />
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="@Model.NombreEmpresa" class="form-label">Nombre Establecimiento</label>
+                        <input type="text" asp-for="NombreEmpresa" value=""/>               
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="@Model.NumeroResolucion" class="form-label">Numero Resolución</label>
+                        <input type="text" asp-for="NumeroResolucion"/>                
+                    </div>                       
+                    @*</div>*@
+                </div>
+                <div class="row mt-2">
+                    @*<div class="d-flex col-12 justify-content-around">*@
+                    <div class="col-md-3 mb-1">  
+                        <label for="@Model.Estado" class="form-label">Estado Establecimiento</label>
+                        <select asp-for="Estado" asp-items="Model.Estados" class="form-select"></select>   
+                    </div>
+                        <div class="col-md-3 mb-1">
+                        <label for="@Model.EstadoEmisionCITES" class="form-label">Estado Emisión Cites</label>
+                        <select asp-for="EstadoEmisionCITES" asp-items="Model.Estados" class="form-select"></select>  
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="@Model.FechaEmisionResolucionDesde" class="form-label">Fecha Resolución Desde</label>
+                        <input asp-for="FechaEmisionResolucionDesde" />               
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="@Model.FechaEmisionResolucionHasta" class="form-label">Fecha Resolución Hasta</label>
+                        <input  asp-for="FechaEmisionResolucionHasta" />                
+                    </div>
+                    @*</div>*@
+                </div>
+            </div>
+            <br />
+            <div class="mt-2 row justify-content-end">
+                <div class="col-2">
+                    <button id="btnConsultarDatos" class="btn btn-primary bordesButon mb-2">Consultar</button>
+                </div>
+            </div>
+            @*<div class="row">
+                <div class="col-md-6 mt-1">
+                    <button id="btnExportarExcel" class="btn btn-primary bordesButon mb-2">Exportar Excel</button>
+                    <button id="btnExportarPDF" class="btn btn-danger bordesButon mb-2">Exportar PDF</button>
+                </div>
+            </div>*@
+            <div class="mt-3">
+                <!--<h4 class="titulosModalControl">Resoluciones Registradas</h4>-->
+                <div class="mt-2 mb-2 divTabla">
+                    <div class="table-responsive">
+                        <table id="TablaReporteriaCupos" class="table w-100">
+                            <caption class="d-none">Table Description</caption>
+                            <thead>
+                                <tr>
+                                    <th class="th-mediumText">Tipo de Establecimiento</th>
+                                    <th class="th-bigText">Nombre de Establecimiento</th>
+                                    <th class="th-mediumText">Nit</th>
+                                    <th class="th-mediumText">Estado Establecimiento</th>
+                                    <th class="th-bigText">Estado de Emisión CITES</th>
+                                    <th class="th-mediumText">Numero de Resolución</th>
+                                    <th class="th-bigText">Fecha de Emisión Resolución</th>
+                                    <th class="th-mediumText">Especie</th>
+                                    <th class="th-mediumText">Machos</th>
+                                    <th class="th-mediumText">Hembras</th>
+                                    <th class="th-bigText">Población Total Parental</th>
+                                    <th class="th-mediumText">Año de Producción</th>
+                                    <th class="th-mediumText">Cupos de aprovechamiento y comercialización</th>
+                                    <th class="th-mediumText">Cuota Repoblación</th>
+                                    <th class="th-bigText">Total de cupos Asignados</th>
+                                    <th class="th-bigText">Soporte de Repoblacion</th>
+                                    <th class="th-mediumText">Cupos Utilizados</th>
+                                    <th class="th-mediumText">Cupos Disponibles</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-2 row justify-content-center">
+                <div class="col-2">
+                    <a class="btn btn-primary bordesButon mb-2" asp-action="Reportes" asp-controller="Home" >Regresar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+
+    <script src="~/js/ReportesEmpresasMarcaje/ReportesIndex.js" asp-append-version="true"></script>
+    <script>
+        module.inicializarProcesos();
+
+        $(document).ready(async function() {
+            let urlBase = window.location.origin;
+            let url = `${urlBase}/ReportesCuposEmpresasMarcaje/DatosTablaReporte`;
+            let resp = await Get(url);
+
+            //TablaReporteriaCupos = $(`#TablaReporteriaCupos`).DataTable({
+            //    destroy: true,
+            //    scrollX: true,
+            //    lengthChange: true,
+            //    lengthMenu: [5, 10, 20, 50, 100],
+            //    paging: true,
+            //    info: true,
+            //    filter: false,
+            //    dom: "<'row'<'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            //    language: {
+            //        lengthMenu: "Resultados pág. _MENU_",
+            //        info: "_START_ al _TOTAL_ Resultados",
+            //        search: '',
+            //        searchPlaceholder: "Buscar",
+            //        zeroRecords: "No se encontraron resultados",
+            //        infoEmpty: "0 al 0 Resultados",
+            //        paginate: {
+            //            previous: 'Anterior',
+            //            next: 'Siguiente'
+            //        }
+            //    },
+            //    data: resp,
+            var columns = [
+                {
+                    "data": "tipoEmpresa"
+                },
+                {
+                    "data": "nombreEmpresa"
+                },
+                {
+                    "data": "nit"
+                },
+                {
+                    "data": "estado"
+                },
+                {
+                    "data": "estadoEmisionCITES"
+                },
+                {
+                    "data": "numeroResolucion"
+                },
+                {
+                    "data": "fechaEmisionResolucion",
+                    render: function(data) {
+                        return moment(data).format('DD-MM-yyyy')
+                    }
+                },
+                {
+                    "data": "especies"
+                },
+                {
+                    "data": "machos"
+                },
+                {
+                    "data": "hembras"
+                },
+                {
+                    "data": "poblacionTotalParental"
+                },
+                {
+                    "data": "anioProduccion"
+                },
+                {
+                    "data": "cuposComercializacion"
+                },
+                {
+                    "data": "cuotaRepoblacion"
+                },
+                {
+                    "data": "cuposAsignadosTotal"
+                },
+                {
+                    "data": "soportesRepoblacion",
+                    render: function(data) {
+                        if (data) {
+                            return 'Si';
+                        }
+                        return 'No';
+                    }
+                },
+                {
+                    "data": "cupoUtilizado"
+                },
+                {
+                    "data": "cupoDisponible"
+                },
+            ];
+            //    columnDefs: [{
+            //        targets: 17
+            //    }]
+
+            //});
+            //agregarClasesDatatable(`#TablaReporteriaCupos`);
+            DataTableGenericoBotones('#TablaReporteriaCupos', columns, resp, 17);
+        });
+    </script>
+}
+

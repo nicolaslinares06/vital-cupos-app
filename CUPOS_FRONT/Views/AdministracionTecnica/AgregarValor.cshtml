@@ -1,0 +1,141 @@
+﻿@model Web.Models.AdminTecnicaReq;
+
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<div class="tab-pane container active p-2" id="form-agregarValor">
+    <form asp-controller="AdministracionTecnica" asp-action="Crear" method="post" id="form-creacion-tabla">
+        <div class="col-form-label mt-1 mb-1">
+            <h1>Crear Parámetro Técnico</h1>
+        </div>
+        <div class="col-form-label mt-1 mb-1">
+            <h2>Información del parámetro técnico</h2>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 mb-1">
+                <label for="nombreTablaCreada" class="form-label">Nombre</label>
+                <input type="text" asp-for="nombre" class="form-control" id="nombreTablaCreada"/>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="ValorTablaCreada" class="form-label">Valor</label>
+                <input type="text" asp-for="valor" class="form-control" id="ValorTablaCreada"/>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="DescripcionTabla" class="form-label">Descripción</label>
+                <input type="text" asp-for="descripcion" class="form-control" id="DescripcionTabla"/>
+            </div>
+            @*<div class="mensaje-error-creacion-tabla">
+                <div class="alert alert-dismissible alert-info" id="alerta-crear-tabla">
+                    <button type="button" id="cerrar-alert-tabla" class="cerrar-alert" data-dismiss="alert">
+                        &times;
+                    </button>
+                    <strong>¡¡AVISO!!</strong>
+                    <br>
+                    <div class="alerta-password-diferente" id="alert-creacion-tabla">
+                        
+                    </div>
+                </div>
+            </div>*@
+            <div class="mt-2 row justify-content-center">
+                <div class="col-2">
+                    <button type="button" class="btn-aceptar-crear-tabla btn btn-primary w-100">GUARDAR</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn-volver-crear-tabla btn btn-secondary w-100">VOLVER</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal confirmacion creacion de rol -->
+<div class="modal fade" id="creacion-tabla" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro que desea crear el valor?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="boton-si-crear-tabla btn btn-primary w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal respuesta creacion rol -->
+<div class="modal fade" id="resp-creacion-tabla" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>@ViewBag.RespuestaCreacionTabla</p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="cerrar-modal-actualizar btn btn-primary w-100">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
+<script>
+$(".btn-volver-crear-tabla").click(function() {
+    document.location.href = "/AdministracionTecnica/Index";
+});
+
+$(".btn-aceptar-crear-tabla").click(function() {
+    $("#creacion-tabla").modal("show");
+});
+
+//$(".boton-no-crear-tabla").click(function() {
+//    $("#creacion-tabla").modal("hide");
+//});
+
+$(".boton-si-crear-tabla").click(function() {
+    $("#creacion-tabla").modal("hide");
+    $("#form-creacion-tabla").submit();
+});
+
+$(document).ready(function() {
+    if ('@ViewBag.ErrorCreacion' == 'false') {
+        $("#resp-creacion-tabla").modal("show");
+    }
+
+    //Realizar funcion autocomplete
+    $('#nombreTablaCreada').autocomplete({
+        source: '/AdministracionTecnica/BuscarValoresTecnicos',
+        select: function (event, ui) {
+            $("#nombreTablaCreada").val(ui.item.label);
+            return false;
+        }
+    });
+});
+
+$(".cerrar-modal-actualizar").click(function() {
+    document.location.href = "/AdministracionTecnica/Index";
+});
+</script>

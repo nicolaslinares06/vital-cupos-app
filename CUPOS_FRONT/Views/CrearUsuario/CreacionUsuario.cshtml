@@ -1,0 +1,359 @@
+﻿@model Web.Models.CreacionUsu;
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+
+<div class="tab-pane container active p-2" id="form1">
+    <form asp-controller="CrearUsuario" asp-action="Crear" method="post" id="creacionUsuario">
+        <div class="col-form-label mt-1 mb-1">
+            <h1>Crear Usuario</h1>
+        </div>
+        <div class="col-form-label mt-1 mb-1">
+            <h2>Información de usuario</h2>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 mb-1">
+                <label for="primernom" class="form-label">Primer nombre</label>
+                <input type="text" asp-for="firstName" id="primernom" class="form-control" placeholder="&#xf007 Primer nombre" onkeypress="return check(event)" required/>
+                <span id="validacionprimernom" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="segundonom" class="form-label">Segundo nombre</label>
+                <input type="text" asp-for="secondName" id="segundonom" class="form-control" placeholder="&#xf007 Segundo nombre" onkeypress="return check(event)" required/>
+                <span id="validacionsegundonom" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="primerape" class="form-label">Primer apellido</label>
+                <input type="text" asp-for="firstLastName" id="primerape" class="form-control" placeholder="&#xf007 Primer apellido" onkeypress="return check(event)" required/>
+                <span id="validacionprimerape" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="segundoape" class="form-label">Segundo apellido</label>
+                <input type="text" asp-for="SecondLastName" id="segundoape" class="form-control" placeholder="&#xf007 Segundo apellido" onkeypress="return check(event)" required/>
+                <span id="validacionsegundoape" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1" id="divtipodoc">
+                <label for="tipodoc" class="form-label">Tipo de documento</label>
+                <select class="form-control" asp-for="codeParametricDocumentType" id="tipodoc" required>
+                </select>
+                <span id="validaciontipodoc" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="numdoc" class="form-label">Número de documento</label>
+                <input type="text" asp-for="identification" id="numdoc" class="form-control" placeholder="&#xf2c2 0000000000" onkeypress="return checkNumber(event)" required/>
+                <span id="validacionnumdoc" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="direccion" class="form-label">Direccion</label>
+                <input type="text" asp-for="address" id="direccion" class="form-control" placeholder="&#xf3c5 direccion" required/>
+                <span id="validaciondireccion" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1" id="divDependencia">
+                <label for="dependencia" class="form-label">Dependencia</label>
+                <select class="form-control" asp-for="dependence" id="dependencia" required>
+                </select>
+                <span id="validaciondependencia" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="telefono" class="form-label">Telefono</label>
+                <input type="number" asp-for="phone" id="telefono" class="form-control" placeholder="&#xf879 0000000000" onkeypress="return checkNumber(event)" required/>
+                <span id="validaciontelefono" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="fax" class="form-label">Celular</label>
+                <input type="text" asp-for="celular" id="fax" class="form-control" placeholder="&#xf1ac CELULAR" onkeypress="return checkNumber(event)" />
+                <span id="validacionfax" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="iniciocont" class="form-label">Inicio de contrato</label>
+                <input type="date" asp-for="contractStartDate" id="iniciocont" class="form-control" placeholder="&#xf073 dd/mm/aaaa" />
+                <span id="validacioniniciocont" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="fincont" class="form-label">Fin de contrato</label>
+                <input type="date" asp-for="contractFinishDate" id="fincont" class="form-control" placeholder="&#xf073 dd/mm/aaaa" />
+                <span id="validacionfincont" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="text" asp-for="email" id="email" class="form-control" placeholder="&#xf1fa usuario@minambiente.com" required/>
+                <span id="validacionemail" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="rol" class="form-label">Rol</label>
+                <select class="form-control" asp-for="rol" id="rol" required>
+                </select>
+                <span id="validacionrol" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mt-2 row justify-content-center">
+                <div class="col-2">
+                    <button type="button" class="btn btn-primary crear-usuario">GUARDAR</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn-volver-creacion-usuario btn btn-secondary">VOLVER</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- modal pregunta confirmacion actualizacion Datos -->
+<div class="modal fade" id="confirmacion-crear" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro de que desea guardar la informacion?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary w-100 boton-si">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal mensaje cambio respuesta Actualizacion -->
+<div class="modal fade" id="mensaje-creacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Información</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="modalText-actualizacion">
+                            @ViewBag.Mensaje
+                        </p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary cerrar-info" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let primernom = document.getElementById("primernom");
+let primerape = document.getElementById("primerape");
+//let tipodoc = document.getElementById("tipodoc");
+let numdoc = document.getElementById("numdoc");
+let direccion = document.getElementById("direccion");
+//let dependencia = document.getElementById("dependencia");
+let telefono = document.getElementById("telefono");
+let iniciocont = document.getElementById("iniciocont");
+let fincont = document.getElementById("fincont");
+let email = document.getElementById("email");
+//let rol = document.getElementById("rol");
+
+var tipodoc = document.getElementById("tipodoc");
+var rol = document.getElementById("rol");
+var dependencia = document.getElementById("dependencia");
+
+$(async function() {
+    let url = "@Url.Action("ConsultarDocumentos","CrearUsuario")";
+    let resp = await Get(url);
+
+    tipodoc.innerHTML = "<option value = '' selected>Seleccione tipo documento</option>"
+    resp.forEach(el => {
+        tipodoc.innerHTML += `<option value='${el.id}'>${el.type}</option>`;
+    });
+
+    let urlrol = "@Url.Action("ConsultarRoles","Usuarios")";
+    let r = await Get(urlrol);
+
+    rol.innerHTML = "<option value = '' selected>Seleccione el rol</option>";
+    r.forEach(a => {
+        rol.innerHTML += `<option value='${a.id}'>${a.name}</option>`;
+    });
+
+    let urldep = "@Url.Action("ConsultarDependencia","CrearUsuario")";
+    let respDep = await Get(urldep);
+
+    dependencia.innerHTML = "<option value = '' selected>Seleccione la dependencia</option>";
+    respDep.forEach(a => {
+        dependencia.innerHTML += `<option value='${a.nombre}'>${a.nombre}</option>`;
+    });
+
+    if ('@ViewBag.MostrarMensaje' == "true") {
+        $("#mensaje-creacion").modal("show");
+    }
+});
+
+$(".crear-usuario").click(function() {
+    if(valCampos()) {
+        $("#confirmacion-crear").modal("show");
+    }
+});
+
+$(".boton-si").click(function() {
+    $("#creacionUsuario").submit();
+    $("#confirmacion-crear").modal("hide");
+});
+
+$(".btn-volver-creacion-usuario").click(function() {
+    document.location.href = '/Usuarios/GestionUsuarios';
+});
+
+$("#cerrar-alert-fecha").click(function() {
+    $("#alerta-fecha-inv").css("display", "none");
+});
+
+$(".cerrar-info").click(function() {
+    document.location.href = "/Usuarios/GestionUsuarios";
+});
+
+function check(e) {
+    tecla = (document.all) ? e.keyCode : e.which;
+
+    if (tecla == 8) {
+        return true;
+    }
+
+    patron = /[A-Za-zñÑ]/;
+    tecla_final = String.fromCharCode(tecla);
+    return patron.test(tecla_final);
+}
+
+function checkNumber(e) {
+    tecla = (document.all) ? e.keyCode : e.which;
+
+    if (tecla == 10) {
+        return true;
+    }
+
+    patron = /[0-9]/;
+    tecla_final = String.fromCharCode(tecla);
+    return patron.test(tecla_final);
+}
+
+function validar(elemento, span, val = false, elemento2 = null) {
+        
+    if(elemento==null && !val && elemento2!=null){
+        if(elemento2.innerHTML!=''){
+            return true;
+        }
+        span.innerText='Campo obligatorio';
+        ocultarElemento(span, false);
+        return false;
+    }
+
+    //se valida si alguno de los checks de es aprovechamiento esta seleccionado
+    if (elemento == null && val) {
+        if ($(Terminos).is(':checked')) {
+            return true;
+        }
+        if ($(TratamientoDatos).is(':checked')) {
+            return true;
+        }
+        ocultarElemento(span, false);
+        return false;
+    }
+    //se validan elementos de input normales si estan llenos
+    if (elemento != null) {
+        if ($(elemento).val()==null || $(elemento).val() == '' || $(elemento).val() == '0' || $(elemento).val() == 0 || $(elemento).val().length == 0) {
+            ocultarElemento(span, false);
+            if (elemento2 != null) {
+                if (!elemento2.hasClass('required-validate')) {
+                    elemento2.addClass('required-validate');
+                }
+                return false;
+            }
+            if (!$(elemento).hasClass('required-validate')) {
+                $(elemento).addClass('required-validate');
+            }
+            return false;
+        }
+    }
+    return true;
+}
+
+function valCampos() {
+    let Validarprimernom = validar(primernom, validacionprimernom);
+    let Validarprimerape = validar(primerape, validacionprimerape);
+    let Validartipodoc = validar(tipodoc, validaciontipodoc, false, $("#divtipodoc .tipodoc-selection"));
+    let Validarnumdoc = validar(numdoc, validacionnumdoc);
+    let Validardireccion = validar(direccion, validaciondireccion);
+    let Validardependencia = validar(dependencia, validaciondependencia, false, $("#divDependencia .dependencia-selection"));
+    let Validartelefono = validar(telefono, validaciontelefono);
+    let Validariniciocont = validar(iniciocont, validacioniniciocont);
+    let Validarfincont = validar(fincont, validacionfincont);
+    let Validaremail = validar(email, validacionemail);
+    let Validarrol = validar(rol, validacionrol);
+
+    if (Validarprimernom && Validarprimerape && Validartipodoc && Validarnumdoc && Validardireccion && Validardependencia && Validartelefono && Validariniciocont && Validarfincont && Validaremail && Validarrol) {
+        return true;
+    }
+    return false;
+};
+
+$(primernom).on('change', function() {
+    reiniciarElementos(primernom, validacionprimernom);
+});
+
+$(primerape).on('change', function() {
+    reiniciarElementos(primerape, validacionprimerape);
+});
+
+$(tipodoc).on('change', function() {
+    reiniciarElementos(tipodoc, validaciontipodoc);
+});
+
+$(numdoc).on('change', function() {
+    reiniciarElementos(numdoc, validacionnumdoc);
+});
+
+$(direccion).on('change', function() {
+    reiniciarElementos(direccion, validaciondireccion);
+});
+
+$(dependencia).on('change', function() {
+    reiniciarElementos(dependencia, validaciondependencia);
+});
+
+$(telefono).on('change', function() {
+    reiniciarElementos(telefono, validaciontelefono);
+});
+
+$(fax).on('change', function() {
+    reiniciarElementos(fax, validacionfax);
+});
+
+$(iniciocont).on('change', function() {
+    reiniciarElementos(iniciocont, validacioniniciocont);
+});
+
+$(fincont).on('change', function() {
+    reiniciarElementos(fincont, validacionfincont);
+});
+
+$(email).on('change', function() {
+    reiniciarElementos(email, validacionemail);
+});
+
+$(rol).on('change', function() {
+    reiniciarElementos(rol, validacionrol);
+});
+</script>

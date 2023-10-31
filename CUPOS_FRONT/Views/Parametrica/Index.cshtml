@@ -1,0 +1,349 @@
+﻿@{
+    Layout = "_LayoutBandejaReceptor";
+}
+<body>
+    <div class="row">
+        <div class="col-md-8 mt-2">
+            <a asp-controller="Home" asp-action="Index" title="Modulo de CITES">Modulo de CITES</a>  >
+            <a asp-controller="Home" asp-action="Administracion" title="Administración">Administración</a>  >
+            <strong>@Context.Session.GetString("NombreParametrica")</strong>
+        </div>
+        <div class="col-md-4 mt-2">
+            <a class="btn btn-secondary" type="button" asp-controller="Parametrica" asp-action="Ayuda" title="Ayuda">AYUDA</a>
+            <a class="btn btn-secondary" type="button" asp-controller="Home" asp-action="Index" title="Inicio">INICIO</a>
+        </div>
+    </div>
+    <div class="col-11 mx-auto">
+        <h1>@Context.Session.GetString("NombreParametrica")</h1>
+        <div class="row dataTables_filter">
+            <div class="col-12">
+                <label class="col-sm-12">Buscar</label>
+            </div>
+            <div class="col-10">
+                <input type="text" id="busqueda-gestion" class="lista-desp col-12" placeholder="Buscar tablas paramétricas o reglas de Negocio" />
+            </div>
+            <div class="col-2">
+                <button type="button" id="boton-consultar-scr" class="btn btn-primary" title="Consultar">CONSULTAR</button>
+            </div>
+        </div>
+        <!-- botón modal agregar -->
+        <div class="col-2 mt-2 mb-2">
+            <a class="btn btn-primary" type="button" asp-controller="Parametrica" asp-action="Registrar" title="Agregar valor">AGREGAR VALOR</a>
+        </div>
+    </div>
+    <div class="col-11 mx-auto">
+        <!-- data table -->
+        <div class="solicitudes-guardadas-contenedor d-none">
+            <div class="table-responsive">
+                <table id="tabla-parametricas-guardadas" class="table w-100">
+                    <caption class="d-none">Table Description</caption>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th class="th-mediumText">Nombre</th>
+                            <th class="th-mediumText">Valor</th>
+                            <th class="th-bigText">Descripción</th>
+                            <th class="th-shortText">Estado</th>
+                            <th class="th-shortText">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+<partial name="Modales/Modales.cshtml" />
+<script>
+    $(document).ready(function () {
+        $("#boton-consultar-scr").trigger("click");
+        $(`.Administracion #padre`).addClass("active-within");
+        $(`#Parametrica a`).addClass("active");
+    });
+    //Traer datos de consultas
+    $("#boton-consultar-scr").click(async function () {
+        visualizarFondoProcesando();
+        $('.solicitudes-guardadas-contenedor').removeClass("d-none");
+
+        var nombre = $("#busqueda-gestion").val();
+
+        let url = "@Url.Action("Filtrar","Parametrica")";
+        let resp = await Get(url, { nombreBus: nombre });
+        ocultarFondoProcesando();
+        console.log(resp);
+        $tblPendientes = $('#tabla-parametricas-guardadas').DataTable({
+            searching: false,
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom:
+                "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                    previous: "Anterior",
+                    next: "Siguiente",
+                },
+            },
+            data: resp,
+            columns: [
+                {
+                    "data": "pkT008codigo",
+                    className: "d-none"
+                },
+                {
+                    "data": "a008Parametrica",
+                    render: function (data, type, row) {
+                        return `<p class="d-none">${data}</p>
+                                <input class="form-control border no-border bg-white"" type="text" value="${data}" id="parametrica${row.pkT008codigo}" disabled>`;
+                    },
+                },
+                {
+                    "data": "a008Valor",
+                    render: function (data, type, row) {
+                        return `<p class="d-none">${data}</p>
+                            <input class="form-control border no-border bg-white"" type="text" value="${data}" id="valor${row.pkT008codigo}" disabled>`;
+                    },
+                },
+                {
+                    "data": "a008Descripcion",
+                    render: function (data, type, row) {
+                        data = data == null ? '' : data;
+                        return `<p class="d-none">${data}</p>
+                                <input class="form-control border no-border bg-white"" type="text" value="${data}" id="descripcion${row.pkT008codigo}" disabled>`;
+                    },
+                },
+                {
+                    "data": "a008EstadoRegistro",
+                    render: function (data, type, row) {
+                        var option = "";
+                        if (data == 72) {
+                            option = "INACTIVO";
+                        }
+                        else {
+                            option = "ACTIVO";
+                        }
+
+                        return `<p class="d-none">${data}</p>
+                                <select class="form-select border no-border bg-white"" id="estado${row.pkT008codigo}" disabled>
+                                <option value=${data == 72 ? "ACTIVO" : "INACTIVO"} selected>${data == 72 ? "ACTIVO" : "INACTIVO"}</option>
+                                <option value=${option}>${option}</option>
+                            </select>`;
+                    },
+                },
+                {
+                    render: function (data, type, row) {
+                        if (row.a008EstadoRegistro == 72) {
+                            return `<a class="button" id="btnEditarRegistro${row.pkT008codigo}" onclick='EditarRegistro(${row.pkT008codigo})' title="Editar">Editar</a>
+                                        <a class="button d-none" id="btnGuardarRegistro${row.pkT008codigo}" onclick='GuardarRegistro(${row.pkT008codigo})' title="Guardar">Guardar</a>
+                                        <a class="button d-none" id="btnCancelarAccion${row.pkT008codigo}" onclick='CancelarAccion(${row.pkT008codigo})' title="Cancelar">Cancelar</a>
+                                        <div class="btn-switch" id="btnBorrarRegistro${row.pkT008codigo}" onclick='ActivarInactivarRegistro(${row.pkT008codigo}, ${row.a008EstadoRegistro})' title="${(row.a008EstadoRegistro != 72 ? "Activar" : "Inactivar")}">
+                                            <input type="checkbox" name="btn-switch" id="label-switch${row.pkT008codigo}" class="btn-checkbox-switch" checked/>
+                                            <label for="label-switch${row.pkT008codigo}" class="btn-label-switch"></label>
+                                        </div>`;
+                        }
+                        else {
+                            return `<a class="button" id="btnEditarRegistro${row.pkT008codigo}" onclick='EditarRegistro(${row.pkT008codigo})' title="Editar">Editar</a>
+                                        <a class="button d-none" id="btnGuardarRegistro${row.pkT008codigo}" onclick='GuardarRegistro(${row.pkT008codigo})' title="Guardar">Guardar</a>
+                                        <a class="button d-none" id="btnCancelarAccion${row.pkT008codigo}" onclick='CancelarAccion(${row.pkT008codigo})' title="Cancelar">Cancelar</a>
+                                        <div class="btn-switch" id="btnBorrarRegistro${row.pkT008codigo}" onclick='ActivarInactivarRegistro(${row.pkT008codigo}, ${row.a008EstadoRegistro})' title="${(row.a008EstadoRegistro != 72 ? "Activar" : "Inactivar")}">
+                                            <input type="checkbox" name="btn-switch" id="label-switch${row.pkT008codigo}" class="btn-checkbox-switch" />
+                                            <label for="label-switch${row.pkT008codigo}" class="btn-label-switch"></label>
+                                        </div>`;
+                        }
+                    },
+                    orderable: false
+                }
+            ],
+            columnDefs: [{
+                targets: 5
+            }]
+        });
+
+
+        if ($(`#tabla-parametricas-guardadas`).find('tbody tr').length < 5) {
+            $('#tabla-parametricas-guardadas_paginate').hide($('#tabla-parametricas-guardadas_paginate thead'));
+        } else {
+            $('#tabla-parametricas-guardadas_paginate').show();
+        }
+    });
+
+    //Metodos para editar
+    function EditarRegistro(id) {
+        $("#parametrica" + id).prop("disabled", false);
+        $("#descripcion" + id).prop("disabled", false);
+        $("#valor" + id).prop("disabled", false);
+        $("#estado" + id).prop("disabled", false);
+
+        $('#btnEditarRegistro' + id).addClass("d-none");
+        $('#btnBorrarRegistro' + id).addClass("d-none");
+        $('#btnGuardarRegistro' + id).removeClass("d-none");
+        $('#btnCancelarAccion' + id).removeClass("d-none");
+
+        $('#datos-obligatorios').data('id', id);
+    }
+
+    function CancelarAccion(id) {
+        $("#boton-consultar-scr").trigger("click");
+
+        $("#parametrica" + id).prop("disabled", true);
+        $("#descripcion" + id).prop("disabled", true);
+        $("#valor" + id).prop("disabled", true);
+        $("#estado" + id).prop("disabled", true);
+
+        $('#btnEditarRegistro' + id).removeClass("d-none");
+        $('#btnBorrarRegistro' + id).removeClass("d-none");
+        $('#btnGuardarRegistro' + id).addClass("d-none");
+        $('#btnCancelarAccion' + id).addClass("d-none");
+    }
+
+    function GuardarRegistro(id) {
+
+        var nombre = $('#parametrica' + id).val();
+        var valor = $('#valor' + id).val();
+
+        if (nombre == "" || valor == "") {
+            $('.mensaje-datos-obligatorio').html('');
+            nombre == "" ? $('.mensaje-datos-obligatorio').append("<p>Nombre<p>") : '';
+            valor == "" ? $('.mensaje-datos-obligatorio').append("<p>Valor<p>") : '';
+
+            $('#datos-obligatorios').modal('show');
+        }
+        else {
+            $('#confirmacion-actualizacion').modal('show');
+
+            $("#parametrica" + id).prop("disabled", true);
+            $("#descripcion" + id).prop("disabled", true);
+            $("#valor" + id).prop("disabled", true);
+            $("#estado" + id).prop("disabled", true);
+
+            $('#confirmacion-actualizacion').data('id', id);
+        }
+    }
+
+    $(".boton-confirmar-no-actualizar").click(function () {
+        var id = $('#confirmacion-actualizacion').data('id');
+
+        $('#confirmacion-actualizacion').modal('hide');
+
+        $("#parametrica" + id).prop("disabled", false);
+        $("#descripcion" + id).prop("disabled", false);
+        $("#valor" + id).prop("disabled", false);
+        $("#estado" + id).prop("disabled", false);
+    });
+
+    $(".boton-confirmar-actualizar").click(async function () {
+        visualizarFondoProcesando();
+        var id = $('#confirmacion-actualizacion').data('id');
+
+        $("#parametrica" + id).prop("disabled", true);
+        $("#descripcion" + id).prop("disabled", true);
+        $("#valor" + id).prop("disabled", true);
+        $("#estado" + id).prop("disabled", true);
+
+        var nombre = $('#parametrica' + id).val();
+        var valor = $('#valor' + id).val();
+        var descripcion = $('#descripcion' + id).val();
+        var estado = $('#estado' + id).val();
+
+        estado = estado.toUpperCase() == 'ACTIVO' ? 72 : 73;
+
+        $('#confirmacion-actualizacion').modal('hide');
+
+        json = {
+            code: id,
+            name: nombre,
+            value: valor,
+            description: descripcion,
+            estate: estado
+        }
+
+        let url = "@Url.Action("Actualizar","Parametrica")";
+        let resp = await Get(url, json);
+        ocultarFondoProcesando();
+
+        if (resp != null) {
+            $("#boton-consultar-scr").trigger("click");
+            $("#actualizacion-exitosa").modal("show");
+            $('#datos-obligatorios').data('id', "");
+        }
+    });
+
+    $(".boton-confirmar-mensajes").click(function () {
+        var id = $('#confirmacion-actualizacion').data('id');
+
+        if (id != '') {
+            $('#btnEditarRegistro' + id).removeClass("d-none");
+            $('#btnBorrarRegistro' + id).removeClass("d-none");
+            $('#btnGuardarRegistro' + id).addClass("d-none");
+            $('#btnCancelarAccion' + id).addClass("d-none");
+        }
+
+        $('#creacion-exitosa').modal('hide');
+        $("#actualizacion-exitosa").modal("hide");
+        $("#activarInactivar-exitosa").modal("hide");
+
+    });
+    //Metodos para Activar
+    function ActivarInactivarRegistro(id, estado) {
+        $('#mensaje-confirmacion-activarInactivar').html('');
+
+        if (estado == 72) {
+            estado = 73;
+            $('#mensaje-confirmacion-activarInactivar').append('¿Está seguro de que desea inactivar la informacion?');
+        } else {
+            estado = 72;
+            $('#mensaje-confirmacion-activarInactivar').append('¿Está seguro de que desea activar la informacion?');
+        }
+
+        $('#confirmacion-activarInactivar').modal('show');
+        $('#confirmacion-activarInactivar').data('id', id);
+        $('#confirmacion-activarInactivar').data('estado', estado);
+    }
+
+    $(".boton-no-confirmacion-activarInactivar").click(function () {
+        $('#confirmacion-activarInactivar').modal('hide');
+    });
+
+    $(".boton-confirmacion-activarInactivar").click(async function () {
+        visualizarFondoProcesando();
+        var id = $('#confirmacion-activarInactivar').data('id');
+        var estado = $('#confirmacion-activarInactivar').data('estado');
+
+        var nombre = $('#parametrica' + id).val();
+
+        $('#confirmacion-activarInactivar').modal('hide');
+
+        json = {
+            code: id,
+            estate: estado
+        }
+
+        let url = "@Url.Action("ActivarInactivar","Parametrica")";
+        let resp = await Get(url, json);
+        ocultarFondoProcesando();
+        if (resp != null) {
+
+            $("#boton-consultar-scr").trigger("click");
+            $('#mensaje-exito-activarInactivar').html('');
+
+            if (estado == 72) {
+                $('#mensaje-exito-activarInactivar').append('Su información ha sido activada con éxito');
+            } else {
+                $('#mensaje-exito-activarInactivar').append('Su información ha sido inactivada con éxito');
+            }
+
+            $("#activarInactivar-exitosa").modal("show");
+        }
+    });
+</script>

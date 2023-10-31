@@ -1,0 +1,192 @@
+﻿@{
+    Layout = "_LayoutRegistrarResolucion";
+}
+<div class="container">
+    <div id="divVinculos1">
+        <a asp-controller="Home" asp-action="Index">Inicio</a> > <a asp-controller="Home" asp-action="FlujoNegocio">Flujo de negocio</a> > <strong>Registrar información de resolución de comercialización de peces</strong>
+    </div>
+    <div class="text-end">
+        <a class="btn btn-secondary" type="button" asp-controller="ControlFishRequest" asp-action="Ayuda" title="Ayuda">AYUDA</a>
+        <a type="button" class="btn btn-secondary" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip"
+            data-bs-placement="top" title="Inicio">inicio</a>
+    </div>
+    <div id="divPrincipal">
+        <h1 id="tituloBuscador">Peces</h1>
+        <div id="divBuscador" class="dataTables_filter w-100">
+            <div class="row label-datatable d-flex">
+                <div class="col-md-2 col-4">
+                    <label for="sltTipoDocumento" class="form-label">Tipo de documento</label>
+                    <select type="text" class="form-select" id="sltTipoDocumento" placeholder="Tipo de documento">
+
+                    </select>
+                    <span id="validacionsltTipoDocumento" class="span-advertencia d-none">Campo Obligatorio</span>
+                </div>
+                <div class="col-md-10 col-8">
+                    <label for="txtNumeroDocuemnto" class="form-label">Numero de documento</label>
+                    <div class="row d-flex">
+                        <div class="col-10">
+                            <input type="text" class="form-control" id="txtNumeroDocuemnto"
+                                placeholder="Numero de documento">
+                            <span id="validaciontxtNumeroDocuemnto" class="span-advertencia d-none">Campo
+                                Obligatorio</span>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-primary w-100" onclick="buscarEntidad()">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"
+                                    id="spinnerButton"></span>
+                                Buscar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 d-none" id="divTablas">
+            <div class="table-responsive">
+                <table id="tableEntidad" class="table w-100" aria-describedby="Tabla entidad">
+                    <caption class="d-none">Table Description</caption>
+                    <thead>
+                        <tr>
+                            <th class="th-mediumText">Tipo documento</th>
+                            <th class="th-mediumText">Número documento</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th class="th-mediumText">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="bordes-top mt-2" id="divTablaResoluciones">
+                <h4>Resolución de permisos</h4>
+                <div class="table-responsive">
+                    <table id="tableResoluciones" class="table w-100" aria-describedby="Tabla resolucion">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>N° Resolución</th>
+                                <th class="th-mediumText">Fecha resolución</th>
+                                <th>Fecha inicio</th>
+                                <th>Fecha fin</th>
+                                <th class="th-mediumText">Objeto resolución</th>
+                                <th class="th-mediumText">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="divSecundario" class="d-none">
+
+        <div class="row">
+
+            <h3 id="tituloResolucion"></h3>
+
+            <ul class="nav nav-tabs">
+                <li class="nav-item" id="nav-1">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#tab1" id="tab-1">Datos del
+                        Establecimiento</a>
+                </li>
+                <li class="nav-item d-none" id="nav-2">
+                    <a class="nav-link" data-bs-toggle="tab" href="#tab2" id="tab-2">Resolución</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane container active p-2" id="tab1">
+                    <partial name="Partials/DatoEntidad" />
+                </div>
+                <div class="tab-pane container fade p-2" id="tab2">
+                    <partial name="Partials/Resolucion" />
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <button type="button" onclick="salir()" id="btnSalir"
+                class="btn btn-primary btn-bandeja-regresar m-2 d-none"></button>
+            <button type="button" onclick="guardarResolucion()" id="btnGuardar"
+                class="btn btn-primary btn-bandeja-regresar m-2 d-none">Guardar</button>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalConfimaciones" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center" id="divConfirmacionMensaje">
+                    <div class="col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="lblConfirmacion"></p>
+                    </div>
+                </div>
+                <div class="text-center d-none" id="divSpinner3">
+                    <div class="spinner-border text-primary mb-2 spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="divBotonesConfirmacion" class="text-center row mt-1 mb-1 d-none">
+                    <div class="col-6 d-none" id="divBtnSiGuardar">
+                        <button type="button" class="btn btn-primary" onclick="SiGuardar()">Si</button>
+                    </div>
+                    <div class="col-6" id="divBtnNo">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnNoConfimar"
+                            onclick="noConfirmaciones()">No</button>
+                    </div>
+                    <div class="col-6 d-none" id="divBtnSiCancelar">
+                        <button type="button" class="btn btn-secondary" onclick="SiCancelar()">Si</button>
+                    </div>
+                    <div class="col-6 d-none" id="divBtnSiEliminar">
+                        <button type="button" class="btn btn-secondary" onclick="siEliminarResolucion()">Si</button>
+                    </div>
+
+                </div>
+                <div id="divBotonAceptarConfirmacion" class="col-12 text-center d-none">
+                    <button class="btn btn-primary mb-1 mt-1" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalAlerta" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fas fa-exclamation-circle i-modal-alerta"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal-alerta">
+                        <p>Alerta</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>Los siguientes campos son obligatorios</p>
+                        <ul id="ulCamposOblgatorios" class="list-group">
+
+                        </ul>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                ACEPTAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<partial name="Scripts\ControlFishRequestScript" />

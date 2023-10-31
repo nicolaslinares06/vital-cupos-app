@@ -1,0 +1,141 @@
+﻿@model Web.Models.CreateRolRequest;
+
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<div class="tab-pane container active p-2" id="form-crearRol">
+    <form asp-controller="AdministrarRoles" asp-action="CreacionRol" method="post" id="form-creacion-rol">
+        <div class="col-form-label mt-1 mb-1">
+            <h1>Crear Rol</h1>
+        </div>
+        <div class="col-form-label mt-1 mb-1">
+            <h2>Información del rol</h2>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 mb-1">
+                <label for="nombreRol" class="form-label">Nombre</label>
+                <input type="text" asp-for="name" class="form-control" id="nombreRol"/>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="cargoRol" class="form-label">Cargo</label>
+                <input type="text" asp-for="position" class="form-control" id="cargoRol"/>
+            </div>
+            @*<div class="col-md-3 mb-1">
+                <div class="alert alert-dismissible alert-info" id="alerta-crear-rol">
+                    <button type="button" id="cerrar-alert-rol" class="cerrar-alert" data-dismiss="alert">
+                        &times;
+                    </button>
+                    <strong>¡¡AVISO!!</strong>
+                    <div class="alerta-password-diferente" id="alert-creacion-rol">
+                        
+                    </div>
+                </div>
+            </div>*@
+            <div class="mt-2 row justify-content-center">
+                <div class="col-2">
+                    <button type="button" class="btn-aceptar-crear-rol btn btn-primary">CONTINUAR</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn-volver-crear-rol btn btn-secondary">VOLVER</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal confirmacion creacion de rol -->
+<div class="modal fade" id="creacion-rol" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro que desea crear este rol?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="boton-si-crear-rol btn btn-primary w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal respuesta creacion rol -->
+<div class="modal fade" id="resp-creacion-rol" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>@ViewBag.RespuestaCreacionRol</p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="boton-aceptar-mensaje-creacion-rol btn btn-primary w-100">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
+<script>
+//var alert = document.getElementById("alerta-crear-rol");
+
+$(document).ready(async function() {
+    //ocultarElemento(alert, true);
+
+    if('@ViewBag.ErrorCreacion' == "false"){
+        $("#resp-creacion-rol").modal("show");
+    }
+
+    //Realizar funcion autocomplete
+    $('#nombreRol').autocomplete({
+        source: '/AdministrarRoles/BuscarRoles',
+        select: function (event, ui) {
+            $("#nombreRol").val(ui.item.label);
+            return false;
+        }
+    });
+});
+$(".btn-volver-crear-rol").click(function() {
+    document.location.href = "/AdministrarRoles/Index";
+});
+
+$(".btn-aceptar-crear-rol").click(function() {
+    $("#creacion-rol").modal("show");
+});
+
+$(".boton-si-crear-rol").click(function() {
+        visualizarFondoProcesando();
+    $("#form-creacion-rol").submit();
+    ocultarFondoProcesando();
+});
+
+//$(".boton-no-crear-rol").click(function() {
+//    $("#creacion-rol").modal("hide");
+//});
+
+$(".boton-aceptar-mensaje-creacion-rol").click(function() {
+    $("#resp-creacion-rol").modal("hide");
+    document.location.href = "/AdministrarRoles/Index";
+});
+</script>

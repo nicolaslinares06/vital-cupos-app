@@ -1,0 +1,106 @@
+<body>
+    <div class="row">
+        <h1>Crear tabla</h1>
+        <h2>Información de la tabla</h2>
+        <div class="col-md-3 mb-1">
+            <label for="nombreParametrico" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombreParametrico" placeholder=" Nombre" maxlength="25">
+        </div>
+        <div class="col-md-3 mb-1">
+            <label for="valorParametrico" class="form-label">Valor</label>
+            <input type="text" class="form-control" id="valorParametrico" placeholder=" Valor" maxlength="25">
+        </div>
+        <div class="col-md-9 mb-1">
+            <label for="descripcionParametrico" class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcionParametrico" rows="3" placeholder=" Descripcíon"></textarea>
+        </div>
+    </div>
+    <div class="mt-4 row justify-content-center">
+        <div class="col-2">
+            <button type="button" class="btn btn-primary boton-guardar-info col-12" title="Guardar">GUARDAR</button>
+        </div>
+        <div class="col-2">
+            <a class="btn btn-secondary" type="button" asp-controller="Parametrica" asp-action="Index" title="Volver" id="25">VOLVER</a>
+        </div>
+    </div>
+</body>
+<partial name="Modales/Modales.cshtml" />
+<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        //Realizar funcion autocomplete
+        $('#nombreParametrico').autocomplete({
+            source: '/Parametrica/BuscarParametro',
+            select: function (event, ui) {
+                $("#nombreParametrico").val(ui.item.label);
+                return false;
+            }
+        });
+
+        $('#nombreParametrico').val('');
+        $('#valorParametrico').val('');
+        $('#descripcionParametrico').val('');
+    });
+
+    //Metodos para guardar
+    $(".boton-guardar-info").click(function () {
+        var nombre = $('#nombreParametrico').val();
+        var valor = $('#valorParametrico').val();
+
+        if (nombre == "" || valor == "") {
+            $('.mensaje-datos-obligatorio').html('');
+            nombre == "" ? $('.mensaje-datos-obligatorio').append("<p>Nombre<p>") : '';
+            valor == "" ? $('.mensaje-datos-obligatorio').append("<p>Valor<p>") : '';
+
+            $('#datos-obligatorios').modal('show');
+        }
+        else {
+            $('#confirmacion-creacion').modal('show');
+        }
+    });
+
+    $(".boton-no-confirmar-guardar").click(function () {
+        $('#confirmacion-creacion').modal('hide');
+    });
+
+    $(".boton-confirmar-guardar").click(async function () {
+        visualizarFondoProcesando();
+        $('#confirmacion-creacion').modal('hide');
+
+        var nombre = $('#nombreParametrico').val();
+        var valor = $('#valorParametrico').val();
+        var descripcion = $('#descripcionParametrico').val();
+
+        json = {
+            name: nombre,
+            value: valor,
+            description: descripcion,
+            estate: 72
+        }
+
+        let url = "@Url.Action("Crear","Parametrica")";
+        let resp = await Get(url, json);
+        ocultarFondoProcesando();
+
+        if (resp != null) {
+
+            $('#nombreParametrico').val('');
+            $('#valorParametrico').val('');
+            $('#descripcionParametrico').val('');
+
+            $('#creacion-exitosa').modal('show');
+        }
+
+    });
+
+    $(".boton-confirmar-mensajes-obligatorio").click(function () {
+        var id = $('#datos-obligatorios').data('id');
+        $("#datos-obligatorios").modal("hide");
+    });
+
+    $(".boton-confirmar-mensajes").click(function () {
+        window.location.href = "/Parametrica";
+    });
+
+</script>

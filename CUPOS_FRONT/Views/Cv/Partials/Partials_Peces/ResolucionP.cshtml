@@ -1,0 +1,48 @@
+<div class="container">
+    <h3 id="tituloResolucion"></h3>
+
+    <div class="row mb-3" id="divDatosEntidadpeces">
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtNombreRes" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="txtNombreRes" placeholder="Nombre" readonly>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtNitRes" class="form-label">Nit</label>
+            <input type="text" class="form-control" id="txtNitRes" placeholder="Nit" readonly>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtNumeroResolucion" class="form-label required">Numero de resolución</label>
+            <input type="number" class="form-control" readonly id="txtNumeroResolucion" placeholder="Numero de resolución">
+            <span id="validaciontxtNumeroResolucion" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtFechaResolucionp" class="form-label required">Fecha resolución</label>
+            <input type="date" class="form-control" readonly id="txtFechaResolucionp" placeholder="Fecha resolucion">
+            <span id="validaciontxtFechaResolucion" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtFechaInicio" class="form-label required">Fecha inicio</label>
+            <input type="date" class="form-control" readonly id="txtFechaInicio" placeholder="Fecha inicio">
+            <span id="validaciontxtFechaInicio" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtFechaFin" class="form-label required">Fecha fin</label>
+            <input type="date" class="form-control" readonly id="txtFechaFin" placeholder="Fecha fin">
+            <span id="validaciontxtFechaFin" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+                <div class="mb-1 mt-1 col-6">
+                    @* Si coloco divAdjunto funciona *@
+                    <div id="divAdjuntopeces">
+
+                               
+
+                    </div>
+                </div>
+        <div class="mb-1 mt-1 col-12" id="divObjetoResolucion">
+            <label for="txtObjetoResolucion" class="form-label required">Objeto de la resolucion</label>
+            <textarea class="form-control" readonly id="txtObjetoResolucion" rows="4"></textarea>
+            <span class="span-advertencia d-none" id="spanObjetoResolucion">Campo Obligatorio</span>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,93 @@
+﻿<div class="mt-3">
+    <div class="mt-2 mb-2">
+        <table id="tableCertificadoshj" class="table w-100">
+            <caption class="d-none">Table Description</caption>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>N° Certificación</th>
+                    <th>Fecha certificación</th>
+                    <th>Nit</th>
+                    <th class="mediumText">Vigencia de certificación</th>
+                    <th class="mediumText">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="certificados" class="mt-1 mb-1 row">
+<div class="container">
+    <div class="row mb-3" id="divCertificado">
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtAutoridadEmiteCertificado2" class="form-label required">Autoridad ambiental que emite
+                certificado</label>
+            <select type="text" class="form-select" id="txtAutoridadEmiteCertificado2" disabled>
+
+            </select>
+            <span id="validaciontxtAutoridadEmiteCertificado" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtNumeroCertificacion2" class="form-label required">Número de certificación</label>
+            <input type="number" class="form-control" readonly id="txtNumeroCertificacion2"
+                placeholder="Número de certificación">
+            <span id="validaciontxtNumeroCertificacion" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtFechaCertificacion" class="form-label required">Fecha de certificación</label>
+            <input type="date" class="form-control" readonly id="txtFechaCertificacion" placeholder="Fecha de certificación">
+            <span id="validaciontxtFechaCertificacion" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtVigenciaCertificacion" class="form-label required">Vigencia de certificación</label>
+            <input type="date" class="form-control" readonly id="txtVigenciaCertificacion"
+                placeholder="Vigencia de certificación">
+            <span id="validaciontxtVigenciaCertificacion" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label class="form-label required" for="chksTipoPermiso">Tipo de permiso</label>
+            <div id="chksTipoPermiso" class="text-center">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="chksTipoPermisoImportacion"
+                        id="chksTipoPermisoImportacion" value="48" disabled>
+                    <label class="form-check-label" for="chksTipoPermisoImportacion">Importación</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="chksTipoPermisoExportacion"
+                        id="chksTipoPermisoExportacion" value="47" disabled>
+                    <label class="form-check-label" for="chksTipoPermisoExportacion">Exportación</label>
+                </div>
+            </div>
+            <span id="validacionchksTipoPermiso" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+
+        <div class="mb-1 mt-1 col-6">
+            <label class="form-label required">Tipo de especímenes o productos a importar o exportar</label>
+            <div class="marginL-25">
+                <div id="divChecksTipoEspecímenesProductosImpExp">
+                </div>
+            </div>
+            <span id="validacionTipoEspecímenesProductosImpExp" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <div id="divAdjunto2">
+
+
+
+            </div>
+        </div>
+
+
+
+        <div class="mb-1 mt-1 col-12" id="divObservacionesCertificado">
+            <label for="txtObservacionesCertificado" class="form-label">Observaciones</label>
+            <textarea class="form-control" readonly id="txtObservacionesCertificado" rows="4"></textarea>
+        </div>
+
+    </div>
+</div>
+
+
+
+</div>

@@ -1,0 +1,43 @@
+﻿@model Web.Models.EditVisitaActaCortes;
+
+
+<div class="row col-12 mb-3">
+    <div class="form-group col-md-6">
+        <label  class="form-label required" for="CantidadPielCorte">Cantidad de pieles a cortar</label>
+        <input type="text" class="form-control inputValidation" asp-for="CantidadPielACortar" placeholder="Nro de pieles">
+        <span class="SPANValidation" id="SPANCantidadPielCorte"></span>
+    </div>
+@*    <div class="form-group col-md-6">
+        <label for="PrecintoIdentificacion">Precintos de identificacion</label>
+        <input type="text" class="form-control inputValidation" asp-for="PrecintoIdentificacion" placeholder="Nro de Identificacion">
+        <span class="SPANValidation" id="SPANPrecintoIdentificacion"></span>
+    </div>*@
+    <div class="col-md-6">
+        <label  class="form-label required" for="ArchivoPrecintosMarquilla">Precintos de Identificación</label>
+        <input type="file" class="form-control" id="ArchivoPrecintosMarquilla">
+        <span class="SPANValidation span-advertencia" id="SPANArchivoPrecintosMarquilla"></span>
+        <div class="col-md-12" id="DivMostrarArchivoExcel"></div>
+    </div>
+</div>
+<div class="row col-md-11">
+    <label for="EstadoPiel">Estados de las pieles</label>
+</div>
+<div class="row col-12 mb-3 px-3">
+    <div class="form-check form-check-inline col-md-3">
+        <input type="hidden" id="HiddenEstadoPiel" value="@Model.EstadoPielInt" />
+        <input class="form-check-input" type="radio" name="radioEstadosPielCorte" id="EstadoPiel0" value="0">
+        <label class="form-check-label" for="EstadoPiel1">Crudas</label>
+    </div>
+    <div class="form-check form-check-inline col-md-3">
+        <input class="form-check-input" type="radio" name="radioEstadosPielCorte" id="EstadoPiel1" value="1">
+        <label class="form-check-label" for="EstadoPiel2">Azul Humedo</label>
+    </div>
+    <div class="form-check form-check-inline col-md-3">
+        <input class="form-check-input" type="radio" name="radioEstadosPielCorte" id="EstadoPiel2" value="2">
+        <label class="form-check-label" for="EstadoPiel3">Curtidas</label>
+    </div>
+    <div class="form-check form-check-inline col-md-2">
+        <input class="form-check-input" type="radio" name="radioEstadosPielCorte" id="EstadoPiel3" value="3">
+        <label class="form-check-label" for="EstadoPiel4">Terminadas</label>
+    </div>
+</div>

@@ -1,0 +1,464 @@
+﻿@using Web.Models;
+@model InformacionSolicitud;
+
+@{
+    var tipoSolicitud = "";
+    if (Model.ListaTiposSolicitud.Any())
+    {
+        tipoSolicitud = Model.ListaTiposSolicitud.Where(s => s.IdTipoSolicitud == Model.TypeRequestCode)
+                                                      .Select(p => p.TipoSolicitud).FirstOrDefault() ?? "";
+    }
+}
+
+
+
+<body>
+    <div class="row">
+        <ul class="nav nav-tabs mt-4">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#solicitudRadicada">Solicitud</a>
+            </li>
+            <li class="nav-item" id="validarCartaSolicitud">
+                <a class="nav-link" data-bs-toggle="tab" href="#cartaSolicitudRadicada">Carta</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane container active p-2" id="solicitudRadicada">
+                <div class="row">
+                    <hr size="5" />
+                    <h1>Información del establecimiento</h1>
+                    <div class="col-md-3 mb-1">
+                        <label for="ciudadSolicitud" class="form-label">Ciudad</label>
+                        <input type="text" class="form-control" id="ciudadSolicitud" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="fechaSolicitud" class="form-label">Fecha consignación precintos - marquillas</label>
+                        <input type="text" class="form-control" id="fechaSolicitud" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="establecimientoSolicitud" class="form-label">Establecimiento</label>
+                        <input type="text" class="form-control" id="establecimientoSolicitud" readonly>
+                    </div>
+                    <h2>Representante legal</h2>
+                    <div class="col-md-3 mb-1">
+                        <label for="primerNombre" class="form-label">Primer Nombre</label>
+                        <input type="text" class="form-control" id="primerNombre" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="segundoNombre" class="form-label">Segundo Nombre</label>
+                        <input type="text" class="form-control" id="segundoNombre" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="primerApellido" class="form-label">Primer Apellido</label>
+                        <input type="text" class="form-control" id="primerApellido" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="segundoApellido" class="form-label">Segundo Apellido</label>
+                        <input type="text" class="form-control" id="segundoApellido" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="tipoIdentificacion" class="form-label">Tipo de identificación</label>
+                        <input type="text" class="form-control" id="tipoIdentificacion" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="numeroIdentificacion" class="form-label">Número de identificación</label>
+                        <input type="number" class="form-control" id="numeroIdentificacion" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="telefono" class="form-label">Teléfono</label>
+                        <input type="number" class="form-control" id="telefono" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="correoElectronico" class="form-label">Correo Electrónico</label>
+                        <input type="text" class="form-control" id="correoElectronico" readonly>
+                    </div>
+                    <h1>Solicitud</h1>
+                    <div class="col-md-7 mb-1">
+                        <label for="tipoSolicitud" class="form-label">Tipo de solicitud</label>
+                        <input type="text" class="form-control" id="tipoSolicitud" readonly>
+                    </div>
+                    <div class="col-md-12 mb-4 mt-2">
+
+                        @{
+                            if (tipoSolicitud == "Precintos")
+                            {
+                                <table id="tableNumeraciones" class="table w-100" aria-describedby="tabla de numeraciones">
+                                    <thead>
+                                        <tr>
+                                            <th class="th-bigText">Especie</th>
+                                            <th class="th-bigText">Numeración Interna Inicial</th>
+                                            <th class="th-bigText">Numeración Interna Final</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            }
+
+                            if (tipoSolicitud == "marquillasMADS")
+                            {
+                                <table id="TablaVisitaCortes" class="table w-100">
+                                    <caption class="d-none">Table Description</caption>
+                                    <thead>
+                                        <tr>
+                                            <th class="th-mediumText">Tipo de fracción</th>
+                                            <th class="th-mediumText">Cantidad</th>
+                                            <th class="th-mediumText">Total Área</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            }
+                        }
+                        
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="direccionEntrega" class="form-label">Dirección Entrega</label>
+                        <input type="text" class="form-control" id="direccionEntrega" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="departamentoSolicitud" class="form-label">Departamento</label>
+                        <input type="text" class="form-control" id="departamentoSolicitud" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="ciudad" class="form-label">Ciudad</label>
+                        <input type="text" class="form-control" id="ciudad" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="cantidad" class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="cantidad" readonly>
+                    </div>
+                    <div class="col-md-2 mb-1">
+                        <label for="longitudMenor" class="form-label">Longitud menor (cm)</label>
+                        <input type="number" class="form-control" id="longitudMenor" readonly>
+                    </div>
+                    <div class="col-md-2 mb-1">
+                        <label for="longitudMayor" class="form-label">Longitud mayor (cm)</label>
+                        <input type="number" class="form-control" id="longitudMayor" readonly>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <label for="fechaConsignacion" class="form-label">Fecha de consignación precintos marquillas</label>
+                        <input type="text" class="form-control" id="fechaConsignacion" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="especiesSubespecies" class="form-label">Especie</label>
+                        <input type="text" class="form-control" id="especiesSubespecies" readonly>
+                    </div>
+                
+                    <div class="col-md-12 my-auto mb-4 row">
+                        <div class="col-5">
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label" for="inlineCheckbox1">Soporte Consignación precintos - marquillas</label>
+                            </div>
+                            <div class="row w-100 mt-2 contenerAdjuntos DocumentoSoporteConsignacion">
+                                <div class="col-11">
+                                    <div class="btnPrevisualizar" id="verDocumentoSoporteConsignacion"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label" for="inlineCheckbox1">Anexo</label>
+                            </div>
+                            <div class="DocumentoAnexos">
+                            </div>
+                        </div>
+                    </div>
+                    <hr size="5" />
+                    <div class="col-md-9 mb-4">
+                        <label for="observaciones" class="form-label">Observaciones o descripción del requerimiento</label>
+                        <textarea class="form-control" id="observaciones" rows="3" placeholder=" Observaciones" readonly></textarea>
+                    </div>
+                    <div class="col-md-9 mb-1 d-none" id="divRespuesta">
+                        <label for="respuesta" class="form-label">Respuesta</label>
+                        <textarea class="form-control" id="respuesta" rows="3" placeholder=" Respuesta" readonly></textarea>
+                    </div>
+                    <div class="col-5 d-none" id="divSoporteRespuesta">
+                        <div class="col-12">
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label" for="inlineCheckbox1">Documento Soporte</label>
+                            </div>
+                            <div class="DocumentoDesistimiento">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane container fade p-2" id="cartaSolicitudRadicada">
+                <h1>Carta</h1>
+                <div id="divCarta"></div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 row justify-content-center">
+        <div class="col-2">
+            <a class="btn btn-primary" type="button" asp-controller="GestionPrencintosNacionalesDirector" asp-action="Index" title="Regresar">REGRESAR</a>
+        </div>
+    </div>
+</body>
+<partial name="./../Modales/Modales.cshtml" />
+<script>
+    $("#guardarNumeroRadicado").click(function () {
+        $("#confirmacionNumeroRadicado").modal('show');
+    });
+
+    $("#confirmarGuardarNumeroRadicado").click(function () {
+        $("#confirmacionNumeroRadicado").modal('hide');
+        $("#creacionNumeroRadicado").modal('show');
+    });
+
+    $(document).ready(async function () {
+        visualizarFondoProcesando();
+        var id = @ViewBag.idSolicitud;
+
+        const tablaNumeraciones = document.querySelector('#tableNumeraciones');
+        const tablaVisitaCortes = document.querySelector('#TablaVisitaCortes');
+
+        let url = "@Url.Action("DetalleSolicitud","GestionPrencintosNacionales")";
+        let resp = await Get(url, { id: id });
+        console.log(resp)       
+
+        if (resp != null) {
+            DocumentoSoporteConsignacion();
+            DocumentoAnexos();
+            DocumentoDesistimiento();
+            $('#ciudadSolicitud').val(resp[0].ciudad);
+            $('#departamentoSolicitud').val(resp[0].departamento);
+            $('#fechaSolicitud').val(moment(resp[0].fecha).format('DD/MM/yyyy'));
+            $('#establecimientoSolicitud').val(resp[0].establecimiento);
+            $('#primerNombre').val(resp[0].primernombre);
+            $('#segundoNombre').val(resp[0].segundonombre);
+            $('#primerApellido').val(resp[0].primerapellido);
+            $('#segundoApellido').val(resp[0].segundoapellido);
+            $('#tipoIdentificacion').val(resp[0].tipoidentificacion);
+            $('#numeroIdentificacion').val(resp[0].numeroidentificacion);
+            $('#direccionEntrega').val(resp[0].direccionentrega);
+            $('#ciudad').val(resp[0].ciudadentrega);
+            $('#telefono').val(resp[0].telefono);
+            $('#correoElectronico').val(resp[0].correoelectronico);
+            $('#cantidad').val(resp[0].cantidad);
+            $('#especiesSubespecies').val(resp[0].especie);
+            $('#codigoInicial').val(resp[0].codigoinicial);
+            $('#codigoFinal').val(resp[0].codigofinal);
+            $('#longitudMenor').val(resp[0].longitudmenor);
+            $('#longitudMayor').val(resp[0].longitudmayor);
+            $('#observaciones').val(resp[0].observaciones);
+            $('#respuesta').val(resp[0].respuesta);
+            $('#fechaConsignacion').val(moment(resp[0].fechalegal).format('DD/MM/yyyy'));
+            $('#tipoSolicitud').val(resp[0].tiposolicitud);
+
+
+
+            //if (resp[0].consignacion == true) {
+            //    $("#consignacionSi").prop("checked", true);
+            //    $("#consignacionNo").prop("checked", false);
+            //}
+            //else {
+            //    $("#consignacionSi").prop("checked", false);
+            //    $("#consignacionNo").prop("checked", true);
+            //}
+
+            if (resp[0].respuesta != null) {
+                $('#respuesta').val(resp[0].respuesta);
+                $('#divRespuesta').removeClass('d-none');
+                $('#divSoporteRespuesta').removeClass('d-none');
+            } else {
+                $('#divRespuesta').addClass('d-none');
+                $('#divSoporteRespuesta').addClass('d-none');
+            }
+
+
+            if(tablaNumeraciones)
+            {
+                let urlCodigos = "@Url.Action("ListaNumeracionesSolicitud","GestionPrencintosNacionales")";
+                let respCodigos = await Get(urlCodigos, { idSolicitud: id });
+                
+                if (respCodigos !== null)
+                {
+                    var table = $('#tableNumeraciones').DataTable({
+                        searching: false,
+                        destroy: true,
+                        scrollX: true,
+                        lengthChange: true,
+                        lengthMenu: [5, 10, 20, 50, 100],
+                        paging: true,
+                        info: true,
+                        dom:
+                            "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                            "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+                        language: {
+                            lengthMenu: "Resultados pág. _MENU_",
+                            info: "_START_ al _TOTAL_ Resultados",
+                            search: "",
+                            searchPlaceholder: "Buscar",
+                            zeroRecords: "No se encontraron resultados",
+                            infoEmpty: "0 al 0 Resultados",
+                            paginate: {
+                                previous: "Anterior",
+                                next: "Siguiente",
+                            },
+                        },
+                        data: respCodigos,
+                        columns: [
+                            {
+                                "data": "origen",
+                                render: function (data, type, row) {
+                                    var especie = resp[0].especie;
+                                    return especie;
+                                },
+                            },
+                            { "data": "inicial" },
+                            { "data": "final" },
+                        ]
+                    });
+
+                    if ($(`#tableNumeraciones`).find('tbody tr').length < 5) {
+                        $('#tableNumeraciones_paginate').hide();
+                    } else {
+                        $('#tableNumeraciones_paginate').show();
+                    }
+                }
+                else{
+                    $('#tableNumeraciones').DataTable();
+                }
+
+            }
+
+            if (tablaVisitaCortes) {
+                let urlCodigos = "@Url.Action("ListaTiposPartesCortes","GestionPrencintosNacionales")";
+                let respTiposPartes = await Get(urlCodigos, { idSolicitud: id });
+
+                if (respTiposPartes !== null) {
+                    $('#TablaVisitaCortes').DataTable({
+                        searching: false,
+                        destroy: true,
+                        scrollX: true,
+                        lengthChange: true,
+                        lengthMenu: [5, 10, 20, 50, 100],
+                        paging: true,
+                        info: true,
+                        dom:
+                            "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                            "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+                        language: {
+                            lengthMenu: "Resultados pág. _MENU_",
+                            info: "_START_ al _TOTAL_ Resultados",
+                            search: "",
+                            searchPlaceholder: "Buscar",
+                            zeroRecords: "No se encontraron resultados",
+                            infoEmpty: "0 al 0 Resultados",
+                            paginate: {
+                                previous: "Anterior",
+                                next: "Siguiente",
+                            },
+                        },
+                        data: respTiposPartes,
+                        columns: [
+                            { "data": "fractionType" },
+                            { "data": "amountSelected" },
+                            { "data": "totalAreaSelected" },
+                        ]
+                    });
+
+                    if ($(`#TablaVisitaCortes`).find('tbody tr').length < 5) {
+                        $('#TablaVisitaCortes_paginate').hide();
+                    } else {
+                        $('#TablaVisitaCortes_paginate').show();
+                    }
+                }
+                else {
+                    $('#TablaVisitaCortes').DataTable();
+                }
+
+            }
+
+
+           
+        }
+
+
+        let urlCarta = "@Url.Action("TraerDocumentosPrecintos","GestionPrencintosNacionales")";
+        let respCarta = await Get(urlCarta, {
+            code: id,
+            type: 10170
+        });
+        respCarta.forEach((elemento) => {
+            $('#divCarta').html('<iframe src=' + elemento.adjuntoBase64 + ' type="application/pdf" width="100%" height="800px"></iframe>')
+        });
+        ocultarFondoProcesando();
+    });
+
+    async function DocumentoSoporteConsignacion() {
+        var id = @ViewBag.idSolicitud;
+
+        let url = "@Url.Action("TraerDocumentosPrecintos","GestionPrencintosNacionales")";
+        let resp = await Get(url, {
+            code: id,
+            type: 10109
+        });
+        resp.forEach((elemento) => {
+            $("#verDocumentoSoporteConsignacion").html(elemento.nombreAdjunto);
+        });
+    }
+
+    async function DocumentoAnexos() {
+        var id = @ViewBag.idSolicitud;
+
+        let url = "@Url.Action("TraerDocumentosPrecintos","GestionPrencintosNacionales")";
+        let resp = await Get(url, {
+            code: id,
+            type: 10110
+        });
+        $(".DocumentoAnexos").html('');
+        resp.forEach((elemento) => {
+            $(".DocumentoAnexos").append(`<div class="row w-100 mt-2 contenerAdjuntos">
+                                                <div class="col-11">
+                                                                <div class="btnPrevisualizar" onclick="verDocumentoAnexos('${elemento.adjuntoBase64}')">${elemento.nombreAdjunto}</div>
+                                                </div>
+                                            </div>`);
+        });
+    }
+
+    async function DocumentoDesistimiento() {
+        var id = @ViewBag.idSolicitud;
+
+        let url = "@Url.Action("TraerDocumentosPrecintos","GestionPrencintosNacionales")";
+        let resp = await Get(url, {
+            code: id,
+            type: 10169
+        });
+        debugger;
+        resp.forEach((elemento) => {
+            $(".DocumentoDesistimiento").append(`<div class="row w-100 mt-2 contenerAdjuntos">
+                                                        <div class="col-11">
+                                                            <div class="btnPrevisualizar" onclick="verDocumentoDesistimiento('${elemento.adjuntoBase64}')">${elemento.nombreAdjunto}</div>
+                                                        </div>
+                                                    </div>`);
+        });
+    }
+
+    $("#verDocumentoSoporteConsignacion").click(async function () {
+        var id = @ViewBag.idSolicitud;
+
+        let url = "@Url.Action("TraerDocumentosPrecintos","GestionPrencintosNacionales")";
+        let resp = await Get(url, {
+            code: id,
+            type: 10109
+        });
+        resp.forEach((elemento) => {
+            var newWindow = window.open();
+            newWindow.document.write('<iframe src=' + elemento.adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+        });
+    });
+
+    async function verDocumentoAnexos(adjuntoBase64) {
+        var newWindow = window.open();
+        newWindow.document.write('<iframe src=' + adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+    }
+
+    async function verDocumentoDesistimiento(adjuntoBase64) {
+        var newWindow = window.open();
+        newWindow.document.write('<iframe src=' + adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+    }
+</script>

@@ -1,0 +1,164 @@
+﻿@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<body>
+    <div class="row">
+        <div class="col-md-8 mt-2">
+            <a asp-controller="Home" asp-action="Index" title="Modulo de CITES">Modulo de CITES</a>  >
+            <a asp-controller="Home" asp-action="Administracion" title="Administración">Administración</a>  >
+            <strong>@ViewBag.name</strong>
+        </div>
+        <div class="col-md-4 mt-2">
+            <a class="btn btn-secondary" type="button" asp-controller="" asp-action="Ayuda" title="Ayuda">AYUDA</a>
+            <a class="btn btn-secondary" type="button" asp-controller="Home" asp-action="Index" title="Inicio">INICIO</a>
+        </div>
+        <hr size="5" />
+        <h1>@ViewBag.name</h1>
+    </div>
+    <div class="col-11 mx-auto mt-2">
+        <!-- data table -->
+        <div class="table-responsive">
+            <table id="tablaServcios" class="table w-100">
+                <caption class="d-none">Table Description</caption>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="th-shortText">EndPoint</th>
+                        <th class="th-shortText">Seguridad</th>
+                        <th class="th-shortText">Entrada</th>
+                        <th class="th-shortText">Salida</th>
+                        <th class="th-shortText">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <input type="hidden" id="servicio" value="@ViewBag.name">
+        </div>
+    </div>
+    <div class="mt-4 row justify-content-center">
+        
+        <div class="col-2">
+            <a class="btn btn-primary" type="button" asp-controller="AdministrarServicios" asp-action="Index" title="Volver">Regresar</a>
+        </div>
+    </div>
+</body>
+<script>
+    $(document).ready(async function () {
+
+        let servicios = [
+            {
+                servicio: "WS-CITES-011_Consultar Salvoconducto CITES - a SUNL",
+                endpoint: "/api/login/access-token",
+                seguridad: "JWT",
+                entrada: "-Usuario -Contraseña",
+                salida: "-Json Web Token (JWT)",
+                estado: "Activo"
+            },
+            {
+                servicio: "WS-CITES-011_Consultar Salvoconducto CITES - a SUNL",
+                endpoint: "/api/GetDataSUNL/",
+                seguridad: "JWT",
+                entrada: "-Numero SUNL -Numero identificación",
+                salida: "-Json con información del salvoconducto",
+                estado: "Activo"
+            },
+            {
+                servicio: "Acceso a servicio de autenticación VITAL",
+                endpoint: "/api/login/access-token",
+                seguridad: "JWT",
+                entrada: "-Usuario  -Contraseña",
+                salida: "-Json Web Token (JWT)",
+                estado: "Activo"
+            },
+            {
+                servicio: "Acceso a servicio de autenticación VITAL",
+                endpoint: "/api/auth_users/",
+                seguridad: "JWT",
+                entrada: "-Usuario  -Contraseña (vital)",
+                salida: "-Json con información del usuario",
+                estado: "Activo"
+            },
+            {
+                servicio: "Acceso a servicio de autenticación VITAL",
+                endpoint: "/api/auth_users/validate_token_auth/",
+                seguridad: "JWT",
+                entrada: "-Token (Json anterior)  -Numero Usuario",
+                salida: "-True o False",
+                estado: "Activo"
+            }
+        ];
+
+        const servicioDeseado = $('#servicio').val();
+        const serviciosFiltrados = servicios.filter(servicio => servicio.servicio === servicioDeseado);
+
+
+        $tablaServcios = $('#tablaServcios').DataTable({
+            searching: false,
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom:
+                "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                    previous: "Anterior",
+                    next: "Siguiente",
+                },
+            },
+            data: serviciosFiltrados,
+            columns: [
+                {
+                    "data": "endpoint",
+                    className: "d-none"
+                },
+                {
+                    "data": "endpoint"
+                },
+                {
+                    "data": "seguridad"
+                },
+                {
+                    "data": "entrada"
+                },
+                {
+                    "data": "salida"
+                },
+                {
+                    "data": "estado",
+                    render: function (data, type, row) {
+                        var colorDiv = "";
+                        if (data == "Sin conexión") {
+                            colorDiv = "danger";
+                            return `<div class="p-3 mb-2 bg-${colorDiv} text-${colorDiv} bg-opacity-75 text-white">SIN CONEXIÓN</div>`;
+                        } else {
+                            colorDiv = "success";
+                            return `<div class="p-3 mb-2 bg-${colorDiv} text-${colorDiv} bg-opacity-75 text-white">CONEXIÓN EXITOSA</div>`;
+                        }
+                    },
+                }
+            ],
+            columnDefs: [{
+                targets: 2
+            }]
+        });
+
+
+        if ($(`#tablaServcios`).find('tbody tr').length < 5) {
+            $('#tablaServcios_paginate').hide($('#tablaServcios_paginate thead'));
+        } else {
+            $('#tablaServcios_paginate').show();
+        }
+    });
+</script>

@@ -1,0 +1,35 @@
+﻿@{
+    Layout = "_LayoutSaleDocuments";
+}
+
+<div class="container">
+    <div class="row content">
+        <div class="col-md-8 resume">
+            <a asp-controller="" asp-action="">Inicio</a>  > <a asp-controller="" asp-action="">Iniciar Tramites</a>  >   <a asp-controller="" asp-action="">Cupos Precintos y Marquillas</a>  >   <strong>Consultar Salvoconductos de movilización</strong>          
+        </div>
+        <div class="col-md-4 iconos">
+            <button type="submit" class="btn btn-secondary" title="Ayuda">AYUDA</button>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">INICIO</a>
+        </div>
+    </div> 
+    <div class="container">
+        <h3 class="titulos-h3">Consultar Salvoconductos de movilización</h3>
+        <div class="row mt-2">
+            <div class="col-md-6 mb-1">             
+                <label for="nitTxt" class="form-label">Nit</label>                           
+                <input type="text" class="form-control" id="nitTxt">                            
+            </div>
+            <div class="col-md-6 mb-1">             
+                <label for="conduitNumberTxt" class="form-label">Numero de salvoconducto</label>                           
+                <input type="text" class="form-control" id="conduitNumberTxt">                                        
+            </div>                            
+            <div class="row justify-content-center">
+                <button type="button" id="btnReturn" class="btn btn-primary btn-bandeja-regresar m-2" onclick="Return()" title="Regresar a Registrar documento de venta">Regresar</button>
+                <button type="button" id="btnReturn" class="btn btn-primary btn-bandeja-regresar m-2" onclick="Redirect()"  title="Consultar salvoconductos">Consultar</button>
+            </div>                         
+        </div>
+    </div>
+</div>
+<partial name="Scripts\ConduitMobilizationScripts" />
+
+           

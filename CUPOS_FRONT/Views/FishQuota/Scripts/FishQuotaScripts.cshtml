@@ -1,0 +1,1615 @@
+﻿<script>
+var codeDelete = 0;
+var codeEdit = 0;
+var saveEdit = false;
+var codeDeleteFishQuotaAmount = 0;
+var codeEditFishQuotaAmount = 0;
+var codeDetailsViewId = 0;
+var saveEditFishQuotaAmountWC = false;
+var saveEditFishQuotaAmountCS = false;
+var saveEditFishQuotaAmountOP = false;
+var saveEditFishQuotaAmountARC = false;
+var saveCountFishQuotaAmountWC = 0;
+var saveCountFishQuotaAmountCS = 0;
+var saveCountFishQuotaAmountOP = 0;
+var saveCountFishQuotaAmountAR = 0;
+var editIdWC = 0;
+var editIdCS = 0;
+var editIdOP = 0;
+var editIdAR = 0;
+var fishQuotaAmountListTempWC = new Array();
+var fishQuotaAmountRemovedWC = new Array();
+var fishQuotaAmountListTempCS = new Array();
+var fishQuotaAmountRemovedMC = new Array();
+var typeSelectForm = "";
+var actionFishQuotaAmount ="";
+var IndividualFileBase64 = '';
+var nombreIndividualFile = '';
+var tipoAdjuntoIndividualFile = '';
+var inc = 0;
+var multipleAttachments = [];
+var multipleAttachmentsRemoved = [];
+var listAllSpecies = [];
+var messageTextAlert = [];
+var fileMultipleFile = document.getElementById('fileMultipleFile');
+var contenedorMultipleFile = document.getElementById('contenedorMultipleFile');
+var spanFileMultipleFile = document.getElementById('spanFileMultipleFile');
+var fileContenedorMultipleFile = document.getElementById('fileContenedorMultipleFile');
+var waterSweetContinentalDiv = document.getElementById('WaterSweetContinentalDiv');
+var sailorDiv = document.getElementById('SailorDiv');
+var quotasTable = document.getElementById('QuotasTable');
+var messageTextInformative = document.getElementById('MessageTextInformative');
+var messageText = document.getElementById('messageText');
+var messageTextConfirmDelete = document.getElementById('MessageTextConfirmDelete');
+var messageTextConfirmDeleteAmount = document.getElementById('MessageTextConfirmDeleteAmount');
+var messageTextConfirmSave = document.getElementById('MessageTextConfirmSave');
+var messageTextConfirmSaveAmountWC = document.getElementById('MessageTextConfirmSaveAmountWC');
+var messageTextConfirmSaveAmountCS = document.getElementById('MessageTextConfirmSaveAmountCS');
+var messageTextConfirmSaveAmountOP = document.getElementById('MessageTextConfirmSaveAmountOP');
+var messageTextConfirmSaveAmountARC = document.getElementById('MessageTextConfirmSaveAmountARC');
+var messageTextConfirmCancelSave = document.getElementById('MessageTextConfirmCancelSave');
+var deleteBtnModal = document.getElementById("deleteAmountBtnYes");
+var typeSelectTxt = document.getElementById("TypeSelectTxt");
+var numberResolutionTxt = document.getElementById("NumberResolutionTxt");
+var resolutionDateTxt = document.getElementById("ResolutionDateTxt");
+var resolutionObjectTxt = document.getElementById("ResolutionObjectTxt");
+var initialVigencyDateTxt = document.getElementById("InitialVigencyDateTxt"); 
+var finalVigencyDateTxt = document.getElementById("FinalVigencyDateTxt"); 
+var descriptionDiv = document.getElementById("DescriptionDiv"); 
+var TitleDivCS = document.getElementById("TitleDivCS");   
+var resourceDivCS = document.getElementById("ResourceDivCS");   
+var quotaDivCS = document.getElementById("QuotaDivCS"); 
+var totalDivCS = document.getElementById("TotalDivCS");   
+var saveDivCS = document.getElementById("SaveDivCS");   
+var TitleDivOP = document.getElementById("TitleDivOP");   
+var resourceDivOP = document.getElementById("ResourceDivOP");   
+var quotaDivOP = document.getElementById("QuotaDivOP"); 
+var totalDivOP = document.getElementById("TotalDivOP");   
+var saveDivOP = document.getElementById("SaveDivOP"); 
+var TitleDivAR = document.getElementById("TitleDivAR");   
+var resourceDivAR = document.getElementById("ResourceDivAR");   
+var quotaDivAR = document.getElementById("QuotaDivAR"); 
+var totalDivAR = document.getElementById("TotalDivAR");   
+var saveDivAR = document.getElementById("SaveDivAR"); 
+var groupDivWC = document.getElementById("GroupDivWC");   
+var specieDivWC = document.getElementById("SpecieDivWC");   
+var commonNameDivWC = document.getElementById("CommonNameDivWC");   
+var quotaSpecieDivWC = document.getElementById("QuotaSpecieDivWC");   
+var quotaGroupDivWC = document.getElementById("QuotaGroupDivWC"); 
+let divTotalTxtWC=document.getElementById('divTotalTxtWC');  
+var saveDivWC = document.getElementById("SaveDivWC");   
+var titleTableActionsTxtWC = document.getElementById("TitleTableActionsTxtWC");
+var titleTableActionsTxtCS = document.getElementById("TitleTableActionsTxtCS");
+var titleTableActionsTxtOP = document.getElementById("TitleTableActionsTxtOP");
+var titleTableActionsTxtAR = document.getElementById("TitleTableActionsTxtAR");
+var btnReturnFQ = document.getElementById("BtnReturnFQ");
+var btnCancelFQ = document.getElementById("BtnCancelFQ");
+var btnSaveFQ = document.getElementById("BtnSaveFQ");
+var groupTxtWC = document.getElementById("GroupTxtWC");
+var specieTxtWC = document.getElementById("SpecieTxtWC");
+var commonNameTxtWC = document.getElementById("CommonNameTxtWC");
+var resourceTxtCS = document.getElementById("ResourceTxtCS");
+var resourceTxtOP = document.getElementById("ResourceTxtOP");
+var resourceTxtArc = document.getElementById("ResourceTxtArc");
+var titleModalConfirmation = document.getElementById("TitleModalConfirmation");
+var otherDivWC = document.getElementById("OtherDivWC");
+var otherFieldEnabled = false;
+var hideOtherFieldDiv = document.getElementById("HideOtherFieldDiv");
+var otherDivBtn = document.getElementById("OtherDivBtn");
+let ulCamposOblgatorios=document.getElementById('ulCamposOblgatorios');
+let divCommonNameTxtWC=document.getElementById('divCommonNameTxtWC');
+
+let validarCambioGrupos=false;
+
+$(document).ready(function(){ 
+    GetFishesQuotas(); 
+    GetSpecies();
+    HiddeFormsControls(false);
+    HiddeElement(quotasTable,false);     
+    HiddeElement(document.getElementById('SaveDiv'),true);
+    HiddeElement(waterSweetContinentalDiv,true);  
+    HiddeElement(sailorDiv,true);    
+    HiddeElement(otherDivWC,true);     
+});
+
+// Permite campos solo numeros
+function OnlyNumberKey(evt) {        
+    var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+    if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+        return false;
+    return true;
+}
+
+//obtiene las cuotas para peces
+async function GetFishesQuotas(search = null){
+    let url = ""; 
+    if(search == null){
+        url = `@Url.Action("GetFishesQuotas","FishQuota")`;
+        
+    }else{
+        var numberResolution = $(NumberResolutionTxtSearch).val();    
+        var initialVigencyDateTxt = $(InitialVigencyDateTxtSearch).val();
+        var finalVigencyDateTxt = $(FinalVigencyDateTxtSearch).val();
+        url = `@Url.Action("GetFishesQuotas", "FishQuota")` + `?initialValidityDate=${initialVigencyDateTxt}` + `&&finalValidityDate=${finalVigencyDateTxt}` + `&&numberResolution=${numberResolution}`;
+    }
+    let response = await Get(url);
+    if(response.length > 0){
+        $(`#TableFishesQuotas`).DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],            
+            paging:true,
+            info: true,
+            filter:false,
+            dom:
+                "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                previous: "Anterior",
+                next: "Siguiente",
+                },
+            },
+            data:response,
+            columns:[
+                {
+                    "data": "code",
+                    className: "d-none"
+                },             
+                {
+                    "data": "numberResolution",
+                },              
+                {
+                    "data": "resolutionDate",
+                    render: function (data) {
+                        if (data != null) {
+                        return moment(data).format("DD-MM-yyyy");
+                        }
+                        return data;
+                    },                    
+                },     
+                                {
+                    "data": "initialValidityDate",
+                    render: function (data) {
+                        if (data != null) {
+                        return moment(data).format("DD-MM-yyyy");
+                        }
+                        return data;
+                    },                    
+                },   
+                                {
+                    "data": "finalValidityDate",
+                    render: function (data) {
+                        if (data != null) {
+                        return moment(data).format("DD-MM-yyyy");
+                        }
+                        return data;
+                    },                    
+                },                    
+                {
+                    "data": "resolutionObject",
+                },
+                {
+                    render: function () {
+                        return '<a type="button" class="text-primary" id="btnViewDetail" title="Ver detalle">VER</a> / <a type="button" class="text-primary" id="btnEdit" title="Editar">EDITAR</a> / <a type="button" class="text-primary" id="btnDelete" title="Eliminar">ELIMINAR</a>';
+                    },
+                }            
+                ],
+            columnDefs: [{
+                targets: 6
+            }]  
+        });   
+        agregarClasesDatatable(`#TableFishesQuotas`);
+    }else{
+        if(search != null){
+            messageText.innerText='La resolución NO se encuentra registrada';
+            $('#MessageTextModal').modal('show');   
+        }     
+    }         
+}
+
+$('#TableFishesQuotas tbody').on('click', '#btnEdit', async function () {
+    saveEdit = true;
+    codeEdit = $(this).parents("tr").find("td")[0].innerText;   
+    HiddeElement(quotasTable,true);     
+    HiddeElement(document.getElementById('SaveDiv'),false);  
+    document.getElementById('titleSaveDiv').innerText = 'Editar resolución cuotas globales de pesca';
+    document.getElementById('TitleSaveDivPanel').innerText = 'Editar resolución cuotas globales de pesca';    
+    let url = `@Url.Action("GetFishQuotaByCode", "FishQuota")` + `?code=${codeEdit}`;
+    let response = await Get(url);
+
+    let getDocumentsUrl = `@Url.Action("GetSupportDocument", "FishQuota")` + `?code=${codeEdit}`;
+    let responseDocuments = await Get(getDocumentsUrl); 
+    if (responseDocuments.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+    }  
+    if(response != null && responseDocuments != null){
+        LoadFishQuotaFormControls(response, responseDocuments, "Edit");
+    }               
+} );
+
+//muestra el formulario cuotas para peces
+function ShowFishQuotaForm(){
+    HiddeElement(quotasTable,true);     
+    HiddeElement(document.getElementById('SaveDiv'),false); 
+    document.getElementById('titleSaveDiv').innerText = 'Registrar resolución cuotas globales de pesca';
+    document.getElementById('TitleSaveDivPanel').innerText = 'Registrar resolución cuotas globales de pesca';    
+    saveEdit = false;
+    CleanFields();
+}
+
+//muestra el modal de confirmacion para guardar cuotas para peces
+function ConfirmSave(){
+    var validateFishQuotaFields = ValidateFields('default');
+    if(validateFishQuotaFields){        
+        if(((typeSelectForm == "Continental - Agua Dulce") && (fishQuotaAmountListTempWC.length > 0)) || ((typeSelectForm == "Marino Costero") && (fishQuotaAmountListTempCS.length > 0))){
+            messageTextConfirmSave.innerText='¿Esta seguro de guardar la información?';
+            $('#ConfirmModalSave').modal('show');      
+        }else{
+            messageTextInformative.innerHTML='';
+            if(typeSelectForm == "Continental - Agua Dulce"){
+                titleModalConfirmation.innerText = 'Alerta';
+                messageTextInformative.innerHTML ='Para guardar, es necesario agregar una o mas cuotas \nContinental Agua dulce (Grupo, Especie, Nombre común, Cuota por especie, Cuota por grupo)';
+                $('#MessageTextModalInformative').modal('show');  
+            }else{
+                titleModalConfirmation.innerText = 'Alerta';
+                messageTextInformative.innerHTML ='Para guardar, es necesario agregar una o mas cuotas \nMarino costero (Recurso, Cuota, Total)';
+                $('#MessageTextModalInformative').modal('show');  
+            }
+
+        }
+    }
+}
+
+//guarda el cuota para peces
+async function SaveFishQuota(rta){ 
+    if(rta){
+        let url = '';
+        let frmData;        
+        if(saveEdit == true){             
+            frmData={
+                'Code': codeEdit,
+                'Type': $(TypeSelectTxt).val(),  
+                'NumberResolution':$(NumberResolutionTxt).val(), 
+                'ResolutionDate': $(ResolutionDateTxt).val(), 
+                'InitialValidityDate': $(InitialVigencyDateTxt).val(),
+                'FinalValidityDate': $(FinalVigencyDateTxt).val(),  
+                'ResolutionObject': $(ResolutionObjectTxt).val(),
+                'SupportDocuments': multipleAttachments,
+                'SupportDocumentsRemoved' : multipleAttachmentsRemoved,
+                'FishQuotaAmounts': typeSelectForm == "Continental - Agua Dulce" ? fishQuotaAmountListTempWC : fishQuotaAmountListTempCS, 
+                'FishQuotaAmountsRemoved': typeSelectForm == "Continental - Agua Dulce" ? fishQuotaAmountRemovedWC : fishQuotaAmountRemovedMC
+            };
+            url = `@Url.Action("UpdateFishQuota", "FishQuota")`;           
+        }else{
+            frmData={
+                'Code': 0,     
+                'Type': $(TypeSelectTxt).val(),  
+                'NumberResolution':$(NumberResolutionTxt).val(), 
+                'ResolutionDate': $(ResolutionDateTxt).val(), 
+                'InitialValidityDate': $(InitialVigencyDateTxt).val(),
+                'FinalValidityDate': $(FinalVigencyDateTxt).val(),                
+                'ResolutionObject': $(ResolutionObjectTxt).val(),
+                'SupportDocuments': multipleAttachments,
+                'FishQuotaAmounts': typeSelectForm == "Continental - Agua Dulce" ? fishQuotaAmountListTempWC : fishQuotaAmountListTempCS 
+            };
+            url = `@Url.Action("SaveFishQuota", "FishQuota")`;
+        }
+
+        let response = await Get(url, frmData);
+        
+        if(!response.error){
+            CleanFields();
+            messageText.innerText='La información se guardo con éxito';
+            $('#MessageTextModal').modal('show');
+        }else{
+            messageText.innerText='No se pudo guardar la información';
+            $('#MessageTextModal').modal('show');
+        }
+    }else{
+        $('#ConfirmModalSave').modal('hidde');        
+    }
+}
+
+$('#TableFishesQuotas tbody').on('click', '#btnDelete', async function () { 
+    codeDelete = $(this).parents("tr").find("td")[0].innerText;   
+    messageTextConfirmDelete.innerText='¿Está seguro que desea Inactivar la resoluión?';
+    $('#ConfirmModalDelete').modal('show');
+} );
+
+//muestra el modal de confirmacion para eliminar cuotas para peces
+async function ConfirmDelete(rta){
+    if(rta){
+        let url = `@Url.Action("DeleteFishQuota", "FishQuota")` + `?code=${codeDelete}`;        
+        let response = await Get(url);
+        if (autoridades.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        if(!response.error){
+                messageText.innerText='La resolución ha sido inactivada con éxito';
+                $('#MessageTextModal').modal('show');
+        }else{
+                messageText.innerText='No se pudo inactivar la información';
+                $('#MessageTextModal').modal('show');
+        }
+        
+    }else{
+        $('#ConfirmModalDelete').modal('hidde');
+    }
+}
+
+//evento acepta de modal informativo 
+function ConfirmAcceptModal(){
+    window.location.href = '@Url.Action("FishQuotas", "FishQuota")'
+}
+
+
+
+//valida campos vacios
+function Validate(elemento, span){
+    if(elemento){
+        ShowAlert(span, false);
+        return true;
+    }else{
+        ShowAlert(span,true);
+        return false;
+    }
+}
+
+//oculta elementos html
+function ShowAlert(elemento,validar){
+    if(validar){
+        if($(elemento).hasClass('d-none')){
+            $(elemento).removeClass('d-none')
+        }              
+    }else{ 
+        if (!$(elemento).hasClass('d-none')) {
+            $(elemento).addClass('d-none')
+        }                 
+    }
+}
+
+//limpia o restablece los campos del formulario
+function CleanFields(){  
+    typeSelectTxt.value = "";
+    numberResolutionTxt.value = "";
+    resolutionObjectTxt.value = ""; 
+}
+
+//se llenan los controles al editar o ver detalle cuota para peces 
+function LoadFishQuotaFormControls(data, documents, action){
+    $(NumberResolutionTxt).val(data[0].numberResolution);
+    $(ResolutionDateTxt).val(moment(data[0].resolutionDate).format('yyyy-MM-DD'));
+    $(InitialVigencyDateTxt).val(moment(data[0].initialValidityDate).format('yyyy-MM-DD'));
+    $(FinalVigencyDateTxt).val(moment(data[0].finalValidityDate).format('yyyy-MM-DD'));
+    $(ResolutionObjectTxt).val(data[0].resolutionObject);
+    multipleAttachments = documents;
+    multipleAttachments.forEach(element => {
+       UploadAttachments(element.codigo, element.tipoAdjunto, element.adjuntoBase64, action, element.nombreAdjunto)
+    });    
+        
+    if(data[0].type === 'Continental - Agua Dulce'){
+        TypeSelectTxt.selectedIndex = 1;         
+        typeSelectForm = "Continental - Agua Dulce";             
+        HiddeElement(waterSweetContinentalDiv,false);
+        HiddeElement(sailorDiv,true);  
+        data.forEach(element => {
+            fishQuotaAmountListTempWC.push(element);
+        });          
+    }else{
+        TypeSelectTxt.selectedIndex = 2;      
+        typeSelectForm = "Marino Costero";                
+        HiddeElement(waterSweetContinentalDiv,true);
+        HiddeElement(sailorDiv,false);          
+        data.forEach(element => {
+            fishQuotaAmountListTempCS.push(element);
+        });          
+    }    
+    data.forEach(element => {
+        GetFishesQuotasAmount(element.region, data); 
+    });      
+
+    if(action == 'ViewDetails'){
+        HiddeFormsControls(true);         
+        FishQuotaDisabledForm();   
+    }else{
+        HiddeFormsControls(false);
+        TypeSelectTxt.disabled = true;      
+    }    
+}
+
+//Deshabilita controles de formulario cuotas para peces
+function FishQuotaDisabledForm(){
+    typeSelectTxt.disabled = true;
+    numberResolutionTxt.disabled = true;
+    resolutionDateTxt.disabled = true;
+    initialVigencyDateTxt.disabled = true;
+    finalVigencyDateTxt.disabled = true;
+    resolutionObjectTxt.disabled = true; 
+    fileMultipleFile.disabled = true; 
+}
+
+//oculta elementos html
+function HiddeElement(element,validate){
+    if(validate){
+        if (!$(element).hasClass('d-none')) {
+            $(element).addClass('d-none')
+        }                      
+    }else{ 
+        if($(element).hasClass('d-none')){
+            $(element).removeClass('d-none')
+        }                 
+    }
+}
+
+//muestra el formulario de continental agua dulce o marino costero
+function ShowFormTypeDiv() {
+    HiddeFormsControls(false);            
+    let typeSelect = document.getElementById("TypeSelectTxt").value;
+    switch(typeSelect) {
+        case "Continental - Agua Dulce":
+            HiddeElement(waterSweetContinentalDiv,false);
+            HiddeElement(sailorDiv,true);
+            typeSelectForm = "Continental - Agua Dulce";     
+            break;
+        case "Marino Costero":
+            HiddeElement(waterSweetContinentalDiv,true);
+            HiddeElement(sailorDiv,false);  
+            typeSelectForm = "Marino Costero";     
+            break;
+        default:
+        HiddeElement(waterSweetContinentalDiv,true);
+        HiddeElement(sailorDiv,true);  
+    }  
+}
+
+//obtiene cantidad cuota para peces
+function GetFishesQuotasAmount(regionCode = 0, response = null){ 
+    switch(regionCode) {     
+    case 75:   
+        var responseFilter = "";
+        if(response != null){
+            responseFilter = response.filter(element=>{ 
+                return element.region === 75;
+            });
+        }
+        $(`#CaribbeanSea`).DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom:
+                "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                previous: "Anterior",
+                next: "Siguiente",
+                },
+            },
+            data: responseFilter, 
+            columns:[
+                {
+                    "data": "codeFishQuotaAmount",
+                    className: "d-none"
+                },             
+                {
+                    "data": "speciesCode",
+                    className: "d-none"
+                }, 
+                {
+                    "data": "speciesName",
+                },                          
+                {
+                    "data": "quota",
+                },             
+                {
+                    "data": "total",
+                },
+                {
+                    render: function () {
+                            return '<div class="waterContinentalActions"><a type="button" class="text-primary" id="btnEditCS" title="Editar">EDITAR</a> / <a type="button" class="text-primary" id="btnDeleteCS" title="Eliminar">ELIMINAR</a></div>';
+                    },
+                }            
+                ],
+            columnDefs: [{
+                targets: 5
+            }]  
+        });   
+        agregarClasesDatatable(`#CaribbeanSea`);
+        break;                
+    case 76:   
+        var responseFilter = "";
+        if(response != null){              
+            responseFilter = response.filter(element=>{ 
+                return element.region === 76;
+            });  
+        }       
+        $(`#OceanPacificTable`).DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom:
+                "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                previous: "Anterior",
+                next: "Siguiente",
+                },
+            },
+            data: responseFilter,            
+            columns:[
+                {
+                    "data": "codeFishQuotaAmount",
+                    className: "d-none"
+                },             
+                {
+                    "data": "speciesCode",
+                    className: "d-none"
+                },        
+                {
+                    "data": "speciesName",
+                },                    
+                {
+                    "data": "quota",
+                },             
+                {
+                    "data": "total",
+                },
+                {
+                    render: function () {
+                        return '<div class="waterContinentalActions"><a type="button" class="text-primary" id="btnEditOP" title="Editar">EDITAR</a> / <a type="button" class="text-primary" id="btnDeleteOP" title="Eliminar">ELIMINAR</a></div>';
+                    },
+                }            
+                ],
+            columnDefs: [{
+                targets: 5
+            }]  
+        });   
+        agregarClasesDatatable(`#OceanPacificTable`);
+        break;
+    case 77:
+        var responseFilter = "";
+        if(response != null){                
+            responseFilter = response.filter(element=>{ 
+                return element.region === 77;
+            });    
+        }            
+        $(`#ArchipelagoTable`).DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom:
+                "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                previous: "Anterior",
+                next: "Siguiente",
+                },
+            },
+            data: responseFilter,            
+            columns:[
+                {
+                    "data": "codeFishQuotaAmount",
+                    className: "d-none"
+                },                       
+                {
+                    "data": "speciesCode",
+                    className: "d-none"
+                },     
+                {
+                    "data": "speciesName",
+                },                       
+                {
+                    "data": "quota",
+                },             
+                {
+                    "data": "total",
+                },
+                {
+                    render: function () {
+                        return '<div class="waterContinentalActions"><a type="button" class="text-primary" id="btnEditAR" title="Editar">EDITAR</a> / <a type="button" class="text-primary" id="btnDeleteAR" title="Eliminar">ELIMINAR</a></div>';
+                    },
+                }            
+                ],
+            columnDefs: [{
+                targets: 5
+            }]  
+        });            
+        agregarClasesDatatable(`#ArchipelagoTable`);
+        break;               
+    default:   
+        var responseFilter = "";
+        if(response != null){                            
+            responseFilter = response.filter(element=>{ 
+                return element.region === 78;
+            });  
+        }        
+        $(`#WaterSweetContinentalTable`).DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom:
+                "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                previous: "Anterior",
+                next: "Siguiente",
+                },
+            },
+            data: responseFilter,            
+            columns:[
+                {
+                    "data": "codeFishQuotaAmount",
+                    className: "d-none"
+                },             
+                {
+                    "data": "group",
+                    className: "d-none"
+                },
+                {
+                    "data": "groupName",
+                },                              
+                {
+                    "data": "speciesCode",
+                    className: "d-none"
+                },      
+                {
+                    "data": "speciesName",
+                },   
+                {
+                    "data": "speciesNameComun",
+                },                    
+                {
+                    "data": "quota",
+                },             
+                {
+                    "data": "total",
+                },
+                {
+                        render: function () {
+                            return '<div class="waterContinentalActions"><a type="button" class="text-primary" id="btnEditWC" title="Editar">EDITAR</a> / <a type="button" class="text-primary" id="btnDeleteWC" title="Eliminar">ELIMINAR</a></div>';
+                        }
+                }            
+                ],
+            columnDefs: [{
+                targets: 6
+            }]  
+        });            
+                                    
+        agregarClasesDatatable(`#WaterSweetContinentalTable`);
+    }        
+}
+
+$('#WaterSweetContinentalTable tbody').on('click', '#btnDeleteWC', async function () { 
+    codeDeleteFishQuotaAmount = $(this).parents("tr").find("td")[0].innerText;   
+    deleteBtnModal.onclick = function() {ConfirmDeleteAmount(true, 'waterContinental')};
+    messageTextConfirmDeleteAmount.innerText='¿Está seguro que desea eliminar el registro seleccionado?';
+    $('#ConfirmModalDeleteAmount').modal('show');  
+} );
+
+$('#CaribbeanSea tbody').on('click', '#btnDeleteCS', async function () { 
+    codeDeleteFishQuotaAmount = $(this).parents("tr").find("td")[0].innerText; 
+    deleteBtnModal.onclick = function() {ConfirmDeleteAmount(true, 'caribbeanSea')};
+    messageTextConfirmDeleteAmount.innerText='¿Está seguro que desea eliminar el registro seleccionado?';
+    $('#ConfirmModalDeleteAmount').modal('show');
+} );
+
+$('#OceanPacificTable tbody').on('click', '#btnDeleteOP', async function () { 
+    codeDeleteFishQuotaAmount = $(this).parents("tr").find("td")[0].innerText;  
+    deleteBtnModal.onclick = function() {ConfirmDeleteAmount(true, 'oceanPacific')};
+    messageTextConfirmDeleteAmount.innerText='¿Está seguro que desea eliminar el registro seleccionado?';
+    $('#ConfirmModalDeleteAmount').modal('show');
+} );
+
+$('#ArchipelagoTable tbody').on('click', '#btnDeleteAR', async function () { 
+    codeDeleteFishQuotaAmount = $(this).parents("tr").find("td")[0].innerText;   
+    deleteBtnModal.onclick = function() {ConfirmDeleteAmount(true, 'archipelago')};
+    MessageTextConfirmDeleteAmount.innerText='¿Está seguro que desea eliminar el registro seleccionado?';
+    $('#ConfirmModalDeleteAmount').modal('show');
+} );
+
+//Elimina cantidad cuotas para peces
+function ConfirmDeleteAmount(validate, form){
+    if(validate)
+    {
+        switch(form) {
+            case "waterContinental":
+                let fishQuotaAmountDeleted = fishQuotaAmountListTempWC.filter(element=>{ 
+                    return element.codeFishQuotaAmount == codeDeleteFishQuotaAmount;
+                });        
+                fishQuotaAmountRemovedWC.push(fishQuotaAmountDeleted[0]);            
+                const indexWC = fishQuotaAmountListTempWC.map(e => e.codeFishQuotaAmount).indexOf(parseInt(codeDeleteFishQuotaAmount));
+                if(indexWC > -1){
+                    fishQuotaAmountListTempWC.splice(indexWC, 1); 
+                    GetFishesQuotasAmount(78, fishQuotaAmountListTempWC);          
+                }
+                break;
+            case "caribbeanSea":    
+                let fishQuotaAmountDeletedCs = fishQuotaAmountListTempCS.filter(element=>{ 
+                    return element.codeFishQuotaAmount == codeDeleteFishQuotaAmount;
+                });         
+                fishQuotaAmountRemovedMC.push(fishQuotaAmountDeletedCs[0]);                                   
+                const indexCS = fishQuotaAmountListTempCS.map(e => e.codeFishQuotaAmount).indexOf(parseInt(codeDeleteFishQuotaAmount));
+                if(indexCS > -1){
+                    fishQuotaAmountListTempCS.splice(indexCS, 1); 
+                    GetFishesQuotasAmount(75, fishQuotaAmountListTempCS);          
+                }      
+                break;
+            case "oceanPacific":
+                let fishQuotaAmountDeletedOc = fishQuotaAmountListTempCS.filter(element=>{ 
+                    return element.codeFishQuotaAmount == codeDeleteFishQuotaAmount;
+                });         
+                fishQuotaAmountRemovedMC.push(fishQuotaAmountDeletedOc[0]);             
+                const indexOP = fishQuotaAmountListTempCS.map(e => e.codeFishQuotaAmount).indexOf(parseInt(codeDeleteFishQuotaAmount));
+                if(indexOP > -1){
+                    fishQuotaAmountListTempCS.splice(indexOP, 1); 
+                    GetFishesQuotasAmount(76, fishQuotaAmountListTempCS);           
+                }                  
+                break;      
+            case "archipelago":
+                let fishQuotaAmountDeletedAr = fishQuotaAmountListTempCS.filter(element=>{ 
+                    return element.codeFishQuotaAmount == codeDeleteFishQuotaAmount;
+                });         
+                fishQuotaAmountRemovedMC.push(fishQuotaAmountDeletedAr[0]);               
+                const indexAR = fishQuotaAmountListTempCS.map(e => e.codeFishQuotaAmount).indexOf(parseInt(codeDeleteFishQuotaAmount));
+                if(indexAR > -1){
+                    fishQuotaAmountListTempCS.splice(indexAR, 1); 
+                    GetFishesQuotasAmount(77, fishQuotaAmountListTempCS);           
+                }               
+                break;                
+            default:
+        } 
+    }
+}
+
+$('#WaterSweetContinentalTable tbody').on('click', '#btnEditWC', async function () { 
+    saveEditFishQuotaAmountWC = true;
+    saveEditFishQuotaAmountCS = false;
+    saveEditFishQuotaAmountOP = false;
+    saveEditFishQuotaAmountARC = false;
+    codeEditFishQuotaAmount = $(this).parents("tr").find("td")[0].innerText;   
+    let frmData={
+        'code': codeEditFishQuotaAmount,    
+        'group': $(this).parents("tr").find("td")[1].innerText,      
+        'speciesCode': $(this).parents("tr").find("td")[3].innerText, 
+        'speciesName': $(this).parents("tr").find("td")[4].innerText, 
+        'quota': $(this).parents("tr").find("td")[6].innerText, 
+        'total': $(this).parents("tr").find("td")[7].innerText
+    };
+    LoadFishQuotaAmountForm(frmData, "waterContinental");
+} );
+
+$('#CaribbeanSea tbody').on('click', '#btnEditCS', async function () { 
+    saveEditFishQuotaAmountCS = true;
+    saveEditFishQuotaAmountWC = false;
+    saveEditFishQuotaAmountOP = false;
+    saveEditFishQuotaAmountARC = false;    
+    codeEditFishQuotaAmount = $(this).parents("tr").find("td")[0].innerText;   
+    let frmData={
+        'code': codeEditFishQuotaAmount,     
+        'speciesCode': $(this).parents("tr").find("td")[1].innerText,        
+        'speciesName': $(this).parents("tr").find("td")[2].innerText, 
+        'quota': $(this).parents("tr").find("td")[3].innerText, 
+        'total': $(this).parents("tr").find("td")[4].innerText
+    };
+    LoadFishQuotaAmountForm(frmData, "caribbeanSea");
+} );
+
+$('#OceanPacificTable tbody').on('click', '#btnEditOP', async function () { 
+    saveEditFishQuotaAmountOP = true;
+    saveEditFishQuotaAmountWC = false;
+    saveEditFishQuotaAmountCS = false;
+    saveEditFishQuotaAmountARC = false;    
+    codeEditFishQuotaAmount = $(this).parents("tr").find("td")[0].innerText;   
+    let frmData={
+        'code': codeEditFishQuotaAmount,     
+        'speciesCode': $(this).parents("tr").find("td")[1].innerText,
+        'speciesName': $(this).parents("tr").find("td")[2].innerText, 
+        'quota': $(this).parents("tr").find("td")[3].innerText, 
+        'total': $(this).parents("tr").find("td")[4].innerText
+    };
+    LoadFishQuotaAmountForm(frmData, "oceanPacific");
+} );
+
+$('#ArchipelagoTable tbody').on('click', '#btnEditAR', async function () { 
+    saveEditFishQuotaAmountARC = true;
+    saveEditFishQuotaAmountWC = false;
+    saveEditFishQuotaAmountCS = false;
+    saveEditFishQuotaAmountOP = false;     
+    codeEditFishQuotaAmount = $(this).parents("tr").find("td")[0].innerText;   
+    let frmData={
+        'code': codeEditFishQuotaAmount,     
+        'speciesCode': $(this).parents("tr").find("td")[1].innerText,
+        'speciesName': $(this).parents("tr").find("td")[2].innerText, 
+        'quota': $(this).parents("tr").find("td")[3].innerText, 
+        'total': $(this).parents("tr").find("td")[4].innerText
+    };  
+    LoadFishQuotaAmountForm(frmData, "archipelago");
+} );
+
+//se llenan los controles al editar cantidad cuota para peces 
+function LoadFishQuotaAmountForm(data, form){
+    switch(form) {
+        case "waterContinental":
+            editIdWC = data.code;
+            $(GroupTxtWC).val(data.group).trigger('change');
+            $(SpecieTxtWC).val(data.speciesCode).trigger('change');
+            $(QuotaTxtWC).val(data.quota);
+            $(TotalTxtWC).val(data.total);
+            SetCommonName();            
+            break;
+        case "caribbeanSea":
+            editIdCS = data.code;
+            $(ResourceTxtCS).val(data.speciesCode);
+            $(QuotaTxtCS).val(data.quota);
+            $(TotalTxtCS).val(data.total);            
+            break;
+        case "oceanPacific":
+            editIdOP = data.code;
+            $(ResourceTxtOP).val(data.speciesCode);
+            $(QuotaTxtOP).val(data.quota);
+            $(TotalTxtOP).val(data.total);                 
+            break;      
+        case "archipelago":
+            editIdAR = data.code;
+            $(ResourceTxtArc).val(data.speciesCode);
+            $(QuotaTxtArc).val(data.quota);
+            $(TotalTxtArc).val(data.total);            
+            break;                
+        default:
+    }    
+}
+
+//Agrega cantidad cuota para peces continental agua dulce
+function SaveFishQuotaAmount(form){
+    switch(form) {
+        case "waterContinental":
+            var validateFishQuotaFields = ValidateFields('waterContinental');
+            if(validateFishQuotaFields){
+                saveCountFishQuotaAmountWC++;
+                let speciesName = specieTxtWC.options[specieTxtWC.selectedIndex].text == "Seleccione" ? "" : specieTxtWC.options[specieTxtWC.selectedIndex].text;
+                let speciesNameComun=CommonNameTxtWC.options[CommonNameTxtWC.selectedIndex].text;
+                if(otherFieldEnabled){ 
+                    speciesNameComun = speciesNameComun + ", " + document.getElementById('OtherTxtWC').value; 
+                }
+
+                let frmData={
+                    'codeFishQuotaAmount': saveCountFishQuotaAmountWC, 
+                    'group': $(GroupTxtWC).val(),
+                    'groupName': groupTxtWC.options[groupTxtWC.selectedIndex].text == "Seleccione grupo..." ? "" : groupTxtWC.options[groupTxtWC.selectedIndex].text,
+                    'speciesCode':$(SpecieTxtWC).val(), 
+                    'speciesName': speciesName, 
+                    'speciesNameComun' : speciesNameComun,
+                    'quota': $(QuotaTxtWC).val() == "" ? 0 : $(QuotaTxtWC).val(), 
+                    'total': $(TotalTxtWC).val() == "" ? 0 : $(TotalTxtWC).val(),
+                    'nameRegion': 'CUENCAS CONTINENTALES',
+                    'region': 78,
+                    'actionTemp': 1 
+                };
+                if(saveEditFishQuotaAmountWC){
+                    if(fishQuotaAmountListTempWC.length > 0){
+                        fishQuotaAmountListTempWC.forEach(element => {
+                            if(element.codeFishQuotaAmount == editIdWC){
+                                element.group = frmData.group;
+                                element.groupName = frmData.groupName;
+                                element.speciesCode = frmData.speciesCode;
+                                element.speciesName = frmData.speciesName;
+                                element.speciesNameComun = frmData.speciesNameComun;
+                                element.quota = frmData.quota;
+                                element.total = frmData.total;
+                                CleanFieldsAmount('waterContinental');
+                                GetFishesQuotasAmount(78, fishQuotaAmountListTempWC);                        
+                            }
+                        });
+                    } 
+                    saveEditFishQuotaAmountWC = false;                                         
+                }else{
+                    fishQuotaAmountListTempWC.push(frmData);
+                    CleanFieldsAmount('waterContinental');
+                    GetFishesQuotasAmount(78, fishQuotaAmountListTempWC); 
+                }            
+            }           
+            break;    
+        case "caribbeanSea":
+            var validateFishQuotaFields = ValidateFields('caribbeanSea');
+            if(validateFishQuotaFields){
+                saveCountFishQuotaAmountCS++;
+                let frmData={
+                    'codeFishQuotaAmount': saveCountFishQuotaAmountCS,     
+                    'speciesCode':$(ResourceTxtCS).val(), 
+                    'speciesName': resourceTxtCS.options[resourceTxtCS.selectedIndex].text, 
+                    'quota': $(QuotaTxtCS).val(), 
+                    'total': $(TotalTxtCS).val(),
+                    'nameRegion': 'MAR CARIBE',
+                    'region': 75,
+                    'actionTemp': 1 
+                };       
+                if(saveEditFishQuotaAmountCS){
+                    if(fishQuotaAmountListTempCS.length > 0){
+                        fishQuotaAmountListTempCS.forEach(element => {
+                            if(element.codeFishQuotaAmount == editIdCS){
+                                element.speciesCode = frmData.speciesCode;
+                                element.speciesName = frmData.speciesName;
+                                element.quota = frmData.quota;
+                                element.total = frmData.total;
+                                CleanFieldsAmount('caribbeanSea');
+                                GetFishesQuotasAmount(75, fishQuotaAmountListTempCS);                        
+                            }
+                        });
+                    }       
+                    saveEditFishQuotaAmountCS = false;                 
+                }else{
+                    fishQuotaAmountListTempCS.push(frmData);
+                    CleanFieldsAmount('caribbeanSea');
+                    GetFishesQuotasAmount(75, fishQuotaAmountListTempCS); 
+                }                    
+            }          
+            break;
+        case "oceanPacific":
+            var validateFishQuotaFields = ValidateFields('oceanPacific');
+            if(validateFishQuotaFields){
+                saveCountFishQuotaAmountCS++;
+                let frmData={
+                    'codeFishQuotaAmount': saveCountFishQuotaAmountCS,     
+                    'speciesCode':$(ResourceTxtOP).val(), 
+                    'speciesName': ResourceTxtOP.options[ResourceTxtOP.selectedIndex].text, 
+                    'quota': $(QuotaTxtOP).val(), 
+                    'total': $(TotalTxtOP).val(),
+                    'nameRegion': 'OCÉANO PACIFICO',
+                    'region': 76,
+                    'actionTemp': 1 
+                };                
+                if(saveEditFishQuotaAmountOP){
+                    if(fishQuotaAmountListTempCS.length > 0){
+                        fishQuotaAmountListTempCS.forEach(element => {
+                            if(element.codeFishQuotaAmount == editIdOP){
+                                element.speciesCode = frmData.speciesCode;
+                                element.speciesName = frmData.speciesName;
+                                element.quota = frmData.quota;
+                                element.total = frmData.total;
+                                CleanFieldsAmount('oceanPacific'); 
+                                GetFishesQuotasAmount(76, fishQuotaAmountListTempCS);                        
+                            }
+                        });
+                    }         
+                    saveEditFishQuotaAmountOP = false;                                   
+                }else{
+                    fishQuotaAmountListTempCS.push(frmData);
+                    CleanFieldsAmount('oceanPacific'); 
+                    GetFishesQuotasAmount(76, fishQuotaAmountListTempCS);                        
+                }                    
+            }           
+            break;      
+        case "archipelago":
+            var validateFishQuotaFields = ValidateFields('archipelago');
+            if(validateFishQuotaFields){
+                saveCountFishQuotaAmountCS++;
+                let frmData={
+                    'codeFishQuotaAmount': saveCountFishQuotaAmountCS,     
+                    'speciesCode':$(ResourceTxtArc).val(), 
+                    'speciesName': ResourceTxtArc.options[ResourceTxtArc.selectedIndex].text, 
+                    'quota': $(QuotaTxtArc).val(), 
+                    'total': $(TotalTxtArc).val(),
+                    'nameRegion': 'ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA',
+                    'region': 77,
+                    'actionTemp': 1 
+                };                
+                if(saveEditFishQuotaAmountARC){
+                    if(fishQuotaAmountListTempCS.length > 0){
+                        fishQuotaAmountListTempCS.forEach(element => {
+                            if(element.codeFishQuotaAmount == editIdAR){
+                                element.speciesCode = frmData.speciesCode;
+                                element.speciesName = frmData.speciesName;
+                                element.quota = frmData.quota;
+                                element.total = frmData.total;
+                                CleanFieldsAmount('archipelago');     
+                                GetFishesQuotasAmount(77, fishQuotaAmountListTempCS);                        
+                            }
+                        });
+                    }    
+                    saveEditFishQuotaAmountARC = false;                                        
+                }else{
+                    fishQuotaAmountListTempCS.push(frmData);
+                    CleanFieldsAmount('archipelago');     
+                    GetFishesQuotasAmount(77, fishQuotaAmountListTempCS);                        
+                }                    
+            }
+            break;                
+        default:
+    }
+}
+
+//limpia formularios cantidad cuota para peces
+function CleanFieldsAmount(form){
+    switch(form) {
+        case "waterContinental":
+            validarCambioGrupos=true;
+            $('#GroupTxtWC').val('0').trigger('change');
+            specieTxtWC.value = "0";
+            $("SpecieTxtWC").val('0').trigger('change');
+            $('#CommonNameTxtWC').val('0').trigger('change');
+            document.getElementById("QuotaTxtWC").value = "";           
+            document.getElementById("TotalTxtWC").value = "";    
+            document.getElementById("OtherTxtWC").value = "";       
+            HiddeElement(otherDivBtn, false);
+            HiddeElement(otherDivWC,true);        
+            if($(divCommonNameTxtWC).hasClass('col-12')){
+                $(divCommonNameTxtWC).removeClass('col-12');
+                $(divCommonNameTxtWC).addClass('col-8');
+            }     
+            validarCambioGrupos=false;
+            break;    
+        case "caribbeanSea":
+            document.getElementById("ResourceTxtCS").value = "";
+            document.getElementById("QuotaTxtCS").value = "";           
+            document.getElementById("TotalTxtCS").value = "";           
+            break;
+        case "oceanPacific":
+            document.getElementById("ResourceTxtOP").value = "";
+            document.getElementById("QuotaTxtOP").value = "";           
+            document.getElementById("TotalTxtOP").value = "";                
+            break;      
+        case "archipelago":
+            document.getElementById("ResourceTxtArc").value = "";
+            document.getElementById("QuotaTxtArc").value = "";           
+            document.getElementById("TotalTxtArc").value = "";          
+            break;                
+        default:
+    }
+}
+
+//Valida campos del formulario de registro cuota para peces
+function ValidateFields(form){
+    switch(form) {
+        case "waterContinental":
+            var validateGroup = Validate($(GroupTxtWC).val(), document.getElementById('ValidateGroupWC'));
+            var validateSpecie = Validate($(SpecieTxtWC).val(), document.getElementById('ValidateSpecieWC'));
+            var validateCommonName = Validate($(CommonNameTxtWC).val(), document.getElementById('ValidateCommonNameWC'));
+            
+            if(validateGroup && validateSpecie /*&& validateQuota && validateTotal*/ && validateCommonName){
+                return true;
+            }else if(validateGroup){
+                ShowAlert(document.getElementById('ValidateSpecieWC'), false);
+                ShowAlert(document.getElementById('ValidateCommonNameWC'), false);
+                return true;
+            }else if(validateSpecie){
+                ShowAlert(document.getElementById('ValidateGroupWC'), false);
+                return true;                
+            }
+            return false;     
+            break;    
+        case "caribbeanSea":
+            var validateResource = Validate($(ResourceTxtCS).val(), document.getElementById('ValidateResourceCS'));
+            var validateQuota = Validate($(QuotaTxtCS).val(), document.getElementById('ValidateQuotaCS'));
+            var validateTotal = Validate($(TotalTxtCS).val(), document.getElementById('ValidateTotalCS'));
+
+            if(validateResource && validateQuota && validateTotal){
+                return true;
+            }
+            return false;        
+            break;
+        case "oceanPacific":
+            var validateResource = Validate($(ResourceTxtOP).val(), document.getElementById('ValidateResourceOP'));
+            var validateQuota = Validate($(QuotaTxtOP).val(), document.getElementById('ValidateQuotaOP'));
+            var validateTotal = Validate($(TotalTxtOP).val(), document.getElementById('ValidateTotalOP'));
+
+            if(validateResource && validateQuota && validateTotal){
+                return true;
+            }
+            return false;             
+            break;      
+        case "archipelago":
+            var validateResource = Validate($(ResourceTxtArc).val(), document.getElementById('ValidateResourceARC'));
+            var validateQuota = Validate($(QuotaTxtArc).val(), document.getElementById('ValidateQuotaARC'));
+            var validateTotal = Validate($(TotalTxtArc).val(), document.getElementById('ValidateTotalARC'));
+
+            if(validateResource && validateQuota && validateTotal){
+                return true;
+            }
+            return false;          
+            break;                
+        default:
+            var validateType = Validate($(TypeSelectTxt).val(), document.getElementById('ValidateType'));
+            var validateNumberResolution = Validate($(NumberResolutionTxt).val(), document.getElementById('ValidateNumberResolution'));     
+            var validateResolutionDate = Validate($(ResolutionDateTxt).val(), document.getElementById('ValidateResolutionDate'));     
+            var validateVigencyInitial = Validate($(InitialVigencyDateTxt).val(), document.getElementById('ValidateVigencyInitial'));     
+            var validateResolutionObject = Validate($(ResolutionObjectTxt).val(), document.getElementById('ResolutionObject'));     
+            
+            var validateFileMultipleFile = false;
+            if(multipleAttachments.length > 0){
+                validateFileMultipleFile = true;
+                HiddeElement(spanFileMultipleFile, true);               
+            }else{
+                spanFileMultipleFile.innerText = 'Campo Obligatorio';
+                HiddeElement(spanFileMultipleFile, false);   
+            }
+
+            if(validateType && validateNumberResolution && validateResolutionDate && validateVigencyInitial /*&& validateVigencyFinal*/ && validateResolutionObject && validateFileMultipleFile){
+                return true;
+            }
+            var camposObligatorios=[];
+            if(validateType == false){
+                camposObligatorios.push("Tipo");                 
+            }
+            if(validateNumberResolution == false){
+                camposObligatorios.push("Número resolución");                 
+            }
+            if(validateResolutionDate == false){
+                camposObligatorios.push("Fecha resolución");                 
+            }
+            if(validateVigencyInitial == false){
+                camposObligatorios.push("Fecha Inicio, ");                 
+            }
+            if(validateResolutionObject == false){
+                camposObligatorios.push("Objeto de la resolución");                 
+            }
+            if(validateFileMultipleFile == false){
+                camposObligatorios.push("Documento soporte");                 
+            }   
+            if(camposObligatorios.length>0){
+                alertasValidacionesControles('#modalAlerta', ulCamposOblgatorios, camposObligatorios);
+            }       
+              
+
+            return false;            
+    }   
+}
+
+//Valida campos vacios
+function Validate(element, span){
+    if(element){
+        ShowAlert(span, false);
+        return true;
+    }else{
+        ShowAlert(span,true);
+        return false;
+    }
+}
+
+//Oculta elementos html
+function ShowAlert(element,validate){
+    if(validate){
+        if($(element).hasClass('d-none')){
+            $(element).removeClass('d-none')
+        }              
+    }else{ 
+        if (!$(element).hasClass('d-none')) {
+            $(element).addClass('d-none')
+        }                 
+    }
+}
+
+//Muestra modal de confirmacion para cancelar el guardado
+function ConfirmCancelOrReturn(param){
+    if(param == "cancel"){
+        messageTextConfirmCancelSave.innerText='¿Esta seguro que desea cancelar?';
+        $('#ConfirmModalCancelSave').modal('show');   
+    }else{
+        messageTextConfirmCancelSave.innerText='¿Está seguro de que desea salir?';
+        $('#ConfirmModalCancelSave').modal('show');   
+    }     
+}
+
+//Redirecciona a cuotas para peces
+function RedirectCancelSave(param){
+    if(param){
+        window.location.href = '@Url.Action("FishQuotas", "FishQuota")'
+    }
+}
+
+//Obtiene las especies
+async function GetSpecies() {
+    let url = `@Url.Action("GetSpecies", "FishQuota")`;
+    let responseJsonSpecies = await Get(url);
+    if (responseJsonSpecies.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+    }
+    listAllSpecies = responseJsonSpecies;
+    var familias=[];
+    if(responseJsonSpecies!=null){
+        confSelectScrollInfite("#SpecieTxtWC", responseJsonSpecies);
+        confSelectScrollInfite("#ResourceTxtCS", responseJsonSpecies);
+        confSelectScrollInfite("#ResourceTxtOP", responseJsonSpecies);
+        confSelectScrollInfite("#ResourceTxtArc", responseJsonSpecies);
+        $.each(responseJsonSpecies, function (key, value) {
+            $("#CommonNameTxtWC").append("<option value=" + value.id + ">" + value.commonName + "</option>");
+        });        
+        listAllSpecies.forEach(el=>{
+            var validarRepetido= familias.find(p=>p.nameFamily==el.nameFamily);
+            if(validarRepetido==null && validarRepetido==undefined){
+                familias.push(el);
+            }
+        });
+        $.each(familias, function (key, value){
+            $("#GroupTxtWC").append("<option value=" + value.id + ">" + value.nameFamily + "</option>");
+        });
+        $('#GroupTxtWC').select2();
+    }
+
+
+
+}
+
+$('#TableFishesQuotas tbody').on('click', '#btnViewDetail', async function () { 
+    codeDetailsViewId = $(this).parents("tr").find("td")[0].innerText;   
+    HiddeElement(quotasTable,true);     
+    HiddeElement(document.getElementById('SaveDiv'),false);  
+    document.getElementById('titleSaveDiv').innerText = 'Registrar resolución cuotas globales de pesca';
+    document.getElementById('TitleSaveDivPanel').innerText = 'Ver detalle';      
+    let url = `@Url.Action("GetFishQuotaByCode", "FishQuota")` + `?code=${codeDetailsViewId}`;
+    let response = await Get(url);
+
+    let getDocumentsUrl = `@Url.Action("GetSupportDocument", "FishQuota")` + `?code=${codeDetailsViewId}`;
+    let responseDocuments = await Get(getDocumentsUrl);
+    if (responseDocuments.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+    }
+    if(response != null && responseDocuments != null){
+       actionFishQuotaAmount = "ViewDetails";    
+       LoadFishQuotaFormControls(response, responseDocuments, "ViewDetails");     
+    }    
+} );
+
+//Oculta controles o elementos de formulario
+function HiddeFormsControls(hide){              
+    if(hide){
+        HiddeElement(groupDivWC,true);
+        HiddeElement(specieDivWC,true);
+        HiddeElement(commonNameDivWC,true);
+        HiddeElement(quotaSpecieDivWC,true);
+        HiddeElement(quotaGroupDivWC,true);
+        HiddeElement(saveDivWC,true);
+        if($(divTotalTxtWC).hasClass('col-8')){
+            $(divTotalTxtWC).removeClass('col-8');
+            $(divTotalTxtWC).addClass('col-12');
+        }
+        HiddeElement(resourceDivCS,true);
+        HiddeElement(quotaDivCS,true);
+        HiddeElement(totalDivCS,true);
+        HiddeElement(saveDivCS,true);
+        HiddeElement(resourceDivOP,true);
+        HiddeElement(quotaDivOP,true);
+        HiddeElement(totalDivOP,true);
+        HiddeElement(saveDivOP,true);
+        HiddeElement(resourceDivAR,true);
+        HiddeElement(quotaDivAR,true);
+        HiddeElement(totalDivAR,true);
+        HiddeElement(saveDivAR,true);      
+        titleTableActionsTxtWC.innerText = "";
+        titleTableActionsTxtCS.innerText = "";
+        titleTableActionsTxtOP.innerText = "";
+        titleTableActionsTxtAR.innerText = "";
+        HiddeElement(document.getElementsByClassName("waterContinentalActions"),true);     
+        HiddeElement(btnReturnFQ,false);     
+        HiddeElement(btnCancelFQ,true);     
+        HiddeElement(btnSaveFQ,true);       
+        HiddeElement(otherDivBtn,true);      
+    }else{
+        HiddeElement(groupDivWC,false);
+        HiddeElement(specieDivWC,false);
+        HiddeElement(commonNameDivWC,false);
+        HiddeElement(quotaSpecieDivWC,false);
+        HiddeElement(quotaGroupDivWC,false);
+        if($(divTotalTxtWC).hasClass('col-12')){
+            $(divTotalTxtWC).removeClass('col-12');
+            $(divTotalTxtWC).addClass('col-8');
+        }
+        HiddeElement(saveDivWC,false);
+        HiddeElement(resourceDivCS,false);
+        HiddeElement(quotaDivCS,false);
+        HiddeElement(totalDivCS,false);
+        HiddeElement(saveDivCS,false);
+        HiddeElement(resourceDivOP,false);
+        HiddeElement(quotaDivOP,false);
+        HiddeElement(totalDivOP,false);
+        HiddeElement(saveDivOP,false);
+        HiddeElement(resourceDivAR,false);
+        HiddeElement(quotaDivAR,false);
+        HiddeElement(totalDivAR,false);
+        HiddeElement(saveDivAR,false);
+        HiddeElement(btnReturnFQ,true);     
+        HiddeElement(btnCancelFQ,false);     
+        HiddeElement(btnSaveFQ,false);  
+        HiddeElement(otherDivBtn,false);      
+    }
+}
+
+//Muestra el adjunto Html
+function AttachHTML(contenedor, Base64, tipoAdjunto, nombre, inputFile, codigo = null) {
+    if (codigo != null) {
+        contenedor.innerHTML +=
+            `<div class="row w-100 mt-2 contenerAdjuntos" id="contenedorMultipleFile${codigo}">
+                            <div class="col-11">
+                                <a type="buttton" class="btnPrevisualizar" id="btnPrevisualizar${codigo}">${nombre}</a>
+                            </div>
+                            <div class="text-end col-1">
+                                <a type="button" class="btnEliminarAdjunto" id="btnEliminarAdjunto${codigo}"><span class="fas fa-times"></span></a>
+                            <div>
+                        <div>`;
+        return;
+    }
+    contenedor.innerHTML =
+        `<div class="row w-100 mt-2 contenerAdjuntos">
+                        <div class="col-11">
+                            <a type="buttton" id="btnPrevisualizar">${nombre}</a>
+                        </div>
+                        <div class="text-end col-1">
+                            <a type="button" id="btnEliminarAdjunto"><span class="fas fa-times"></span></a>
+                        <div>
+                    <div>`;
+    if (inputFile != null) {
+        HiddeElement(inputFile, true);
+    }
+    $('#btnPrevisualizar').on('click', function () {
+        var newWindow = window.open();
+        newWindow.document.write('<iframe src=' + Base64 + ' style="height:100%; width:100%;"></iframe>');
+    });
+    $('#btnEliminarAdjunto').on('click', function () {
+        contenedor.innerHTML = '';
+        HiddeElement(inputFile, false);
+    });
+    var adjunto = {
+        'adjuntoBase64': Base64,
+        'tipoAdjunto': tipoAdjunto,
+        'nombre': nombre
+    }
+    return adjunto;
+}
+
+//Muestra archivos adjuntos
+async function ShowAttachments(file, contenedor, span, extencionesPermitidas, strExtenciones, inputFile = null, adjuntoMultiple = []) {
+    const sizeFile = Math.round((file.size / 1024));
+    if (sizeFile > 2048) {
+        span.innerText = 'Tamaño maximo permitido es de 2MB';
+        HiddeElement(span, false);
+        file = '';
+        return;
+    }
+    if (extencionesPermitidas.includes(file.type)) {
+        Base64 = await toBase64(file);
+        if (inputFile == null) {
+            inc++;
+            var codigo = 0;
+            if (multipleAttachments.length > 0) {
+                multipleAttachments.forEach(el => {
+                    if (codigo < el.codigo) {
+                        codigo = el.codigo;
+                    }
+                });
+            }
+            adjuntoMultiple.push({
+                'codigo': codigo == 0 ? inc : codigo + 1,
+                'adjuntoBase64': Base64,
+                'nombreAdjunto': file.name,
+                'tipoAdjunto': file.type,
+                'actionTemp': 'add'
+            });
+            contenedor.innerHTML = "";
+            adjuntoMultiple.forEach(el => {
+                AttachHTML(contenedor, el.Base64, el.tipoAdjunto, el.nombreAdjunto, inputFile, el.codigo);
+            });
+            return;
+        }
+        return AttachHTML(contenedor, Base64, file.type, file.name, inputFile);
+    }
+    span.innerText = 'Solo se admiten tipos de documentos ' + strExtenciones;
+    HiddeElement(span, false);
+    file = '';
+}
+
+fileContenedorMultipleFile.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    HiddeElement(spanFileMultipleFile, true);
+    $(fileContenedorMultipleFile).addClass('activeFile');
+});
+
+fileContenedorMultipleFile.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    HiddeElement(spanFileMultipleFile, true);
+    $(fileContenedorMultipleFile).removeClass('activeFile');
+});
+
+fileContenedorMultipleFile.addEventListener('drop', (e) => {
+    e.preventDefault();
+    HiddeElement(spanFileMultipleFile, true);
+    $(fileContenedorMultipleFile).removeClass('activeFile');
+    var files = e.dataTransfer.files;
+    var extencionesPermitidas = ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","image/png","image/jpeg","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/pdf"];
+    var strExtenciones = ".pdf, .docx,.xlsx , .jpeg y .png"; 
+    for (const file of files) {
+        ShowAttachments(file, contenedorMultipleFile, spanFileMultipleFile, extencionesPermitidas, strExtenciones, null, multipleAttachments);
+    };
+});
+
+$('#fileMultipleFile').on('change', async function () {
+    HiddeElement(spanFileMultipleFile, true);
+    var dato_archivo = $('#fileMultipleFile').prop("files")[0];
+    var extencionesPermitidas = ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","image/png","image/jpeg","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/pdf"];
+    var strExtenciones = ".pdf, .docx, .xlsx , .jpeg y .png"; 
+    await ShowAttachments(dato_archivo, contenedorMultipleFile, spanFileMultipleFile, extencionesPermitidas, strExtenciones, null, multipleAttachments);
+});
+
+$(contenedorMultipleFile).on('click', '.btnPrevisualizar', function (e) {
+    var cadenaViewId = e.target.parentElement.firstElementChild.id;
+    var id = "0";
+
+    if(cadenaViewId != ""){
+        id = cadenaViewId.replace(/btnPrevisualizar/i, "");
+    }else{
+        var cadenaEditId = e.target.parentElement.id;    
+        id = cadenaEditId.replace(/btnPrevisualizar/i, "");
+    }
+
+    var adjunto = multipleAttachments.find(p => p.codigo == parseInt(id));
+    var newWindow = window.open();
+    newWindow.document.write('<iframe src=' + adjunto.adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+});
+
+$(contenedorMultipleFile).on('click', '.btnEliminarAdjunto', function (e) {
+    var cadena = e.target.parentElement.id;
+    var id = cadena.replace(/btnEliminarAdjunto/i, "");
+    var adjunto = multipleAttachments.find(p => p.codigo == parseInt(id));
+    multipleAttachments = multipleAttachments.filter(p => p.codigo != adjunto.codigo);
+    multipleAttachmentsRemoved.push(adjunto);
+    var hijoA = document.getElementById(`contenedorMultipleFile${adjunto.codigo}`);
+    var hijoB = document.getElementById(`doc${adjunto.codigo}`);
+
+    if(hijoA != null){
+        contenedorMultipleFile.removeChild(hijoA);
+    }else{
+        contenedorMultipleFile.removeChild(hijoB);
+    }
+});
+
+//Carga documentos soporte adjuntos
+function UploadAttachments(codigo, tipoAdjunto, adjuntoBase64, action, attachmentName) {
+    if (action == 'ViewDetails') {
+        contenedorMultipleFile.innerHTML +=
+            `<div class="row w-100 mt-2 contenerAdjuntos" id="contenedorMultipleFile${codigo}">
+                <div class="col-11">
+                    <a type="buttton" class="btnPrevisualizar" id="btnPrevisualizar${codigo}">${attachmentName}</a>
+                </div>
+            <div>`;
+    } else {
+        contenedorMultipleFile.innerHTML +=
+            `<div class="row w-100 mt-2 contenerAdjuntos" id="contenedorMultipleFile${codigo}">
+                <div class="col-11">
+                    <a type="buttton" class="btnPrevisualizar" id="btnPrevisualizar${codigo}">${attachmentName}</a>
+                </div>
+                <div class="text-end col-1">
+                    <a type="button" class="btnEliminarAdjunto" id="btnEliminarAdjunto${codigo}"><span class="fas fa-times"></span></a>
+                <div>
+            <div>`;
+    }            
+}
+
+//Obtiene especies por grupo
+function GetSpeciesByGroup(){
+    if(!validarCambioGrupos){
+        let groupSelect = groupTxtWC.options[groupTxtWC.selectedIndex].text;
+        if(groupSelect != "Seleccione grupo..."){
+            let speciesByGruoup = listAllSpecies.filter(element=>{ 
+                return element.nameFamily == groupSelect;
+            });
+
+            RemoveAllItems(specieTxtWC);
+            RemoveAllItems(commonNameTxtWC);
+            AddSpeciesByGroupItem(speciesByGruoup);
+        }else{
+            confSelectScrollInfite("#SpecieTxtWC", listAllSpecies);
+            $('CommonNameTxtWC').val('0').trigger('change');
+        }
+        return;
+    }
+    RemoveAllItems(specieTxtWC);
+    confSelectScrollInfite("#SpecieTxtWC", listAllSpecies);
+    $('CommonNameTxtWC').val('0').trigger('change');
+}
+
+//Elimina todos los items de controles select
+function RemoveAllItems(selectBox) {
+    while (selectBox.options.length > 0) {
+        selectBox.remove(0);
+    }
+}
+
+//Agrega elementos especies por grupo a controles select
+function AddSpeciesByGroupItem(speciesByGruoupList){
+    $("#SpecieTxtWC").append("<option value=''>Seleccione</option>");
+    $.each(speciesByGruoupList, function (key, value) {
+        $("#SpecieTxtWC").append("<option value=" + value.id + ">" + value.text + "</option>");
+    });   
+
+    $("#CommonNameTxtWC").append("<option value=''></option>");
+    $.each(speciesByGruoupList, function (key, value) {
+        $("#CommonNameTxtWC").append("<option value=" + value.id + ">" + value.commonName + "</option>");
+    });       
+}
+
+//Carga o establece valor en el select nombre comun
+function SetCommonName(){
+    if(!validarCambioGrupos){
+        for (var i, j = 0; i = commonNameTxtWC.options[j]; j++) {
+            if (i.value == specieTxtWC.value) {
+                commonNameTxtWC.selectedIndex = j;      
+                break;
+            }
+        }  
+    }
+}
+
+//Muestra campo otro
+function ShowOtherField(param){
+    if(param){
+        otherFieldEnabled = true;
+        HiddeElement(otherDivBtn, true);
+        HiddeElement(otherDivWC,false); 
+        if($(divCommonNameTxtWC).hasClass('col-8')){
+            $(divCommonNameTxtWC).removeClass('col-8');
+            $(divCommonNameTxtWC).addClass('col-12');
+        }  
+    }else{
+        otherFieldEnabled = false;
+        HiddeElement(otherDivBtn, false);
+        HiddeElement(otherDivWC,true);        
+        if($(divCommonNameTxtWC).hasClass('col-12')){
+            $(divCommonNameTxtWC).removeClass('col-12');
+            $(divCommonNameTxtWC).addClass('col-8');
+        }     
+    }
+}
+
+hideOtherFieldDiv.addEventListener('click', function () {
+    ShowOtherField(false);
+});
+</script>

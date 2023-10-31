@@ -1,0 +1,137 @@
+﻿<body>
+    <div class="row">
+        <hr size="5" />
+        <h1>Desistimiento</h1>
+        <div class="col-md-9">
+            <label class="form-label required">Adjuntar documento soporte del desistimiento</label>
+            <label type="button" for="fileIndividualFile" class="file text-center" id="fileContenedorIndividualFile">
+                <p id="placeHolderIndividualFile"><span class="fas fa-paperclip"></span> Adjunte o arrastre aquí un documento.</p>
+                <input type="file" id="fileIndividualFile">
+            </label>
+            <span id="spanFileIndividualFile" class="span-advertencia d-none"></span>
+            <div id="contenedorIndividualFile">
+            </div>
+        </div>
+        <div class="col-md-9 mb-1">
+            <label for="observaciones" class="form-label required">Observaciones</label>
+            <textarea class="form-control" id="observaciones" rows="3" placeholder=" Observaciones"></textarea>
+        </div>
+    </div>
+    <div class="mt-4 row justify-content-center">
+        <div class="col-2">
+            <a class="btn btn-primary" type="button" asp-controller="GestionPrencintosNacionales" asp-action="Index" title="Volver">VOLVER</a>
+        </div>
+        <div class="col-2">
+            <button type="button" id="guardarDesistimientoSolicitud" class="btn btn-primary col-12" title="Aceptar">ACEPTAR</button>
+        </div>
+    </div>
+</body>
+<partial name="./../Modales/Modales.cshtml" />
+<script>
+    
+    let IndividualFileBase64 = '';
+    let nombreIndividualFile = '';
+    let tipoAdjuntoIndividualFile = '';
+
+    let fileIndividualFile = document.getElementById('fileIndividualFile');
+    let contenedorIndividualFile = document.getElementById('contenedorIndividualFile');
+    let spanFileIndividualFile = document.getElementById('spanFileIndividualFile');
+    let fileContenedorIndividualFile = document.getElementById('fileContenedorIndividualFile');
+    
+        
+    $('#fileIndividualFile').on('change', async function () {
+        ocultarElemento(spanFileIndividualFile, true);
+        contenedorIndividualFile.innerHTML = "";
+        IndividualFileBase64 = '';
+        nombreIndividualFile = '';
+        tipoAdjuntoIndividualFile = '';
+        var dato_archivo = $('#fileIndividualFile').prop("files")[0];
+        var extencionesPermitidas = ["application/pdf"];
+        var strExtenciones = ".pdf";
+        var adjunto = await mostrarAdjunto(dato_archivo, contenedorIndividualFile, spanFileIndividualFile, extencionesPermitidas, strExtenciones, fileContenedorIndividualFile);
+        IndividualFileBase64 = adjunto.adjuntoBase64;
+        nombreIndividualFile = adjunto.nombreAdjunto;
+        tipoAdjuntoIndividualFile = adjunto.tipoAdjunto;
+    });
+
+    fileContenedorIndividualFile.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        ocultarElemento(spanFileIndividualFile, true);
+        $(fileContenedorIndividualFile).addClass('activeFile');
+    });
+
+    fileContenedorIndividualFile.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        ocultarElemento(spanFileIndividualFile, true);
+        $(fileContenedorIndividualFile).removeClass('activeFile');
+    });
+
+    fileContenedorIndividualFile.addEventListener('drop', async function (e){
+        e.preventDefault();
+        contenedorIndividualFile.innerHTML = "";
+        ocultarElemento(spanFileIndividualFile, true);
+        $(fileContenedorIndividualFile).removeClass('activeFile');
+        var files = e.dataTransfer.files;
+        if (files.length > 1) {
+            spanFileIndividualFile.innerText = 'Solo se admite un adjunto.';
+            ocultarElemento(spanFileIndividualFile, false);
+            return
+        }
+        var extencionesPermitidas = ["application/pdf"];
+        var strExtenciones = ".pdf";
+        var adjunto = await mostrarAdjunto(files[0], contenedorIndividualFile, spanFileIndividualFile, extencionesPermitidas, strExtenciones, fileContenedorIndividualFile);
+        IndividualFileBase64 = adjunto.adjuntoBase64;
+        nombreIndividualFile = adjunto.nombreAdjunto;
+        tipoAdjuntoIndividualFile = adjunto.tipoAdjunto;
+        $(fileIndividualFile).val('');
+    });
+        
+
+    $("#guardarDesistimientoSolicitud").click(async function () {
+        var observaciones = $('#observaciones').val();
+
+        if (IndividualFileBase64 == "" || observaciones == "") {
+            $('.mensaje-datos-obligatorio').html('');
+            IndividualFileBase64 == "" ? $('.mensaje-datos-obligatorio').append("<p>Adjunto<p>") : '';
+            observaciones == "" ? $('.mensaje-datos-obligatorio').append("<p>Obeservaciones<p>") : '';
+
+            $('#datos-obligatorios').modal('show');
+        }
+        else {
+            $('#datos-obligatorios').modal('hide');
+            $('#confirmacionDesistimiento').modal('show');
+        }
+    })
+
+    let archivoPdf = {};
+    $("#confirmarDesistimientoSolicitud").click(async function () {
+
+        var id = @ViewBag.idSolicitud;
+        var observaciones = $('#observaciones').val();
+
+        archivoPdf.codigo = id;
+        archivoPdf.nombreAdjunto = nombreIndividualFile;
+        archivoPdf.adjuntoBase64 = IndividualFileBase64;
+        archivoPdf.tipoAdjunto = tipoAdjuntoIndividualFile;
+
+        $('#confirmacionDesistimiento').modal('hide');
+
+        json = {
+            code: id,
+            state: 17,
+            file: archivoPdf,
+            observations: observaciones
+        }
+        visualizarFondoProcesando();
+        let url = "@Url.Action("DesistimientoSolicitud","GestionPrencintosNacionales")";
+        let resp = await Get(url, json);
+
+        if (resp != null) {
+            IndividualFileBase64 = '';
+            nombreIndividualFile = '';
+            tipoAdjuntoIndividualFile = '';
+            $('#desistimientoExitoso').modal('show');
+        }
+        ocultarFondoProcesando();
+    })
+</script>

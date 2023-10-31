@@ -1,0 +1,353 @@
+﻿@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<body>
+    <div class="row">
+        <div class="col-md-8 mt-2">
+            <a asp-controller="Home" asp-action="Index">Inicio</a>  >
+            <a asp-controller="Home" asp-action="Index">Iniciar Tramites</a>  >
+            <strong>Bandeja gestionar precintos nacionales y marquillas</strong>
+        </div>
+        <div class="col-md-4 mt-2">
+            <a class="btn btn-secondary" type="button" asp-controller="GestionPrencintosNacionalesDirector" asp-action="Ayuda" title="Ayuda">AYUDA</a>
+            <a class="btn btn-secondary"  asp-controller="Home" asp-action="FlujoNegocio">INICIO</a>
+        </div>
+    </div>
+    <div class="col-12 mx-auto mt-2">
+        <ul class="nav nav-tabs">
+            <li class="nav-item" onclick="consultarTablaEstado('tablaPendientesGuardadas', 'ConsultarPendiente')">
+                <a class="nav-link active" data-bs-toggle="tab" href="#tablaPendientes">Pendientes</a>
+            </li>
+            <li class="nav-item" onclick="consultarTablaEstado('tablaFirmadasGuardadas', 'ConsultarFirmada')">
+                <a class="nav-link" data-bs-toggle="tab" href="#tablaFirmadas">Cartas Firmadas</a>
+            </li>
+            <li class="nav-item" onclick="consultarTablaEstado('tablaSolicitudesAprobadasGuardadas', 'ConsultarAprobada')">
+                <a class="nav-link" data-bs-toggle="tab" href="#tablaSolicitudesAprobadas">Solicitudes Aprobadas</a>
+            </li>
+            <li class="nav-item" onclick="consultarTablaEstado('tablaDesistimientosGuardadas', 'ConsultarDesistimiento')">
+                <a class="nav-link" data-bs-toggle="tab" href="#tablaDesistimientos">Desistimientos</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane container active p-2" id="tablaPendientes">
+                <div class="table-responsive">
+                    <table id="tablaPendientesGuardadas" class="table w-100">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="th-mediumText">Número de radicado</th>
+                                <th class="th-shortText">Fecha de radicado</th>
+                                <th class="th-bigText">Tipo de solicitud</th>
+                                <th class="th-bigText">Nombre del solicitante</th>
+                                <th class="th-shortText">Fecha de solicitud</th>
+                                <th></th>
+                                <th class="th-mediumText">Número de radicado de salida</th>
+                                <th class="th-shortText">Fecha de radicado de salida</th>
+                                <th class="th-shortText">Estado</th>
+                                <th class="th-mediumText">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane container fade p-2" id="tablaFirmadas">
+                <div class="table-responsive">
+                    <table id="tablaFirmadasGuardadas" class="table w-100">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="th-mediumText">Número de radicado</th>
+                                <th class="th-shortText">Fecha de  radicado</th>
+                                <th class="th-bigText">Tipo de solicitud</th>
+                                <th class="th-bigText">Nombre del solicitante</th>
+                                <th class="th-shortText">Fecha de solicitud</th>
+                                <th></th>
+                                <th class="th-mediumText">Número de radicado de salida</th>
+                                <th class="th-shortText">Fecha de radicado de salida</th>
+                                <th class="th-shortText">Estado</th>
+                                <th class="th-mediumText">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane container fade p-2" id="tablaSolicitudesAprobadas">
+                <div class="table-responsive">
+                    <table id="tablaSolicitudesAprobadasGuardadas" class="table w-100">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="th-mediumText">Número de radicado</th>
+                                <th class="th-shortText">Fecha de radicado</th>
+                                <th class="th-bigText">Tipo de solicitud</th>
+                                <th class="th-bigText">Nombre del solicitante</th>
+                                <th class="th-shortText">Fecha de solicitud</th>
+                                <th></th>
+                                <th class="th-mediumText">Número de radicado de salida</th>
+                                <th class="th-shortText">Fecha de radicado de salida</th>
+                                <th class="th-shortText">Estado</th>
+                                <th class="th-mediumText">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane container fade p-2" id="tablaDesistimientos">
+                <div class="table-responsive">
+                    <table id="tablaDesistimientosGuardadas" class="table w-100">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="th-mediumText">Número de radicado</th>
+                                <th class="th-shortText">Fecha de radicado</th>
+                                <th class="th-bigText">Tipo de solicitud</th>
+                                <th class="th-bigText">Nombre del solicitante</th>
+                                <th class="th-shortText">Fecha de solicitud</th>
+                                <th></th>
+                                <th class="th-mediumText">Número de radicado de salida</th>
+                                <th class="th-shortText">Fecha de radicado de salida</th>
+                                <th class="th-shortText">Estado</th>
+                                <th class="th-mediumText">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 row justify-content-center">
+            <div class="col-2">
+                <a class="btn btn-primary" type="button" asp-controller="Home" asp-action="FlujoNegocio" title="Volver">Regresar</a>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    $(document).ready(async function () {
+        visualizarFondoProcesando();
+        let url = "@Url.Action("ConsultarPendiente","GestionPrencintosNacionalesDirector")";
+        let resp = await Get(url);
+        console.log(resp);
+        var table = $('#tablaPendientesGuardadas').DataTable({
+            searching: true,
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom:
+                "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                    previous: "Anterior",
+                    next: "Siguiente",
+                },
+            },
+            data: resp,
+            columns: [
+                {
+                    "data": "id",
+                    className: "d-none"
+                },
+                { "data": "numeroradicado" },
+                {
+                    "data": "fecharadicado",
+                    render: function (data, type, row) {
+                        if (data != null) {
+                            var fecha = data.split('T');
+                            return fecha[0];
+                        } else {
+                            return data;
+                        }
+                    },
+                },
+                {
+                  "data": "tiposolicitud",           
+                },
+                { "data": "entidad" },
+                {
+                    "data": "fechasolicitud",
+                    render: function (data, type, row) {
+                        if (data != null) {
+                            var fecha = data.split('T');
+                            return fecha[0];
+                        } else {
+                            return data;
+                        }
+                    },
+                },
+                {
+                    "data": "fechasolicitud",
+                    className: "d-none"
+                },
+                { "data": "numeroradicadosalida" },
+                {
+                    "data": "fecharadicadosalida",
+                    render: function (data, type, row) {
+                        if (data != null) {
+                            var fecha = data.split('T');
+                            return fecha[0];
+                        } else {
+                            return data;
+                        }
+                    },
+                },
+                { "data": "estado" },
+                {
+                    render: function (data, type, row) {
+                        return `<a class="button" href="GestionPrencintosNacionalesDirector/VisualizarCartaSolicitud?idSolicitud=${row.id}">Editar</a>`;
+                    },
+                },
+            ],
+
+            // Agrega esta línea para ordenar por la columna "fechasolicitud" de forma ascendente
+            order: [[6, 'asc']]
+        });
+
+        agregarClasesDatatable('#tablaPendientesGuardadas');
+        ocultarFondoProcesando();
+    });
+
+    async function consultarTablaEstado(tabla, metodo) {
+        debugger;
+        visualizarFondoProcesando();
+        var url = "";
+        switch (metodo) {
+            case "ConsultarPendiente":
+                url = "@Url.Action("ConsultarPendiente","GestionPrencintosNacionalesDirector")";
+                break;
+            case "ConsultarFirmada":
+                url = "@Url.Action("ConsultarFirmada","GestionPrencintosNacionalesDirector")";
+                break;
+            case "ConsultarAprobada":
+                url = "@Url.Action("ConsultarAprobada","GestionPrencintosNacionalesDirector")";
+                break;
+            case "ConsultarDesistimiento":
+                url = "@Url.Action("ConsultarDesistimiento","GestionPrencintosNacionalesDirector")";
+                break;
+            default:
+                url = "@Url.Action("ConsultarPendiente","GestionPrencintosNacionalesDirector")";
+                break;
+        }
+
+        let resp = await Get(url);
+        console.log(resp);
+        var table = $('#' + tabla).DataTable({
+            searching: true,
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom:
+                "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                    previous: "Anterior",
+                    next: "Siguiente",
+                },
+            },
+            data: resp,
+            columns: [
+                {
+                    "data": "id",
+                    className: "d-none"
+                },
+                { "data": "numeroradicado" },
+                {
+                    "data": "fecharadicado",
+                    render: function (data, type, row) {
+                        if (data != null) {
+                            var fecha = data.split('T');
+                            return fecha[0];
+                        } else {
+                            return data;
+                        }
+                    },
+                },
+                {
+                  "data": "tiposolicitud",                    
+                },
+                { "data": "entidad" },
+
+                {
+                    "data": "fechasolicitud",
+                    render: function (data, type, row) {
+                        if (data != null) {
+                            var fecha = data.split('T');
+                            return fecha[0];
+                        } else {
+                            return data;
+                        }
+                    },
+                },
+                {
+                    "data": "fechasolicitud",
+                    className: "d-none"
+                },
+                { "data": "numeroradicadosalida" },
+                {
+                    "data": "fecharadicadosalida",
+                    render: function (data, type, row) {
+                        if (data != null) {
+                            var fecha = data.split('T');
+                            return fecha[0];
+                        } else {
+                            return data;
+                        }
+                    },
+                },
+                { "data": "estado" },
+                {
+                    render: function (data, type, row) {
+                        if (tabla == "tablaPendientesGuardadas") {
+                            return `<a class="button" href="GestionPrencintosNacionalesDirector/VisualizarCartaSolicitud?idSolicitud=${row.id}">Editar</a>`;
+                        } else if (tabla == "tablaFirmadasGuardadas") {
+                            return `<a class="button" href="GestionPrencintosNacionalesDirector/VisualizarCartaFirmadaSolicitud?idSolicitud=${row.id}">Ver</a>`;
+                        } else if (tabla == "tablaSolicitudesAprobadasGuardadas") {
+                            return `<a class="button" href="GestionPrencintosNacionalesDirector/SolicitudRadicadaAprobada?idSolicitud=${row.id}">Ver</a>`;
+                        } else if (tabla == "tablaDesistimientosGuardadas") {
+                            return `<a class="button" href="GestionPrencintosNacionalesDirector/SolicitudRadicadaDesistimiento?idSolicitud=${row.id}">Ver</a>`;
+                        } else {
+                            return `<a class="button" href="GestionPrencintosNacionalesDirector/SolicitudRadicadaPendiente?idSolicitud=${row.id}">Editar</a>`;
+                        }
+                    },
+                },
+            ],
+
+            // Agrega esta línea para ordenar por la columna "fechasolicitud" de forma ascendente
+            order: [[6, 'asc']]
+        });
+
+        agregarClasesDatatable('#' + tabla);
+        ocultarFondoProcesando();
+    }
+</script>

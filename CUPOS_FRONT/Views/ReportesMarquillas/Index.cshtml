@@ -1,0 +1,285 @@
+﻿@model CUPOS_FRONT.Models.ReportesMarquillasModels.FiltrosMarquillas;
+
+<div class="container">
+
+    <div>
+        <a asp-controller="Home" asp-action="Reportes">Modulo de Reportes </a>  >  <strong>Reportes de Marquillas</strong>
+    </div>
+    <div class="receptor-buttons-ayuda-inicio text-end">
+        <button type="submit" class="btn-Ayuda-AdminActividades btn btn-secondary" title="Ayuda">AYUDA</button>
+        <button type="submit" class="btn btn-secondary" title="Inicio">INICIO</button>
+    </div>
+    <div class="row">
+        <div class="container">
+            @*<form asp-controller="ReportesMarquillas" asp-action="ObtenerDatosMarquillas" method="post" id="realizarConsulta">*@
+                <div class="w-100">
+                    <h2>Reporte Marquillas</h2>
+                    <div class="row mt-2">
+                        @*<div class="d-flex col-12 justify-content-around">*@
+                        <div class="col-md-3 mb-1">
+                            <label for="@Model.dateFrom" class="form-label">Fecha Desde</label>
+                            <input id="fechaDesde" asp-for="dateFrom" />
+                        </div>
+                        <div class="col-md-3 mb-1">
+                            <label for="@Model.dateTo" class="form-label">Fecha Hasta</label>
+                            <input id="fechaHasta" asp-for="dateTo" />                       
+                        </div>
+                        <div class="col-md-3 mb-1">
+                            <label for="@Model.radicationNumber" class="form-label">Radicado</label>
+                            <input type="text" id="radicadoNum" asp-for="radicationNumber" />
+                        </div>  
+                        @*</div>*@
+                    </div>
+                </div>
+                <br />
+                <div class="mt-2 row justify-content-end">
+                    <div class="col-2">
+                        <button id="btnConsultarDatos" class="btn btn-primary bordesButon mb-2">Consultar</button>
+                    </div>
+                </div>
+            @*</form>*@
+            @*<div class="row">
+                <div class="col-md-6 mt-1">
+                    <button id="btnExportarExcel" class="btn btn-primary bordesButon mb-2">Exportar Excel</button>
+                    <button id="btnExportarPDF" class="btn btn-danger bordesButon mb-2">Exportar PDF</button>
+                </div>
+            </div>*@
+
+            <!-- DataTable -->
+            <div class="mt-3">
+                <!--<h4 class="titulosModalControl">Resoluciones Registradas</h4>-->
+                <div class="mt-2 mb-2 divTabla">
+                    <div class="table-responsive">
+                        <table id="TablaReporteriamarquillas" class="table w-100">
+                            <caption class="d-none">Table Description</caption>
+                            <thead>
+                                <tr>
+                                    <th class="th-mediumText">Numero Radicado</th>
+                                    <th class="th-mediumText">Fecha Radicado</th>
+                                    <th class="th-bigText">Nombre Empresa</th>
+                                    <th class="th-mediumText">NIT</th>
+                                    <th class="th-mediumText">Ciudad</th>
+                                    <th class="th-mediumText">Dirección</th>
+                                    <th class="th-shortText">Teléfono</th>
+                                    <th class="th-mediumText">Especie</th>
+                                    <th class="th-shortText">Tipo</th>
+                                    <th class="th-shortText">Espécimenes a Marcar</th>
+                                    <th class="th-shortText">Cantidad</th>
+                                    <th class="th-shortText">Color</th>                               
+                                    <th class="th-mediumText">Numeración Interna Inicial</th>
+                                    <th class="th-mediumText">Numeración Interna Final</th>
+                                    <th class="th-shortText">Valor Consignación</th>
+                                    <th class="th-mediumText">Evaluador</th>
+                                    <th class="th-shortText">Fecha Envío Respuesta</th>
+                                    <th class="th-shortText">Numeración Inicial Marquillas</th>
+                                    <th class="th-shortText">Numeración Final Marquillas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-2 row justify-content-center">
+                <div class="col-2">
+                    <a class="btn btn-primary bordesButon mb-2" asp-action="Reportes" asp-controller="Home">Regresar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    @*<script src="~/js/ReportesMarcaje/ReportesMarquillasIndex.js" asp-append-version="true"></script>*@
+    <script>
+        //moduleReportesMarquillas.inicializarProcesos()
+
+        $("#btnConsultarDatos").click(async function() {
+            //$("#realizarConsulta").submit();
+            var desde = $("#fechaDesde").val();
+            var hasta = $("#fechaHasta").val();
+            var radicado = $("#radicadoNum").val();
+
+            json = {
+                dateFrom: desde,
+                dateTo: hasta,
+                radicationNumber: radicado
+            }
+
+            let urlBase = window.location.origin;
+            let url = `${urlBase}/ReportesMarquillas/ObtenerDatosMarquillas`;
+            let resp = await Get(url, json);
+            
+            var columns = [
+                {
+                    "data": "radicationNumber"
+                },
+                {
+                    "data": "radicationDate",
+                    render: function(data, type, row) {
+                        var fecha = moment(data).format('yyyy-MM-DD');
+                        return fecha
+                    }
+                },
+                {
+                    "data": "companyName"
+                },
+                {
+                    "data": "nit"
+                },
+                {
+                    "data": "city"
+                },
+                {
+                    "data": "address"
+                },
+                {
+                    "data": "phone"
+                },
+                {
+                    "data": "species"
+                },
+                {
+                    "data": "type"
+                },
+                {
+                    "data": "speciesTags"
+                },
+                {
+                    "data": "amount"
+                },
+                {
+                    "data": "color"
+                },
+                {
+                    "data": "initialNumber"
+                },
+                {
+                    "data": "finalNumber"
+                },
+                {
+                    "data": "consignmentValue"
+                },
+                {
+                    "data": "evaluator"
+                },
+                {
+                    "data": "answerDate",
+                    render: function(data, type, row) {
+                        var fecha = moment(data).format('yyyy-MM-DD');
+                        return fecha
+                    }
+                },
+                {
+                    "data": "initialNumberTags"
+                },
+                {
+                    "data": "finalNumberTags"
+                },
+            ];
+
+            DataTableGenericoBotones('#TablaReporteriamarquillas', columns, resp, 18);
+        });
+
+        $(document).ready(async function() {
+            let urlBase = window.location.origin;
+            let url = `${urlBase}/ReportesMarquillas/ObtenerDatosMarquillas`;
+            let resp = await Get(url);
+            
+            //TablaReporteriaCupos = $(`#TablaReporteriaCupos`).DataTable({
+            //    destroy: true,
+            //    scrollX: true,
+            //    lengthChange: true,
+            //    lengthMenu: [5, 10, 20, 50, 100],
+            //    paging: true,
+            //    info: true,
+            //    filter: false,
+            //    dom: "<'row'<'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            //    language: {
+            //        lengthMenu: "Resultados pág. _MENU_",
+            //        info: "_START_ al _TOTAL_ Resultados",
+            //        search: '',
+            //        searchPlaceholder: "Buscar",
+            //        zeroRecords: "No se encontraron resultados",
+            //        infoEmpty: "0 al 0 Resultados",
+            //        paginate: {
+            //            previous: 'Anterior',
+            //            next: 'Siguiente'
+            //        }
+            //    },
+            //    data: resp,
+            var columns = [
+                {
+                    "data": "radicationNumber"
+                },
+                {
+                    "data": "radicationDate",
+                    render: function(data, type, row) {
+                        var fecha = moment(data).format('yyyy-MM-DD');
+                        return fecha
+                    }
+                },
+                {
+                    "data": "companyName"
+                },
+                {
+                    "data": "nit"
+                },
+                {
+                    "data": "city"
+                },
+                {
+                    "data": "address"
+                },
+                {
+                    "data": "phone"
+                },
+                {
+                    "data": "species"
+                },
+                {
+                    "data": "type"
+                },
+                {
+                    "data": "speciesTags"
+                },
+                {
+                    "data": "amount"
+                },
+                {
+                    "data": "color"
+                },
+                {
+                    "data": "initialNumber"
+                },
+                {
+                    "data": "finalNumber"
+                },
+                {
+                    "data": "consignmentValue"
+                },
+                {
+                    "data": "evaluator"
+                },
+                {
+                    "data": "answerDate",
+                    render: function(data, type, row) {
+                        var fecha = moment(data).format('yyyy-MM-DD');
+                        return fecha
+                    }
+                },
+                {
+                    "data": "initialNumberTags"
+                },
+                {
+                    "data": "finalNumberTags"
+                },
+            ];
+
+            DataTableGenericoBotones('#TablaReporteriamarquillas', columns, resp, 18);
+        });
+    </script>
+}
+

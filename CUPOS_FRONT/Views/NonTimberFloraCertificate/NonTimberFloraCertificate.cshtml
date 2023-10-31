@@ -1,0 +1,199 @@
+﻿@{
+    Layout = "_LayoutRegistrarResolucion";
+}
+<div class="container">
+    <div id="divVinculos1">
+        <a asp-controller="Home" asp-action="Index">Inicio</a> > <a asp-controller="Home"
+            asp-action="FlujoNegocio">Flujo de negocio</a> > <strong>Flora</strong>
+    </div>
+    <div id="divVinculos2" class="d-none">
+        <a asp-controller="Home" asp-action="Index">Inicio</a> > <a asp-controller="Home"
+            asp-action="FlujoNegocio">Flujo de negocio</a> > <a asp-controller="NonTimberFloraCertificate"
+            asp-action="NonTimberFloraCertificate">Flora</a> >
+        <strong id="accionText">Registrar certificado</strong>
+    </div>
+    <div class="text-end">
+        <a class="btn btn-secondary" type="button" asp-controller="NonTimberFloraCertificate" asp-action="Ayuda" title="Ayuda">AYUDA</a>
+        <a type="button" class="btn btn-secondary" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip"
+            data-bs-placement="top" title="Inicio">inicio</a>
+    </div>
+
+    <div id="divPrincipal">
+        <div id="divBuscador" class="w-100">
+            <button class="btn btn-light col-1 d-none" onclick="volverBuscador()" id="divVolverRegistrarCertificado">
+                <span class="fa-solid fa-chevron-left"></span>
+            </button>
+            <h1 id="tituloBuscador"></h1>
+            <div class="dataTables_filter">
+                <div class="row label-datatable">
+                    <div class="col-md-3 col-sm-12" id="divNumeroCertificado">
+                        <label for="txtNumeroCertifiacdo" class="form-label">Numero de certificado</label>
+                        <input type="text" class="form-control" id="txtNumeroCertifiacdo"
+                            placeholder="Numero de certificado">
+                    </div>
+                    <div class="col-md-3 col-sm-12" id="divtipoCertificado">
+                        <label for="sltTipoDocumento" class="form-label">Tipo de documento</label>
+                        <select type="text" class="form-select" id="sltTipoDocumento" placeholder="Tipo de documento">
+
+                        </select>
+                        <span id="validacionsltTipoDocumento" class="span-advertencia d-none">Campo Obligatorio</span>
+                    </div>
+                    <div class="col-md-6 col-sm-12" id="divNumeroDocBtn">
+                        <label for="txtNumeroDocuemnto" class="form-label">Numero de documento</label>
+                        <div class="row d-flex">
+                            <div class="col-md-6 col-sm-12" id="divNumeroDocumento">
+                                <input type="text" class="form-control" id="txtNumeroDocuemnto"
+                                    placeholder="Numero de documento">
+                                <span id="validaciontxtNumeroDocuemnto" class="span-advertencia d-none">Campo
+                                    Obligatorio</span>
+                            </div>
+                            <div class="col-md-6 col-sm-12" id="divBtn">
+                                <button type="button" class="btn btn-primary w-100" onclick="buscarCertificado()">
+                                    <span class="spinner-border spinner-border-sm d-none" role="status"
+                                        aria-hidden="true" id="spinnerButton"></span>
+                                    Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mb-2 mt-2" id="divBtnRegistrarCertificado">
+            <button class="btn btn-primary" onclick="registrarCertificado()">Registrar Certificado</button>
+        </div>
+
+        <div class="pt-4" id="divTableCertificados">
+            <div class="table-responsive">
+                <table id="tableCertificados" class="table w-100" aria-describedby="Tabla certificados">
+                    <caption class="d-none">Table Description</caption>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>N° Certificación</th>
+                            <th>Nit</th>
+                            <th class="mediumText">Fecha registro certificado</th>
+                            <th>Fecha certificación</th>
+                            <th class="mediumText">Vigencia de certificación</th>
+                            <th class="mediumText">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="divSecundario" class="d-none">
+
+        <div class="row">
+
+            <h1 id="tituloCertificado"></h1>
+
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#tab1" id="tab-1"
+                        onclick="loadDatosEntidad()">Datos del
+                        establecimiento</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#tab2" id="tab-2"
+                        onclick="loadCertificado()">Certificado</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane container active p-2" id="tab1">
+                    <partial name="Partials/DatosEntidad" />
+                </div>
+                <div class="tab-pane container fade p-2" id="tab2">
+                    <partial name="Partials/Certificado" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <button type="button" onclick="siguiente()" id="btnSiguiente" class="btn btn-primary m-2">Siguiente</button>
+            <button type="button" onclick="CancelarRegistrarCertificado(true)" id="btnCancelarRegistrarCertificado"
+                class="btn btn-primary m-2 d-none">Cancelar</button>
+            <button type="button" onclick="guardarRegistrarCertificado()" id="btnGuardarRegistrarCertificado"
+                class="btn btn-primary m-2 d-none">Guardar</button>
+        </div>
+    </div>
+
+</div>
+<div class="modal fade" id="modalConfimaciones" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center" id="divConfirmacionMensaje">
+                    <div class="col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="lblConfirmacion"></p>
+                    </div>
+                </div>
+                <div class="text-center d-none" id="divSpinner3">
+                    <div class="spinner-border text-primary mb-2 spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="divBotonesConfirmacion" class="text-center row d-none">
+                    <div class="col-6 d-none" id="divBtnsiGuardar">
+                        <button type="button" class="btn btn-primary" onclick="siGuardar()">Si</button>
+                    </div>
+                    <div class="col-6" id="divBtnNo">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnNoConfimar"
+                            onclick="noConfirmaciones()">No</button>
+                    </div>
+                    <div class="col-6 d-none" id="divBtnSiCancelar">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="siCancelar()"
+                            id="btnNoConfimar">Si</button>
+                    </div>
+                    <div class="col-6 d-none" id="divBtnSiEliminar">
+                        <button type="button" class="btn btn-secondary" onclick="siEliminarCertificacion()">Si</button>
+                    </div>
+                </div>
+                <div id="divBotonAceptarConfirmacion" class="col-12 text-center d-none">
+                    <button class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalAlerta" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fas fa-exclamation-circle i-modal-alerta"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal-alerta">
+                        <p>Alerta</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>Los siguientes campos son obligatorios</p>
+                        <ul id="ulCamposOblgatorios" class="list-group">
+
+                        </ul>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                ACEPTAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<partial name="Scripts\NonTimberFloraCertificateScript" />

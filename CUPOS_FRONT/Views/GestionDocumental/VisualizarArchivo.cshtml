@@ -1,0 +1,54 @@
+﻿@model Web.Models.AdminTecnicaReq;
+
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+<div class="tab-pane container active p-2" id="form-adjuntoArchivo">
+    <table>
+		<caption class="d-none">Table Description</caption>
+		<tr>
+			<th></th>
+		</tr>
+		<tr>
+			<td style="width:100%;border:1px solid darkgray;padding: 5px;vertical-align:top;">		
+				<h3 style="font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight:bold; text-shadow:1px solid darkgray; margin:0 auto; border-bottom:1px solid darkgray;">
+					VISUALIZAR ARCHIVO
+				</h3>
+				<div class="card" id="formato3">
+					 <h6 class="titulo1">Cuerpo del formato acta</h6>
+					 <div class="row">
+						 <div class="col-md-12">
+							<div id="BoxText" class="cuerpo" contenteditable="false">
+							</div>
+						</div>
+					</div>
+					<br />
+					 <div class="row justify-content-center">
+						 <div class="col-md-4">  
+							 <button type="button" id="btnVolver" title="Haga clic en este botón para volver a la seccion de Gestion Documental" class="form-control btn btn-primary tx-15">&nbsp;VOLVER</button>
+						 </div>
+					 </div>
+				</div>
+			</td>
+		</tr>	
+	</table>
+</div>
+<script>
+	var textBox = document.getElementById("BoxText");
+
+	async function LeerArchivo() {
+        var id = @ViewBag.idArch;
+
+        let url = `@Url.Action("LeerDocumento","GestionDocumental")` + `?id=` + id;
+        let r = await Get(url);
+        textBox.innerHTML = r;
+    }
+
+	$(document).ready(function() {
+        LeerArchivo();
+	});
+
+	$("#btnVolver").click(function(){
+		document.location.href = "/GestionDocumental/Index";
+	});
+</script>

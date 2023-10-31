@@ -1,0 +1,8 @@
+
+.vs/
+TestUnit/bin
+TestUnit/obj
+CUPOS_FRONT/bin/
+CUPOS_FRONT/obj
+/.sonarqube
+/coverage.xml

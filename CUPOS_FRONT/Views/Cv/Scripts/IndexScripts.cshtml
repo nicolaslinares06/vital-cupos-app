@@ -1,0 +1,2143 @@
+﻿<script>
+
+    var divDatoshj = document.getElementById('divDatoshj');
+
+
+    var txtEntidadhj = document.getElementById('txtEntidadhj');
+    var txtPaishj = document.getElementById('txtPaishj');
+    var txtNombrehj = document.getElementById('txtNombrehj')
+    var txtDepartamentohj = document.getElementById('txtDepartamentohj');
+    var txtNithj = document.getElementById('txtNithj');
+    var txtCiudadhj = document.getElementById('txtCiudadhj');
+    var txtTelefonohj = document.getElementById('txtTelefonohj');
+    var txtCorreohj = document.getElementById('txtCorreohj');
+    var txtDireccionhj = document.getElementById('txtDireccionhj');
+    var situacionparametrica = document.getElementById('situacionparametrica');
+    var situacionparametricacites = document.getElementById('situacionparametricacites');
+    var cupostotal1 = document.getElementById('cupostotal1');
+    var resootorgadas = document.getElementById('resootorgadas');
+
+
+    //validar
+    var divSpinner = document.getElementById('divSpinner');
+    var divBtnAceptarModal = document.getElementById('divBtnAceptarModal');
+
+    var txtSituacionhj2 = document.getElementById('txtSituacionhj2');
+    var txtSituacionhj = document.getElementById('txtSituacionhj');
+
+    var tab1Contenthj = document.getElementById('tab1');
+    var tab2Contenthj = document.getElementById('tab2');
+    var tab3Contenthj = document.getElementById('tab3');
+    var tab4Contenthj = document.getElementById('tab4');
+    var tab5Contenthj = document.getElementById('tab5');
+    var tab6Contenthj = document.getElementById('tab6');
+    var btnSiguiente2 = document.getElementById('btnSiguiente2');
+    var btnSiguiente3 = document.getElementById('btnSiguiente3');
+    var btnSiguientesituacion = document.getElementById('btnSiguientesituacion');
+    var ddd = document.getElementById('ddd');
+
+    //por cada campo se debe definir lo siguiente usando el en label for txtNithj, y en el id txtNithj
+    var txtNithj = document.getElementById('txtNithj');
+
+
+    //situacion ids
+    var txtEstadohj = document.getElementById('txtEstadohj');
+    var totalcertificadoshj = document.getElementById('totalcertificadoshj');
+
+
+    //idboton Salir
+    var btnSalirControlhj = document.getElementById('btnSalirControlhj');
+    var btnSalirControl2 = document.getElementById('btnSalirControl2');
+    var btnAnterior2 = document.getElementById('btnAnterior2');
+    var btnAnterior3 = document.getElementById('btnAnterior3');
+    var salir = document.getElementById('salir');
+
+    let divQuienVendeTabla=document.getElementById('divQuienVendeTabla');
+    let divQuienCompraTabla =document.getElementById('divQuienCompraTabla');
+
+    //boton sigueinte o anterior
+
+    function siguiente3() {
+        if ($(tab1Contenthj).is(":visible")) {
+            loadTabs(2);
+            loadsituacion();
+            ocultarElemento(btnAnterior3, false);
+            ocultarElemento(salir, true);
+            btnSiguiente3.innerText = 'Siguiente';
+            return;
+        }
+        if ($(tab2Contenthj).is(":visible")) {
+            loadTabs(3);
+            //llenadodoc();
+            documentoventa();
+            ocultarElemento(btnAnterior3, false);
+            ocultarElemento(btnSiguiente3, true);
+            ocultarElemento(salir, false);
+
+            return;
+        }
+        if ($(tab3Contenthj).is(":visible")) {
+
+            ocultarElemento(salir, false);
+            ocultarElemento(btnAnterior3, false);
+
+
+            btnSalirControl();
+            btnSiguiente3.innerText = 'Salir';
+            return;
+        }
+
+
+    }
+
+    function Anterior3() {
+        if ($(tab1Contenthj).is(":visible")) {
+            ocultarElemento(btnAnterior3, true);
+            ocultarElemento(salir, true);
+            return;
+        }
+        if ($(tab2Contenthj).is(":visible")) {
+            loadTabs(1);
+            ocultarElemento(btnAnterior3, true);
+            ocultarElemento(btnSiguiente3, false);
+            ocultarElemento(salir, true);
+            llenadoDatosEmpresas();
+            btnAnterior3.innerText = 'Anterior';
+
+            return;
+        }
+        if ($(tab3Contenthj).is(":visible")) {
+            ocultarElemento(informacion, true)
+            ocultarElemento(detalle, true)
+            loadTabs(2);
+            ocultarElemento(btnAnterior3, false);
+            ocultarElemento(btnSiguiente3, false);
+            ocultarElemento(salir, true);
+            btnAnterior3.innerText = 'Anterior';
+            btnSiguiente3.innerText = 'Siguiente';
+
+
+            return;
+        }
+    }
+
+
+    //index modal 1
+    function cerrarSesion2() {
+        limpiarModalCerrarSesion2();
+        ocultarElemento("#btnSiNoCerrarSsesion2", false);
+        $("#mensajeModalCerrarSesion2").text("¿Está seguro de que desea salir?");
+    }
+
+    function limpiarModalCerrarSesion2() {
+        ocultarElemento("#btnSiNoCerrarSsesion2", true);
+        ocultarElemento("#btnAceptarCerrarSsesion2", true);
+    }
+
+    var btnSiguiente4 = document.getElementById('btnSiguiente4');
+    var btnAnterior4 = document.getElementById('btnAnterior4');
+    var salir4 = document.getElementById('salir4');
+
+    function siguiente4() {
+        if ($(tab1Contenthj).is(":visible")) {
+            loadTabs(2);
+            loadsituacion();
+            ocultarElemento(btnAnterior4, false);
+            ocultarElemento(salir4, true);
+            btnSiguiente4.innerText = 'Siguiente';
+            return;
+        }
+        if ($(tab2Contenthj).is(":visible")) {
+            loadTabs(3);
+            //llenadodoc();
+            documentoventa();
+            ocultarElemento(btnAnterior4, false);
+            ocultarElemento(btnSiguiente4, false);
+            ocultarElemento(salir4, true);
+
+            return;
+        }
+        if ($(tab3Contenthj).is(":visible")) {
+            ocultarElemento(certificados, true);
+            loadTabs(4);
+            llenandoTablaCertificados()
+            ocultarElemento(btnAnterior4, false);
+            ocultarElemento(btnSiguiente4, false);
+            ocultarElemento(salir4, true);
+
+            return;
+        }
+        if ($(tab4Contenthj).is(":visible")) {
+            ocultarElemento(detallepeces, true);
+            loadTabs(5);
+            llenandopeces()
+            ocultarElemento(btnAnterior4, false);
+            ocultarElemento(btnSiguiente4, true);
+            ocultarElemento(salir4, false);
+
+            return;
+        }
+        if ($(tab5Contenthj).is(":visible")) {
+            ocultarElemento(salir4, false);
+            ocultarElemento(btnAnterior4, false);
+            ocultarElemento(btnSiguiente4, true);
+
+            salir4();
+            btnSiguiente4.innerText = 'Salir';
+            return;
+        }
+
+
+    }
+
+    function Anterior4() {
+        if ($(tab1Contenthj).is(":visible")) {
+            ocultarElemento(btnAnterior4, true);
+            ocultarElemento(salir4, true);
+            return;
+        }
+        if ($(tab2Contenthj).is(":visible")) {
+            loadTabs(1);
+            ocultarElemento(btnAnterior4, true);
+            ocultarElemento(btnSiguiente4, false);
+            ocultarElemento(salir4, true);
+            llenadoDatosEmpresas();
+            btnAnterior4.innerText = 'Anterior';
+
+            return;
+        }
+        if ($(tab3Contenthj).is(":visible")) {
+            ocultarElemento(informacion, true);
+            ocultarElemento(detalle, true);
+            loadTabs(2);
+            ocultarElemento(btnAnterior4, false);
+            ocultarElemento(btnSiguiente4, false);
+            ocultarElemento(salir4, true);
+            btnAnterior4.innerText = 'Anterior';
+            btnSiguiente4.innerText = 'Siguiente';
+
+
+            return;
+        }
+        if ($(tab4Contenthj).is(":visible")) {
+            loadTabs(3);
+
+            ocultarElemento(quienvende, true);
+            ocultarElemento(quiencompra, true);
+            ocultarElemento(documento, true);
+            ocultarElemento(divQuienVendeTabla, true);
+            ocultarElemento(divQuienCompraTabla, true);
+            ocultarElemento(btnAnterior4, false);
+            ocultarElemento(btnSiguiente4, false);
+            ocultarElemento(salir4, true);
+            btnAnterior4.innerText = 'Anterior';
+            btnSiguiente4.innerText = 'Siguiente';
+
+
+            return;
+        }
+        if ($(tab5Contenthj).is(":visible")) {
+            ocultarElemento(certificados, true);
+            loadTabs(4);
+            ocultarElemento(btnAnterior4, false);
+            ocultarElemento(btnSiguiente4, false);
+            ocultarElemento(salir4, true);
+            btnAnterior4.innerText = 'Anterior';
+            btnSiguiente4.innerText = 'Siguiente';
+
+
+            return;
+        }
+    }
+
+    //index modal 2
+    function cerrarSesion3() {
+        limpiarModalCerrarSesion();
+        ocultarElemento("#btnSiNoCerrarSsesion3", false);
+        $("#mensajeModalCerrarSesion3").text("¿Está seguro de que desea salir?");
+    }
+
+    function limpiarModalCerrarSesion3() {
+        ocultarElemento("#btnSiNoCerrarSsesion3", true);
+        ocultarElemento("#btnAceptarCerrarSsesion3", true);
+    }
+
+    var btnSiguiente5 = document.getElementById('btnSiguiente5');
+    var btnAnterior5 = document.getElementById('btnAnterior5');
+    var salir5 = document.getElementById('salir5');
+
+
+    function siguiente5() {
+        if ($(tab1Contenthj).is(":visible")) {
+            loadTabs(2);
+            loadsituacion();
+            ocultarElemento(btnAnterior5, false);
+            ocultarElemento(salir5, true);
+            btnSiguiente5.innerText = 'Siguiente';
+            return;
+        }
+        if ($(tab2Contenthj).is(":visible")) {
+            ocultarElemento(divregistrarResolucion, true);
+            ocultarElemento(especieexportar, true);
+            loadTabs(3);
+            llenadoresolucioncupos()
+            ocultarElemento(btnAnterior5, false);
+            ocultarElemento(btnSiguiente5, false);
+            ocultarElemento(salir5, true);
+
+            return;
+        }
+        if ($(tab3Contenthj).is(":visible")) {
+            loadTabs(4);
+            //llenadodoc();
+            documentoventa();
+            ocultarElemento(btnAnterior5, false);
+            ocultarElemento(btnSiguiente5, true);
+            ocultarElemento(salir5, false);
+
+            return;
+        }
+        if ($(tab4Contenthj).is(":visible")) {
+            ocultarElemento(detallepeces, true);
+
+            ocultarElemento(quienvende, true);
+            ocultarElemento(quiencompra, true);
+            ocultarElemento(documento, true);
+            ocultarElemento(divQuienVendeTabla, true);
+            ocultarElemento(divQuienCompraTabla, true);
+            loadTabs(5);
+            llenandopeces()
+            ocultarElemento(salir5, false);
+            ocultarElemento(btnAnterior5, false);
+            ocultarElemento(btnSiguiente5, true);
+
+            salir5();
+            btnSiguiente5.innerText = 'Salir';
+
+            return;
+        }
+
+
+    }
+
+    function Anterior5() {
+        if ($(tab1Contenthj).is(":visible")) {
+            ocultarElemento(btnAnterior5, true);
+            ocultarElemento(salir5, true);
+            return;
+        }
+        if ($(tab2Contenthj).is(":visible")) {
+            loadTabs(1);
+            ocultarElemento(btnAnterior5, true);
+            ocultarElemento(btnSiguiente5, false);
+            ocultarElemento(salir5, true);
+            llenadoDatosEmpresas();
+            btnAnterior5.innerText = 'Anterior';
+
+            return;
+        }
+        if ($(tab3Contenthj).is(":visible")) {
+            ocultarElemento(informacion, true)
+            ocultarElemento(detalle, true)
+            loadTabs(2);
+            ocultarElemento(btnAnterior5, false);
+            ocultarElemento(btnSiguiente5, false);
+            ocultarElemento(salir5, true);
+            btnAnterior5.innerText = 'Anterior';
+            btnSiguiente5.innerText = 'Siguiente';
+
+
+            return;
+        }
+        if ($(tab4Contenthj).is(":visible")) {
+            ocultarElemento(divregistrarResolucion, true);
+            ocultarElemento(especieexportar, true);
+            loadTabs(3);
+            ocultarElemento(btnAnterior5, false);
+            ocultarElemento(btnSiguiente5, false);
+            ocultarElemento(salir5, true);
+            btnAnterior5.innerText = 'Anterior';
+            btnSiguiente5.innerText = 'Siguiente';
+
+
+            return;
+        }
+        if ($(tab5Contenthj).is(":visible")) {
+            loadTabs(4);
+            ocultarElemento(quienvende, true);
+            ocultarElemento(quiencompra, true);
+            ocultarElemento(documento, true);
+            ocultarElemento(divQuienVendeTabla, true);
+            ocultarElemento(divQuienCompraTabla, true);
+            ocultarElemento(btnAnterior5, false);
+            ocultarElemento(btnSiguiente5, false);
+            ocultarElemento(salir5, true);
+            btnAnterior5.innerText = 'Anterior';
+            btnSiguiente5.innerText = 'Siguiente';
+
+
+            return;
+        }
+    }
+
+    //index modal 
+    function cerrarSesion5() {
+        limpiarModalCerrarSesion();
+        ocultarElemento("#btnSiNoCerrarSsesion4", false);
+        $("#mensajeModalCerrarSesion4").text("¿Está seguro de que desea salir?");
+    }
+
+    function limpiarModalCerrarSesion4() {
+        ocultarElemento("#btnSiNoCerrarSsesion4", true);
+        ocultarElemento("#btnAceptarCerrarSsesion4", true);
+    }
+
+    function loadDatosEmpresahj() {
+        llenadoDatosEmpresas();
+
+        ocultarElemento(btnAnterior5, true);
+        ocultarElemento(btnAnterior4, true);
+        ocultarElemento(btnAnterior3, true);
+
+        ocultarElemento(salir5, true);
+        ocultarElemento(salir4, true);
+        ocultarElemento(salir, true);
+
+        ocultarElemento(btnSiguiente5, false);
+        ocultarElemento(btnSiguiente4, false);
+        ocultarElemento(btnSiguiente3, false);
+    }
+
+    function loadsituacion() {
+        @* checksoffsituacion();  se debe activar manual*@
+        ocultarElemento(informacion, true);
+        ocultarElemento(detalle, true);
+
+        llenadosituacion();
+        ocultarElemento(btnAnterior5, false);
+        ocultarElemento(btnAnterior4, false);
+        ocultarElemento(btnAnterior3, false);
+
+        ocultarElemento(salir5, true);
+        ocultarElemento(salir4, true);
+        ocultarElemento(salir, true);
+
+        ocultarElemento(btnSiguiente5, false);
+        ocultarElemento(btnSiguiente4, false);
+        ocultarElemento(btnSiguiente3, false);
+    }
+
+    @* var especieexportar = document.getElementById('nav-33'); *@
+
+        function loadresolucionhj() {
+
+            llenadoresolucioncupos();
+            ocultarElemento(especieexportar, true);
+            ocultarElemento(divregistrarResolucion, true);
+
+            ocultarElemento(btnAnterior5, false);
+            ocultarElemento(btnAnterior4, false);
+            ocultarElemento(btnAnterior3, false);
+
+            ocultarElemento(salir5, true);
+            ocultarElemento(salir4, true);
+            ocultarElemento(salir, true);
+
+            ocultarElemento(btnSiguiente5, false);
+            ocultarElemento(btnSiguiente4, false);
+            ocultarElemento(btnSiguiente3, false);
+
+        }
+
+    function documentoventa() {
+
+
+        ocultarElemento(quienvende, true);
+        ocultarElemento(quiencompra, true);
+        ocultarElemento(documento, true);
+        ocultarElemento(divQuienVendeTabla, true);
+        ocultarElemento(divQuienCompraTabla, true);
+
+        ocultarElemento(btnAnterior5, false);
+        ocultarElemento(btnAnterior3, false);
+        ocultarElemento(btnAnterior4, false);
+        ocultarElemento(salir, false);
+        ocultarElemento(salir4, true);
+        ocultarElemento(salir5, false);
+
+        ocultarElemento(btnSiguiente5, true);
+        ocultarElemento(btnSiguiente3, true);
+        ocultarElemento(btnSiguiente4, true);
+
+        llenadodocumento();
+        //llenadodoc();
+
+    }
+
+    function certificadoflorahj() {
+        @* checksoff(); *@
+            ocultarElemento(certificados, true);
+        llenandoTablaCertificados();
+
+        ocultarElemento(btnAnterior5, false);
+        ocultarElemento(btnAnterior4, false);
+        ocultarElemento(btnAnterior3, false);
+
+        ocultarElemento(salir5, true);
+        ocultarElemento(salir4, true);
+        ocultarElemento(salir, true);
+
+        ocultarElemento(btnSiguiente5, false);
+        ocultarElemento(btnSiguiente4, false);
+        ocultarElemento(btnSiguiente3, false);
+
+    }
+
+    function Controlpeces() {
+        ocultarElemento(detallepeces, true);
+        llenandopeces();
+
+        ocultarElemento(btnAnterior5, false);
+        ocultarElemento(btnAnterior4, false);
+        ocultarElemento(btnAnterior3, false);
+
+        ocultarElemento(salir5, false);
+        ocultarElemento(salir4, false);
+        ocultarElemento(salir, true);
+
+        ocultarElemento(btnSiguiente5, true);
+        ocultarElemento(btnSiguiente4, true);
+        ocultarElemento(btnSiguiente3, true);
+    }
+
+    let autoridades = [];
+    var txtAutoridadEmiteResolucion = document.getElementById('txtAutoridadEmiteResolucion')
+    var sltPagoCuotaRepoblacion = document.getElementById('sltPagoCuotaRepoblacion')
+
+    async function TraerAutoridadEmite() {
+        let url = `@Url.Action("ConsultAuthority", "NonTimberFloraCertificate")`;
+        autoridades = await Get(url);
+        if (autoridades.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        txtAutoridadEmiteResolucion.innerHTML = '<option value="0">Seleccione Autoridad...</option>';
+        autoridades.forEach(el => {
+            txtAutoridadEmiteResolucion.innerHTML +=
+                `<option value="${el.code}">${el.name}</option>`
+        });
+    }
+
+    //carga datosempresa
+    $(document).ready(async function () {
+        await llenadoDatosEntidad();
+        loadTabs(1);
+        await configuracionControlesSoloAño();
+        await llenadoDatosEmpresas();
+        //muestra autoridad en cupos
+        TraerAutoridadEmite();
+        TraerAutoridadEmite2();
+        //checkcertificado
+        @* TraerAutoridadEmitecertificado(); *@
+            traerTiposEspecímenesProductosImpExp();
+        //no estaba
+        traerTiposEspecimenes();
+        traerPagoCuotaRepoblacionOpciones();
+            @* traerTiposMarcaje(); *@
+            ocultarElemento(divSpinner, true);
+        ocultarElemento(divBtnAceptarModal, true);
+        ConsultParametrica("ddlDisposicionEspecimenes", "TIPO DISPOSICIÓN DE ESPECÍMENES", "Seleccione disposición de especímenes");
+
+    });
+
+    var codigoempresad;
+
+    async function llenadoDatosEmpresas() {
+
+        nitEmpresa = @ViewBag.documentid;
+        cvtxtNumeroDocuemnto = @ViewBag.documentid;
+        let sltTipoDocumento2 = @ViewBag.documentypecv;
+        let url = `@Url.Action("Buscar", "Cv")` + `?documentypecv=${sltTipoDocumento2}&documentid=${cvtxtNumeroDocuemnto}`;
+        let r = await Get(url);
+        if(r.volverInicio !=undefined){
+            cerrarSesionCaducada();
+            return;
+        } 
+        //se define donde se llenara el campo numerodocumento usando el id txtNithj
+
+        console.log(r);
+
+        $(txtEntidadhj).val(r[0].nombreEntidadhj);
+        $(txtPaishj).val(r[0].paishj);
+        $(txtNombrehj).val(r[0].nombreEmpresahj);
+        $(txtDepartamentohj).val(r[0].departamentohj);
+        $(txtNithj).val(r[0].nithj);
+        $(txtCiudadhj).val(r[0].ciudadhj);
+        $(txtTelefonohj).val(r[0].telefonohj);
+        $(txtCorreohj).val(r[0].correohj);
+        $(txtDireccionhj).val(r[0].direccionhj);
+        codigoempresad = r[0].codigoEmpresa;
+        nitEmpresa = r[0].nithj;
+    }
+
+    async function llenadosituacion() {
+        cvtxtNumeroDocuemnto = @ViewBag.documentid;
+        let sltTipoDocumento2 = @ViewBag.documentypecv;
+        let url = `@Url.Action("Situacion", "Cv")` + `?documentypecv=${sltTipoDocumento2}&documentid=${cvtxtNumeroDocuemnto}`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        $(situacionparametrica).val(r[0].estado);
+        $(situacionparametricacites).val(r[0].estado);
+        await llenarregistrossituacion(cvtxtNumeroDocuemnto);
+        $(`#TableSituacionhj`).DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom: "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                    previous: "Anterior",
+                    next: "Siguiente",
+                },
+            },
+            //datos es la variable del controller consulta que da
+            data: r,
+            columns: [
+                {
+                    data: "id",
+                    className: "d-none",
+                },
+                {
+                    data: "nitsitu",
+                },
+                {
+                    data: "empresasitu",
+                },
+                {
+                    data: "nombresitu",
+                },
+                {
+                    data: "estadositu",
+                },
+                {
+                    "data": "id",
+                    render: function () {
+                        return '<a type="button" class="btnDetallesi" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles">VER DETALLE</a>';
+                    },
+                },
+            ],
+            columnDefs: [
+                {
+                    targets: 5,
+                },
+            ],
+        });
+        agregarClasesDatatable(`#TableSituacionhj`);
+
+    }
+    var txtObservaciones = document.getElementById('txtObservaciones');
+    var tiponovedad = document.getElementById('tiponovedad');
+    var txtFecha = document.getElementById('txtFecha');
+    var divAdjuntosituacion = document.getElementById('divAdjuntosituacion');
+
+    var adjuntosSoporte3 = document.getElementById('adjuntosSoporte3');
+    var ddlEstado = document.getElementById('ddlEstado');
+    var tiponovedad = document.getElementById('tiponovedad');
+
+    $('#TableSituacionhj tbody').on('click', '.btnDetallesi', async function () {
+        ocultarElemento(situacionnav, false)
+
+    });
+
+
+
+
+    async function llenarregistrossituacion(nitEmpresa) {
+
+        let url = `@Url.Action("ConsultSituacionnovedad", "Cv")` + `?codigoEmpresa=${nitEmpresa}`;
+        let r = await Get(url);
+        if(r.volverInicio !=undefined){
+            cerrarSesionCaducada();
+            return;
+        } 
+
+        $(`#tablanovedades`).DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom: "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                    previous: "Anterior",
+                    next: "Siguiente",
+                },
+            },
+            //datos es la variable del controller consulta que da
+            data: r,
+            columns: [
+                {
+                    "data": "codigo",
+                    className: "d-none"
+                },
+                {
+                    "data": "nombreTipoNovedad"
+                },
+                {
+                    render: function (data, type, row) {
+                        return `${moment(row.fechaRegistroNovedad).format('DD-MM-yyyy')}`;
+                    }
+                },
+                {
+                    "data": "estadositu"
+                },
+                {
+                    "data": "estadoEmisionCITES"
+                },
+                {
+                    "data": "codigo",
+                    render: function () {
+                        return '<a type="button" class="btnDetalledetail" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles">VER DETALLE</a>';
+                    },
+                },
+            ],
+            columnDefs: [
+                {
+                    targets: 5,
+                },
+            ],
+        });
+        agregarClasesDatatable(`#tablanovedades`);
+
+
+    }
+
+    function limpiar() {
+        divAdjuntosituacion.innerHTML = "";
+        txtObservaciones.innerHTML = "";
+        ddlEstado.innerHTML = "";
+        txtNombreZoo.innerHTML = "";
+        tiponovedad.innerHTML = "";
+        txtFecha.innerHTML = "";
+
+
+    }
+
+
+    $('#tablanovedades tbody').on('click', '.btnDetalledetail', async function () {
+
+
+
+        limpiar();
+        ocultarElemento(informacion, true)
+        ocultarElemento(detalle, true)
+        checksoffsituacion(); // readonly estado para emision de permisos CITES 
+        situacionid = $(this).parents("tr").find("td")[0].innerText;
+        id = $(this).parents("tr").find("td")[0].innerText;
+        var getDocumentsUrlsi = `@Url.Action("ConsultSituacionpdf", "Cv")` + `?situacionid=${situacionid}`;
+        let documents = await Get(getDocumentsUrlsi); 
+        if (documents.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        llenarpdfsituacion(documents, "btnDetalledetail");
+        await llenarsituaciondetail();
+
+    });
+
+    var adjuntosSoporte3 = [];
+
+    async function llenarpdfsituacion(documents, action) {
+        adjuntosSoporte3 = documents.documentosSoporte;
+        adjuntosSoporte3.forEach(el => {
+            cargarAdjuntos3(el.codigo, el.nombreAdjunto);
+        });
+
+        //llena el documento venta
+
+    }
+
+
+    function cargarAdjuntos3(codigo, nombre) {
+        divAdjuntosituacion.innerHTML +=
+            `<div class="row w-100 mt-2 contenerAdjuntos" id="divAdjuntosituacion${codigo}">
+                <div class="col-11">
+                    <a type="buttton" class="btnPrevisualizar" id="btnPrevisualizar${codigo}">${nombre}</a>
+                </div>
+            <div>`;
+    }
+
+
+    $(divAdjuntosituacion).on('click', '.btnPrevisualizar', function (e) {
+        var cadena = e.target.parentElement.firstElementChild.id;
+        var id = cadena.replace(/btnPrevisualizar/i, "");
+        var adjunto = adjuntosSoporte3.find(p => p.codigo == parseInt(id));
+        var newWindow = window.open();
+        newWindow.document.write('<iframe src=' + adjunto.adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+    });
+
+    var txtCuposDisponibles = document.getElementById('txtCuposDisponibles')
+    var txtInventarioDisponible = document.getElementById('txtInventarioDisponible')
+    var txtNumeroCuposPendientesTramitar = document.getElementById('txtNumeroCuposPendientesTramitar')
+    var ddlDisposicionEspecimenes = document.getElementById('ddlDisposicionEspecimenes')
+    var txtNitZoo = document.getElementById('txtNitZoo')
+    var txtOtroCual = document.getElementById('txtOtroCual')
+    var txtObservacionesDetalle = document.getElementById('txtObservacionesDetalle')
+    var idDisposicionEspecimen = document.getElementById('idDisposicionEspecimen')
+
+    async function llenarsituaciondetail() {
+
+
+        ocultarElemento(informacion, false);
+        let nitEmpresa = @ViewBag.documentid;
+        let url = `@Url.Action("ConsultSituacionid", "Cv")` + `?codigoEmpresa=${nitEmpresa}&situacionid=${id}`;
+        let r = await Get(url);
+        
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        var tipo = (r[0].idTipoNovedad)
+        if ((tipo) == "71") {
+
+            $(txtObservaciones).val(r[0].observacionesitu);
+            $(ddlEstado).val(r[0].estadoEmisionCITES);
+            $(txtNombreZoo).val(r[0].estadoEmisionCITES);
+            $(tiponovedad).val(r[0].nombreTipoNovedad);
+            $(txtFecha).val(moment(r[0].fechaRegistroNovedad).format('yyyy-MM-DD'));
+            $('input[name="check_EstadoCITES"][value=' + r[0].idEstadoEmisionCITES + ']').prop('checked', true);
+            ocultarElemento(informacion, false)
+            ocultarElemento(detalle, false)
+
+
+            $(txtCuposDisponibles).val(r[0].cuposDisponibles);
+            $(txtInventarioDisponible).val(r[0].inventarioDisponible);
+            $(txtNumeroCuposPendientesTramitar).val(r[0].numeroCupospendientesportramitar);
+            $(ddlDisposicionEspecimenes).val((r[0].idDisposicionEspecimen == null ? 0 : r[0].idDisposicionEspecimen));
+            if ($(ddlDisposicionEspecimenes).val() == "39") {
+                $(ddlDisposicionEspecimenes).prop("disabled", true);
+            }
+            idEmpresaZoo = r[0].idEmpresaZoo;
+            if (idEmpresaZoo > 0) {
+                nitEmpresaZoo = r[0].nitEmpresaZoo;
+                $(txtNitZoo).val(r[0].nitEmpresaZoo);
+                llenadoDatosEntidadZoo(false);
+            }
+            $(txtOtroCual).val(r[0].otroCual);
+            seleccionDisposicionEspecimenes();
+            $(txtObservacionesDetalle).val(r[0].observacionesDetalle);
+
+
+
+
+        }
+        else {
+            ocultarElemento(informacion, false)
+            ocultarElemento(detalle, true)
+            $(txtObservaciones).val(r[0].observacionesitu);
+            $(ddlEstado).val(r[0].estadoEmisionCITES);
+            $(txtNombreZoo).val(r[0].estadoEmisionCITES);
+            $(tiponovedad).val(r[0].nombreTipoNovedad);
+            $(txtFecha).val(moment(r[0].fechaRegistroNovedad).format('yyyy-MM-DD'));
+            $('input[name="check_EstadoCITES"][value=' + r[0].idEstadoEmisionCITES + ']').prop('checked', true);
+
+        }
+
+
+
+
+
+
+    }
+
+
+
+
+    var containerZoocriadero = document.getElementById('containerZoocriadero')
+    var OtroCual = document.getElementById('OtroCual')
+    var containerZoocriadero = document.getElementById('containerZoocriadero')
+    var txtCorreoZoo = document.getElementById('txtCorreoZoo')
+    var nitzoo = document.getElementById("txtNitZoo");
+
+    async function seleccionDisposicionEspecimenes() {
+        $(containerZoocriadero).hide();
+        $(OtroCual).hide();
+        if ($(ddlDisposicionEspecimenes).val() == "39") {
+            $(containerZoocriadero).show();
+        }
+        if ($(ddlDisposicionEspecimenes).val() == "40") {
+            $(OtroCual).show();
+        }
+    }
+
+
+    async function llenadoDatosEntidadZoo(ver) {
+        let tipoDocumento = 95 //Nit;
+
+        nitEmpresaZoo = nitzoo.value;
+
+
+
+
+        if (nitEmpresaZoo == "") {
+            MostrarMensajeAdver("Nit zoocriadero de destino requerido.");
+            return;
+        }
+
+        let url = `@Url.Action("ConsultEntityDates", "RegistrarResolucion")` + `?documentType=${tipoDocumento}&nitBussines=${nitEmpresaZoo}&entityType=60`; let r = await Get(url);
+
+        if (r.length > 0) {
+            idEmpresaZoo = r[0].codigoEmpresa;
+            $("#txtNombreZoo").val(r[0].nombreEmpresa);
+            $("#txtPaisZoo").val(r[0].pais);
+            $("#txtDepartamentoZoo").val(r[0].departamento);
+            $("#txtCiudadZoo").val(r[0].ciudad);
+            $("#txtTelefonoZoo").val(r[0].telefono);
+            $(txtCorreoZoo).val(r[0].correo);
+            $("#txtDireccionZoo").val(r[0].direccion);
+            $(txtNitZoo).prop("disabled", true);
+            $("#boton-consultar-entidadZoo").hide();
+            if (ver) {
+                $("#boton-cancelar-buscarZoo").show();
+            }
+            else {
+                $("#boton-cancelar-buscarZoo").hide();
+            }
+            $("#divDatosEntidadZoo").show();
+        }
+        else {
+            MostrarMensajeAdver("Número de documento no existe o Entidad no es Zoocriadero.");
+        }
+
+
+
+
+
+
+    }
+
+    async function traerPagoCuotaRepoblacionOpciones() {
+        let url = `@Url.Action("ConsultRepoblationPay", "RegistrarResolucion")`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        tiposPagoCuotaRepoblacion = r;
+        sltPagoCuotaRepoblacion.innerHTML = `<option value="0" selected>Seleccione pago de cuota de repoblacion</option>`;
+        r.forEach(el => {
+            sltPagoCuotaRepoblacion.innerHTML +=
+                `<option value="${el.code}">${el.name}</option>`
+        });
+    }
+    async function TraerAutoridadEmite2() {
+        let url = `@Url.Action("ConsultAuthority", "NonTimberFloraCertificate")`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        //txtAutoridadEmiteCertificado2.innerHTML = '<option value="0">Seleccione Autoridad...</option>';
+        //r.forEach(el => {
+        //    txtAutoridadEmiteCertificado2.innerHTML +=
+        //        `<option value="${el.code}">${el.name}</option>`
+        //});
+    }
+
+
+    async function traerTiposEspecimenes() {
+        let url = `@Url.Action("ConsultEspecimensTypes", "RegistrarResolucion")`;
+        especies = await Get(url);
+        if (especies.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        confSelectScrollInfite("#sltEspecimen", especies);
+        confSelectScrollInfite("#sltTipoEspecimenValido", especies);
+    }
+
+    async function traerTiposMarcaje() {
+        let url = `@Url.Action("ConsultMarkingType", "RegistrarResolucion")`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        tiposMarcaje = r;
+        r.forEach(el => {
+            divChecksTipoMarcaje.innerHTML +=
+                `<div class="form-check">
+                    <input class="form-check-input check" name="tiposMarcas" type="checkbox" value="${el.code}" id="check${el.code}">
+                    <label class="form-check-label" for="flexCheckDefault">
+                    ${el.name}
+                    </label>
+                </div>`
+        })
+    }
+
+
+
+    async function llenadoresolucioncupos() {
+        cvtxtNumeroDocuemnto = @ViewBag.documentid;
+        let sltTipoDocumento2 = @ViewBag.documentypecv;
+        let url = `@Url.Action("Resolucioncupos", "Cv")` + `?&documentid=${nitEmpresa}`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        
+        $(`#tableresolucioncuposhj`).DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom: "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                    previous: "Anterior",
+                    next: "Siguiente",
+                },
+            },
+            //datos es la variable del controller consulta que da
+            data: r,
+            columns: [
+                {
+                    "data": "codigoCupo",
+                    className: "d-none"
+                },
+                {
+                    "data": "numeroResolucion",
+                    className: "td-1"
+                },
+
+                {
+                    "data": "fechaResolucion",
+                    render: function (data) {
+                        return moment(data).format('yyyy-MM-DD');
+                    }
+                },
+                {
+                    "data": "fechaRegistroResolucion",
+                    render: function (data) {
+                        return moment(data).format('yyyy-MM-DD');
+                    }
+                },
+                {
+                    "data": "autoridadEmiteResolucion",
+                    render: function (data) {
+                        let autoridad;
+                        autoridades.forEach(el => {
+                            if (parseInt(el.code) == parseInt(data)) {
+                                autoridad = el.name;
+                            }
+                        });
+                        return autoridad
+                    }
+                },
+                {
+                    "data": "codigoEspecie",
+                    render: function (data) {
+                        var especieNombre;
+                        especies.forEach(el => {
+                            if (el.id == data) {
+                                especieNombre = el.text;
+                            }
+                        });
+                        return especieNombre;
+                    }
+                },
+                {
+                    "data": "anioProduccion"
+                },
+                {
+                    "data": "cuposAprovechamientoComercializacion"
+                },
+                {
+                    "data": "cuotaRepoblacion"
+                },
+                {
+                    "data": "cuposTotal"
+                },
+                {
+                    "data": "cuposDisponibles"
+                },
+                {
+                    "data": "codigoCupo",
+                    render: function () {
+                        return '<a type="button" class="btnDetalle" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles">VER DETALLE</a>';
+                    },
+                },
+            ],
+            columnDefs: [{
+                targets: 11
+            }]
+
+        });
+        agregarClasesDatatable(`#tableresolucioncuposhj`);
+    }
+
+
+
+
+    var divTableCuposAnio = document.getElementById('divTableCuposAnio')
+    var idCupoEditar = 0;
+
+    $('#tableresolucioncuposhj tbody').on('click', '.btnDetalle', async function () {
+        ocultarElemento(especieexportar, true);
+        tituloAccionResolucion.innerText = 'Ver resolucion';
+
+        idCupoEditar = $(this).parents("tr").find("td")[0].innerText;
+        var url = `@Url.Action("ConsultOneQuota2", "Cv")` + `?quotaCode=${idCupoEditar}`;
+        let resp = await Get(url);
+        if (resp.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        
+        llenarControles(resp);
+
+        llenadoresolucioncupdos(resp);
+        checksoffCupos();
+
+    });
+
+    var CuposPorAnio = [];
+    var accionAgregarEditarCuposAnio = true; //true para agregar false para editar
+    var recargarTablaCuposAnio = false;
+    var contadorRegistrosCuposAnio = 0;
+    var contadorEspeciesExportar = 0;
+    var idCuposAnio;
+    var datosGuardar = [];
+    var tiposMarcajeSeleccionados = [];
+    var accionEditar = false; //true para editar resolucion, false para ver resolucion
+    var accionVer = false; //true para ver
+    var accionGuardar = false;
+    var accionEditarEspecieExportar = false;
+    var accionVerEspecieExportar = false;
+    var idCupoEditar = 0;
+    var datosEspecieExportar;
+    var validacionEspecieExportar = false;
+    var validacionResolucion = false;
+    var idEspecieExportarEditar;
+    var adjuntosNuevo = [];
+    var adjuntosEliminar = [];
+    var adjuntosOriginal = [];
+    var adjuntoBase64;
+    var nombreAdjunto;
+    var tipoAdjunto;
+    var nitEmpresa;
+    var tiposMarcaje = [];
+    var tiposPagoCuotaRepoblacion = [];
+    var idEliminarResolucion;
+    var totalOtorgadosControlCupos = 0;
+    var encontroEntidad = false;
+    var totalDisponibles = 0;
+    var especies = [];
+    var adjuntosResolucion = [];
+    let resoluciones;
+
+
+
+
+    async function llenadoresolucioncupdos(data) {
+        CuposPorAnio = [];
+        CuposPorAnio.push(data.especiesExportar);
+        $(`#TableCuposPorAnio`).DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom: "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                    previous: "Anterior",
+                    next: "Siguiente",
+                },
+            },
+            //datos es la variable del controller consulta que da
+            data: CuposPorAnio,
+            columns: [
+                {
+                    "data": "id",
+                    className: "d-none"
+                },
+                {
+                    "data": "codigoEspecie",
+                    render: function (data) {
+                        var especieNombre;
+                        especies.forEach(el => {
+                            if (el.id == data) {
+                                especieNombre = el.text;
+                            }
+                        });
+                        return especieNombre;
+                    }
+                },
+                {
+                    "data": "anio"
+                },
+                {
+                    "data": "cupos"
+                },
+                {
+                    "data": "cuotaRepoblacion"
+                },
+                {
+                    "data": "totalCupos"
+                },
+                {
+                    "data": "numeroInternoInicial"
+                },
+                {
+                    "data": "numeroInternoFinal"
+                },
+                {
+                    "data": "numeroInternoInicialCuotaRepoblacion",
+                    render: function (data) {
+                        if (data == 0) {
+                            return '';
+                        }
+                        return data;
+                    }
+                },
+                {
+                    "data": "numeroInternoFinalCuotaRepoblacion",
+                    render: function (data) {
+                        if (data == 0) {
+                            return '';
+                        }
+                        return data;
+                    }
+                },
+                {
+                    "data": "seRegistroEspecieComercializar",
+                    render: function (data) {
+
+                        return '<a type="button" class="btnVerEspecieComercializar" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver especie a comercializar">VER ESPECIE COMERCIALIZAR</a>';
+
+                    }
+                }
+            ],
+            columnDefs: [{
+                targets: 10
+            }]
+        });
+
+        agregarClasesDatatable(`#TableCuposPorAnio`);
+    }
+
+    var txtnumeroResolucion = document.getElementById('txtnumeroResolucion');
+    var txtFechaResolucion = document.getElementById('txtFechaResolucion');
+    var txtTotalCuposOtorgados = document.getElementById('txtTotalCuposOtorgados');
+    var txtCuposAprovechamientoComercializacion = document.getElementById('txtCuposAprovechamientoComercializacion');
+    var txtAnioProduccion = document.getElementById('txtAnioProduccion');
+    var txtCuposRegistrar = document.getElementById('txtCuposRegistrar');
+    var txtCuotaRepoblacion = document.getElementById('txtCuotaRepoblacion');
+    var txtObservacionescupos = document.getElementById('txtObservacionescupos');
+    let txtCodigoZoocriadero = document.getElementById('txtCodigoZoocriadero');
+
+    async function llenarControles(datos) {
+        ocultarElemento(divregistrarResolucion, false);
+        ocultarElemento(divTableCuposAnio, false);
+        $(txtAutoridadEmiteResolucion).val(datos.resolucionInfo.autoridadEmiteResolucion);
+        $(txtCodigoZoocriadero).val(datos.resolucionInfo.codigoZoocriadero);
+        $(txtnumeroResolucion).val(datos.resolucionInfo.numeroResolucion);
+        $(txtFechaResolucion).val(moment(datos.resolucionInfo.fechaResolucion).format('yyyy-MM-DD'));
+        $(txtFechaRegistroResolucion).val(moment(datos.resolucionInfo.fechaRegistroResolucion).format('yyyy-MM-DD'));
+        $(txtObservacionescupos).val(datos.resolucionInfo.observaciones);
+    }
+
+    var tabexportado = document.getElementById('tab9')
+
+
+
+    $('#TableCuposPorAnio tbody').on('click', '.btnVerEspecieComercializar', function () {
+        ocultarElemento(especieexportar, false);
+
+
+
+
+        tituloAccionEspecieExportar.innerText = "Ver especie a comercializar";
+
+        idCuposAnio = parseInt($(this).parents("tr").find("td")[0].innerText);
+
+        var especieComercializar = CuposPorAnio.find(p => p.id == idCuposAnio);
+
+
+        llenarEspeciExportarControles(especieComercializar);
+
+        loadTabs(3);
+        @* loadTabs(3); *@
+    });
+
+    var divChecksTipoMarcaje = document.getElementById('divChecksTipoMarcaje');
+
+
+
+    //llena los controles de especie a comercializar
+    function llenarEspeciExportarControles(especieEditar) {
+
+        if (especieEditar.sePagoCuotaRepoblacion) {
+            $(CheckSeRealizoPagoCuotaRepoblacion).prop("checked", true);
+            ocultarElemento(divCuotaRepoblacion, false);
+        } else {
+            $(CheckSeRealizoPagoCuotaRepoblacion).prop("checked", false);
+            ocultarElemento(divCuotaRepoblacion, true);
+        }
+        //region comentado asignacion de campos
+        var tipoMarcaje = especieEditar.codigoParametricaTipoMarcaje.split("|");
+        tipoMarcaje.forEach(el => {
+            var element = parseInt(el);
+            $(`#check${element}`).prop("checked", true)
+        });
+        $(txtNombreEspecie).val(especieEditar.tipoEspecimen);
+        $(sltEspecimen).val(especieEditar.codigoEspecie).trigger('change');
+        $(txtAnioProduccionEspecimen).val(especieEditar.añoProduccion);
+        $(txtMarcaLote).val(especieEditar.marcaLote);
+        $(txtCondicionesMarcaje).val(especieEditar.condicionesMarcaje);
+        $(txtMachos).val(especieEditar.poblacionParentalMacho);
+        $(txtHembras).val(especieEditar.poblacionParentalHembra);
+        $(txtTotalPoblacion).val(especieEditar.poblacionParentalTotal);
+        $(txtSalioIncubadora).val(especieEditar.poblacionSalioDeIncubadora);
+        $(txtPoblacionDispCupos).val(especieEditar.poblacionDisponibleParaCupos);
+        $(txtIndividuasRepoblacion).val(especieEditar.individuosDestinadosARepoblacion);
+        $(txtCuposAprovechamientoOtorgados).val(especieEditar.cupoAprovechamientoOtorgados);
+        $(txtTasaReposicion).val(especieEditar.tasaReposicion);
+        $(txtNumeroMortalidad).val(especieEditar.numeroMortalidad);
+        if (especieEditar.cuotaRepoblacionParaAprovechamiento) {
+            $(chkSiEsAprovechamiento).prop('checked', true);
+        } else {
+            $(chkNoEsAprovechamiento).prop('checked', true);
+        }
+        $(sltPagoCuotaRepoblacion).val(especieEditar.codigoParametricaPagoCuotaDerepoblacion);
+        $(txtCuposAprovOtorgPagada).val(especieEditar.cupoAprovechamientoOtorgadosPagados);
+        $(txtFechaRadicado).val(moment(especieEditar.fechaRadicado).format('yyyy-MM-DD'));
+        $(txtnumeroInternoInicialCuotaRepoblacion).val(especieEditar.numeroInternoInicialCuotaRepoblacion == 0 ? '' : especieEditar.numeroInternoInicialCuotaRepoblacion);
+        $(txtnumeroInternoFinalCuotaRepoblacion).val(especieEditar.numeroInternoFinalCuotaRepoblacion == 0 ? '' : especieEditar.numeroInternoFinalCuotaRepoblacion);
+        //llenar adjunto
+        divAdjuntoespecie.innerHTML = '';
+        adjuntosResolucion = especieEditar.documentosSoporte;
+        especieEditar.documentosSoporte.forEach(el => {
+
+
+            divAdjuntoespecie.innerHTML +=
+                `<div class="row w-100 mt-2 contenerAdjuntos" id="divAdjuntoespecie${el.codigo}">
+                        <div class="col-11">
+                            <a type="buttton" class="btnPrevisualizar" id="btnPrevisualizar${el.codigo}">${el.nombreAdjunto}</a>
+                    </div>
+                    <div>`;
+        });
+        $(txtObservacionesEspecieExportar).val(especieEditar.observaciones);
+    }
+
+    var divAdjuntoespecie = document.getElementById('divAdjuntoespecie');
+
+    $(divAdjuntoespecie).on('click', '.btnPrevisualizar', function (e) {
+        var cadena = e.target.parentElement.firstElementChild.id;
+        var id = cadena.replace(/btnPrevisualizar/i, "");
+        var adjunto = adjuntosResolucion.find(p => p.codigo == parseInt(id));
+        var newWindow = window.open();
+        newWindow.document.write('<iframe src=' + adjunto.adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+    });
+    //se convierten controles para que sean de tipo year
+    function configuracionControlesSoloAño() {
+        $(txtAnioProduccion).datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+    }
+
+
+    var Documentoregistrados = document.getElementById('Documentoregistrados');
+    var divregistrarResolucion = document.getElementById("divregistrarResolucion");
+    var divSpinner2 = document.getElementById("divSpinner2");
+
+    async function llenadodocumento() {
+        cvtxtNumeroDocuemnto = @ViewBag.documentid;
+        let sltTipoDocumento2 = @ViewBag.documentypecv;
+        let url = `@Url.Action("DocumentoVenta", "Cv")`;
+        let r = await Get(url, { nit: cvtxtNumeroDocuemnto });
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+
+        //$(`#Tabledocumento
+        @* $(Documentoregistrados).val(r[0].totaldocumentos); *@
+            $(`#Tabledocumento`).DataTable({
+                destroy: true,
+                scrollX: true,
+                lengthChange: true,
+                lengthMenu: [5, 10, 20, 50, 100],
+                paging: true,
+                info: true,
+                dom:
+                    "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                    "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+                language: {
+                    lengthMenu: "Resultados pág. _MENU_",
+                    info: "_START_ al _TOTAL_ Resultados",
+                    search: "",
+                    searchPlaceholder: "Buscar",
+                    zeroRecords: "No se encontraron resultados",
+                    infoEmpty: "0 al 0 Resultados",
+                    paginate: {
+                        previous: "Anterior",
+                        next: "Siguiente",
+                    },
+                },
+                data: r,
+                columns: [
+                    {
+                        "data": "code",
+                        className: "d-none"
+                    },
+                    {
+                        "data": "numeration",
+                    },
+                    {
+                        "data": "carteNumber",
+                    },
+                    {
+                        "data": "nitCompanySeller",
+                    },
+                    {
+                        "data": "reasonSocial",
+                    },
+                    {
+                        "data": "nitCompanyShopper",
+                    },
+                    {
+                        "data": "reasonSocialShopper",
+                    },
+                    {
+                        "data": "saleDate",
+                    },
+                    {
+                        "data": "quotasSold",
+                    },
+                    {
+                        "data": "code",
+                        render: function () {
+                            return '<a type="button" class="btnDetalle2" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles">VER DETALLE</a>';
+                        },
+                    }
+                ],
+                columnDefs: [{
+                    targets: 7,
+                    render: function (data) {
+                        return moment(data, "YYYY-MM-DD").utc().format('DD/MM/YYYY')
+                    }
+                }]
+            });
+        agregarClasesDatatable(`#Tabledocumento`);
+    }
+
+    $('#Tabledocumento tbody').on('click', '.btnDetalle2', async function () {
+        divAdjunto.innerHTML = "";
+        codeDetailsViewId = $(this).parents("tr").find("td")[0].innerText;
+        id = $(this).parents("tr").find("td")[0].innerText;
+        var getDocumentsUrl = `@Url.Action("ConsultDocument2", "Cv")` + `?docuid=${codeDetailsViewId}`;
+        let responseDocuments = await Get(getDocumentsUrl);
+        if (responseDocuments.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        llenarControlesdocumentopdf(responseDocuments, "btnDetalle2");
+        await llenarControlesdocumentodata();
+    });
+
+    async function llenarControlesdocumentodata() {
+
+        let url = `@Url.Action("ConsultDocumentid", "Cv")` + `?docuid=${id}`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        
+        $(CarteNumber).val(r[0].carteNumber);
+        $(SaleDate).val(moment(r[0].saleDate).format('yyyy-MM-DD'));
+        $(NumberSold).val(r[0].numberSold);
+        $(BusinessSale).val(r[0].businessSale); //not data
+        $(TypeDocumentSeller).val(r[0].typeDocumentSeller); //not data
+        $(DocumentNumberSeller).val(r[0].documentNumberSeller);
+        $(ReasonSocial).val(r[0].reasonSocial);
+        $(Observations).val(r[0].observations);
+        $(InventoryAvailability).val(r[0].inventoryAvailability);
+        $(Shopper).val(r[0].businessShopper); //not data
+        $(TypeDocumentShopper).val(r[0].typeDocumentShopper); //not data
+        $(DocumentNumberShopper).val(r[0].documentNumberShopper);
+        $(ReasonSocialShopper).val(r[0].reasonSocialShopper);
+        $(ObservationsShopper).val(r[0].observationsShopper);
+
+        let getQuotas = `@Url.Action("GetQuotasByCode", "SaleDocument")` + `?code=${id}`;
+        let responseQuotas = await Get(getQuotas);  
+        if (responseQuotas.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+
+        let getInventoryUrl = `@Url.Action("GetInventory","SaleDocument")` + `?documentNumber=${r[0].documentNumberShopper}&code=${id}`;
+        let responseJsonInventory = await Get(getInventoryUrl); 
+        if (responseJsonInventory.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+
+        console.log(responseQuotas);
+        console.log(responseJsonInventory);
+        cargarCupos(responseQuotas);
+        cargarInventario(responseJsonInventory);
+
+        ocultarElemento(quienvende, false);
+        ocultarElemento(quiencompra, false);
+        ocultarElemento(documento, false);
+        ocultarElemento(divQuienVendeTabla, false);
+        ocultarElemento(divQuienCompraTabla, false);
+
+        //llena el documento venta
+
+    }
+
+    function cargarCupos(responseQuotas){
+        let columns=[
+            {
+                "data":"code",
+                className:"d-none"
+            },                
+            {
+                "data":"numberResolution",
+            },
+            {
+                "data": "quotasGrant",
+            },
+            {
+                "data": "quotasAdvantageCommercialization",
+            },
+            {
+                "data": "quotasRePoblation",
+            },
+            {
+                "data": "quotasAvailable",
+            },    
+            {
+                "data": "yearProduction",
+            },           
+            {
+                "data": "speciesCode",
+                render: function (data) {
+                    var especieNombre;
+                    especies.forEach(el => {
+                        if (parseInt(el.id) == parseInt(data)) {
+                            especieNombre = el.text;
+                        }
+                    });
+                    return especieNombre;
+                } 
+            },      
+            {
+                "data": "quotasSold",
+            }
+        ];
+        DataTableGenericoSinBuscador('#TableCuposDetails', columns, responseQuotas, 8); 
+    }
+
+    function cargarInventario(responseJsonInventory){
+        let columns=[
+            {
+                "data": "code",
+                className:"d-none"
+            },                  
+            {
+                "data": "numberSaleCarte",
+            },
+            {
+                "data": "reasonSocial",
+            },
+            {
+                "data": "saleDate",
+                render: function (data) {
+                    if (data != null) {
+                    return moment(data).format("DD-MM-yyyy");
+                    }
+                    return data;
+                },             
+            },
+            {
+                "data": "availabilityInventory",
+            },
+            {
+                "data": "year",
+            },
+            {
+                "data": "speciesCode",
+                render: function (data) {
+                    var especieNombre;
+                    especies.forEach(el => {
+                        if (parseInt(el.id) == parseInt(data)) {
+                            especieNombre = el.text;
+                        }
+                    });
+                    return especieNombre;
+                } 
+            }, 
+            {
+                "data": "availableInventory",
+            },
+            {
+                "data": "inventorySold",
+            }
+        ];
+        DataTableGenericoSinBuscador('#TableInventoryDetails', columns, responseJsonInventory, 8);    
+    }
+
+    var adjuntosSoporte = [];
+    var divAdjunto = document.getElementById('divAdjunto');
+
+    async function llenarControlesdocumentopdf(documents, action) {
+
+        adjuntosSoporte = documents.documentosSoporte;
+        adjuntosSoporte.forEach(el => {
+            cargarAdjuntos(el.codigo, el.nombreAdjunto);
+        });
+        //llena el documento venta
+    }
+
+    function cargarAdjuntos(codigo, nombre) {
+        divAdjunto.innerHTML +=
+            `<div class="row w-100 mt-2 contenerAdjuntos" id="divAdjunto${codigo}">
+                <div class="col-11">
+                    <a type="buttton" class="btnPrevisualizar" id="btnPrevisualizar${codigo}">${nombre}</a>
+                </div>
+            <div>`;
+    }
+
+    $(divAdjunto).on('click', '.btnPrevisualizar', function (e) {
+        var cadena = e.target.parentElement.firstElementChild.id;
+        var id = cadena.replace(/btnPrevisualizar/i, "");
+
+        var adjunto = adjuntosSoporte.find(p => p.codigo == parseInt(id));
+        var newWindow = window.open();
+        newWindow.document.write('<iframe src=' + adjunto.adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+    });
+
+
+
+    var totalcertificadoshj = document.getElementById('totalcertificadoshj');
+
+    async function llenandoTablaCertificados() {
+        let url = `@Url.Action("ConsultCertificateshj", "Cv")`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        
+        @* $(totalcertificadoshj).val(r[0].totalcertificados); *@
+            $(`#tableCertificadoshj`).DataTable({
+                destroy: true,
+                scrollX: true,
+                lengthChange: true,
+                lengthMenu: [5, 10, 20, 50, 100],
+                paging: true,
+                info: true,
+                dom: "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+                language: {
+                    lengthMenu: "Resultados pág. _MENU_",
+                    info: "_START_ al _TOTAL_ Resultados",
+                    search: "",
+                    searchPlaceholder: "Buscar",
+                    zeroRecords: "No se encontraron resultados",
+                    infoEmpty: "0 al 0 Resultados",
+                    paginate: {
+                        previous: "Anterior",
+                        next: "Siguiente",
+                    },
+                },
+                //datos es la variable del controller consulta que da
+                data: r,
+                columns: [
+                    {
+                        "data": "codigoCertificado",
+                        className: "d-none"
+                    },
+                    {
+                        "data": "numeroCertificacion",
+                    },
+                    {
+                        "data": "fechaCertificacion",
+                        render: function (data) {
+                            return moment(data).format('yyyy-MM-DD');
+                        }
+                    },
+                    {
+                        "data": "nit"
+                    },
+                    {
+                        "data": "vigenciaCertificacion",
+                        render: function (data) {
+                            return moment(data).format('yyyy-MM-DD');
+                        }
+                    },
+                    {
+                        "data": "codigoCertificado",
+                        render: function () {
+                            return '<a type="button" class="btnDetallecertificado" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalles">VER DETALLE</a>';
+                        },
+                    },
+                ],
+                columnDefs: [{
+                    targets: 5
+                }]
+
+            });
+        agregarClasesDatatable(`#tableCertificadoshj`);
+    }
+
+    var idcertificado = 0;
+
+    $('#tableCertificadoshj tbody').on('click', '.btnDetallecertificado', async function () {
+        divAdjunto2.innerHTML = "";
+        ocultarElemento(certificados, false);
+        checksoff();
+        idcertificado = $(this).parents("tr").find("td")[0].innerText;
+        var url = `@Url.Action("ConsultCertificateshj2", "Cv")` + `?idcertificado=${idcertificado}`;
+        let resp = await Get(url);
+        if (resp.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+
+        llenarControles3(resp);
+        limpiarcertificado();
+
+    });
+
+    var txtNumeroCertificacion2 = document.getElementById('txtNumeroCertificacion2');
+
+    var certificados = document.getElementById('certificados');
+    var divAdjunto2 = document.getElementById('divAdjunto2');
+    var adjuntosSoporte2 = [];
+
+
+    var chkExportacion = 0;
+    var chkImportacion = 0;
+    var tipoPermisoEnviar = [];
+    var tipoEspecimenProductoImpExp = [];
+    var tipoEspecímenesProductosImpExp = [];
+
+    async function traerTiposEspecímenesProductosImpExp() {
+        let url = `@Url.Action("ConsultEspecimensProductsType", "NonTimberFloraCertificate")`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        tipoEspecímenesProductosImpExp = r;
+        //r.forEach(el => {
+        //    divChecksTipoEspecímenesProductosImpExp.innerHTML +=
+        //        `<div class="form-check">
+        //        <input class="form-check-input checkTiposEspecimenesProductos" name="TiposEspecímenesProductosImpExp" type="checkbox" value="${el.code}" id="check${el.code}">
+        //        <label class="form-check-label" for="flexCheckDefault">
+        //        ${el.name}
+        //        </label>
+        //    </div>`
+        //});
+    }
+
+    function limpiarcertificado() {
+
+        txtNumeroCertificacion2.innerHTML = "";
+        txtFechaCertificacion.innerHTML = "";
+        txtVigenciaCertificacion.innerHTML = "";
+        chksTipoPermisoImportacion.innerHTML = "";
+        chksTipoPermisoExportacion.innerHTML = "";
+        txtObservacionesCertificado.innerHTML = "";
+
+
+    }
+
+
+
+
+    async function llenarControles3(val) {
+
+        //$(txtAutoridadEmiteCertificado2).val(val.autoridadEmiteCertificacion);
+        $(txtNumeroCertificacion2).val(val.numeroCertificado);
+        $(txtFechaCertificacion).val(moment(val.fechaCertificacion).format('yyyy-MM-DD'));
+        $(txtVigenciaCertificacion).val(moment(val.vigenciaCertificacion).format('yyyy-MM-DD'));
+
+        let tiposPermisos = val.tipoPermiso.split("|");
+
+        tipoPermisoEnviar = tiposPermisos;
+        if (tiposPermisos.includes("48")) {
+            $(chksTipoPermisoImportacion).prop('checked', true);
+        }
+        if (tiposPermisos.includes("47")) {
+            $(chksTipoPermisoExportacion).prop('checked', true);
+        }
+
+        var tipoEspecimenProducto = val.tipoEspecimenProductoImpExp.split("|");
+        tipoEspecimenProducto.forEach(el => {
+            var element = parseInt(el);
+            $(`#check${element}`).prop("checked", true)
+        });
+
+        $(txtObservacionesCertificado).val(val.observacionesCertificado);
+
+        adjuntosSoporte2 = val.documentosSoporte;
+
+        adjuntosSoporte2.forEach(el => {
+            cargarAdjuntos2(el.codigo, el.nombreAdjunto);
+        });
+    }
+
+    function cargarAdjuntos2(codigo, nombre) {
+        divAdjunto2.innerHTML +=
+            `<div class="row w-100 mt-2 contenerAdjuntos" id="divAdjunto2${codigo}">
+                <div class="col-11">
+                    <a type="buttton" class="btnPrevisualizar" id="btnPrevisualizar${codigo}">${nombre}</a>
+                </div>
+            <div>`;
+    }
+
+
+    $(divAdjunto2).on('click', '.btnPrevisualizar', function (e) {
+        var cadena = e.target.parentElement.firstElementChild.id;
+        var id = cadena.replace(/btnPrevisualizar/i, "");
+        var adjunto = adjuntosSoporte2.find(p => p.codigo == parseInt(id));
+        var newWindow = window.open();
+        newWindow.document.write('<iframe src=' + adjunto.adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+    });
+
+
+    var totalresopeces = document.getElementById('totalresopeces');
+
+    async function llenandopeces() {
+        cvtxtNumeroDocuemnto = @ViewBag.documentid;
+        let sltTipoDocumento2 = @ViewBag.documentypecv;
+        let url = `@Url.Action("ConsultPeces", "Cv")` + `?documentid=${codigoempresad}`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        
+        @* $(totalresopeces).val(r[0].totalresolucionpeces); *@
+            $(`#tableresolucionespeces`).DataTable({
+                destroy: true,
+                scrollX: true,
+                lengthChange: true,
+                lengthMenu: [5, 10, 20, 50, 100],
+                paging: true,
+                info: true,
+                dom: "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+                language: {
+                    lengthMenu: "Resultados pág. _MENU_",
+                    info: "_START_ al _TOTAL_ Resultados",
+                    search: "",
+                    searchPlaceholder: "Buscar",
+                    zeroRecords: "No se encontraron resultados",
+                    infoEmpty: "0 al 0 Resultados",
+                    paginate: {
+                        previous: "Anterior",
+                        next: "Siguiente",
+                    },
+                },
+                //datos es la variable del controller consulta que da
+                data: r,
+                columns: [
+                    {
+                        "data": "codigoResolucion",
+                        className: "d-none"
+                    },
+                    {
+                        "data": "numeroResolucion",
+                        className: "td-1"
+                    },
+                    {
+                        "data": "fechaResolucion",
+                        render: function (data) {
+                            return moment(data).format('yyyy-MM-DD');
+                        }
+                    },
+                    {
+                        "data": "fechaInicio",
+                        render: function (data) {
+                            return moment(data).format('yyyy-MM-DD');
+                        }
+                    },
+                    {
+                        "data": "fechaFin",
+                        render: function (data) {
+                            return moment(data).format('yyyy-MM-DD');
+                        }
+                    },
+                    {
+                        "data": "objetoResolucion"
+                    },
+                    {
+                        "data": "codigoResolucion",
+                        render: function () {
+                            return '<a type="button" class="btnDetalleResolucion">VER DETALLE</a>';
+                        },
+                    },
+                ],
+                columnDefs: [{
+                    targets: 5
+                }]
+            });
+        agregarClasesDatatable(`#tableresolucionespeces`);
+    }
+
+    var tituloResolucion = document.getElementById('tituloResolucion')
+
+    var divDatosEntidadpeces = document.getElementById('divDatosEntidadpeces')
+    var detallepeces = document.getElementById('detallepeces')
+    var txtNombreRes = document.getElementById('txtNombreRes')
+    var txtNitRes = document.getElementById('txtNitRes')
+
+
+    $('#tableresolucionespeces tbody').on('click', '.btnDetalleResolucion', async function () {
+
+        cvtxtNumeroDocuemnto = @ViewBag.documentid;
+        let sltTipoDocumento2 = @ViewBag.documentypecv;
+        let url = `@Url.Action("Buscar", "Cv")` + `?documentypecv=${sltTipoDocumento2}&documentid=${cvtxtNumeroDocuemnto}`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        $(txtNombreRes).val(r[0].nombreEmpresahj);
+        $(txtNitRes).val(r[0].nithj);
+        idResolucion = $(this).parents("tr").find("td")[0].innerText;
+        await llenarControlesResolucion();
+        ocultarElemento(detallepeces, false)
+
+        tituloResolucion.innerText = 'Ver detalles resolución';
+
+    });
+
+    var txtFechaResolucionp = document.getElementById('txtFechaResolucionp')
+
+
+    async function llenarControlesResolucion() {
+
+
+        let url = `@Url.Action("Consultpecespdf","Cv")` + `?idresolucionp=${idResolucion}`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        
+        $(txtNumeroResolucion).val(r.numeroResolucion);
+        $(txtFechaResolucionp).val(moment(r.fechaResolucion).format('yyyy-MM-DD'));
+        $(txtFechaInicio).val(moment(r.fechaInicio).format('yyyy-MM-DD'));
+        $(txtFechaFin).val(moment(r.fechaFin).format('yyyy-MM-DD'));
+        $(txtObjetoResolucion).val(r.objetoResolucion);
+
+        adjuntoBase64 = r.adjunto.adjuntoBase64;
+        nombreAdjunto = r.adjunto.nombreAdjunto;
+        tipoAdjunto = r.adjunto.tipoAdjunto;
+        crearArchivo(nombreAdjunto, adjuntoBase64);
+    }
+
+    var divAdjuntopeces = document.getElementById('divAdjuntopeces')
+
+    function crearArchivo(nombre, adjuntoBase64) {
+        divAdjuntopeces.innerHTML = `<div class="row w-100 mt-2 contenerAdjuntos">
+                  <div class="col-11">
+                      <a type="buttton" id="btnPrevisualizar">${nombre}</a>
+                  </div>
+              <div>`;
+        $('#btnPrevisualizar').on('click', function () {
+            var newWindow = window.open();
+            newWindow.document.write('<iframe src=' + adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+        });
+    }
+
+
+
+
+    var DocumentNumberShopper = document.getElementById('DocumentNumberShopper');
+    var saleDate = document.getElementById("SaleDate");
+    var businessSale = document.getElementById("BusinessSale");
+    var typeDocumentSeller = document.getElementById("TypeDocumentSeller");
+    var shopper = document.getElementById("Shopper");
+    var typeDocumentShopper = document.getElementById("TypeDocumentShopper");
+    var carteNumber = document.getElementById("CarteNumber");
+    var numberSold = document.getElementById("NumberSold");
+    var documentNumberSeller = document.getElementById("DocumentNumberSeller");
+    var reasonSocial = document.getElementById("ReasonSocial");
+    var observations = document.getElementById("Observations");
+    var inventoryAvailability = document.getElementById("InventoryAvailability");
+    var documentNumberShopper = document.getElementById("DocumentNumberShopper");
+    var reasonSocialShopper = document.getElementById("ReasonSocialShopper");
+    var observationsShopper = document.getElementById("ObservationsShopper");
+    var titleSaveDiv = document.getElementById('TitleSaveDiv');
+    var titleSaveDivPanel = document.getElementById('TitleSaveDivPanel');
+    var viewDetailsDiv = document.getElementById('ViewDetailsDiv');
+    var messageTextAlert = "Los siguiente campos son requeridos: \n";
+    var fileMultipleFile = document.getElementById('fileMultipleFile');
+    var contenedorMultipleFile = document.getElementById('contenedorMultipleFile');
+    var contenedorMultipleFileViewDetails = document.getElementById('contenedorMultipleFileViewDetails');
+    var spanFileMultipleFile = document.getElementById('spanFileMultipleFile');
+    var fileContenedorMultipleFile = document.getElementById('fileContenedorMultipleFile');
+
+    //Readonly Situacion
+
+
+    function checksoff() {
+
+        $(".checkTiposEspecimenesProductos").prop("disabled", true);
+        $(".checkEstadoInactivo").prop("disabled", true);
+        $(".checkEstadoActivo").prop("disabled", true);
+        disabledControl(chksTipoPermisoExportacion, true);
+        disabledControl(chksTipoPermisoImportacion, true);
+        disabledControl(checkEstadoInactivo, true);
+        disabledControl(checkEstadoActivo, true);
+        $(".check").prop("disabled", true);
+    }
+    function checksoffsituacion() {
+
+
+        $(".checkEstadoInactivo").prop("disabled", true);
+        $(".checkEstadoActivo").prop("disabled", true);
+
+        disabledControl(checkEstadoInactivo, true);
+        disabledControl(checkEstadoActivo, true);
+    }
+    function checksoffCupos() {
+
+        disabledControl(CheckSeRealizoPagoCuotaRepoblacion, true);
+
+        disabledControl(divChecksTipoMarcaje, true);
+        $(".check").prop("disabled", true);
+
+    }
+
+
+
+
+
+
+
+
+
+    async function llenadoDatosEntidad() {
+        let tipoDocumento = @ViewBag.documentypecv;
+        nitEmpresa = @ViewBag.documentid;
+
+        if (tipoDocumento == "" || nitEmpresa == "") {
+            MostrarMensajeAdver("Tipo y Número de documento requeridos.");
+            return;
+        }
+
+        let url = `@Url.Action("ConsultEntityDates", "RegistrarResolucion")` + `?documentType=${tipoDocumento}&nitBussines=${nitEmpresa}`;
+        let r = await Get(url);
+
+        if (r.volverInicio != undefined || r == undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+
+        if (r.length > 0) {
+            $("#tipodoc").prop("disabled", true);
+            $("#numdoc").prop("disabled", true);
+            $("#boton-consultar-entidad").hide();
+            $("#boton-cancelar").show();
+            dtRow = r[0];
+            codigoEmpresa = dtRow.codigoEmpresa;
+            idTipoEmpresa = dtRow.idtipoEntidad;
+
+            @* llenadoGrillaEntidad(r); *@
+                llenadoGrillaEntidad2(nitEmpresa);
+        }
+        else {
+            MostrarMensajeAdver("Número de documento no existe.");
+        }
+    }
+
+    var fechaultima = document.getElementById('fechaultima')
+    var estaddo = document.getElementById('estaddo')
+    var estadopermiso = document.getElementById('estadopermiso')
+
+    async function llenadoGrillaEntidad2(nitEmpresa) {
+
+        let url = `@Url.Action("ConsultSituacionnovedad", "Cv")` + `?codigoEmpresa=${nitEmpresa}`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        
+       
+        console.log(r);
+        if (r.length > 0) {
+            const ultimoEstadoEstablecimiento = r.reduce((prev, current) => prev.codigo > current.codigo ? prev : current);
+
+            $(estaddo).val(ultimoEstadoEstablecimiento.estadositu);
+            $(estadopermiso).val(ultimoEstadoEstablecimiento.estadoEmisionCITES);
+            @* $(fechaultima).val(moment(r[0].ultimomodificado).format('yyyy-MM-DD')); Comprueba si es el ultimo registro*@
+
+        }
+        else
+        {
+             $(estaddo).val('ACTIVO');
+            $(estadopermiso).val('ACTIVO');
+        }
+      
+
+    }
+
+
+
+
+
+
+
+
+
+
+</script>

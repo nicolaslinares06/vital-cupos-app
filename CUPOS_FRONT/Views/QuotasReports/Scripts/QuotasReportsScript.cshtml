@@ -1,0 +1,197 @@
+﻿<script>
+
+    let txtNNumeroResolucion=document.getElementById('txtNNumeroResolucion');
+    let txtNombreEmpresa=document.getElementById('txtNombreEmpresa');
+    let txtNit=document.getElementById('txtNit');
+    let txtFechaResolucionDesde=document.getElementById('txtFechaResolucionDesde');
+    let txtFechaResolucionHasta=document.getElementById('txtFechaResolucionHasta');
+
+    let autoridades;
+    let especies;
+    let tiposEmpresas;
+    let tiposPagoCuotaRepoblacion;
+    $(document).ready(async function () {
+        await TraerAutoridadEmite();
+        await traerTiposEspecimenes();
+        await traerTiposEntidad();
+        await traerPagoCuotaRepoblacionOpciones();
+        await traerResolucionesSinFiltro();
+    });
+    
+    async function TraerAutoridadEmite() {
+        let url = `@Url.Action("ConsultAuthority", "NonTimberFloraCertificate")`;
+        autoridades = await Get(url);
+        if (autoridades.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+    }
+
+    async function traerTiposEspecimenes() {
+        let url = `@Url.Action("ConsultEspecimensTypes", "RegistrarResolucion")`;
+        especies = await Get(url);
+        if (especies.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+    }
+
+    async function traerTiposEntidad() {
+        let url = `@Url.Action("ConsultEntityTypes", "RegistrarResolucion")`;
+        tiposEmpresas = await Get(url);
+        if (tiposEmpresas.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+    }
+
+    async function traerPagoCuotaRepoblacionOpciones() {
+        let url = `@Url.Action("ConsultRepoblationPay", "RegistrarResolucion")`;
+        tiposPagoCuotaRepoblacion = await Get(url);
+        if (tiposPagoCuotaRepoblacion.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+    }
+
+    function limpiarFiltros(){
+        $(txtNNumeroResolucion).val('');
+        $(txtNombreEmpresa).val('');
+        $(txtNit).val('');
+        $(txtFechaResolucionDesde).val('');
+        $(txtFechaResolucionHasta).val('');
+    }
+
+    async function Buscar(){
+        ocultarElemento('#spinnerButton', false);
+        await traerResolucionesSinFiltro();
+        ocultarElemento('#spinnerButton', true);
+        limpiarFiltros();
+    }
+
+    async function traerResolucionesSinFiltro(){
+        let url = `@Url.Action("ConsultResolutions", "QuotasReports")` + `?resolutionNumber=${$(txtNNumeroResolucion).val()!='' ? $(txtNNumeroResolucion).val() : ''}&BussinesName=${$(txtNombreEmpresa).val() != '' ? $(txtNombreEmpresa).val() : ''}&BussinesNit=${$(txtNit).val()!='' ? $(txtNit).val() : ''}&fromDate=${$(txtFechaResolucionDesde).val()!='' ? $(txtFechaResolucionDesde).val() : ''}&toDate=${$(txtFechaResolucionHasta).val() !='' ? $(txtFechaResolucionHasta).val() : ''}`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        var columns = [
+            {
+                "data": "nombreEmnpresa",
+            },
+            {
+                "data": "nitEmpresa",
+            },
+
+            {
+                "data": "tipoEmpresa",
+                render: function (data) {
+                    let tipoEmpresa;
+                    tiposEmpresas.forEach(el=>{
+                        if(parseInt(el.code) == parseInt(data)){
+                            tipoEmpresa = el.name;
+                        }
+                    });
+                    return tipoEmpresa
+                }
+            },
+            {
+                "data": "numeroResolucion"
+            },
+            {
+                "data": "fechaRegistroResolucion",
+                render : function(data){
+                    return moment(data).format('yyyy-MM-DD');
+                }
+            },
+            {
+                "data": "fechaResolucion",
+                render: function (data) {
+                    return moment(data).format('yyyy-MM-DD');
+                }
+            },
+            {
+                "data": "autoridadEmiteResolucion",
+                render : function(data){
+                    let autoridad;
+                    autoridades.forEach(el=>{
+                        if(parseInt(el.code) == parseInt(data)){
+                            autoridad = el.name;
+                        }
+                    });
+                    return autoridad
+                }
+            },
+            {
+                "data": "codigoEspecie",
+                render: function (data) {
+                    var especieNombre;
+                    especies.forEach(el => {
+                        if (el.id == data) {
+                            especieNombre = el.text;
+                        }
+                    });
+                    return especieNombre;
+                }
+            },
+            {
+                "data": "tipoEspecimen"
+            },
+            {
+                "data": "anioProduccion"
+            },
+            {
+                "data": "cuposAprovechamientoComercializacion"
+            },
+            {
+                "data": "cuotaRepoblacion"
+            },
+            {
+                "data": "cuposTotal"
+            },
+            {
+                "data": "codigoParametricaPagoCuotaDerepoblacion",
+                render : function(data){
+                    if(data==0){
+                        return '';
+                    }
+                    let tipoPagoCuotaRepoblacion;
+                    tiposPagoCuotaRepoblacion.forEach(el=>{
+                        if(parseInt(el.code) == parseInt(data)){
+                            tipoPagoCuotaRepoblacion = el.name;
+                        }
+                    });
+                    return tipoPagoCuotaRepoblacion
+                }
+            },
+            {
+                "data": "fechaRadicado",
+                render: function (data) {
+                    if(data!=null){
+                        return moment(data).format('yyyy-MM-DD');
+                    }
+                    return '';
+                }
+            },
+            {
+                "data": "soporteRepoblacion",
+                render: function (data) {
+                   if(data){
+                    return 'Si';
+                   }
+                   return 'No';
+                }   
+            },
+            {
+                "data": "cuposUtilizados"
+            },
+            {
+                "data": "cuposDisponibles"
+            }
+        ];
+
+        DataTableGenericoBotones('#TableResoluciones', columns, r, 17);
+    }
+
+</script>

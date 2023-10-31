@@ -1,0 +1,51 @@
+﻿@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<body>
+    <div class="col-11 mx-auto">
+        <h1>Mapa del Sitio</h1>
+        <ul>
+            <li><a href="/Home">Inicio</a></li>
+            <li>
+                <a href="/Home/Administracion">Administración</a>
+                <ul>
+                    <li><a href="/Usuarios/GestionUsuarios">Gestion de usuarios</a></li>
+                    <li><a href="/AdministrarRoles">Administración de roles</a></li>
+                    <li><a href="/GestionAsignacionDeRoles">Gestion de solicitudes de asignación de rol</a></li>
+                    <li><a href="/AdministrarEstados">Administración de estados</a></li>
+                    <li><a href="/Parametrica">Administración de tablas paramétricas y reglas de negocio</a></li>
+                    <li><a href="/Auditoria/GestionAuditoria">Gestión de auditoría</a></li>
+                    <li><a href="/">Gestión documental</a></li>
+                    <li><a href="/AdministracionTecnica">Administración técnica</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="/Home/FlujoDeNegocio">Flujo de negocio</a>
+                <ul class="submenu">
+                    <li><a href="/Receptor/Bandeja">Gestionar solicitudes de permisos CITES</a></li>
+                    <li><a href="/Receptor/ConsultaConceptoTecnico">Consulta de permisos concepto técnico</a></li>
+                    <li><a href="/Receptor/ConsultaPermisos">Consulta de permisos CITES</a></li>
+                    <li><a href="/BandejaExterno/BandejaExterno">Radicar solicitud CITES (No comercial)</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="/Home/Reportes">Reportes</a>
+                <ul>
+                    <li><a href="">Reporte anual</a></li>
+                    <li><a href="">Reporte CITES</a></li>
+                    <li><a href="">Reporte inspecciones</a></li>
+                    <li><a href="">Reporte Cupos, Establecimientos y Marcaje</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</body>
+<script>
+$(document).ready(function () {
+    $('.barnav-box').addClass('d-none');
+    $('.MenuSuperior ').addClass('d-none');
+});
+</script>

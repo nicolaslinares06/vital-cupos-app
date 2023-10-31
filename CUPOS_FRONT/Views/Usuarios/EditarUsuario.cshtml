@@ -1,0 +1,299 @@
+﻿@model CUPOS_FRONT.Models.Requests.ReqUser;
+@{
+    //Layout = "_LayoutBandejaReceptor";
+}
+
+
+<div class="tab-pane container active p-2" id="form1">
+    <form asp-controller="Usuarios" asp-action="Actualizar" method="post" id="edicionUsuario">
+        <div class="col-form-label mt-1 mb-1">
+            <h1>Editar Usuario</h1>
+        </div>
+        <div class="col-form-label mt-1 mb-1">
+            <h2>Información de usuario</h2>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 mb-1 d-none">
+                <label for="code" class="form-label">codigo</label>
+                <input type="text" asp-for="code" id="code" class="form-control" placeholder="&#xf007 Codigo" required/>
+            </div>
+            <div class="col-md-3 mb-1 d-none">
+                <label for="rol" class="form-label">Roles</label>
+                <input type="text" asp-for="rol" id="roles" class="form-control" placeholder="&#xf007 Rol(es)" required/>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="primernom" class="form-label">Primer nombre</label>
+                <input type="text" asp-for="firstName" id="primernom" class="form-control" placeholder="&#xf007 Primer nombre" onkeypress="return check(event)" required/>
+                <span id="validacionprimernom" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="segundonom" class="form-label">Segundo nombre</label>
+                <input type="text" asp-for="secondName" id="segundonom" class="form-control" placeholder="&#xf007 Segundo nombre" onkeypress="return check(event)" required/>
+                <span id="validacionsegundonom" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="primerape" class="form-label">Primer apellido</label>
+                <input type="text" asp-for="firstLastName" id="primerape" class="form-control" placeholder="&#xf007 Primer apellido" onkeypress="return check(event)" required/>
+                <span id="validacionprimerape" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="segundoape" class="form-label">Segundo apellido</label>
+                <input type="text" asp-for="SecondLastName" id="segundoape" class="form-control" placeholder="&#xf007 Segundo apellido" onkeypress="return check(event)" required/>
+                <span id="validacionsegundoape" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1" id="divtipodoc">
+                <label for="tipodoc" class="form-label">Tipo de documento</label>
+                <select class="form-control" asp-for="codeParametricDocumentType" id="tipodoc" asp-items="@Model.documentType" required>
+                </select>
+                <span id="validaciontipodoc" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="numdoc" class="form-label">Número de documento</label>
+                <input type="text" asp-for="identification" id="numdoc" class="form-control" placeholder="&#xf2c2 0000000000" onkeypress="return checkNumber(event)" required/>
+                <span id="validacionnumdoc" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="direccion" class="form-label">Direccion</label>
+                <input type="text" asp-for="address" id="direccion" class="form-control" placeholder="&#xf3c5 direccion" required/>
+                <span id="validaciondireccion" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1" id="divDependencia">
+                <label for="dependencia" class="form-label">Dependencia</label>
+                <select class="form-control" asp-for="dependence" id="dependencia" asp-items="@Model.dependenceType" required>
+                </select>
+                <span id="validaciondependencia" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="telefono" class="form-label">Telefono</label>
+                <input type="number" asp-for="phone" id="telefono" class="form-control" placeholder="&#xf879 0000000000" onkeypress="return checkNumber(event)" required/>
+                <span id="validaciontelefono" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="fax" class="form-label">Celular</label>
+                <input type="text" asp-for="celular" id="fax" class="form-control" placeholder="&#xf1ac CELULAR" onkeypress="return checkNumber(event)" />
+                <span id="validacionfax" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="iniciocont" class="form-label">Inicio de contrato</label>
+                <input asp-for="contractStartDate" id="iniciocont" class="form-control" placeholder="&#xf073 dd/mm/aaaa" />
+                <span id="validacioniniciocont" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="fincont" class="form-label">Fin de contrato</label>
+                <input asp-for="contractFinishDate" id="fincont" class="form-control" placeholder="&#xf073 dd/mm/aaaa" />
+                <span id="validacionfincont" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="text" asp-for="email" id="email" class="form-control" placeholder="&#xf1fa usuario@minambiente.com" required/>
+                <span id="validacionemail" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="estado" class="form-label">Estado</label>
+                <select class="form-control" asp-for="estate" id="estado" required>
+                </select>
+                <span id="validacionestado" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="rol" class="form-label">Rol</label>
+                <select class="select2 form-control" asp-for="registrationStatus" name="states[]" multiple="multiple" id="rol" required>
+                </select>
+                <span id="validacionrol" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mt-2 row justify-content-center">
+                <div class="col-2">
+                    <button type="button" class="btn btn-primary editar-usuario">GUARDAR</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn-volver-edicion-usuario btn btn-secondary">VOLVER</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- modal pregunta confirmacion actualizacion Datos -->
+<div class="modal fade" id="confirmacion-actualizar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro de que desea guardar la informacion?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-primary w-100 boton-si">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal mensaje cambio respuesta Actualizacion -->
+<div class="modal fade" id="mensaje-edicion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Información</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="modalText-actualizacion">
+                            @ViewBag.msjEditarUsuario
+                        </p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary cerrar-info" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var tipoDocumento = document.getElementById("tipodoc");
+var dependence = document.getElementById("dependencia");
+var rol = document.getElementById("rol");
+var estado = document.getElementById("estado");
+
+$(".cerrar-info").click(function() {
+    document.location.href = "/Usuarios/GestionUsuarios";
+});
+
+$(".btn-volver-edicion-usuario").click(function() {
+    document.location.href = "/Usuarios/GestionUsuarios";
+});
+
+$(".editar-usuario").click(function() {
+    $("#confirmacion-actualizar").modal("show");
+
+    var roles = $("#rol").val().join('|');
+
+    if (roles != null && roles != "") {
+        rols = roles;
+    }
+
+    $("#roles").val(rols);
+});
+
+$(".boton-si").click(async function() {
+    $("#edicionUsuario").submit();
+    $("#confirmacion-actualizar").modal("hide");
+});
+
+$(document).ready(async function() {
+    let url = "@Url.Action("ConsultarEdit","Usuarios")";
+    let resp = await Get(url);
+    
+    //$("#code").val(resp[0].id);
+    //$("#primernom").val(resp[0].primerNombre);
+    //$("#segundonom").val(resp[0].segundoNombre);
+    //$("#primerape").val(resp[0].primerApellido);
+    //$("#segundoape").val(resp[0].segundoApellido);
+    //$("#numdoc").val(resp[0].identificacion);
+    //$("#direccion").val(resp[0].direccion);
+    //$("#telefono").val(resp[0].telefono);
+    //$("#fax").val(resp[0].celular);
+    //$("#iniciocont").val(resp[0].inicioContrato);
+    //$("#fincont").val(resp[0].finContrato);
+    //$("#email").val(resp[0].email);
+    //$("#login").val(resp[0].login);
+
+    //let url2 = "@Url.Action("ConsultarDocumentos","CrearUsuario")";
+    //let resp2 = await Get(url2);
+    //debugger
+    //resp2.forEach(el => {
+    //    if (el.type == resp[0].tipoDocumento) {
+    //        tipoDocumento.innerHTML += `<option value='${el.id}' selected>${el.type}</option>`;
+    //    }
+    //    else
+    //        tipoDocumento.innerHTML += `<option value='${el.id}'>${el.type}</option>`;
+    //});
+    
+    //let urldep = "@Url.Action("ConsultarDependencia","CrearUsuario")";
+    //let respDep = await Get(urldep);
+    
+    //respDep.forEach(a => {
+    //    if (a.nombre == resp[0].dependencia) {
+    //        dependencia.innerHTML += `<option value='${a.nombre}' selected>${a.nombre}</option>`;
+    //    }
+    //    else
+    //        dependencia.innerHTML += `<option value='${a.nombre}'>${a.nombre}</option>`;
+    //});
+    console.log(resp);
+    if (resp.estate == "ACTIVO") {
+        estado.innerHTML = `<option value='ACTIVO' selected>ACTIVO</option><option value='INACTIVO'>INACTIVO</option><option value='PENDIENTE CAMBIO CONTRASEÑA'>PENDIENTE CAMBIO CONTRASEÑA</option>`;
+    }
+    else if (resp.estate == "INACTIVO") {
+        estado.innerHTML = `<option value='INACTIVO' selected>INACTIVO</option><option value='ACTIVO'>ACTIVO</option><option value='PENDIENTE CAMBIO CONTRASEÑA'>PENDIENTE CAMBIO CONTRASEÑA</option>`;
+    }
+    else {
+        estado.innerHTML = `<option value='PENDIENTE CAMBIO CONTRASEÑA' selected>PENDIENTE CAMBIO CONTRASEÑA</option><option value='ACTIVO'>ACTIVO</option><option value='INACTIVO'>INACTIVO</option>`;
+    }
+
+    let urlrol = "@Url.Action("ConsultarRoles","Usuarios")";
+    let r = await Get(urlrol);
+    var rols = resp.rol.split("|");
+    var select;
+
+    r.forEach(s => {
+        if (rols.includes(s.id.toString())) {
+            select += `<option value="${s.id}" selected/>${s.name}</option>`
+        } else {
+            select += `<option value="${s.id}" />${s.name}</option>`;
+        }
+    });
+    rol.innerHTML = select;
+
+    $(".select2").select2();
+    $(".select2-search--inline").addClass("d-none");
+
+    if ('@ViewBag.mostrarMensajeEditar' == "True") {
+        $("#mensaje-edicion").modal("show");
+
+    }
+});
+
+function check(e) {
+    tecla = (document.all) ? e.keyCode : e.which;
+
+    if (tecla == 8) {
+        return true;
+    }
+
+    patron = /[A-Za-zñÑ]/;
+    tecla_final = String.fromCharCode(tecla);
+    return patron.test(tecla_final);
+}
+
+function checkNumber(e) {
+    tecla = (document.all) ? e.keyCode : e.which;
+
+    if (tecla == 10) {
+        return true;
+    }
+
+    patron = /[0-9]/;
+    tecla_final = String.fromCharCode(tecla);
+    return patron.test(tecla_final);
+}
+</script>

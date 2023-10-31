@@ -1,0 +1,186 @@
+﻿<div class="container">
+    <br></br>
+    <div class="mb-1 mt-1 col-6">
+        <label for="estaddo" class="form-label">Estado establecimiento</label>
+        <input type="text" class="form-control" id="estaddo" placeholder="Estado establecimiento" readonly>
+    </div>
+    <div class="mb-1 mt-1 col-6">
+        <label for="estadopermiso" class="form-label">Estado para emisión permisos CITES</label>
+        <input type="text" class="form-control" id="estadopermiso" placeholder="Estado para emisión permisos CITES" readonly>
+    </div>
+    <!-- DataTable Novedades-->
+    <div class="mt-3">
+        <h3>Novedades registradas</h3>
+        <div class="table-responsive">
+            <table id="tablanovedades" class="table w-100">
+                <caption class="d-none">Table Description</caption>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Tipo Novedad</th>
+                        <th>Fecha</th>
+                        <th>Estado Establecimiento</th>
+                        <th class="th-mediumText">Estado para emisión permisos CITES</th>
+                        <th class="th-mediumText">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+<div id="informacion" class="d-none mt-1 mb-1 row">
+
+    <h3>Informacion</h3>
+
+
+    <div class="row mb-3">
+        <div class="mb-1 mt-1 col-6">
+            <label for="tiponovedad" class="form-label">Tipo Novedad</label>
+            <input type="text" class="form-control" id="tiponovedad" placeholder="Estado" readonly>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtFecha" class="form-label">Fecha <span id="reqtxtFecha" style='Color:red;'>*</span></label>
+            <input type="date" id="txtFecha" class="form-control" placeholder="&#xf073 dd/mm/aaaa" readonly />
+        </div>
+
+
+        <div class="mb-1 mt-1 col-6">
+            <label for="ddlEstado" class="form-label">Estado Novedad</label>
+            <input type="text" class="form-control" id="ddlEstado" placeholder="Estado" readonly>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label class="form-label">Estado para emisión de permisos CITES <span id="reqcheck_EstadoCITES"
+                    style='Color:red;'>*</span></label>
+            <div class="row">
+                <div class="col-3">
+                    <input class="form-check-input check" name="check_EstadoCITES" type="radio" value="72"
+                        id="checkEstadoActivo" readonly>
+                    <label class="form-check-label" for="checkEstadoActivo">Activo</label>
+                </div>
+                <div class="col-3">
+                    <input class="form-check-input check" name="check_EstadoCITES" type="radio" value="73"
+                        id="checkEstadoInactivo" readonly>
+                    <label class="form-check-label" for="checkEstadoInactivo">Inactivo</label>
+                </div>
+            </div>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtObservaciones" class="form-label">Observaciones </label>
+            <textarea class="form-control" id="txtObservaciones" rows="5" maxlength="200" readonly></textarea>
+        </div>
+
+        <div class="mb-1 mt-1 col-6">
+            @* Si coloco divAdjunto funciona *@
+            <div id="divAdjuntosituacion">
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<div id="detalle" class="d-none mt-1 mb-1 row">
+    <h2>Detalle</h2>
+    <div class="row mb-3">
+        <div class="mb-1 mt-1 col-4">
+            <label for="txtCuposDisponibles" class="form-label">Cupos disponibles <span id="reqtxtCuposDisponibles"
+                    style='Color:red;'>*</span></label>
+            <input type="text" class="form-control" id="txtCuposDisponibles" placeholder="Cupos disponibles" value="0"
+                readonly>
+        </div>
+        <div class="mb-1 mt-1 col-4">
+            <label for="txtInventarioDisponible" class="form-label">Inventario Disponible <span
+                    id="reqtxtInventarioDisponible" style='Color:red;'>*</span></label>
+            <input type="text" class="form-control" id="txtInventarioDisponible" placeholder="Inventario Disponible"
+                value="0" readonly>
+        </div>
+        <div class="mb-1 mt-1 col-4">
+            <label for="txtNumeroCuposPendientesTramitar" class="form-label">Número de cupos pendientes por tramitar
+                <span id="reqtxtNumeroCuposPendientesTramitar" style='Color:red;'>*</span></label>
+            <input type="text" class="form-control" id="txtNumeroCuposPendientesTramitar"
+                placeholder="Número de cupos pendientes por tramitar" value="0" readonly>
+        </div>
+        <div class="mb-1 mt-1 col-12">
+            <label for="ddlDisposicionEspecimenes" class="form-label">Disposición de especímenes <span
+                    id="reqddlDisposicionEspecimenes" style='Color:red;'>*</span></label>
+            <select class="form-control" id="ddlDisposicionEspecimenes"
+                onchange="seleccionDisposicionEspecimenes()"></select>
+        </div>
+        <div class="containerZoocriadero mt-3 mb-3 border border-secondary rounded p-4">
+            <div class="row mb-3" id="divBuscarEntidadZoo">
+                <div class="row">
+                    <div class="mb-1 mt-1 col-6">
+                        <label for="txtNitZoo" class="form-label">Nit zoocriadero de destino <span
+                                style='Color:red;'>*</span></label>
+                        <input type="number" class="form-control" id="txtNitZoo"
+                            placeholder="Nit zoocriadero de destino" maxlength="20">
+                    </div>
+                    <div class="mb-1 mt-1 col-6">
+                        <br />
+                        <button id="boton-consultar-entidadZoo" type="button" class="btn btn-primary"
+                            onclick="llenadoDatosEntidadZoo(true)">Buscar</button>
+                        <button id="boton-cancelar-buscarZoo" type="button" class="btn btn-primary"
+                            onclick="cancelarBuscarZoo()" style="display:none;">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row mb-3" id="divDatosEntidadZoo">
+                <div class="mb-1 mt-1 col-6">
+                    <label for="txtNombreZoo" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="txtNombreZoo" placeholder="Nombre" readonly>
+                </div>
+                <div class="mb-1 mt-1 col-6">
+                    <label for="txtPaisZoo" class="form-label">País</label>
+                    <input type="text" class="form-control" id="txtPaisZoo" placeholder="Pais" readonly>
+                </div>
+                <div class="mb-1 mt-1 col-6">
+                    <label for="txtDepartamentoZoo" class="form-label">Departamento</label>
+                    <input type="text" class="form-control" id="txtDepartamentoZoo" placeholder="Departamento" readonly>
+                </div>
+                <div class="mb-1 mt-1 col-6">
+                    <label for="txtCiudadZoo" class="form-label">Ciudad/Municipio</label>
+                    <input type="text" class="form-control" id="txtCiudadZoo" placeholder="Ciudad/Municipio" readonly>
+                </div>
+                <div class="mb-1 mt-1 col-6">
+                    <label for="txtDireccionZoo" class="form-label">Dirección</label>
+                    <input type="text" class="form-control" id="txtDireccionZoo" placeholder="Direccion" readonly>
+                </div>
+                <div class="mb-1 mt-1 col-6">
+                    <label for="txtTelefonoZoo" class="form-label">Teléfono</label>
+                    <input type="number" class="form-control" id="txtTelefonoZoo" placeholder="Telefono" readonly>
+                </div>
+                <div class="mb-1 mt-1 col-6">
+                    <label for="txtCorreoZoo" class="form-label">Correo</label>
+                    <input type="text" class="form-control" id="txtCorreoZoo" placeholder="Correo" readonly>
+                </div>
+                <div class="mb-1 w-100 cetrarItems text-end" id="divBtnHistorialCuposDatosEntidad"
+                    onclick="controlCupos(nitEmpresaZoo);">
+                    <label class="text-primary" style="cursor:pointer;">HISTORIAL DE CUPOS</label>
+                    <a type="button" id="btnHistorialCupos">
+                        <span class="fas fa-exclamation-circle fa-2x text-primary" data-bs-toggle="tooltip"
+                            data-bs-placement="top" title="Revisar historial de cupos otorgados"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="mb-1 mt-1 col-12 OtroCual" style="display:none;">
+            <label for="txtOtroCual" class="form-label">¿Cuál? <span style='Color:red;'>*</span></label>
+            <input type="text" class="form-control" id="txtOtroCual" placeholder="¿Cuál?" maxlength="200">
+        </div>
+        <div class="mb-1 mt-1 col-12">
+            <label for="txtObservacionesDetalle" class="form-label">Observaciones </label>
+            <textarea class="form-control" id="txtObservacionesDetalle" rows="5" maxlength="200" readonly></textarea>
+        </div>
+    </div>
+
+
+
+
+</div>

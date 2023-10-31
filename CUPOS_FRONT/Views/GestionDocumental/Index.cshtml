@@ -1,0 +1,152 @@
+﻿@{
+    Layout = "_LayoutBandejaReceptor";
+}
+<body>
+    <div class="row content">
+        <div class="col-md-8 resume">
+            <a asp-controller="Home" asp-action="Index">Modulo de CUPOS</a> > <a asp-controller="Home"
+                asp-action="Administracion">Administración</a> > <strong>@Context.Session.GetString("NombreDocumental")</strong>
+        </div>
+        <div class="col-md-4 iconos">
+            <a type="button" class="btn btn-secondary" title="ayuda" asp-controller="" asp-action="" >AYUDA</a>
+            <a type="button" class="btn btn-secondary" title="Inicio" asp-controller="Home" asp-action="Index">INICIO</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content-fluid">
+            <h2>@Context.Session.GetString("NombreDocumental")</h2>
+            <form method="post">
+                <div class="form-group row">
+                    <label class="col-form-label">Buscar</label>
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <input type="text" class="col-12" id="busqueda-doc" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" id="boton-consultar-documento" class="btn btn-primary">Consultar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+<!-- Datatable Gestion documental -->
+<div class="tab-pane container" id="datatable">
+    <div class="table-responsive">
+        <table id="tabla-gestion-documental" class="table tables-GestDocumental w-100">
+            <caption class="d-none">Table Description</caption>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th class="th-mediumText">Tipo de documento</th>
+                    <th class="th-shortText">Fecha de actualización</th>
+                    <th class="th-shortText">Acciones</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div> 
+</div>
+
+<script>
+    var datatable = document.getElementById("datatable");
+
+    $(document).ready(async function() {
+        datatableGestDocumental();
+        $(`.Administracion #padre`).addClass("active-within");
+        $(`#GestionDocumental a`).addClass("active");
+    });
+
+    $("#boton-consultar-documento").click(async function() {
+        var nombreDoc = $("#busqueda-doc").val();
+        datatableGestDocumental(nombreDoc);
+    });
+
+    async function datatableGestDocumental(nombre){
+        let url = "@Url.Action("BusquedaDocumentos","GestionDocumental")";
+        let resp = await Get(url, { cadBusqueda: nombre});
+
+        $tblRoles=$('#tabla-gestion-documental').DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu:[5, 10, 20, 50, 100],
+            paging:true,
+            info: true,
+            dom: "<'row'<'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-9'l><'col-md-3'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: { 
+                lengthMenu:"Resultados pág. _MENU_",
+                search: '', 
+                info:"_START_ de _TOTAL_ Resultados",
+                searchPlaceholder: "Buscar" ,
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty:"0 al 0 Resultados",
+                paginate: {
+                    previous: 'Anterior',
+                    next:     'Siguiente'
+                }
+            },
+            data:resp,
+            columns:[
+                {
+                    "data":"id",
+                    className:"d-none"
+                },
+                {
+                    "data":"name"
+                },
+                {
+                    "data":"date",
+                    render: function(data, type, row){
+                        return data.substr(0,10)
+                    }
+                },
+                {
+                    "data":"url",
+                    render: function(data, type, row){
+                        if(data == "" || data == null){
+                            return `<label style="color:#808080">VISUALIZAR</label>&nbsp<label style="color:#808080">EDITAR</label>&nbsp<a type="button" class="boton-adjuntar">ADJUNTAR</a>`
+                        }
+                        else{
+                            return `<a type="button" class="boton-visualizar">VISUALIZAR</a>&nbsp<a type="button" class="boton-editar">EDITAR</a>&nbsp<a type="button" class="boton-adjuntar">ADJUNTAR</a>`
+                        }
+                    }
+                },
+                {
+                    "data":"url",
+                    className:"d-none"
+                }
+            ],
+            columnDefs: [{
+                targets: 4
+            }]
+        });
+
+        var idDatatable = "#tabla-gestion-documental";
+        agregarClasesDatatable(idDatatable);
+
+        $('#tabla-gestion-documental tbody').on('click', '.boton-adjuntar', function() {
+            var id = $(this).parents("tr").find("td")[0].innerText;
+            var name = $(this).parents("tr").find("td")[1].innerText;
+            var url = $(this).parents("tr").find("td")[4].innerText;
+
+            document.location.href = "/GestionDocumental/AdjuntarArchivo?id=" + id + "&nombre=" + name + "&url=" + url;
+        });
+
+        $('#tabla-gestion-documental tbody').on('click', '.boton-editar', function() {
+            var id = $(this).parents("tr").find("td")[0].innerText;
+
+            document.location.href = "/GestionDocumental/EditarArchivo?id=" + id;
+        });
+        
+        $('#tabla-gestion-documental tbody').on('click', '.boton-visualizar', function() {
+            var id = $(this).parents("tr").find("td")[0].innerText;
+
+            document.location.href = "/GestionDocumental/VisualizarArchivo?id=" + id;
+        });
+    }
+</script>

@@ -1,0 +1,219 @@
+﻿<!-- Modal mensaje información -->
+<div class="modal fade" id="mensaje-informacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="text-center col-12">
+                    <span id="idIcon" class="fa-solid fa-circle-check i-modal"></span>
+                </div>
+                <div class="text-center col-12 titulo-modal">
+                    <p id="modalText-titulo"></p>
+                </div>
+                <div class="col-12 mensajes-modal">
+                    <p id="modalText-informacion"></p>
+                </div>
+                <div class="col-12">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">ACEPTAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal pregunta confirmación -->
+<div class="modal fade" id="mensaje-confirmacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="text-center col-12">
+					<span class="fa-solid fa-circle-question i-modal"></span> 
+				</div>
+                <div class="text-center col-12 titulo-modal">
+                    <p>Confirmación</p>
+                </div>
+                <div class="col-md-12 mensajes-modal">
+                    <p id="modalText-Confirmacion"></p>
+                </div>
+                <div class="row">
+                     <div class="col-6">
+                        <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-primary w-100 boton-si">SI</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var adjuntosNuevo = [];
+    var adjuntosEliminar = [];
+    var adjuntosOriginal = [];
+    var adjuntos = [];
+    var divAdjunto = document.getElementById("divAdjunto");
+    var spanAdjuntos = document.getElementById("reqfileSoporte");
+    var accionEditar = false;
+    adjuntoBase64 = '';
+    nombreAdjunto = '';
+    tipoAdjunto = '';
+
+    async function ConsultParametrica(idobj, parametrica, seleccione) {
+        let url = "@Url.Action("ConsultarParametrica","Parametrica")?parametrica="+ parametrica;
+        let resp = await Get(url);
+
+        if (resp == null)
+            return;
+
+        var Html = "<option selected value='0'>" + seleccione + "</option>";
+        resp.forEach(el => {
+            Html += `<option value=${el.id}>${el.type}</option>`;
+        })
+        $("#" + idobj).html(Html);
+    }
+
+    async function ConsultPaises() {
+        let url = "@Url.Action("ConsultarPaises","Parametrica")";
+        let resp = await Get(url);
+
+        if (resp == null)
+            return;
+
+        var Html = "<option selected value='0'>Seleccione País</option>"
+        resp.forEach(el => {
+            Html += `<option value=${el.codigo}>${el.nombre}</option>`
+        })
+        $("#ddlPais").html(Html);
+    }
+
+    async function ConsultDepartamentos(idpais, valor) {
+        let url = "@Url.Action("ConsultarDepartamentos","Parametrica")?idpais="+ idpais;
+        let resp = await Get(url);
+
+        if (resp == null)
+            return;
+
+        var Html = "<option selected value='0'>Seleccione Departamento</option>";
+        resp.forEach(el => {
+            Html += `<option value=${el.codigo}>${el.nombre}</option>`
+        })
+        $("#ddlDepartamento").html(Html);
+        if(valor != null)
+            $("#ddlDepartamento").val(valor);
+    }
+
+    async function ConsultCiudades(iddepartamento, valor) {
+        let url = "@Url.Action("ConsultarCiudades","Parametrica")?iddepartamento="+ iddepartamento;
+        let resp = await Get(url);
+
+        if (resp == null)
+            return;
+
+        var Html = "<option selected value='0'>Seleccione Ciudad</option>";
+        resp.forEach(el => {
+            Html += `<option value=${el.codigo}>${el.nombre}</option>`
+        })
+        $("#ddlCiudad").html(Html);
+        if(valor != null)
+            $("#ddlCiudad").val(valor);
+    }
+
+    //se valida si los elementos estan vacios
+    function validarRequeridos(elementos) {
+        var rtp = false;
+        //Se ocultan mensajes
+        $(elementos).each(function() {
+            $("#req"+ this).html("*");
+        });
+               
+        //se validan elementos de input normales si estan llenos
+        $(elementos).each(function() {
+            var id = this;
+            if (id.indexOf("check_") != -1) {
+                if ($('input[name="'+id+'"]:checked').val() == undefined) {
+                    $("#req"+ id).html("* Campo Obligatorio"); 
+                    rtp = true;
+                }
+            }
+            else if ($("#"+id).val() == '' || $("#"+id).val() == '0' || $("#"+id).val() == 0 || $("#"+id).val().length == 0) {
+                $("#req"+ id).html("* Campo Obligatorio"); 
+                rtp = true;
+            }
+        });
+
+        return rtp;
+    }
+
+    function validarEmail(email){
+        var reg = /^([A-Za-z0-9_\-\.])+\@@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+
+        if (reg.test(email) == false) 
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    $('#formFileSoporte').on('change', async function () {
+        reiniciarElementos(formFileSoporte, spanAdjuntos);
+        ocultarElemento(spanAdjuntos, true);
+        var dato_archivo = $('#formFileSoporte').prop("files")[0];
+        var extencionesPermitidas = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "image/jpeg", "image/png"];
+        var strExtenciones = ".pdf, .doc, .xls, .xlsx, .png, .jpeg";
+        await mostrarAdjunto(dato_archivo, divAdjunto, spanAdjuntos, extencionesPermitidas, strExtenciones, null, adjuntos, true, adjuntosNuevo, adjuntosOriginal);
+        $('#formFileSoporte').val('');
+    });
+
+    fileContenedorMultipleFile.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        ocultarElemento(spanAdjuntos, true);
+        $(fileContenedorMultipleFile).addClass('activeFile');
+    });
+
+    fileContenedorMultipleFile.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        ocultarElemento(spanAdjuntos, true);
+        $(fileContenedorMultipleFile).removeClass('activeFile');
+    });
+
+    fileContenedorMultipleFile.addEventListener('drop', (e) => {
+        e.preventDefault();
+        ocultarElemento(spanAdjuntos, true);
+        $(fileContenedorMultipleFile).removeClass('activeFile');
+        var files = e.dataTransfer.files;
+        var extencionesPermitidas = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "image/jpeg", "image/png"];
+        var strExtenciones = ".pdf, .doc, .xls, .xlsx, .png, .jpeg";
+        for (const file of files) {
+            mostrarAdjunto(file, divAdjunto, spanAdjuntos, extencionesPermitidas, strExtenciones, null, adjuntos, true, adjuntosNuevo, adjuntosOriginal);
+        };
+        $('#formFileSoporte').val('');
+    });
+
+    $(divAdjunto).on('click', '.btnPrevisualizar', function (e) {
+        var cadena = e.target.parentElement.firstElementChild.id;
+        var id = cadena.replace(/btnPrevisualizar/i, "");
+        var adjunto = adjuntos.find(p => p.codigo == parseInt(id));
+        var newWindow = window.open();
+        newWindow.document.write('<iframe src=' + adjunto.adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+    });
+
+    $(divAdjunto).on('click', '.btnEliminarAdjunto', function (e) {
+        var cadena = e.target.parentElement.id;
+        var id = cadena.replace(/btnEliminarAdjunto/i, "");
+        var adjunto = adjuntos.find(p => p.codigo == parseInt(id));
+        adjuntos = adjuntos.filter(p => p.codigo != adjunto.codigo);
+        if (accionEditar) {
+            adjuntosNuevo = adjuntosNuevo.filter(p => p.codigo != adjunto.codigo);
+            adjuntoEliminar = adjuntosOriginal.find(p => p.codigo == adjunto.codigo);
+            if (adjuntoEliminar != null && adjuntoEliminar != undefined) {
+                adjuntosEliminar.push(adjunto);
+            }
+        }
+        var hijo = document.getElementById(`divAdjunto${adjunto.codigo}`);
+        divAdjunto.removeChild(hijo);
+    });
+
+</script>

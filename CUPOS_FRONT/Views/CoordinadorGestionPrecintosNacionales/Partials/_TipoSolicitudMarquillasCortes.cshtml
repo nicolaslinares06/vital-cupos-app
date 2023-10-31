@@ -1,0 +1,194 @@
+﻿@model Web.Models.InformacionSolicitud;
+
+<div class="col-md-12">
+    <div class="mt-3 mb-3">
+        <!--<h4 class="titulosModalControl">Resoluciones Registradas</h4>-->
+        <div class="mt-2 mb-2 divTabla">
+            <div class="table-responsive">
+                <table id="TablaVisitaCortes" class="table w-100">
+                    <caption class="d-none">Table Description</caption>
+                    <thead>
+                        <tr>
+                            <th class="th-mediumText">Tipo de fracción</th>
+                            <th class="th-mediumText">Cantidad</th>
+                            <th class="th-mediumText">Total Área</th>                          
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            if(Model.FraccionesSolicitud.Count > 0)
+                            {
+                                foreach (var item in Model.FraccionesSolicitud)
+                                {
+                                    <tr>
+                                        <td>@item.fractionType</td>
+                                        <td>@item.amountSelected</td>
+                                        <td >@item.totalAreaSelected</td>
+                                    </tr>
+                                    
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="col-md-12 row mb-3">
+    <div class="col-md-3 mb-1">
+        <label for="@Model.DireccionEntrega" class="form-label">Dirección Entrega</label>
+        <input type="text" class="form-control" asp-for="DireccionEntrega" readonly>
+    </div>
+    <div class="col-md-3 mb-1">
+        <label for="@Model.DepartamentoEntrega" class="form-label">Departamento</label>
+        <input type="text" class="form-control" asp-for="DepartamentoEntrega" readonly>
+    </div>
+    <div class="col-md-3 mb-1">
+        <label for="@Model.CiudadEntrega" class="form-label">Ciudad</label>
+        <input type="text" class="form-control" asp-for="CiudadEntrega" readonly>
+    </div>
+
+
+    <div class="col-md-3 mb-1">
+        <label for="@Model.Cantidad" class="form-label">Cantidad</label>
+        <input type="number" class="form-control" asp-for="Cantidad" readonly>
+    </div>
+    @*
+    <div class="col-md-3 mb-1">
+    <label for="@Model.CodigoInicialPieles" class="form-label">Codigo inicial de las pieles</label>
+    <input type="text" class="form-control" asp-for="CodigoInicialPieles" readonly>
+    </div>
+    <div class="col-md-3 mb-1">
+    <label for="@Model.CodigoFinalPieles" class="form-label">Codigo final de las pieles</label>
+    <input type="text" class="form-control" asp-for="CodigoFinalPieles" readonly>
+    </div>*@
+    <div class="col-md-2 mb-1">
+        <label for="@Model.LongitudMenor" class="form-label">Longitud menor</label>
+        <input type="number" class="form-control" asp-for="LongitudMenor" placeholder=" Longitud menor" readonly>
+    </div>
+    <div class="col-md-2 mb-1">
+        <label for="@Model.LongitudMayor" class="form-label">Longitud mayor</label>
+        <input type="number" class="form-control" asp-for="LongitudMayor" placeholder=" Longitud mayor" readonly>
+    </div>
+    <div class="col-md-4 mb-4">
+        <label for="@Model.FechaAsignacion" class="form-label">Fecha Consignación precintos-marquillas</label>
+        <input type="text" class="form-control" asp-for="FechaAsignacion" readonly>
+    </div>
+    <div class="col-md-3 mb-4">
+        <label for="@Model.EspeciesSubEspecies" class="form-label">Especie</label>
+        <input type="text" class="form-control" asp-for="EspeciesSubEspecies" readonly>
+    </div>
+
+</div>
+<div class="col-md-12 my-auto mb-4 row">
+
+    @{
+        if (Model.EsSoporteConsignacion && !String.IsNullOrEmpty(@Model.archivoConsignacion.adjuntoBase64))
+        {
+
+
+            <div class="col-5">
+                <div class="form-check form-check-inline">
+                    <label class="form-check-label" for="inlineCheckbox1">Soporte Consignación precintos-marquillas</label>
+                </div>
+                <div class="row w-100 mt-2 contenerAdjuntos">
+                    <div class="col-11">
+                        <div class="btnPrevisualizar" id="btnSoporteConsignacion">@Model.archivoConsignacion.nombreAdjunto</div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        }
+    }
+
+    @{
+        if (@Model.ArchivoCartaVenta.Any())
+        {
+            var conteo = 0;
+            <div class="col-5">
+                <div class="form-check form-check-inline">
+                    <label class="form-check-label" for="inlineCheckbox1">Anexo</label>
+                </div>
+                @foreach (var item in @Model.ArchivoCartaVenta)
+                {
+
+
+
+                    <div class="row w-100 mt-2 contenerAdjuntos">
+                        <input type="hidden" id="base64Anexo_@conteo" value="@item.adjuntoBase64" />
+                        <div class="col-11">
+                            <div class="btnPrevisualizar btnAnexo" id="@conteo">@item.nombreAdjunto</div>
+                        </div>
+
+                    </div>
+                    conteo++;
+                }
+
+            </div>
+
+
+        }
+
+    }
+</div>
+
+@*<hr size="5" />
+<div class="col-md-9 mb-4">
+    <label for="@Model.Observaciones" class="form-label">Observaciones o descripción del requerimiento</label>
+    <textarea class="form-control" asp-for="Observaciones" rows="3" placeholder=" Observaciones o descripción del requerimiento" readonly></textarea>
+</div>
+*@
+
+@{
+    if (!String.IsNullOrEmpty(@Model.Respuesta))
+    {
+        <div class="col-md-12 my-auto mb-4 row">
+            <div class="col-md-5">
+                <label for="@Model.Respuesta" class="form-label">Respuesta</label>
+                <textarea class="form-control" asp-for="Respuesta" rows="3" placeholder=" Respuesta" readonly></textarea>
+            </div>
+
+            @{
+                @if (Model.ArchivosRespuesta.Any())
+                {
+                    var conteoRespuesta = 0;
+
+                    <div class="col-md-5">
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="inlineCheckbox1">Documentos Soporte</label>
+                        </div>
+
+
+                        @foreach (var item in @Model.ArchivosRespuesta)
+                        {
+
+
+
+                            <div class="row w-100 mt-2 contenerAdjuntos">
+                                <input type="hidden" id="base64Respues_@conteoRespuesta" value="@item.adjuntoBase64" />
+                                <div class="col-11">
+                                    <div class="btnPrevisualizar btnSoporteRespuesta" id="@conteoRespuesta">@item.nombreAdjunto</div>
+                                </div>
+
+                            </div>
+                            conteoRespuesta++;
+                        }
+
+
+
+                    </div>
+
+                }
+            }
+
+
+        </div>
+
+    }
+}

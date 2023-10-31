@@ -1,0 +1,196 @@
+﻿@{
+    Layout = "_LayoutSaleDocuments";
+}
+<div class="container">
+    <div class="row content">
+        <div class="col-md-8 resume">
+          <a asp-controller="Home" asp-action="Index">Inicio</a> > <a asp-controller="SaleDocument" asp-action="SaleDocuments">Documentos de venta</a> > <strong>Registrar Documento de venta</strong>
+        </div>
+        <div class="col-md-4 iconos">
+            <button type="submit" class="btn btn-secondary" title="Ayuda">AYUDA</button>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">INICIO</a>
+        </div>
+    </div>  
+    <h3 class="titulos-h3">Registrar Documento de Venta</h3>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#tab1" id="tab-1" onclick="SellerFormShow()">Quien vende</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab2" id="tab-2" onclick="ShopperFormShow()">Quien compra</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab3" id="tab-3" onclick="DocumentSupportShow()">Documento soporte</a>
+        </li>            
+    </ul> 
+    <div class="tab-content">
+        <div class="tab-pane container active p-2" id="tab1">
+            <partial name="Partials/SellerForm" />
+        </div>
+        <div class="tab-pane container fade p-2" id="tab2">
+            <partial name="Partials/ShopperForm" />
+        </div>
+        <partial name="Partials/QuotasInventoryTable" />        
+        <div class="tab-pane container fade p-2" id="tab3">
+            <partial name="Partials/DocumentSupport" />
+        </div>
+    </div>                  
+    <div class="row justify-content-center">
+        <button type="button" id="btnReturn" class="btn btn-primary btn-bandeja-regresar m-2" onclick="Return()" title="Regresar">Regresar</button>
+        <button type="button" id="btnPrevious" class="btn btn-primary btn-bandeja-regresar m-2" onclick="NextOrPrevious('previous')" title="Ir a la pestaña anterior">Anterior</button>
+        <button type="button" id="btnCancel" class="btn btn-primary btn-bandeja-regresar m-2" onclick="ConfirmCancelSave()" title="Cancelar el guardado del documento de venta">Cancelar</button>
+        <button type="button"  id="btnNext" class="btn btn-primary btn-bandeja-regresar m-2" onclick="NextOrPrevious('next')" title="Ir a la siguiente pestaña">Siguiente</button>
+        <button type="button" id="btnSave" class="btn btn-primary btn-bandeja-regresar m-2" onclick="ConfirmSave()" title="Guardar documento de venta">Guardar</button>
+    </div>              
+</div>
+<div class="modal fade" id="MessageTextModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="messageText"></p>
+                    </div>
+                    <div id="divBotonesConfirmacion" class="text-center col-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnAccept" onclick="ConfirmAcceptModal()">Aceptar</button>
+                            </div>
+                        </div>
+                    </div>                            
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="MessageTextModalInformative" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p id="TitleModalConfirmation">Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="MessageTextInformative"></p>
+                    </div>
+                    <div id="divBotonesConfirmacion" class="text-center col-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnAccept">Aceptar</button>
+                            </div>
+                        </div>
+                    </div>                            
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ConfirmModalSave" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center row" id="divConfirmacionMensaje">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-md-12 mensajes-modal">
+                        <p id="MessageTextConfirmSave"></p>
+                    </div>
+                </div>
+                <div class="text-center d-none" id="divSpinner3">
+                    <div class="spinner-border text-primary mb-2 spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="divBotonesConfirmacion" class="text-center col-12">
+                    <div class="row">
+                        <div class="col-6" class="d-none" id="divBtnSiModal">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnSiModal" onclick="SaveSaleDocument(true)">Si</button>
+                        </div>
+                        <div class="col-6" class="d-none" id="divBtnNoModal">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnNoModal" onclick="SaveSaleDocument(false)">No</button>
+                        </div>        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ConfirmModalCancelSave" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center row" id="divConfirmacionMensaje">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-md-12 mensajes-modal">
+                        <p id="MessageTextConfirmCancelSave"></p>
+                    </div>
+                </div>
+                <div class="text-center d-none" id="divSpinner3">
+                    <div class="spinner-border text-primary mb-2 spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="divBotonesConfirmacion" class="text-center col-12">
+                    <div class="row">
+                        <div class="col-6" class="d-none" id="divBtnSiModal">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnSiModal" onclick="RedirectCancelSave(true)">Si</button>
+                        </div>
+                        <div class="col-6" class="d-none" id="divBtnNoModal">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnNoModal" onclick="RedirectCancelSave(false)">No</button>
+                        </div>        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalAlerta" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fas fa-exclamation-circle i-modal-alerta"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal-alerta">
+                        <p>Alerta</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>Los siguientes campos son obligatorios</p>
+                        <ul id="ulCamposOblgatorios" class="list-group">
+
+                        </ul>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                ACEPTAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<partial name="Scripts\SaleDocumentScripts" />

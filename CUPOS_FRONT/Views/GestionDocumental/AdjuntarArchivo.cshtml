@@ -1,0 +1,237 @@
+﻿@model Web.Models.AdminTecnicaReq;
+
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<div class="tab-pane container active p-2" id="form-adjuntoArchivo">
+    <div class="col-form-label mt-1 mb-1">
+        <h1>Adjuntar Archivo</h1>
+    </div>
+    <div class="col-md-12 mb-3">
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label required">Adjuntar plantilla de documento</label>
+                <label type="button" for="fileIndividualFile" class="file text-center" id="fileContenedorIndividualFile">
+                    <p id="placeHolderIndividualFile"><span class="fas fa-paperclip"></span> Adjunte o arrastre aquí un documento.</p>
+                    <input type="file" id="fileIndividualFile">
+                </label>
+                <span id="spanFileIndividualFile" class="span-advertencia d-none"></span>
+                <div id="contenedorIndividualFile">
+  
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-2 row justify-content-center">
+            <div class="col-2">
+                <button type="button" class="btn-guardar-archivo btn btn-primary w-100">Guardar</button>
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn-volver-documental btn btn-secondary w-100">Volver</button>
+            </div>
+        </div>
+</div>
+
+<!-- modal confirmacion guardar archivo -->
+<div class="modal fade" id="confirmar-guardadoArchivo" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro que desea guardar el archivo?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-primary confirmar-guardarArchivo w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal mensaje archivo guardado -->
+<div class="modal fade" id="msj-respuesta" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="msj-guardado-archivo"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary cerrar-modal w-100" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var fileContenedorIndividualFile = document.getElementById('fileContenedorIndividualFile');
+    var contenedorIndividualFile = document.getElementById('contenedorIndividualFile');
+    var fileIndividualFile = document.getElementById('fileIndividualFile');
+    var accionVer = false;
+    var adjuntoBase64 = '';
+    var nombreAdjunto = '';
+    var tipoAdjunto = '';
+
+    $(document).ready(async function() {
+        await llenarAdjuntos();
+    });
+
+    async function llenarAdjuntos() {
+        var id = @ViewBag.idArchivo;
+
+        let url = `@Url.Action("ObtenerDocumentos","GestionDocumental")` + `?id=` + id;
+        let r = await Get(url);
+
+        if(r.adjuntoBase64 != null){
+            accionVer = false;
+            adjuntoBase64 = r.adjuntoBase64;
+            nombreAdjunto = r.nombreAdjunto;
+            tipoAdjunto = r.tipoAdjunto;
+            crearArchivo(nombreAdjunto, adjuntoBase64);
+        }
+    }
+
+    $('#fileIndividualFile').on('change', async function () {
+        reiniciarElementos(fileIndividualFile, spanFileIndividualFile);
+        ocultarElemento(spanFileIndividualFile, true);
+        adjuntoBase64 = '';
+        nombreAdjunto = '';
+        tipoAdjunto = '';
+        var dato_archivo = $('#fileIndividualFile').prop("files")[0];
+        if (dato_archivo.size > 2000000) {
+            spanFileIndividualFile.innerText = 'Tamaño maximo permitido es de 2MB';
+            ocultarElemento(spanFileIndividualFile, false);
+            dato_archivo = '';
+            $(fileIndividualFile).val('');
+            return;
+        }
+        tipoAdjunto = dato_archivo.type;
+        if (tipoAdjunto == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || tipoAdjunto == "application/pdf" || tipoAdjunto == "image/jpeg" || tipoAdjunto == "image/png" || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+            nombreAdjunto = dato_archivo.name;
+            adjuntoBase64 = await toBase64(dato_archivo);
+            crearArchivo(nombreAdjunto, adjuntoBase64);
+            return;
+        }
+        tipoAdjunto = '';
+        spanFileIndividualFile.innerText = 'Solo se admiten tipos de documentos .pdf, .docx, .jpeg y .png';
+        if ($(spanFileIndividualFile).hasClass('d-none')) {
+            $(spanFileIndividualFile).removeClass('d-none')
+        }
+        dato_archivo = '';
+        $(fileIndividualFile).val('');
+    });
+
+    function crearArchivo(nombre, adjuntoBase64) {
+        if (accionVer) {
+            contenedorIndividualFile.innerHTML = `<div class="row w-100 mt-2 contenerAdjuntos">
+                  <div class="col-11">
+                      <a type="buttton" id="btnPrevisualizar">${nombre}</a>
+                  </div>
+              <div>`;
+        } else {
+            contenedorIndividualFile.innerHTML = `<div class="row w-100 mt-2 contenerAdjuntos">
+                  <div class="col-11">
+                      <a type="buttton" id="btnPrevisualizar">${nombre}</a>
+                  </div>
+                  <div class="text-end col-1">
+                      <a type="button" id="btnEliminarAdjunto"><span class="fas fa-times"></span></a>
+                  <div>
+              <div>`;
+        }
+        ocultarElemento(fileContenedorIndividualFile, true);
+        $('#btnPrevisualizar').on('click', function () {
+            var newWindow = window.open();
+            newWindow.document.write('<iframe src=' + adjuntoBase64 + ' style="height:100%; width:100%;"></iframe>');
+        });
+        $('#btnEliminarAdjunto').on('click', function () {
+            contenedorIndividualFile.innerHTML = '';
+            ocultarElemento(fileContenedorIndividualFile, false);
+            $(fileIndividualFile).val('');
+        });
+    }
+
+    fileContenedorIndividualFile.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        ocultarElemento(spanFileIndividualFile, true);
+        $(fileContenedorIndividualFile).addClass('activeFile');
+    });
+
+    fileContenedorIndividualFile.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        ocultarElemento(spanFileIndividualFile, true);
+        $(fileContenedorIndividualFile).removeClass('activeFile');
+    });
+
+    fileContenedorIndividualFile.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        contenedorIndividualFile.innerHTML = "";
+        ocultarElemento(spanFileIndividualFile, true);
+        $(fileContenedorIndividualFile).removeClass('activeFile');
+        var files = e.dataTransfer.files;
+        if (files.length > 1) {
+            spanFileIndividualFile.innerText = 'Solo se admite un adjunto.';
+            ocultarElemento(spanFileIndividualFile, false);
+            return
+        }
+        var extencionesPermitidas = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "image/jpeg", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "image/png"];
+        var strExtenciones = ".pdf, .docx, .xlsx, .jpeg, .png";
+        var adjunto = await mostrarAdjunto(files[0], contenedorIndividualFile, spanFileIndividualFile, extencionesPermitidas, strExtenciones, fileContenedorIndividualFile);
+        adjuntoBase64 = adjunto.adjuntoBase64;
+        nombreAdjunto = adjunto.nombreAdjunto;
+        tipoAdjunto = adjunto.tipoAdjunto;
+    });
+
+    $(".btn-guardar-archivo").click(function() {
+        $('#confirmar-guardadoArchivo').modal('show');
+    });
+
+    $(".confirmar-guardarArchivo").click(async function() {
+        var msj = document.getElementById("msj-guardado-archivo");
+        let datos = {
+            'id':@ViewBag.idArchivo,
+            'archivo': {
+                'adjuntoBase64': adjuntoBase64,
+                'nombreAdjunto': nombreAdjunto,
+                'tipoAdjunto': tipoAdjunto
+            }
+        }
+
+        let url = `@Url.Action("SaveDocument","GestionDocumental")`;
+        let val = await Get(url, datos);
+        
+        msj.innerHTML = val;
+        $('#msj-respuesta').modal('show');
+        $('#confirmar-guardadoArchivo').modal('hide');
+    });
+
+    $(".cerrar-modal").click(function() {
+        document.location.href = "/GestionDocumental/Index";
+    });
+
+    $(".btn-volver-documental").click(function(){
+        document.location.href = "/GestionDocumental/Index";
+    });
+</script>

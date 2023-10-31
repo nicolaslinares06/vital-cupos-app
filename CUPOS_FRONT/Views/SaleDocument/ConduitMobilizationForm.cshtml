@@ -1,0 +1,129 @@
+﻿@{
+    Layout = "_LayoutSaleDocuments";
+}
+
+<div class="container">
+    <div class="row content">
+        <div class="col-md-8 resume">
+            <a asp-controller="" asp-action="">Inicio</a>  > <a asp-controller="" asp-action="">Iniciar Tramites</a>  >   <a asp-controller="" asp-action="">Cupos Precintos y Marquillas</a>  >   <strong>Salvoconductos de movilización</strong>         
+        </div>
+        <div class="col-md-4 iconos">
+            <button type="submit" class="btn btn-secondary" title="Ayuda">AYUDA</button>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">INICIO</a>
+        </div>
+    </div>
+    <div class="container">
+        <div id="divConduitMobilization">
+            <h3 class="titulos-h3">Salvoconductos de movilización</h3>
+            <div class="row mt-2">
+                    <div class="col-md-3 mb-1">
+                        <label for="tipoIdentificacion" class="form-label">Tipo de identificación</label>
+                        <input type="text" class="form-control" id="tipoIdentificacion" value="@ViewBag.data.TipoSalvoconducto" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="numeroIdentificacion" class="form-label">Número de identificación</label>
+                        <input type="text" class="form-control" id="numeroIdentificacion" value="@ViewBag.numeroIdentificacion" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="numeroSalvoConducto" class="form-label">Número de salvo coducto</label>
+                        <input type="text" class="form-control" id="numeroSalvoConducto" value="@ViewBag.numeroSalvoConducto" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="fechaVencimiento" class="form-label">Fecha de vencimiento</label>
+                        <input type="text" class="form-control" id="fechaVencimiento" value="@ViewBag.data.VigenciaHasta" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="recursoEspecimen" class="form-label">Recurso del especimén</label>
+                        <input type="text" class="form-control" id="recursoEspecimen" value="@ViewBag.data.InfoEspecies[0].TipoProducto" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="nombreEspecimen" class="form-label">Nombre del especimén</label>
+                        <input type="text" class="form-control" id="nombreEspecimen" value="@ViewBag.data.InfoEspecies[0].NombreCientifico" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="cantidad" class="form-label">Cantidad</label>
+                        <input type="text" class="form-control" id="cantidad" value="@ViewBag.data.InfoEspecies[0].CantidadDisponible" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="finalidadMovilizacion" class="form-label">Finalidad de la movilización</label>
+                        <input type="text" class="form-control" id="finalidadMovilizacion" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="departamento" class="form-label">Departamento</label>
+                        <input type="text" class="form-control" id="departamento" value="@ViewBag.data.DepartamentoDestino" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="municipio" class="form-label">Municipio</label>
+                        <input type="text" class="form-control" id="municipio" value="@ViewBag.data.MunicipioDestino" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="tipoRuta" class="form-label">Tipo ruta</label>
+                        <input type="text" class="form-control" id="tipoRuta" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="medioTransporte" class="form-label">Medio de transporte</label>
+                        <input type="text" class="form-control" id="medioTransporte" value="@ViewBag.data.InfoTransporte[0].MedioTransporte" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="tipoVehiculo" class="form-label">Tipo de vehiculo</label>
+                        <input type="text" class="form-control" id="tipoVehiculo" value="@ViewBag.data.InfoTransporte[0].TipoTransporte" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="placaVehiculo" class="form-label">Placa de vehiculo</label>
+                        <input type="text" class="form-control" id="placaVehiculo" value="@ViewBag.data.InfoTransporte[0].IdentificacionTransporte" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="empresaTransportadora" class="form-label">Empresa transportadora</label>
+                        <input type="text" class="form-control" id="empresaTransportadora" value="@ViewBag.data.AutoridadAmbiental" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="nombreTransportador" class="form-label">Nombre transportador</label>
+                        <input type="text" class="form-control" id="nombreTransportador" value="@ViewBag.data.InfoTransporte[0].NombreTransportador" readonly>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label for="numeroTransportador" class="form-label">Número de identificación transportador</label>
+                        <input type="text" class="form-control" id="numeroTransportador" value="@ViewBag.data.InfoTransporte[0].IdentificacionTransportador" readonly>
+                    </div>
+                    <div class="row justify-content-center">
+                        <button type="button" id="btnReturn" class="btn btn-primary btn-bandeja-regresar m-2" onclick="ReturnExceptConduitMobilization()" title="Regresar a Consultar Salvoconductos de movilización">Regresar</button>
+                        <button type="button" id="btnExit" class="btn btn-primary btn-bandeja-regresar m-2" onclick="ConfirmExit()" title="Salir a registrar documento de venta">Salir</button>
+                    </div>                        
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ConfirmModalExit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center row" id="divConfirmacionMensaje">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-md-12 mensajes-modal">
+                        <p id="MessageTextConfirmExit"></p>
+                    </div>
+                </div>
+                <div class="text-center d-none" id="divSpinner3">
+                    <div class="spinner-border text-primary mb-2 spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="divBotonesConfirmacion" class="text-center col-12">
+                    <div class="row">
+                        <div class="col-6" class="d-none" id="divBtnSiModal">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnSiModal" onclick="ExitToSaleDocumentForm(true)">Si</button>
+                        </div>
+                        <div class="col-6" class="d-none" id="divBtnNoModal">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnNoModal" onclick="ExitToSaleDocumentForm(false)">No</button>
+                        </div>        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<partial name="Scripts\ConduitMobilizationScripts" />

@@ -1,0 +1,48 @@
+<div class="tab-pane container active p-2" id="tab1">
+                <div class="container">
+                    <div class="row mb-3">
+                        <div class="mb-1 mt-1 col-6">
+                            <label for="tiponovedad" class="form-label">Tipo Novedad <span id="reqtiponovedad" style='Color:red;'>*</span></label>
+                            <select class="form-control" id="tiponovedad" onchange="seleccionTipoNovedad()" required>
+                            </select>
+                        </div>
+                        <div class="mb-1 mt-1 col-6">
+                            <label for="txtFecha" class="form-label">Fecha <span id="reqtxtFecha" style='Color:red;'>*</span></label>
+                            <input type="date" id="txtFecha" class="form-control" placeholder="&#xf073 dd/mm/aaaa"/>
+                        </div>
+                        <div class="mb-1 mt-1 col-6">
+                            <label for="ddlEstado" class="form-label">Estado Novedad <span id="reqddlEstado" style='Color:red;'>*</span></label>
+                            <select class="form-control" id="ddlEstado" required>
+                            </select>
+                        </div>
+                        <div class="mb-1 mt-1 col-6">
+                            <label class="form-label">Estado para emisión de permisos CITES <span id="reqcheck_EstadoCITES" style='Color:red;'>*</span></label>
+                            <div class="row">
+                                <div class="col-3">
+                                    <input class="form-check-input check" name="check_EstadoCITES" type="radio" value="72" id="checkEstadoActivo">
+                                    <label class="form-check-label" for="checkEstadoActivo">Activo</label>
+                                </div>
+                                <div class="col-3">
+                                    <input class="form-check-input check" name="check_EstadoCITES" type="radio" value="73" id="checkEstadoInactivo">
+                                    <label class="form-check-label" for="checkEstadoInactivo">Inactivo</label>
+                                </div>
+                             </div>
+                        </div>
+                        <div class="mb-1 mt-1 col-6">
+                            <label for="txtObservaciones" class="form-label">Observaciones </label>
+                            <textarea class="form-control" id="txtObservaciones" rows="5" maxlength="200"></textarea>
+                        </div>
+                         <div class="mb-1 mt-1 col-6">
+
+                            <label for="formFileSoporte" class="form-label">Documento de Soporte <span id="reqformFileSoporte" style='Color:red;'>*</span></label>
+                            <label type="button" class="file text-center" for="formFileSoporte" id="fileContenedorMultipleFile">
+                                <p id="placeHolderMultipleFile"><span class="fas fa-paperclip"></span> Adjunte o arrastre aquí uno o varios
+                                    documentos.</p>
+                                <input type="file" id="formFileSoporte">
+                            </label>
+                            <div id="divAdjuntosituacion">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>

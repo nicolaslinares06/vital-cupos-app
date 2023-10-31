@@ -1,0 +1,91 @@
+<div class="container">
+    <h2>Resolución de Asignación de Cupos</h2>
+    <div class="label-datatable">
+    </div>
+    <div class="mt-3">
+        <div class="mt-2 mb-2">
+            <table id="tableresolucioncuposhj" class="table w-100">
+                <caption class="d-none">Table Description</caption>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Número de resolución</th>
+                        <th>Fecha de resolución</th>
+                        <th>Fecha radicado</th>
+                        <th>Total cupos Otorgados</th>
+                        <th>Cupos por año de producción</th>
+                        <th>Año de producción</th>
+                        <th>Cupos de aprovechamiento y comercialización</th>
+                        <th>Cuota de repoblación</th>
+                        <th class="mediumText">Cupos Disponibles</th>
+                        <th class="mediumText">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div id="divregistrarResolucion" class="d-none mt-1 mb-1 row">
+            <div class="col-12">
+                <h2 id="tituloAccionResolucion"></h2>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtAutoridadEmiteResolucion" class="form-label required">Autoridad ambiental que emite
+                    reolución</label>
+                <select type="text" class="form-select" id="txtAutoridadEmiteResolucion" disabled="disabled">
+                </select>
+                <span id="validaciontxtAutoridadEmiteResolucion" class="span-advertencia d-none">Campo
+                    Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtnumeroResolucion" class="form-label required">Numero de Resolución</label>
+                <input type="number" class="form-control" readonly id="txtnumeroResolucion" placeholder="Numero de Resolucion">
+                <span id="validacionNumeroResolucion" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtFechaResolucion" class="form-label required">Fecha de emisión de la resolución</label>
+                <input type="date" class="form-control" readonly id="txtFechaResolucion" placeholder="Fecha de Resolucion">
+                <span id="validacionFechaResolucion" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtFechaRegistroResolucion" class="form-label required">Fecha de registro resolución</label>
+                <input type="date" class="form-control" readonly id="txtFechaRegistroResolucion"
+                    placeholder="Fecha de registro resolución">
+                <span id="validacionFechaRegistroResolucion" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtCodigoZoocriadero" class="form-label required">código de zoocriadero</label>
+                <input type="number" class="form-control" readonly id="txtCodigoZoocriadero" placeholder="Fecha de Resolucion">
+                <span id="validaciontxtCodigoZoocriadero" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtObservacionescupos" class="form-label">Observaciones</label>
+                <textarea class="form-control" readonly id="txtObservacionescupos" rows="3"></textarea>
+            </div>
+            <div class="mb-1 mt-1 col-12">               
+                <div class="mt-2 mb-2">
+                    <table id="TableCuposPorAnio" class="table w-100">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Especie</th>
+                                <th>Año</th>
+                                <th>Cupos de Aprovechamiento y Comercialización</th>
+                                <th>Cuota de Repoblación</th>
+                                <th>Total cupos otorgados</th>
+                                <th>N° interno inicial</th>
+                                <th>N° interno final</th>
+                                <th>N° interno inicial de cuota de repoblación</th>
+                                <th class="mediumText">N° interno final de cuota de repoblación</th>
+                                <th class="mediumText">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,328 @@
+﻿@model Web.Models.CreateRegistroVisitaCortesFraccionesIrregulares
+
+@{
+    ViewData["Title"] = "Crear Acta Corte partes Irregulares";
+}
+
+
+<div class="container">
+    <div>
+        <a asp-controller="Home" asp-action="Index">Modulo de Cupos</a>  > <a asp-controller="RegistroVisitaDeCortes" asp-action="CreateTipoActaCorte">Registrar visita de Cortes</a> > <strong>Acta de control corte pieles fracciones irregulares</strong>
+    </div>
+    <partial name="Partials/_SeccionBotonAyuda"></partial>
+
+    <partial name="Partials/_CreateTipoActa"></partial>
+    <div>
+        <h3>Registrar Visita de Cortes</h3>
+    </div>
+
+    <div class="col-sm-12">
+        <label class="form-label required">Visita Nro</label>
+    </div>
+    <fieldset class="form-group  col-12 mb-3">
+        <legend class="d-none">Fieldset Description</legend>
+        <div class="row">
+            <div class="col-sm-10">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" required name="radioVisita" id="radioVisita1" value="1">
+                    <label class="form-check-label" for="radioVisita1">
+                        1
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="radioVisita" id="radioVisita2" value="2">
+                    <label class="form-check-label" for="radioVisita2">
+                        2
+                    </label>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <div class="col-12 mb-3 row">
+        <div class="form-group col-md-6">
+            <label class="form-label required" for="TipoEstablecimiento">Nit Establecimiento</label>
+            <input type="hidden" id="HiddenNITEstablecimiento" name="HiddenNITEstablecimiento" value="" />
+            <input type="text" class="form-control inputValidation" id="NitEstablecimiento" name="NitEstablecimiento">
+            <span class="SPANValidation span-advertencia" id="SPANNITEstablecimiento"></span>
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+            <button type="button" id="btnBuscarNitEmpresa" class="btn btn-secondary"> Buscar </button>
+        </div>
+    </div>
+    <div class="col-12 mb-3 row">
+        <div class="form-group col-md-6">
+            <label class="form-label required" for="TipoEstablecimiento">Tipo de Establecimiento</label>
+            <input type="hidden" name="TipoEstablecimiento" id="TipoEstablecimiento" value="" />
+            <input type="text" class="form-control inputValidation" id="TipoEstablecimientoNombre" name="TipoEstablecimientoNombre" disabled>
+
+            <span class="SPANValidation span-advertencia" id="SPANTipoEstablecimientoNombre"></span>
+
+        </div>
+        <div class="form-group col-md-6 mb-3">
+            <input type="hidden" id="EstablecimientoID" name="EstablecimientoID" value="" />
+            <label class="form-label required" for="NombreEstablecimiento">Nombre</label>
+            <input type="text" class="form-control inputValidation" id="NombreEstablecimiento" name="NombreEstablecimiento" disabled>
+            <span class="SPANValidation span-advertencia" id="SPANNombreEstablecimiento"></span>
+        </div>
+    </div>
+    <partial name="Partials/_SeccionInputNumerosDocumentos"></partial>
+    <div class="row col-12 mb-3">
+        <div class="form-group col-md-6">
+            <label class="form-label required" for="CantidadPielCorte">Cantidad de pieles a cortar</label>
+            <input type="text" class="form-control inputValidation" name="CantidadPielACortar" id="CantidadPielACortar" placeholder="Nro de pieles">
+            <span class="SPANValidation span-advertencia" id="SPANCantidadPielCorte"></span>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label required" for="ArchivoPrecintosMarquilla">Precintos de Identificación</label>
+            <input type="file" class="form-control" id="ArchivoPrecintosMarquilla">
+            <span class="SPANValidation span-advertencia" id="SPANArchivoPrecintosMarquilla"></span>
+            <div class="col-md-12" id="DivMostrarArchivoExcel"></div>
+        </div>
+    </div>
+    <div class="row col-md-11">
+        <label for="EstadoPiel">Estados de las pieles</label>
+    </div>
+    <div class="row col-12 mb-3 px-3">
+        <div class="form-check form-check-inline col-md-3">
+            <input class="form-check-input" type="radio" name="radioEstadosPielCorte" checked id="EstadoPiel1" value="0">
+            <label class="form-check-label" for="EstadoPiel1">Crudas</label>
+        </div>
+        <div class="form-check form-check-inline col-md-3">
+            <input class="form-check-input" type="radio" name="radioEstadosPielCorte" id="EstadoPiel2" value="1">
+            <label class="form-check-label" for="EstadoPiel2">Azul Humedo</label>
+        </div>
+        <div class="form-check form-check-inline col-md-3">
+            <input class="form-check-input" type="radio" name="radioEstadosPielCorte" id="EstadoPiel3" value="2">
+            <label class="form-check-label" for="EstadoPiel3">Curtidas</label>
+        </div>
+        <div class="form-check form-check-inline col-md-2">
+            <input class="form-check-input" type="radio" name="radioEstadosPielCorte" id="EstadoPiel4" value="3">
+            <label class="form-check-label" for="EstadoPiel4">Terminadas</label>
+        </div>
+    </div>
+    <div class="row">
+        <h3>Primer Control y Seguimiento</h3>
+    </div>
+    <div class="divCantidadPieles row col-md-12 mb-3">
+        <div class="divContenedorCantidadPielesIrregulares row" id="divSeccionesPrimerControlYSeguimiento">
+            <div class="subseccion1 col-md-3" id="divSubSeccion1ControlYSeguimientoTipoPiel">
+                <div class="divTitulos">
+                    <label>Tipo de piel</label>
+                </div>
+                <div class="DivInput mb-3">
+                    <input class="form-control inputSeccionCortesPieles" name="TipoPielIrregular" id="TipoPielIrregular_0" placeholder="Inserte Tipo de Piel" />
+                </div>
+                <div class="DivAdBtonAdiccionSeccion">
+
+                    <div class="AgregarTipoPiel SeccionBotonAgregarDiv" id="btnAgregarTipoPielIrregular">
+                        <span class="fa-sharp fa-solid fa-square-plus"></span>
+                        <span>Agregar piel</span>
+                    </div>
+                </div>
+            </div>
+            <div class="subseccion2 col-md-2" id="divSeccion2ControlYSeguimientoTipoPiel">
+                <div class="divTitulos">
+                    <label>Área Promedio (dm2)</label>
+                </div>
+                <div class="DivInput mb-3">
+                    <input class="form-control inputSeccionCortesPieles no-paste" id="AreaPromedioTipoPiel_0" name="AreaPromedioTipoPiel" placeholder="Inserte Dato" />
+                </div>
+            </div>
+            <div class="subseccion2 col-md-2" id="divSeccion3ControlYSeguimientoTipoPiel">
+                <div class="divTitulos">
+                    <label>Cantidad de piel</label>
+                </div>
+                <div class="DivInput mb-3">
+                    <input class="form-control inputSeccionCortesPieles no-paste" name="CantidadTipoPiel" id="CantidadTipoPiel_0" placeholder="Inserte cantidad" />
+                </div>
+            </div>
+            <div class="subseccion2 col-md-2" id="divSeccion4ControlYSeguimientoTipoPiel">
+                <div class="divTitulos">
+                    <label>Área Total (dm2)</label>
+                </div>
+                <div class="DivInput mb-3">
+                    <div class="col-11">
+                        <input class="form-control inputSeccionCortesPieles" name="AreaTotalTipoPiel" id="AreaTotalTipoPiel_0" placeholder="Inserte Dato"  disabled/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <h3>Segundo Corte y Seguimiento</h3>
+    </div>
+    <div class="divCantidadPieles col-md-12 mb-3">
+        <div class="divContenedorCantidadPielesIrregulares2 row col-md-12 " id="divContenedorTipoParteCntrlSeguimiento">
+            <div class="subseccion1 col-md-3" id="divSubSeccion1CorteYSeguimientoTipoParte">
+                <div class="divTitulos">
+                    <label>Tipo de Fracciones</label>
+                </div>
+                <div class="DivInput mb-3">
+                     <input class="form-control inputSeccionCortesPieles" name="TipoParteCtrlYseguimiento" id="TipoParteCtrlYseguimiento_0" placeholder="Inserte un tipo de parte" />
+                </div>
+                <div class="DivAdBtonAdiccionSeccion">
+
+                    <div class="AgregarTipoPiel SeccionBotonAgregarDiv" id="btnAgregarTipoParteIrregular">
+                        <span class="fa-sharp fa-solid fa-square-plus"></span>
+                        <span>Agregar parte</span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="subseccion2 col-md-2" id="divSubSeccion2TipoParteCantidad">
+                <div class="divTitulos">
+                    <label>Cantidad </label>
+                </div>
+                <div class="DivInput mb-3">
+                    <input class="form-control inputSeccionCortesPieles" name="TipoParteCandidad" id="TipoParteCandidad_0" placeholder="Inserte cantidad" />
+                </div>
+            </div>
+            <div class="subseccion2  col-md-2" id="divSubSeccion3TipoParteTotal">
+                <div class="divTitulos">
+                    <label>Área Total</label>
+                </div>
+                <div class="DivInput mb-3">
+                    <div class="col-11">
+                        <input class="form-control inputSeccionCortesPieles" name="TipoParteTotal" id="TipoParteTotal_0" placeholder="Inserte Total" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row divContenedorDatoCITES col-12 mb-3">
+        <div class="form-group col-md-6">
+            <label for="FuncionarioCITES">Funcionario Autoridad CITES</label>
+            <div>
+                <input type="text" value="@ViewBag.usuario" class="form-control inputValidation" disabled />
+                <span class="SPANValidation span-advertencia" id="SPANFuncionarioCITES"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row col-12 mb-3">     
+        <div class="form-group col-md-6">
+            <label class="form-label required" for="NombreRepresentante">Nombre de representante del establecimiento</label>
+            <input type="text" class="form-control inputValidation" id="RepresentanteEstablecimiento">
+            <span class="SPANValidation span-advertencia" id="SPANNombreRepresentante"></span>
+
+        </div>
+        <div class="form-group col-md-6">
+            <label class="form-label required" for="FechaVisitaCorte">Fecha Visita</label>
+            <input type="date" class="form-control inputValidation" id="Fecha" name="Fecha">
+            <span class="SPANValidation span-advertencia" id="SPANFechaVisitaCorte"></span>
+        </div>
+    </div>
+
+    <div class="row col-12 mb-3">
+        <div class="form-group col-md-6">
+            <label class="form-label required" for="Departamento">Departamento</label>
+
+            <div>
+                <select class="form-control inputValidation" id="Departamento" name="Departamento" asp-items="Model.Departamentos">   </select>
+            </div>
+            <span class="SPANValidation span-advertencia" id="SPANDepartamento"></span>
+        </div>
+        <div class="form-group col-md-6">
+            <label class="form-label required" for="Ciudad">Ciudad</label>
+            <div>
+                <select class="form-control inputValidation" id="Ciudad" name="Ciudad" asp-items="Model.Ciudades">   </select>
+            </div>
+            <span class="SPANValidation span-advertencia" id="SPANCiudad"></span>
+        </div>
+    </div>
+
+    <partial name="Partials/_SeccionUploadDocumentosPDF"></partial>
+    <div class="mt-1 row justify-content-center">
+        <div class="col-2">
+            <button type="button"
+                    class="btn btn-primary w-100" id="btnGuardarFormularioCorteIrregular">
+                Guardar
+            </button>
+        </div>
+        <div class="col-2">
+            <a class="btn btn-primary w-100" asp-action="Index" asp-controller="RegistroVisitaDeCortes">
+                Cancelar
+            </a>
+        </div>
+    </div>
+    <input type="hidden" id="HiddenResultadoProceso" />
+</div>
+
+<div class="modal fade"
+     id="modalGuardar"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>Está seguro de guardar la información?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" id="btnConfirmarGuardar" class="btn btn-primary">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+                                NO
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade"
+     id="modalMensaje"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Datos procesados</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="PmensajeProcesado"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" id="btnAceptarModal" class="btn btn-primary">Aceptar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="Partials/_modalCamposObligatorios"></partial>
+
+@section Scripts{
+<partial name="_ValidationScriptsPartial"></partial>
+<script src="~/js/RegistroDeVisitaDeCortes/RegistroDeVisitaDeCortesGeneric.js" asp-append-version="true"></script>
+<script src="~/js/RegistroDeVisitaDeCortes/CreateActCortesFraccionesIrregulares.js" asp-append-version="true"></script>
+
+}

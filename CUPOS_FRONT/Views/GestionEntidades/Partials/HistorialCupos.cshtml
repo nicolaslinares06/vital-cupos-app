@@ -1,0 +1,306 @@
+﻿<div class="modal fade" id="divModalHistorialCupos" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true" style="background-color:white;">
+    <div class="modal-dialog modal-xl w-100 h-100">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h1 class="mb-4 mt-4">Control de Cupos</h1>
+                <div id="divCupos" class="mb-2">
+                    <h2 class="mb-3">Cupos</h2>
+                    <table id="TableCupos" class="table w-100" aria-describedby="Tabla cupos">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="th-mediumText">Número de resolución</th>
+                                <th class="th-mediumText">Fecha de resolución</th>
+                                <th class="th-mediumText">Fecha de registo de resolución</th>
+                                <th class="th-bigText">Autoridad ambiental que emite la resolución</th>
+                                <th class="th-mediumText">Especie</th>
+                                <th class="th-mediumText">Año de producción</th>
+                                <th class="th-bigText">Cupos de aprovechamiento y comercialización</th>
+                                <th class="th-mediumText">Cuota de repoblación</th>
+                                <th class="th-mediumText">Total cupos asignados</th>
+                                <th class="th-mediumText">Cupos Disponibles</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="divInventario" class="mb-2">
+                    <h2 class="mb-3">Inventario</h2>
+                    <table id="TableInventario" class="table w-100" aria-describedby="Tabla inventario">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Número de carta de venta y/o factura</th>
+                                <th>Quien Vende (Nombre/Razón Social)</th>
+                                <th>Fecha de Venta</th>
+                                <th>Disponibilidad de Inventario</th>
+                                <th>Especie</th>
+                                <th>Año</th>
+                                <th>Inventario Disponible</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="divEstadisticas" class="mb-2 col-12">
+            
+                </div>
+                <div class="row justify-content-center">
+                    <button type="button" onclick="SalirHistorial()" id="btnSalirHistorial"
+                        class="col-1 btn btn-primary m-2">Salir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var totalDisponibles = 0;
+    var totalOtorgadosControlCupos = 0;
+    var especies = [];
+    let autoridades;
+    let cuposPorEspecie;
+    let inventarioEspecie;
+    let divEstadisticas=document.getElementById('divEstadisticas');
+
+    //#region funciones
+    async function TraerAutoridadEmite() {
+        let url = `@Url.Action("ConsultAuthority", "NonTimberFloraCertificate")`;
+        autoridades = await Get(url);
+        if (autoridades.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+    }
+
+    //se trae los Tipos de Especimenes para pintarlos en select2
+    async function traerTiposEspecimenes() {
+        let url = `@Url.Action("ConsultEspecimensTypes", "RegistrarResolucion")`;
+        especies = await Get(url);
+    }
+
+    //llena modal de control de cupos 
+    async function controlCupos() {
+        $("#divModalHistorialCupos").modal("show");
+        TraerAutoridadEmite();
+        traerTiposEspecimenes()
+
+        await loadTablaCupos();
+        await loadTablaInventario();
+        await cargarTotales();
+    }
+
+    async function SalirHistorial() {
+        $("#divModalHistorialCupos").modal("hide");
+    }
+
+    //cargar la tabal de cupos en modal control de cupos 
+    //cargar la tabal de cupos en modal control de cupos 
+    async function loadTablaCupos() {
+        let url = `@Url.Action("ConsultQuotas", "RegistrarResolucion")` + `?nitBussines=${nitEmpresaZoo}`;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        cuposPorEspecie=r;
+        var columns = [
+            {
+                "data": "codigoCupo",
+                className: "d-none"
+            },
+            {
+                "data": "numeroResolucion",
+                className: "td-1"
+            },
+
+            {
+                "data": "fechaResolucion",
+                render: function (data) {
+                    return moment(data).format('yyyy-MM-DD');
+                }
+            },
+            {
+                "data": "fechaRegistroResolucion",
+                render: function (data) {
+                    return moment(data).format('yyyy-MM-DD');
+                }
+            },
+            {
+                "data": "autoridadEmiteResolucion",
+                render : function(data){
+                    let autoridad;
+                    autoridades.forEach(el=>{
+                        if(parseInt(el.code) == parseInt(data)){
+                            autoridad = el.name;
+                        }
+                    });
+                    return autoridad
+                }
+            },
+            {
+                "data": "codigoEspecie",
+                render: function (data) {
+                    var especieNombre;
+                    especies.forEach(el => {
+                        if (el.id == data) {
+                            especieNombre = el.text;
+                        }
+                    });
+                    return especieNombre;
+                }
+            },
+            {
+                "data": "anioProduccion"
+            },
+            {
+                "data": "cuposAprovechamientoComercializacion"
+            },
+            {
+                "data": "cuotaRepoblacion"
+            },
+            {
+                "data": "cuposTotal"
+            },
+            {
+                "data": "cuposDisponibles"
+            }
+        ];
+
+        DataTableGenerico('#TableCupos', columns, r, 10);
+    }
+
+    //cargar la tabal de inventario en modal control de cupos
+    async function loadTablaInventario() {
+        let url = `@Url.Action("GetInventory","SaleDocument")` + `?documentNumber=${nitEmpresaZoo}` ;
+        let r = await Get(url);
+        if (r.volverInicio != undefined) {
+            cerrarSesionCaducada();
+            return;
+        }
+        inventarioEspecie=r;
+        $(`#TableInventario`).DataTable({
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom: "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: '',
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                    previous: 'Anterior',
+                    next: 'Siguiente'
+                }
+            },
+            data: r,
+            columns: [
+                {
+                    "data": "code",
+                    className: "d-none"
+                },
+                {
+                    "data": "numberSaleCarte"
+                },
+                {
+                    "data": "reasonSocial"
+                },
+                {
+                    "data": "saleDate",
+                    render: function (data) {
+                        if (data != null) {
+                        return moment(data).format("DD-MM-yyyy");
+                        }
+                        return data;
+                    }, 
+                },
+                {
+                    "data": "availabilityInventory"
+                },
+                {
+                    "data": "speciesCode",
+                    render: function (data) {
+                        var especieNombre;
+                        especies.forEach(el => {
+                            if (el.id == data) {
+                                especieNombre = el.text;
+                            }
+                        });
+                        return especieNombre;
+                    }
+                },
+                {
+                    "data": "year"
+                },
+                {
+                    "data": "availableInventory"
+                }
+            ],
+            columnDefs: [{
+                targets: 7
+            }]
+        });
+        agregarClasesDatatable(`#TableInventario`);
+    }
+
+    function cargarTotales(){
+        divEstadisticas.innerHTML='';
+        const especiesAgrupadas = [];
+        if(cuposPorEspecie!=null && cuposPorEspecie!=undefined && cuposPorEspecie.length>0){
+            cuposPorEspecie.forEach(el => {
+                const found = especiesAgrupadas.findIndex(element => element.especie === el.codigoEspecie);
+                if (found === -1) {
+                    especiesAgrupadas.push({
+                        "especie":el.codigoEspecie,
+                        "totalCuposOtorgadosEspecie":el.cuposDisponibles,
+                        "totalInventarioEspecie":0
+                    });
+                } else {
+                    especiesAgrupadas[found].totalCuposOtorgadosEspecie += el.cuposDisponibles;  
+                }
+            });
+        }
+        if(inventarioEspecie!=null && inventarioEspecie!=undefined && inventarioEspecie.length>0){
+            inventarioEspecie.forEach(el => {
+                const found = especiesAgrupadas.findIndex(element => parseInt(element.especie) === el.speciesCode);
+                if (found != -1) {
+                    especiesAgrupadas[found].totalInventarioEspecie += el.availableInventory;  
+                }else{
+                    especiesAgrupadas.push({
+                        "especie":el.speciesCode,
+                        "totalCuposOtorgadosEspecie":0,
+                        "totalInventarioEspecie":el.availableInventory
+                    });
+                }
+            });
+        }
+        if(especiesAgrupadas!=null && especiesAgrupadas!=undefined && especiesAgrupadas.length>0){
+            especiesAgrupadas.forEach(el=>{
+                var especieNombre;
+                especies.forEach(ele => {
+                    if (ele.id == parseInt(el.especie)) {
+                        especieNombre = ele.text;
+                    }
+                });
+                divEstadisticas.innerHTML+=
+                            `<div class="row div-totales col-4">
+                                <label class="col-12 titulo-especie">${especieNombre}</label>
+                                <p><span >${el.totalCuposOtorgadosEspecie}</span> cupos disponibles</p>
+                                <p><span>${el.totalInventarioEspecie}</span> inventario disponibles</p>
+                            </div>`;
+            });
+        }
+    }
+
+</script>

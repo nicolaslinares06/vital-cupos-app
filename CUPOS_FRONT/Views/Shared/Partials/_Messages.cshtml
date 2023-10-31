@@ -1,0 +1,90 @@
+﻿<!-- Modal mensaje información -->
+<div class="modal fade" id="mensaje-informacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="text-center col-12">
+                    <span id="idIcon" class="fa-solid fa-circle-check i-modal"></span>
+                </div>
+                <div class="text-center col-12 titulo-modal">
+                    <p id="modalText-titulo"></p>
+                </div>
+                <div class="col-12 mensajes-modal">
+                    <p id="modalText-informacion"></p>
+                </div>
+                <div class="col-12">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">ACEPTAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal pregunta confirmación -->
+<div class="modal fade" id="mensaje-confirmacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="text-center col-12">
+					<span class="fa-solid fa-circle-question i-modal"></span> 
+				</div>
+                <div class="text-center col-12 titulo-modal">
+                    <p>Confirmación</p>
+                </div>
+                <div class="col-md-12 mensajes-modal">
+                    <p id="modalText-Confirmacion"></p>
+                </div>
+                <div class="row">
+                     <div class="col-6">
+                        <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-primary w-100 boton-si">SI</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    async function MostrarMensajeInfo(Mensaje) {
+        var modal = document.getElementById("modalText-informacion");
+        var modaltitulo = document.getElementById("modalText-titulo");
+        modal.innerHTML = Mensaje;
+        modaltitulo.innerHTML = "Información";
+        
+        $("#idIcon").attr("class", "fa-solid fa-circle-check i-modal");
+        $("#mensaje-informacion").modal("show");
+    }
+    
+    async function MostrarMensajeAdver(Mensaje) {
+        var modal = document.getElementById("modalText-informacion");
+        var modaltitulo = document.getElementById("modalText-titulo");
+        modal.innerHTML = Mensaje;
+        modaltitulo.innerHTML = "Advertencia";
+
+        $("#idIcon").attr("class", "fa-solid fa-triangle-exclamation i-modal");
+        $("#mensaje-informacion").modal("show");
+    }
+
+    async function MostrarMensajeError(Mensaje) {
+        var modal = document.getElementById("modalText-informacion");
+        var modaltitulo = document.getElementById("modalText-titulo");
+        modal.innerHTML = Mensaje;
+        modaltitulo.innerHTML = "Error";
+
+        $("#idIcon").attr("class", "fa-solid fa-bug i-modal");
+        $("#mensaje-informacion").modal("show");
+    }
+
+    async function MostrarMensajeConfir(Mensaje, fnSi) {
+        var modal = document.getElementById("modalText-Confirmacion");
+        modal.innerHTML = Mensaje;
+
+        $(".boton-si").attr("onclick", fnSi);
+
+        $("#mensaje-confirmacion").modal("show");
+    }
+</script>

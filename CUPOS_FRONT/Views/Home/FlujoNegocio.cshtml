@@ -1,0 +1,473 @@
+﻿@{
+    Layout = "_LayoutBandejaReceptor";
+}
+<div class="container">
+    <div class="row home-opciones" id="divOpciones">
+        <h1>Flujo de negocio</h1>
+        @if(Context.Session.GetString("GestionarEntidad") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="GestionEntidades" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreGestionarEntidad")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if(Context.Session.GetString("ResAsignacionCUPOS") == "True")
+        {
+            <div class="col item">
+                <a type="button" id="RegistrarResolucion">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreResAsignacionCUPOS")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if (Context.Session.GetString("HojaVidaEntidad") == "True")
+        {
+            <div class="col item">
+                <a type="button" id="Cv">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreHojaVidaEntidad")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if (Context.Session.GetString("DocumentosVenta") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="SaleDocument" asp-action="SaleDocuments">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreDocumentosVenta")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if (Context.Session.GetString("FloraNoMaderable") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="NonTimberFloraCertificate" asp-action="NonTimberFloraCertificate">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreFloraNoMaderable")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if (Context.Session.GetString("PrecintosMarquillas") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="PrecintosMarquillas" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombrePrecintosMarquillas")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if (Context.Session.GetString("PresolucionesPecesNivelNacional") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="FishQuota" asp-action="FishQuotas">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombrePresolucionesPecesNivelNacional")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if (Context.Session.GetString("ResolucionPecesEntidad") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="ControlFishRequest" asp-action="ControlFishRequest">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreResolucionPecesEntidad")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if (Context.Session.GetString("ActaVisitaCortes") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="RegistroVisitaDeCortes" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreActaVisitaCortes")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if (Context.Session.GetString("PrecintosNacionales") == "True")
+        {
+            <div class="col item">
+                <a type="button" id="precintosNacionalesUsuarioExtrerno">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombrePrecintosNacionales")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if (Context.Session.GetString("SolicitudesPermisosCITES") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="ManageCitesPermits" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreSolicitudesPermisosCITES")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if (Context.Session.GetString("SolicitudesPermisosCITES") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="GestionPrencintosNacionales" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>Bandeja de trabajo de validacion de solicitud - precintos nacionales</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if (Context.Session.GetString("GestionPrecintosNacionalesDirector") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="GestionPrencintosNacionalesDirector" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreGestionPrecintosNacionalesDirector")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if (Context.Session.GetString("GestionPrecintosNacionalesAnalista") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="GestionPrencintosNacionales" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreGestionPrecintosNacionalesAnalista")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+
+        @if (Context.Session.GetString("CoordinadorGPNSolicitudes") == "True")
+        {
+            <div class="col item">
+                <a asp-controller="CoordinadorGestionPrecintosNacionales" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreCoordinadorGPNSolicitudes")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+    </div>
+
+
+
+
+    <div class="d-none" id="divBuscarEmpresa">
+        <button onclick="cerrarBuscar()" class="btn btn-light bg-transparent">
+            <span class="fa-solid fa-chevron-left"></span>
+        </button>
+        <div class="row justify-content-center d-flex text-center mb-2">
+            <div class="col-4">
+                <label for="sltTipoEmpresa" class="form-label">Tipo de establecimiento</label>
+                <select type="text" class="form-select" id="sltTipoEmpresa" placeholder="Tipo de establecimiento">
+                </select>
+                <span id="validacionsltTipoEmpresa" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-4">
+                <label for="sltTipoDocumento" class="form-label">Tipo de documento</label>
+                <select type="text" class="form-select" id="sltTipoDocumento" placeholder="Tipo de documento">
+                </select>
+                <span id="validacionsltTipoDocumento" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="col-4">
+                <label for="txtNumeroDocuemnto" class="form-label">Numero de documento</label>
+                <input type="text" class="form-control" id="txtNumeroDocuemnto" placeholder="Numero de documento">
+                <span id="validaciontxtNumeroDocuemnto" class="span-advertencia d-none">
+                    Campo
+                    Obligatorio
+                </span>
+            </div>
+        </div>
+        <div class="text-center w-100">
+            <button type="button" class="btn btn-primary col-1" onclick="buscarEntidad()" data-bs-toggle="modal"
+                    data-bs-target="#modalConfirmacion">
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"
+                      id="spinnerButton"></span>
+                Buscar
+            </button>
+        </div>
+    </div>
+
+</div>
+<div class="d-none" id="divBuscarEmpresahj">
+    <button onclick="cerrarBuscar2()" class="btn btn-light bg-transparent">
+        <span class="fa-solid fa-chevron-left"></span>
+    </button>
+    <div class="row justify-content-center d-flex text-center mb-2">
+        <div class="col-4">
+            <label for="empresaid" class="form-label required">Establecimiento</label>
+            <select class="form-select" id="empresaid">
+                <option value="" selected>Seleccione Establecimiento...</option>
+                <option value="0">Zoocriadero</option>
+                <option value="1">Comercializadora</option>
+                <option value="2">Manufacturera</option>
+                <option value="66">Curtiembre</option>
+            </select>
+            <span id="validacionsltTipoDocumento" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-4">
+            <label for="cvTipoDocumento" class="form-label required">Tipo de documento</label>
+            <select id="cvTipoDocumento" class="form-select">
+                <option value="" selected>Seleccione tipo de documento</option>
+                <option value="1">CEDULA</option>
+                <option value="2">PASAPORTE</option>
+                <option value="66">CEDULA DE EXTRANJERÍA</option>
+                <option value="88">TARJETA DE IDENTIDAD</option>
+                <option value="95">NIT</option>
+            </select>
+            <span id="validacionsltTipoDocumento" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-4">
+            <label for="cvtxtNumeroDocuemnto" class="form-label required">Numero de documento</label>
+            <input type="text" class="form-control" id="cvtxtNumeroDocuemnto" placeholder="Numero de documento">
+            <span id="validaciontxtNumeroDocuemnto" class="span-advertencia d-none">
+                Campo
+                Obligatorio
+            </span>
+        </div>
+    </div>
+    <div class="text-center w-100">
+        <button type="button" class="btn btn-primary col-1" onclick="buscarHoja()" data-bs-toggle="modal"
+                data-bs-target="#modalConfirmacion2">
+            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"
+                  id="spinnerButton"></span>
+            Buscar
+        </button>
+    </div>
+</div>
+<div class="modal fade" id="modalConfirmacion2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="mensaje2"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal" aria-label="Close"
+                                onclick="aceptarModal2()">
+                            Aceptar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalConfirmacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="mensaje"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal" aria-label="Close"
+                                onclick="aceptarModal()">
+                            Aceptar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var Cv = document.getElementById('Cv');
+    var mensaje = document.getElementById('mensaje');
+    var mensaje2 = document.getElementById('mensaje2');
+    var divOpciones = document.getElementById('divOpciones');
+    var divBuscarEmpresa = document.getElementById('divBuscarEmpresa');
+    var divRegistrarResolucion = document.getElementById('divRegistrarResolucion');
+    var divBuscarEmpresahj = document.getElementById('divBuscarEmpresahj');
+    var divHojadevida = document.getElementById('divHojadevida');
+    var txtNumeroDocuemnto = document.getElementById('txtNumeroDocuemnto');
+    var sltTipoDocumento = document.getElementById('sltTipoDocumento');
+    var cvTipoDocumento = document.getElementById('cvTipoDocumento');
+    var cvtxtNumeroDocuemnto = document.getElementById('cvtxtNumeroDocuemnto');
+    var empresaid = document.getElementById('empresaid');
+    let sltTipoEmpresa=document.getElementById('sltTipoEmpresa');
+    var siEncontroEntidad = false;
+    let spanUsario=document.getElementById('spanUsario');
+    var RegistrarResolucion = document.getElementById('RegistrarResolucion');
+    var siEncontroEntidad2 = false;
+    let precintosNacionalesUsuarioExtrerno=document.getElementById('precintosNacionalesUsuarioExtrerno');
+    let usuarioExterno=false;
+    let codigoEmpresa;
+    let nitEmpresa;
+
+    $(document).ready(async function () {
+        let url = '@Url.Action("ConsultDocumentsTypes", "NonTimberFloraCertificate")';
+        await traerTiposDocumento(sltTipoDocumento, url);
+        await traerTiposDocumento(sltTipoDocumento, url);
+        await trarTiposEntidades();
+        var usuario = '@ViewBag.usuario';
+        spanUsario.innerText=`Usuario: ${usuario}`;
+
+        //localizacion barra de navegacion
+        $(`.FlujoNegocio #padre`).addClass("active-within");
+        if('@ViewBag.validar' == 1){
+            limpiar();
+            ocultarElemento(divBuscarEmpresa, false);
+        }
+        if('@ViewBag.validar' == 2){
+            limpiar();
+            usuarioExterno=true;
+            ocultarElemento(divBuscarEmpresa, false);
+        }
+        if ('@ViewBag.cv' == 1) {
+            limpiar();
+            $(divBuscarEmpresahj).removeClass("d-none");
+        }
+    });
+
+    async function trarTiposEntidades(){
+        let url = '@Url.Action("ConsultEntityTypes", "RegistrarResolucion")';
+        let tipos = await Get(url);
+        sltTipoEmpresa.innerHTML=`<option value="0">Seleccione tipo establecimiento...</option>`;
+        tipos.forEach(el=>{
+            sltTipoEmpresa.innerHTML+=`<option value="${el.code}">${el.name}</option>`;
+        });
+    }
+
+    function limpiar() {
+        usuarioExterno=false;
+        ocultarElemento(divOpciones, true);
+        ocultarElemento(divBuscarEmpresa, true);
+        codigoEmpresa=0;
+        $(txtNumeroDocuemnto).val('');
+        $(sltTipoDocumento).val('0');
+    }
+
+    function cerrarBuscar() {
+        limpiar();
+        ocultarElemento(divOpciones, false);
+    }
+
+    async function buscarEntidad() {
+        
+        var url = `@Url.Action("ConsultEntityDates", "RegistrarResolucion")` + `?documentType=${$(sltTipoDocumento).val()}&nitBussines=${$(txtNumeroDocuemnto).val()}&entityType=${$(sltTipoEmpresa).val()}`;
+        let r = await Get(url);
+        if (r.length > 0) {
+            mensaje.innerText = 'El establecimiento SI se encuentra registrada';
+            siEncontroEntidad = true;
+        } else {
+            siEncontroEntidad = false;
+            mensaje.innerText = 'El establecimiento NO se encuentra registrada';
+        }
+        if(usuarioExterno){
+            codigoEmpresa=r[0].codigoEmpresa;
+            nitEmpresa=r[0].nit;
+        }
+        $('#modalConfirmacion').modal('show');
+    }
+
+    function aceptarModal() {
+        if (siEncontroEntidad) {
+            if(usuarioExterno){
+                url = `@Url.Action("TrayForNationalSealsExternUsers", "TrayForNationalSealsExternUsers")` + `?codigoEmpresa=${parseInt(codigoEmpresa)}&nitEmpresa=${parseInt(nitEmpresa)}`;
+                window.location = url;
+                return;
+            }
+            url = `@Url.Action("RegistrarResolucion", "RegistrarResolucion")` + `?documentType=${$(sltTipoDocumento).val()}&nitBussines=${$(txtNumeroDocuemnto).val()}`;
+            window.location = url;
+        }
+    }
+
+    $(RegistrarResolucion).click(function() {
+        limpiar();
+        ocultarElemento(divBuscarEmpresa, false);
+    });
+
+    $(precintosNacionalesUsuarioExtrerno).click(function() {
+        limpiar();
+        usuarioExterno=true;
+        ocultarElemento(divBuscarEmpresa, false);
+    });
+
+    function limpiar2() {
+        ocultarElemento(divOpciones, true);
+        ocultarElemento(divBuscarEmpresahj, true);
+        $(cvtxtNumeroDocuemnto).val('');
+        $(cvTipoDocumento).val('');
+    }
+
+    function cerrarBuscar2() {
+        limpiar2();
+        ocultarElemento(divOpciones, false);
+    }
+
+    async function buscarHoja() {
+        var url = `@Url.Action("Buscar", "Cv")` + `?documentypecv=${($(cvTipoDocumento).val())}&documentid=${parseInt($(cvtxtNumeroDocuemnto).val())}`;
+        let r = await Get(url);
+        if (r.length > 0) {
+            mensaje2.innerText = 'El establecimiento SI se encuentra registrada';
+            siEncontroEntidad2 = true;
+        } else {
+            siEncontroEntidad2 = false;
+            mensaje2.innerText = 'El establecimiento NO se encuentra registrada';
+        }
+        $('#modalConfirmacion2').modal('show');
+    }
+
+    async function aceptarModal2() {
+        if (siEncontroEntidad2) {
+            var empresas = ($(empresaid).val())
+            console.log(empresas)
+            if (empresas == 66) {
+                url = `@Url.Action("Index1", "Cv")` + `?documentypecv=${($(cvTipoDocumento).val())}&documentid=${parseInt($(cvtxtNumeroDocuemnto).val())}`;
+                window.location = url;
+
+            }
+             if (empresas == 2) {
+                url = `@Url.Action("Index1", "Cv")` + `?documentypecv=${($(cvTipoDocumento).val())}&documentid=${parseInt($(cvtxtNumeroDocuemnto).val())}`;
+                window.location = url;
+
+            }
+            if (empresas == 1) {
+
+                url = `@Url.Action("Index2", "Cv")` + `?documentypecv=${($(cvTipoDocumento).val())}&documentid=${parseInt($(cvtxtNumeroDocuemnto).val())}`;
+                window.location = url;
+
+            }
+            if (empresas == 0) {
+
+                url = `@Url.Action("Index", "Cv")` + `?documentypecv=${($(cvTipoDocumento).val())}&documentid=${parseInt($(cvtxtNumeroDocuemnto).val())}`;
+                window.location = url;
+
+            }
+
+        }
+    }
+
+    $(Cv).click(function () {
+        limpiar2();
+        $(divBuscarEmpresahj).removeClass("d-none");
+    });
+
+
+</script>

@@ -1,0 +1,609 @@
+﻿@model Web.Models.Technical;
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+<body>
+    <div class="row content">
+        <div class="col-md-8 resume">
+            <a asp-controller="Home" asp-action="Index">Modulo de CUPOS</a>  >   <a asp-controller="Home" asp-action="Administracion">Administración</a>  >   <strong>@Context.Session.GetString("NombreTecnica")</strong>
+        </div>
+        <div class="col-md-4 iconos">
+            <a type="button" class="btn btn-secondary" title="Ayuda" asp-action="Ayuda" asp-controller="AdministracionTecnica">AYUDA</a>
+            <a type="button" class="btn btn-secondary" title="Inicio" asp-action="Index" asp-controller="Home" >INICIO</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content-fluid">
+            <h2>@Context.Session.GetString("NombreTecnica")</h2>
+            <form method="post">
+                <div class="form-group row">
+                    <label class="col-form-label">Digitar el nombre del valor técnico</label>
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <input type="text" id="busqueda-admin-tecnica" class="col-12"/>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="boton-consultar-admin-tecnica btn btn-primary">CONSULTAR</button>
+                    </div>
+                </div>
+            </form>
+            <div class="col-12">
+                <button type="button" class="boton-agregar-valor btn btn-primary">Agregar Valor</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- Datatable Administracion tecnica -->
+<div class="tab-pane container" id="datatable">
+    <div class="table-responsive">
+        <table id="tabla-admin-tecnica" class="table tables-adminTecnica w-100">
+            <caption class="d-none">Table Description</caption>
+            <thead>
+                <tr>
+                    <th class="d-none"></th>
+                    <th class="th-mediumText">Nombre</th>
+                    <th class="th-shortText">Valor</th>
+                    <th class="th-mediumText">Descripción</th>
+                    <th class="th-shortText">Estado</th>
+                    <th class="th-shortText">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    if (Model.technicalList.Any())
+                    {
+                        foreach(var item in Model.technicalList)
+                        {
+                                        <tr>
+                                            <td class="d-none">@item.pkT007Codigo</td>
+                                            <td><p class='d-none'>@item.a007nombre</p><input type='text' class='login-datatable' value='@item.a007nombre' id="@("nombre" + item.pkT007Codigo)" readonly /></td>
+                                            <td><p class='d-none'>@item.a007valor</p><input type='text' class='login-datatable' value='@item.a007valor' id='@("valor"+ item.pkT007Codigo)' readonly /></td>
+                                            <td><p class='d-none'>@item.a007descripcion</p><input type='text' class='login-datatable' value='@item.a007descripcion' id='@("descripcion" + item.pkT007Codigo)' readonly /></td>
+                                            <td><select class='@("estado" + @item.pkT007Codigo)' id='@("estado" + @item.pkT007Codigo)' asp-items="@item.estate" disabled></select></td>
+                                            <td><a type="button" class="btn-editar-tabla" id="@("btnEditar" + @item.pkT007Codigo)">EDITAR</a><a type="button" class="btn-guardar-tabla d-none" 
+                                            id="@("btnGuardar" + @item.pkT007Codigo)">GUARDAR / </a>&nbsp<a type="button" class="btn-cerrar-tabla d-none" id="@("btnCerrar" + @item.pkT007Codigo)">CERRAR</a></td>
+                                        </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div> 
+</div>
+
+<!-- modal pregunta confirmacion actualizacion Datos -->
+<div class="modal fade" id="confirmacion-actualizar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro de que desea guardar la información?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="boton-si-cambiar btn btn-primary w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal mensaje cambio contraseña existoso -->
+<div class="modal fade" id="mensaje-Actvalor" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="modalText-mensaje-actValor"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="cerrar-modal btn btn-primary w-100" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal pregunta confirmacion eliminar Datos -->
+<div class="modal fade" id="confirmacion-eliminar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro de que desea eliminar la información?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="boton-si-eliminar btn btn-primary w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal mensaje eliminacion -->
+<div class="modal fade" id="mensaje-ElimValor" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="modalText-mensaje-ElimValor"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="cerrar-modal btn btn-primary w-100" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var datatable = document.getElementById("datatable");
+
+$(document).ready(async function() {
+    visualizarFondoProcesando();
+    inicializarDatatable();
+    $(`.Administracion #padre`).addClass("active-within");
+    $(`#AdministracionTecnica a`).addClass("active");
+    ocultarFondoProcesando();
+});
+
+$(".boton-consultar-admin-tecnica").click(async function() {
+    visualizarFondoProcesando();
+    var valor = $("#busqueda-admin-tecnica").val();
+    datatableAdminTecnica(valor);
+    ocultarFondoProcesando();
+});
+
+$(".boton-agregar-valor").click(function() {
+    document.location.href = "/AdministracionTecnica/AgregarValor";
+});
+
+$(".boton-si-cambiar").click(async function() {
+    visualizarFondoProcesando();
+    var id = sessionStorage.getItem("idAct");
+    var name = sessionStorage.getItem("nomAct");
+    var estate = sessionStorage.getItem("estAct");
+    var value = sessionStorage.getItem("valAct");
+    var description = sessionStorage.getItem("desAct");
+    var labelMensaje = document.getElementById("modalText-mensaje-actValor");
+
+    json = {
+        codigo : id,
+        nombre : name,
+        valor : value,
+        descripcion : description,
+        estadoRegistro : estate
+    }
+
+    $("#confirmacion-actualizar").modal("hide");
+
+    let url = "@Url.Action("Actualizar","AdministracionTecnica")";
+    let resp = await Get(url, json);
+    ocultarFondoProcesando();
+
+    labelMensaje.innerHTML = resp;
+    $("#mensaje-Actvalor").modal("show");
+});
+
+$(".cerrar-modal").click(function() {
+    $(".boton-consultar-admin-tecnica").click();
+});
+
+$(".boton-si-eliminar").click(async function() {
+    visualizarFondoProcesando();
+    var idEliminar = sessionStorage.getItem("idEliminar");
+    var labelMensajeEliminar = document.getElementById("modalText-mensaje-ElimValor");
+    $("#confirmacion-eliminar").modal("hide");
+
+    let url = "@Url.Action("Eliminar","AdministracionTecnica")";
+    let resp = await Get(url, { id: idEliminar });
+    ocultarFondoProcesando();
+    labelMensajeEliminar.innerHTML = resp;
+    $("#mensaje-ElimValor").modal("show");
+});
+
+async function inicializarDatatable() {
+    $tblRoles = $('#tabla-admin-tecnica').DataTable({
+        destroy: true,
+        scrollX: true,
+        lengthChange: true,
+        lengthMenu: [5, 10, 20, 50, 100],
+        paging: true,
+        info: true,
+        dom: "<'row'<'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+        language: {
+            lengthMenu: "Resultados pág. _MENU_",
+            search: '',
+            info: "_START_ de _TOTAL_ Resultados",
+            searchPlaceholder: "Buscar",
+            zeroRecords: "No se encontraron resultados",
+            infoEmpty: "0 al 0 Resultados",
+            paginate: {
+                previous: 'Anterior',
+                next: 'Siguiente'
+            }
+        }
+    });
+
+    $('#tabla-admin-tecnica tbody').on('click', '.btn-guardar-tabla', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var nom = $("#nombre" + data).val();
+        var est = $("#estado" + data).val();
+        var val = $("#valor" + data).val();
+        var des = $("#descripcion" + data).val();
+
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var editar = document.getElementsByClassName("btn-editar-tabla");
+        //var eliminar = document.getElementsByClassName("btn-eliminar-tabla");
+
+        ocultarElemento(guardarUno, true);
+        ocultarElemento(cerrarUno, true);
+        ocultarElemento(editar, false);
+        //ocultarElemento(eliminar, false);
+
+        if (est == "INACTIVO") {
+            estado1 = false;
+        }
+
+        if (est == "ACTIVO") {
+            estado1 = true;
+        }
+
+        sessionStorage.setItem("idAct", data);
+        sessionStorage.setItem("nomAct", nom);
+        sessionStorage.setItem("estAct", estado1);
+        sessionStorage.setItem("valAct", val);
+        sessionStorage.setItem("desAct", des);
+
+        var nombre = document.getElementById("nombre" + data);
+        nombre.setAttribute('readonly', 'readonly');
+
+        var valor = document.getElementById("valor" + data);
+        valor.setAttribute('readonly', 'readonly');
+
+        var descripcion = document.getElementById("descripcion" + data);
+        descripcion.setAttribute('readonly', 'readonly');
+
+        var lista = document.getElementById("estado" + data);
+        lista.setAttribute('disabled', 'disabled');
+
+        //var estado = document.getElementById("opcion2" + data);
+        //estado.setAttribute('disabled', 'disabled');
+
+        $("#confirmacion-actualizar").modal("show");
+    });
+
+    $('#tabla-admin-tecnica tbody').on('click', '.btn-cerrar-tabla', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        
+        $("#nombre" + data).val(sessionStorage.getItem("nomCancel"));
+        $("#valor" + data).val(sessionStorage.getItem("valCancel"));
+        $("#descripcion" + data).val(sessionStorage.getItem("desCancel"));
+        $("#estado" + data).val(sessionStorage.getItem("estCancel"));
+
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var editar = document.getElementsByClassName("btn-editar-tabla");
+        //var eliminar = document.getElementsByClassName("btn-eliminar-tabla");
+
+        ocultarElemento(guardarUno, true);
+        ocultarElemento(cerrarUno, true);
+        ocultarElemento(editar, false);
+        //ocultarElemento(eliminar, false);
+
+        var nombre = document.getElementById("nombre" + data);
+        nombre.setAttribute('readonly', 'readonly');
+
+        var valor = document.getElementById("valor" + data);
+        valor.setAttribute('readonly', 'readonly');
+
+        var descripcion = document.getElementById("descripcion" + data);
+        descripcion.setAttribute('readonly', 'readonly');
+
+        var lista = document.getElementById("estado" + data);
+        lista.setAttribute('disabled', 'disabled');
+
+        //var estado = document.getElementById("opcion2" + data);
+        //estado.setAttribute('disabled', 'disabled');
+    });
+
+    $('#tabla-admin-tecnica tbody').on('click', '.btn-editar-tabla', function() {
+        debugger
+        visualizarFondoProcesando();
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var nom = $("#nombre" + data).val();
+        var est = $("#estado" + data).val();
+        var val = $("#valor" + data).val();
+        var des = $("#descripcion" + data).val();
+
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var editar = document.getElementsByClassName("btn-editar-tabla");
+        //var eliminar = document.getElementsByClassName("btn-eliminar-tabla");
+
+        ocultarElemento(guardarUno, false);
+        ocultarElemento(cerrarUno, false);
+        ocultarElemento(editar, true);
+        //ocultarElemento(eliminar, true);
+        
+        var nombre = document.getElementById("nombre" + data);
+        var valor = document.getElementById("valor" + data);
+        var descripcion = document.getElementById("descripcion" + data);
+        //var estado = document.getElementById("opcion2" + data);
+        var lista = document.getElementById("estado" + data);
+
+        nombre.removeAttribute('readonly');
+        valor.removeAttribute('readonly');
+        descripcion.removeAttribute('readonly');
+        //estado.removeAttribute('disabled');
+        lista.removeAttribute('disabled');
+
+        $("#nombre" + data).css("border", "1px solid");
+        $("#valor" + data).css("border", "1px solid");
+        $("#descripcion" + data).css("border", "1px solid");
+        ocultarFondoProcesando();
+
+        sessionStorage.setItem("nomCancel", nom);
+        sessionStorage.setItem("estCancel", est);
+        sessionStorage.setItem("valCancel", val);
+        sessionStorage.setItem("desCancel", des);
+    });
+}
+
+async function datatableAdminTecnica(valor){
+    let url = "@Url.Action("filtroValor","AdministracionTecnica")";
+    let resp = await Get(url, { nombreValor: valor });
+
+    $tblRoles=$('#tabla-admin-tecnica').DataTable({
+        destroy: true,
+        scrollX: true,
+        lengthChange: true,
+        lengthMenu: [5, 10, 20, 50, 100],
+        paging: true,
+        info: true,
+        dom: "<'row'<'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+        language: { 
+            lengthMenu:"Resultados pág. _MENU_",
+            search: '', 
+            info:"_START_ de _TOTAL_ Resultados",
+            searchPlaceholder: "Buscar" ,
+            zeroRecords: "No se encontraron resultados",
+            infoEmpty:"0 al 0 Resultados",
+            paginate: {
+                previous: 'Anterior',
+                next:     'Siguiente'
+            }
+        },
+        data:resp,
+        columns:[
+            {
+                "data":"pkT007Codigo",
+                className:"d-none"
+            },
+            {
+                "data":"a007nombre",
+                render: function(data, type, row) {
+                    return `<p class='d-none'>${data}</p><input type='text' class='login-datatable' value='${data}' id='nombre${row.pkT007Codigo}' readonly></input>`
+                },
+            },
+            {
+                "data":"a007valor",
+                render: function(data, type, row) {
+                    return `<p class='d-none'>${data}</p><input type='text' class='login-datatable' value='${data}' id='valor${row.pkT007Codigo}' readonly></input>`
+                },
+            },
+            {
+                "data":"a007descripcion",
+                render: function(data, type, row) {
+                    return `<p class='d-none'>${data}</p><input type='text' class='login-datatable' value='${data}' id='descripcion${row.pkT007Codigo}' readonly></input>`
+                },
+            },
+            { 
+                "data":"a007estadoRegistro",
+                render: function(data, type, row){
+                    var option2 = "";
+                    if (data == "ACTIVO") {
+                        option2 = "INACTIVO";
+                    }
+                    else
+                    {
+                        option2 = "ACTIVO";
+                    }
+                    return `<select class='estado${row.pkT007Codigo}' id='estado${row.pkT007Codigo}' disabled><option id='opcion1${row.pkT007Codigo}' value=${data} selected>${data}</options><option id='opcion2${row.pkT007Codigo}' value=${option2} disabled>${option2}</options></select>`
+                },
+                className:"tb-admin-estados-body-tr-td"
+
+            },
+            {
+                render: function(data, type, row){
+                    return `<a type="button" class="btn-editar-tabla" id="btnEditar${row.pkT007Codigo}">EDITAR</a><a type="button" class="btn-guardar-tabla d-none" id="btnGuardar${row.pkT007Codigo}">GUARDAR / </a>&nbsp<a type="button" class="btn-cerrar-tabla d-none" id="btnCerrar${row.pkT007Codigo}">CERRAR</a>`
+                },
+                className:"tb-admin-estados-body-tr-td"
+            }
+        ],
+        columnDefs: [{
+            targets: 5
+        }]
+    });
+
+    var idDatatable = "#tabla-admin-tecnica";
+        agregarClasesDatatable(idDatatable);
+
+    $(".input-datatable-tecnica").css("border", "1px solid");
+
+    //$('#tabla-admin-tecnica tbody').on('click', '.btn-eliminar-tabla', function() {
+    //    var data = $(this).parents("tr").find("td")[0].innerText;
+
+    //    $("#confirmacion-eliminar").modal("show");
+
+    //    sessionStorage.setItem("idEliminar", data);
+    //});
+
+    $('#tabla-admin-tecnica tbody').on('click', '.btn-guardar-tabla', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var nom = $("#nombre" + data).val();
+        var est = $("#estado" + data).val();
+        var val = $("#valor" + data).val();
+        var des = $("#descripcion" + data).val();
+
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var editar = document.getElementsByClassName("btn-editar-tabla");
+        //var eliminar = document.getElementsByClassName("btn-eliminar-tabla");
+
+        ocultarElemento(guardarUno, true);
+        ocultarElemento(cerrarUno, true);
+        ocultarElemento(editar, false);
+        //ocultarElemento(eliminar, false);
+
+        if (est == "INACTIVO") {
+            estado1 = false;
+        }
+
+        if (est == "ACTIVO") {
+            estado1 = true;
+        }
+
+        sessionStorage.setItem("idAct", data);
+        sessionStorage.setItem("nomAct", nom);
+        sessionStorage.setItem("estAct", estado1);
+        sessionStorage.setItem("valAct", val);
+        sessionStorage.setItem("desAct", des);
+
+        var nombre = document.getElementById("nombre" + data);
+        nombre.setAttribute('readonly', 'readonly');
+
+        var valor = document.getElementById("valor" + data);
+        valor.setAttribute('readonly', 'readonly');
+
+        var descripcion = document.getElementById("descripcion" + data);
+        descripcion.setAttribute('readonly', 'readonly');
+
+        var lista = document.getElementById("estado" + data);
+        lista.setAttribute('disabled', 'disabled');
+
+        var estado = document.getElementById("opcion2" + data);
+        estado.setAttribute('disabled', 'disabled');
+
+        $("#confirmacion-actualizar").modal("show");
+    });
+
+    $('#tabla-admin-tecnica tbody').on('click', '.btn-cerrar-tabla', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        
+        $("#nombre" + data).val(sessionStorage.getItem("nomCancel"));
+        $("#valor" + data).val(sessionStorage.getItem("valCancel"));
+        $("#descripcion" + data).val(sessionStorage.getItem("desCancel"));
+        $("#estado" + data).val(sessionStorage.getItem("estCancel"));
+
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var editar = document.getElementsByClassName("btn-editar-tabla");
+        //var eliminar = document.getElementsByClassName("btn-eliminar-tabla");
+
+        ocultarElemento(guardarUno, true);
+        ocultarElemento(cerrarUno, true);
+        ocultarElemento(editar, false);
+        //ocultarElemento(eliminar, false);
+
+        var nombre = document.getElementById("nombre" + data);
+        nombre.setAttribute('readonly', 'readonly');
+
+        var valor = document.getElementById("valor" + data);
+        valor.setAttribute('readonly', 'readonly');
+
+        var descripcion = document.getElementById("descripcion" + data);
+        descripcion.setAttribute('readonly', 'readonly');
+
+        var lista = document.getElementById("estado" + data);
+        lista.setAttribute('disabled', 'disabled');
+
+        var estado = document.getElementById("opcion2" + data);
+        estado.setAttribute('disabled', 'disabled');
+    });
+
+    $('#tabla-admin-tecnica tbody').on('click', '.btn-editar-tabla', function() {
+        debugger
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var nom = $("#nombre" + data).val();
+        var est = $("#estado" + data).val();
+        var val = $("#valor" + data).val();
+        var des = $("#descripcion" + data).val();
+
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var editar = document.getElementsByClassName("btn-editar-tabla");
+        //var eliminar = document.getElementsByClassName("btn-eliminar-tabla");
+
+        ocultarElemento(guardarUno, false);
+        ocultarElemento(cerrarUno, false);
+        ocultarElemento(editar, true);
+        //ocultarElemento(eliminar, true);
+        
+        var nombre = document.getElementById("nombre" + data);
+        var valor = document.getElementById("valor" + data);
+        var descripcion = document.getElementById("descripcion" + data);
+        var estado = document.getElementById("opcion2" + data);
+        var lista = document.getElementById("estado" + data);
+
+        nombre.removeAttribute('readonly');
+        valor.removeAttribute('readonly');
+        descripcion.removeAttribute('readonly');
+        estado.removeAttribute('disabled');
+        lista.removeAttribute('disabled');
+
+        $("#nombre" + data).css("border", "1px solid");
+        $("#valor" + data).css("border", "1px solid");
+        $("#descripcion" + data).css("border", "1px solid");
+
+        sessionStorage.setItem("nomCancel", nom);
+        sessionStorage.setItem("estCancel", est);
+        sessionStorage.setItem("valCancel", val);
+        sessionStorage.setItem("desCancel", des);
+    });
+}
+</script>

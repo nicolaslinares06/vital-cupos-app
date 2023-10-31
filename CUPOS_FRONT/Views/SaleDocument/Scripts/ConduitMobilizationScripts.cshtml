@@ -1,0 +1,34 @@
+<script>
+var messageTextConfirmExit = document.getElementById('MessageTextConfirmExit');
+var nitTxt = document.getElementById('nitTxt');
+var conduitNumberTxt = document.getElementById('conduitNumberTxt');
+
+//Regresa a registrar documento de venta
+function Return(){
+    window.location.href = '@Url.Action("SaleDocumentForm", "SaleDocument")'
+    sessionStorage.setItem("tab", "shopper");
+}
+
+//Redirecciona a salvoconducto movilizacion
+function Redirect(){
+    window.location.href = `@Url.Action("ConduitMobilizationForm", "SaleDocument")?numeroIdentificacion=${nitTxt.value}&&numeroSalvoConducto=${conduitNumberTxt.value}`;
+}
+
+//Regresa a consulta salvoconducto movilizacion
+function ReturnExceptConduitMobilization(){
+    window.location.href = '@Url.Action("ExceptConduitMobilization", "SaleDocument")'
+}
+
+//Muestra mdal de confirmacion de salida
+function ConfirmExit(){
+    messageTextConfirmExit.innerText='¿Está seguro que desea salir? ';
+    $('#ConfirmModalExit').modal('show');        
+}
+
+//Salir a registro documento de venta 
+function ExitToSaleDocumentForm(param){
+    if(param){
+        window.location.href = '@Url.Action("SaleDocumentForm", "SaleDocument")'
+    }
+}
+</script>

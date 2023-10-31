@@ -1,0 +1,44 @@
+﻿@model Web.Models.EditVisitaActaCortes;
+
+
+<div class="row divContenedorDatoCITES">
+    <div class="form-group col-md-6">
+        <label class="form-label required" for="FuncionarioCITES">Funcionario Autoridad CITES</label>
+        <div>
+            <input type="text" value="@Model.FuncionarioAutoridadCitesNombre" class="form-control inputValidation" disabled />
+            <span class="SPANValidation span-advertencia" id="SPANFuncionarioCITES"></span>
+        </div>
+
+    </div>
+</div>
+<div class="row col-12 mb-3">
+    <div class="form-group col-md-6">
+        <label class="form-label required" for="NombreRepresentante">Nombre de representante del establecimiento</label>
+        <input type="text" class="form-control inputValidation" asp-for="RepresentanteEstablecimiento">
+        <span class="SPANValidation span-advertencia" id="SPANNombreRepresentante"></span>
+
+    </div>
+    <div class="form-group col-md-6">
+        <label class="form-label required" for="FechaVisitaCorte">Fecha Visita</label>
+        <input type="date" class="form-control inputValidation" asp-for="Fecha">
+        <span class="SPANValidation span-advertencia" id="SPANFechaVisitaCorte"></span>
+    </div>
+</div>
+
+<div class="row col-12 mb-3">
+    <div class="form-group col-md-6">
+        <label class="form-label required" for="Departamento">Departamento</label>
+
+        <div>
+            <select class="form-control inputValidation" asp-for="Departamento" asp-items="Model.Departamentos">   </select>
+        </div>
+        <span class="SPANValidation span-advertencia" id="SPANDepartamento"></span>
+    </div>
+    <div class="form-group col-md-6">
+        <label class="form-label required" for="Ciudad">Ciudad</label>
+        <div>
+            <select class="form-control inputValidation" asp-for="Ciudad" asp-items="Model.Ciudades">   </select>
+        </div>
+        <span class="SPANValidation span-advertencia" id="SPANCiudad"></span>
+    </div>
+</div>

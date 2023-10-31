@@ -1,0 +1,616 @@
+﻿@model CUPOS_FRONT.Models.Requests.Estados;
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+<body>
+    <div class="row content">
+        <div class="col-md-8 resume">
+            <a asp-controller="Home" asp-action="Index">Modulo de CUPOS</a>  >   <a asp-controller="Home" asp-action="Administracion">Administración</a>  >   <strong>@Context.Session.GetString("NombreEstados")</strong>
+        </div>
+        <div class="col-md-4 iconos">
+            <a type="button" class="btn btn-secondary" title="Ayuda" asp-action="Ayuda" asp-controller="AdministrarEstados">AYUDA</a>
+            <a type="button" class="btn btn-secondary" title="Inicio" asp-action="Index" asp-controller="Home" >INICIO</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content-fluid">
+            <h2>@Context.Session.GetString("NombreEstados")</h2>
+            <form method="post">
+                <div class="form-group row">
+                    <label class="col-md-5">Digitar el nombre de la actividad:</label>
+                    <label class="col-md-7">Estado:</label>
+                </div>
+                <div class="row">
+                    <div class="col-5">
+                        <input type="text" id="busqueda-estado" class="col-12"/>
+                    </div>
+                    <div class="col-5">
+                        <select id="select-estado" class="col-12">
+                            <option selected></option>
+                            <option value="ACTIVO">Activo</option>
+                            <option value="INACTIVO">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="boton-consultar-estados btn btn-primary">CONSULTAR</button>
+                    </div>
+                </div>
+            </form>
+            <div class="col-12">
+                <button type="button" class="boton-agregar-estado btn btn-primary">Agregar Actividad</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- Datatable Estados -->
+<div class="tab-pane container" id="datatable">
+    <div class="table-responsive">
+        <table id="tabla-admin-estados" class="table tables-estados col-12">
+            <caption class="d-none">Table Description</caption>
+            <thead>
+                <tr>
+                    <th class="d-none"></th>
+                    <th class="th-bigText">Actividad</th>
+                    <th class="th-bigText">descripción</th>
+                    <th class="th-shortText">Etapa</th>
+                    <th class="th-veryShortText">Posición</th>
+                    <th class="th-shortText">Estado</th>
+                    <th class="th-mediumText">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    if(Model.estateList.Any())
+                    {
+                        foreach(var item in Model.estateList)
+                        {
+                                <tr>
+                                    <td class="d-none">@item.pkT008codigo</td>
+                                    <td><p class='d-none'>@item.a008etapa</p><input type='text' class='etapaActividades login-datatable' value='@item.a008etapa' id='@("nombre" + item.pkT008codigo)' readonly /></td>
+                                    <td><p class='d-none'>@item.a008descripcion</p><input type='text' class='login-datatable' value='@item.a008descripcion' id='@("descripcion" + item.pkT008codigo)' readonly /></td>
+                                    <td><p class='d-none'>@item.a008codigoParametricaEstado</p><select class="form-control" id="@("estadoCert" + item.pkT008codigo)" asp-items="@item.stage" disabled></select></td>
+                                    <td><p class='d-none'>@item.a008posicion</p><input type='text' class='login-datatable' value='@item.a008posicion' id='@("posicion" + item.pkT008codigo)' readonly /></td>
+                                    <td><select class='@("estado" + @item.pkT008codigo)' id='@("estadoAct" + @item.pkT008codigo)' asp-items="@item.estate" disabled></select></td>
+                                    <td>
+                                        if (@item.a008estadoRegistro == "ACTIVO")
+                                        {
+                                            <p class='d-none'>@item.a008estadoRegistro</p><div class="btn-switch" id="@("btnSwitch" + item.pkT008codigo)"><input type="checkbox" name="btn-switch" id="@("label-switch" + item.pkT008codigo)" 
+                                            class="btn-checkbox-switch" checked /><label for="@("label-switch" + item.pkT008codigo)" class="btn-label-switch"></label></div><a type="button" class="btn-guardar-roles d-none" 
+                                            id="@("btnGuardar" + item.pkT008codigo)">GUARDAR</a> / <a type="button" class="btn-editar-roles" id="@("btnEditar" + item.pkT008codigo)">EDITAR</a><a type="button" 
+                                            class="btn-cerrar-roles d-none" id="@("btnCerrar"+ item.pkT008codigo)">CERRAR</a>
+                                        }
+                                        else
+                                        {
+                                            <p class='d-none'>@item.a008estadoRegistro</p><div class="btn-switch" id="@("btnSwitch" + item.pkT008codigo)"><input type="checkbox" name="btn-switch" id="@("label-switch" + item.pkT008codigo)" 
+                                            class="btn-checkbox-switch" /><label for="@("label-switch" + item.pkT008codigo)" class="btn-label-switch"></label></div><a type="button" class="btn-guardar-roles d-none" 
+                                            id="@("btnGuardar" + item.pkT008codigo)">GUARDAR</a> / <a type="button" class="btn-editar-roles" id="@("btnEditar" + item.pkT008codigo)">EDITAR</a><a type="button" 
+                                            class="btn-cerrar-roles d-none" id="@("btnCerrar"+ item.pkT008codigo)">CERRAR</a>
+                                        }
+                                    </td>
+                                </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div> 
+</div>
+
+<!-- modal pregunta confirmacion actualizacion Datos -->
+<div class="modal fade" id="confirmacion-actualizar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro de que desea guardar la informacion?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="boton-si-guardar-info btn btn-primary w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal mensaje cambio respuesta Actualizacion -->
+<div class="modal fade" id="mensaje-Actualizacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="modalText-actualizacion"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Activacion/Inactivacion -->
+<div class="modal fade" id="cambio-estado-rol" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="mensaje-estado-rol"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="si-cambiar-estado btn btn-primary w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="no-cambiar-estado btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal respuesta actualizacion de estados -->
+<div class="modal fade" id="resp-cambio-estado-rol" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="respuesta-cambio-estado"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="aceptar-activacion btn btn-primary w-100" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
+<script>
+var datatable = document.getElementById("datatable");
+
+$(document).ready(async function() {
+    visualizarFondoProcesando();
+    datatableAdminEstados();
+    $(`.Administracion #padre`).addClass("active-within");
+    $(`#AdministrarEstados a`).addClass("active");
+
+    //Realizar funcion autocomplete
+    $('.etapaActividades').autocomplete({
+        source: '/AdministrarEstados/BuscarEstados',
+        select: function (event, ui) {
+            $(".etapaActividades").val(ui.item.label);
+            return false;
+        }
+    });
+    ocultarFondoProcesando();
+});
+
+$(".boton-consultar-estados").click(async function() {
+    visualizarFondoProcesando();
+    var estado = $("#busqueda-estado").val();
+    var estadosReg = $("#select-estado").val();
+    datatableAdminEstados(estado, estadosReg);
+    ocultarFondoProcesando();
+});
+
+$(".boton-si-guardar-info").click(async function() {
+    visualizarFondoProcesando();
+    var codigo = sessionStorage.getItem("codigoActEst");
+    var nombre = sessionStorage.getItem("nombreActEst");
+    var estado = sessionStorage.getItem("estadoActEst");
+    var descripcion = sessionStorage.getItem("descripcionActEst");
+    var posicion = sessionStorage.getItem("PosicionActEst");
+    var estadoReg = sessionStorage.getItem("EstadoReg");
+    var modal = document.getElementById("modalText-actualizacion");
+
+    json = {
+        id : codigo,
+        position : posicion,
+        idEstate : estado,
+        description : descripcion,
+        stage : nombre,
+        estate : estadoReg
+    }
+
+    $("#confirmacion-actualizar").modal("hide");
+
+    let url = "@Url.Action("ActualizarEstado","AdministrarEstados")";
+    let resp = await Get(url, json);
+    ocultarFondoProcesando();
+
+    if(resp != null){
+        modal.innerHTML = resp;
+        $("#mensaje-Actualizacion").modal("show");
+    }
+});
+
+$(".si-cambiar-estado").click(async function() {
+    visualizarFondoProcesando();
+    var estado = sessionStorage.getItem("estadoRolActEstado");
+    var codigo = sessionStorage.getItem("idAct");
+    var nombre = sessionStorage.getItem("nomCheck");
+    var descripcion = sessionStorage.getItem("desCheck");
+    var estadoInt = sessionStorage.getItem("estCheck");
+    var posicion = sessionStorage.getItem("posCheck");
+    var respuestaModal = document.getElementById("respuesta-cambio-estado");
+    
+    json = {
+        estate : estado,
+        id : codigo,
+        position : posicion,
+        idEstate : estadoInt,
+        description : descripcion,
+        stage : nombre
+    }
+
+    let url = "@Url.Action("ActualizarEstado","AdministrarEstados")";
+    let resp = await Get(url, json);
+    ocultarFondoProcesando();
+    respuestaModal.innerHTML = resp;
+    $("#resp-cambio-estado-rol").modal("show");
+    $("#cambio-estado-rol").modal("hide");
+});
+
+$(".no-cambiar-estado").click(function() {
+    $("#cambio-estado-rol").modal("hide");
+    var idCheck = sessionStorage.getItem("idCheck");
+
+    if($(idCheck).prop('checked')){
+        $(idCheck).prop('checked', false);
+    }
+    else{
+        $(idCheck).prop('checked', true);
+    }
+
+});
+
+async function inicializarDatatable() {
+    $tblRoles=$('#tabla-admin-estados').DataTable({
+        destroy: true,
+        scrollX: true,
+        lengthChange: true,
+        lengthMenu:[5, 10, 20, 50, 100],
+        paging:true,
+        info: true,
+        dom: "<'row'<'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-9'l><'col-md-3'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+        language: { 
+            lengthMenu:"Resultados pág. _MENU_",
+            search: '', 
+            info:"_START_ de _TOTAL_ Resultados",
+            searchPlaceholder: "Buscar" ,
+            zeroRecords: "No se encontraron resultados",
+            infoEmpty:"0 al 0 Resultados",
+            paginate: {
+                previous: 'Anterior',
+                next:     'Siguiente'
+            }
+        }
+    });
+}
+
+async function datatableAdminEstados(estado, estadosReg) {
+    let url = "@Url.Action("filtroEstados","AdministrarEstados")";
+    let resp = await Get(url, { nombreEstado: estado, estadoRegistro: estadosReg});
+
+    let url2 = "@Url.Action("ConsultarEstadosCertificado","AdministrarEstados")";
+    let r = await Get(url2);
+
+    $tblRoles=$('#tabla-admin-estados').DataTable({
+        destroy: true,
+        scrollX: true,
+        lengthChange: true,
+        lengthMenu:[5, 10, 20, 50, 100],
+        paging:true,
+        info: true,
+        dom: "<'row'<'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-9'l><'col-md-3'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+        language: { 
+            lengthMenu:"Resultados pág. _MENU_",
+            search: '', 
+            info:"_START_ de _TOTAL_ Resultados",
+            searchPlaceholder: "Buscar" ,
+            zeroRecords: "No se encontraron resultados",
+            infoEmpty:"0 al 0 Resultados",
+            paginate: {
+                previous: 'Anterior',
+                next:     'Siguiente'
+            }
+        },
+        data:resp,
+        columns:[
+            {
+                "data":"pkT008codigo",
+                className:"d-none"
+            },
+            {
+                "data":"a008etapa",
+                render: function(data, type, row){
+                    return `<p class='d-none'>${data}</p><input type='text' class='etapaActividades login-datatable' value='${data}' id='nombre${row.pkT008codigo}' readonly></input>`
+                },
+                className:"tb-admin-estados-body-tr-td"
+            },
+            {
+                "data":"a008descripcion",
+                render: function(data, type, row){
+                    return `<p class='d-none'>${data}</p><input type='text' class='login-datatable' value='${data}' id='descripcion${row.pkT008codigo}' readonly></input>`
+                },
+                className:"tb-admin-estados-body-tr-td"
+            },
+            {
+                "data":"a008codigoParametricaEstado",
+                render: function(data, type, row){
+                    var select = `<p class='d-none'>${data}</p><select class='form-control' id='estadoCert${row.pkT008codigo}' disabled>`;
+                    r.forEach(el => {
+                        if (el.nombre == data) {
+                            select += `<option value='${el.nombre}' selected>${el.nombre}</option>`;
+                        }
+                        else {
+                            select += `<option value='${el.nombre}'>${el.nombre}</option>`;
+                        }
+                    });
+                    select += "</select>";
+                    return select
+                },
+                className:"tb-admin-estados-body-tr-td"
+            },
+            {
+                "data":"a008posicion",
+                render: function(data, type, row){
+                    return `<p class='d-none'>${data}</p><input type='text' class='login-datatable' value='${data}' id='posicion${row.pkT008codigo}' readonly></input>`
+                },
+                className:"tb-admin-estados-body-tr-td"
+            },
+            { 
+                "data":"a008estadoRegistro",
+                render: function(data, type, row){
+                    var option2 = "";
+                    if (data == "ACTIVO") {
+                        option2 = "INACTIVO";
+                    }
+                    else
+                    {
+                        option2 = "ACTIVO";
+                    }
+                    return `<select class='estado${row.pkT008codigo}' id='estadoAct${row.pkT008codigo}' disabled><option id='opcion1${row.pkT008codigo}' value=${data} selected>${data}</options><option id='opcion2${row.pkT008codigo}' value=${option2}>${option2}</options></select>`
+                },
+                className:"tb-admin-estados-body-tr-td"
+
+            },
+            {
+                "data":"a008estadoRegistro",
+                render: function(data, type, row){
+
+                    if (row.a008estadoRegistro == 'ACTIVO') {
+                        return `<p class='d-none'>${data}</p><div class="btn-switch" id="btnSwitch${row.pkT008codigo}"><input type="checkbox" name="btn-switch" id="label-switch${row.pkT008codigo}" class="btn-checkbox-switch" checked /><label for="label-switch${row.pkT008codigo}" class="btn-label-switch"></label></div><a type="button" class="btn-guardar-roles d-none" id="btnGuardar${row.pkT008codigo}">GUARDAR</a> / <a type="button" class="btn-editar-roles" id="btnEditar${row.pkT008codigo}">EDITAR</a><a type="button" class="btn-cerrar-roles d-none" id="btnCerrar${row.pkT008codigo}">CERRAR</a>`
+                    }
+                    else {
+                        return `<p class='d-none'>${data}</p><div class="btn-switch" id="btnSwitch${row.pkT008codigo}"><input type="checkbox" name="btn-switch" id="label-switch${row.pkT008codigo}" class="btn-checkbox-switch" /><label for="label-switch${row.pkT008codigo}" class="btn-label-switch"></label></div><a type="button" class="btn-guardar-roles d-none" id="btnGuardar${row.pkT008codigo}">GUARDAR</a> / <a type="button" class="btn-editar-roles" id="btnEditar${row.pkT008codigo}">EDITAR</a><a type="button" class="btn-cerrar-roles d-none" id="btnCerrar${row.pkT008codigo}">CERRAR</a>`
+                    }    
+                },
+                className:"tb-admin-estados-body-tr-td"
+            }
+        ],
+        columnDefs: [{
+            targets: 6
+        }]
+    });
+
+    var idDatatable = "#tabla-admin-estados";
+        agregarClasesDatatable(idDatatable);
+        
+    //Realizar funcion autocomplete
+    $('.etapaActividades').autocomplete({
+        source: '/AdministrarEstados/BuscarEstados',
+        select: function (event, ui) {
+            $(".etapaActividades").val(ui.item.label);
+            return false;
+        }
+    });
+
+    $('#tabla-admin-estados tbody').on('click', '.btn-editar-roles', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var nom = $("#nombre" + data).val();
+        var des = $("#descripcion" + data).val();
+        var est = $("#estadoCert" + data).val();
+        var pos = $("#posicion" + data).val();
+
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var editar = document.getElementsByClassName("btn-editar-roles");
+        var toogle = document.getElementsByClassName("btn-switch");
+
+        ocultarElemento(guardarUno, false);
+        ocultarElemento(cerrarUno, false);
+        ocultarElemento(editar, true);
+        ocultarElemento(toogle, true);
+        
+        var nombre = document.getElementById("nombre" + data);
+        var descripcion = document.getElementById("descripcion" + data);
+        var posicion = document.getElementById("posicion" + data);
+        var estate = document.getElementById(`estadoAct${data}`);
+        var estado = document.getElementById(`estadoCert${data}`);
+
+        nombre.removeAttribute('readonly');
+        estado.removeAttribute('disabled');
+        descripcion.removeAttribute('readonly');
+        posicion.removeAttribute('readonly');
+        estate.removeAttribute('disabled');
+
+        sessionStorage.setItem("nomCancel", nom);
+        sessionStorage.setItem("desCancel", des);
+        sessionStorage.setItem("estCancel", est);
+        sessionStorage.setItem("posCancel", pos);
+    });
+
+    $('#tabla-admin-estados tbody').on('click', '.btn-cerrar-roles', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var editar = document.getElementsByClassName("btn-editar-roles");
+        var toogle = document.getElementsByClassName("btn-switch");
+
+        ocultarElemento(guardarUno, true);
+        ocultarElemento(cerrarUno, true);
+        ocultarElemento(editar, false);
+        ocultarElemento(toogle, false);
+
+        var nombre = sessionStorage.getItem("nomCancel");
+        var descripcion = sessionStorage.getItem("desCancel");
+        var estado = sessionStorage.getItem("estCancel");
+        var posicion = sessionStorage.getItem("posCancel");
+
+        $("#nombre" + data).val(nombre);
+        $("#descripcion" + data).val(descripcion);
+        $("#estadoCert" + data).val(estado);
+        $("#posicion" + data).val(posicion);
+
+        var nombreinp = document.getElementById("nombre" + data);
+        nombreinp.setAttribute('readonly', 'readonly');
+
+        var descripcioninp = document.getElementById("descripcion" + data);
+        descripcioninp.setAttribute('readonly', 'readonly');
+
+        var estadoinp = document.getElementById("estadoCert" + data);
+        estadoinp.setAttribute('disabled', 'disabled');
+
+        var estate = document.getElementById(`estadoAct${data}`);
+        estate.setAttribute('disabled', 'disabled');
+
+        var posicioninp = document.getElementById("posicion" + data);
+        posicioninp.setAttribute('readonly', 'readonly');
+    });
+
+    $('#tabla-admin-estados tbody').on('click', '.btn-guardar-roles', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var editar = document.getElementsByClassName("btn-editar-roles");
+        var toogle = document.getElementsByClassName("btn-switch");
+
+        ocultarElemento(guardarUno, true);
+        ocultarElemento(cerrarUno, true);
+        ocultarElemento(editar, false);
+        ocultarElemento(toogle, false);
+
+        var nom = $("#nombre" + data).val();
+        var des = $("#descripcion" + data).val();
+        var est = $("#estadoCert" + data).val();
+        var pos = $("#posicion" + data).val();
+        var estado = $(".estado" + data).val();
+
+        if (estado == "INACTIVO") {
+            estado1 = false;
+        }
+
+        if (estado == "ACTIVO") {
+            estado1 = true;
+        }
+
+        sessionStorage.setItem("codigoActEst", data);
+        sessionStorage.setItem("nombreActEst", nom);
+        sessionStorage.setItem("estadoActEst", est);
+        sessionStorage.setItem("descripcionActEst", des);
+        sessionStorage.setItem("PosicionActEst", pos);
+        sessionStorage.setItem("EstadoReg", estado1);
+
+        var nombreinp = document.getElementById("nombre" + data);
+        nombreinp.setAttribute('readonly', 'readonly');
+
+        var descripcioninp = document.getElementById("descripcion" + data);
+        descripcioninp.setAttribute('readonly', 'readonly');
+
+        var estadoinp = document.getElementById("estadoCert" + data);
+        estadoinp.setAttribute('disabled', 'disabled');
+
+        var estate = document.getElementById(`estadoAct${data}`);
+        estate.setAttribute('disabled', 'disabled');
+
+        var posicioninp = document.getElementById("posicion" + data);
+        posicioninp.setAttribute('readonly', 'readonly');
+
+        $("#confirmacion-actualizar").modal("show");
+    });
+
+    $('#tabla-admin-estados tbody').on('click', '.btn-checkbox-switch', function () {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var idCheck = "#label-switch" + data;
+        var estado;
+        var nom = $("#nombre" + data).val();
+        var des = $("#descripcion" + data).val();
+        var est = $("#estadoCert" + data).val();
+        var pos = $("#posicion" + data).val();
+        var labelMensaje = document.getElementById("mensaje-estado-rol");
+
+        if($(idCheck).prop('checked')){
+            estado = true;
+        }
+        else{
+            estado = false;
+        }
+
+        if(estado == true){
+            labelMensaje.innerHTML = "¿Está seguro que desea activar el rol?";
+            $("#cambio-estado-rol").modal("show");
+        }
+        else{
+            labelMensaje.innerHTML = "¿Está seguro que desea inactivar el rol?";
+            $("#cambio-estado-rol").modal("show");
+        }
+
+        sessionStorage.setItem("estadoRolActEstado", estado);
+        sessionStorage.setItem("idCheck", idCheck);
+        sessionStorage.setItem("nomCheck", nom);
+        sessionStorage.setItem("desCheck", des);
+        sessionStorage.setItem("estCheck", est);
+        sessionStorage.setItem("posCheck", pos);
+        sessionStorage.setItem("idAct", data);
+    });
+}
+
+$(".boton-agregar-estado").click(function() {
+    document.location.href = "/AdministrarEstados/AgregarEstado";
+});
+
+$(".aceptar-activacion").click(function() {
+    $(".boton-consultar-estados").click();
+});
+</script>

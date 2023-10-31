@@ -1,0 +1,51 @@
+﻿<div class="container">
+    <div class="row mb-3 border border-secondary rounded p-4" id="divDatosEntidad">
+        <h3>Datos del Establecimiento</h3>
+        <div class="mb-1 mt-1 col-6">
+            <label for="ddlEntidad" class="form-label">Establecimiento <span id="reqddlEntidad" style='Color:red;'>*</span></label>
+            <select class="form-control" id="ddlEntidad" readonly></select>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtNit" class="form-label">Nit</label>
+            <input type="text" class="form-control" id="txtNit" placeholder="Nit" readonly>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtNombre" class="form-label">Nombre <span id="reqtxtNombre" style='Color:red;'>*</span></label>
+            <input type="text" class="form-control" id="txtNombre" placeholder="Nombre" maxlength="50">
+        </div>
+        <div class="mb-1 mt-1 col-6">
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="ddlPais" class="form-label">País</label>
+            <select class="form-control" id="ddlPais" onchange="ConsultDepartamentos(document.getElementById('ddlPais').value, null);"></select>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="ddlDepartamento" class="form-label">Departamento</label>
+            <select class="form-control" id="ddlDepartamento" onchange="ConsultCiudades(document.getElementById('ddlDepartamento').value, null);"></select>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="ddlCiudad" class="form-label">Ciudad/Municipio <span id="reqddlCiudad" style='Color:red;'>*</span></label>
+            <select class="form-control" id="ddlCiudad"></select>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtDireccion" class="form-label">Dirección <span id="reqtxtDireccion" style='Color:red;'>*</span></label>
+            <input type="text" class="form-control" id="txtDireccion" placeholder="Direccion" maxlength="50">
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtTelefono" class="form-label">Teléfono <span id="reqtxtTelefono" style='Color:red;'>*</span></label>
+            <input type="number" class="form-control" id="txtTelefono" placeholder="Telefono" maxlength="20">
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtCorreo" class="form-label">Correo <span id="reqtxtCorreo" style='Color:red;'>*</span></label>
+            <input type="email" class="form-control" id="txtCorreo" placeholder="Correo" maxlength="50">
+        </div>
+        <div class="row justify-content-center mt-3">
+            <button type="button" onclick="GuardarEntidad()" id="btnGuardarEntidad"
+                class="col-1 btn btn-primary m-2">Guardar</button>
+            <button type="button" onclick="ConfirVolver()" id="btnVolver"
+                class="col-1 btn btn-primary m-2">Cancelar</button>
+         </div>
+    </div>
+</div>

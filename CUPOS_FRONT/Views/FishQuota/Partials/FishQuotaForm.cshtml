@@ -1,0 +1,55 @@
+﻿<div class="row mt-2">
+    <div class="col-md-3 mb-1">
+        <label for="TypeSelectLbl" class="form-label required">Tipo</label>
+        <select name="TypeSelectTxt" id="TypeSelectTxt" class="Form-select" onchange="ShowFormTypeDiv()" required>
+            <option value="">Seleccione</option>
+            <option value="Continental - Agua Dulce">Continental - Agua Dulce</option>
+            <option value="Marino Costero">Marino Costero</option>
+        </select>   
+        <span id="ValidateType" class="span-advertencia d-none">Campo Obligatorio</span> 
+    </div>
+    <div class="col-md-3 mb-1">
+        <label for="NumberResolutionLbl" class="form-label required">Número resolución</label>                           
+        <input type="text" class="form-control" id="NumberResolutionTxt" placeholder="Número resolución" onkeypress="return OnlyNumberKey(event)" maxlength="20">     
+        <span id="ValidateNumberResolution" class="span-advertencia d-none">Campo Obligatorio</span> 
+    </div>   
+    <div class="col-md-2 mb-1">
+        <label for="ResolutionDateLbl" class="form-label required">Fecha resolución</label>
+        <input type="date" class="form-control" id="ResolutionDateTxt">
+        <span id="ValidateResolutionDate" class="span-advertencia d-none">Campo Obligatorio</span>                        
+    </div>                             
+    <div class="col-md-2 mb-1">
+            <label for="initialDateLbl" class="form-label required">Fecha Inicio</label>                           
+            <input type="date" class="form-control" id="InitialVigencyDateTxt">
+            <span id="ValidateVigencyInitial" class="span-advertencia d-none">Campo Obligatorio</span>                         
+    </div>   
+    <div class="col-md-2 mb-1">
+            <label for="finalDateLbl" class="form-label">Fecha Fin</label>                           
+            <input type="date" class="form-control" id="FinalVigencyDateTxt">
+            <span id="ValidateVigencyFinal" class="span-advertencia d-none">Campo Obligatorio</span>                         
+    </div>     
+</div>
+<div id="WaterSweetContinentalDiv">
+    <partial name="Partials/WaterSweetContinentalForm" />        
+</div>
+<div id="SailorDiv">
+    <partial name="Partials/SailorForm" />        
+</div>
+<div class="row mt-2">
+    <div class="col-md-12 mb-1">
+        <label for="ResolutionObjectLbl" class="form-label required">Objeto de la resolución</label>                           
+        <input type="textarea" class="form-control" id="ResolutionObjectTxt" maxlength="200">   
+        <span id="ResolutionObject" class="span-advertencia d-none">Campo Obligatorio</span>                        
+    </div>       
+    <div class="col-md-4 mb-1">        
+        <label class="form-label required">Documento soporte</label>
+        <label type="button" class="file text-center" for="fileMultipleFile" id="fileContenedorMultipleFile">
+            <p id="placeHolderMultipleFile"><span class="fas fa-paperclip"></span> Adjunte o arrastre aquí uno o varios documentos.</p>
+            <input type="file" id="fileMultipleFile">
+        </label>
+        <span id="ValidateFileMultipleFile" class="span-advertencia d-none">Campo Obligatorio</span>                         
+        <span id="spanFileMultipleFile" class="span-advertencia d-none"></span>
+        <div id="contenedorMultipleFile">
+        </div>        
+    </div> 
+</div>                

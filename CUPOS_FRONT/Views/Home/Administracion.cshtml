@@ -1,0 +1,100 @@
+﻿@{
+    Layout = "_LayoutBandejaReceptor";
+}
+<div class="container">
+    <div class="row home-opciones">
+        <h1>Administración</h1>
+        @if(Context.Session.GetString("ConsultarUsuario") == "True")
+        {
+            <div class="col item">
+                <a a asp-controller="Usuarios" asp-action="GestionUsuarios">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreUsuario")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if(Context.Session.GetString("ConsultarAuditoria") == "True")
+        {
+            <div class="col item">
+                <a a asp-controller="Auditoria" asp-action="GestionAuditoria">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreAuditoria")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if(Context.Session.GetString("ConsultarRoles") == "True")
+        {
+            <div class="col item">
+                <a a asp-controller="AdministrarRoles" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreRoles")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if(Context.Session.GetString("ConsultarEstados") == "True")
+        {
+            <div class="col item">
+                <a a asp-controller="AdministrarEstados" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreEstados")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if(Context.Session.GetString("ConsultarTecnica") == "True")
+        {
+            <div class="col item">
+                <a a asp-controller="AdministracionTecnica" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreTecnica")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if(Context.Session.GetString("ConsultarParametrica") == "True")
+        {
+            <div class="col item">
+                <a a asp-controller="Parametrica" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreParametrica")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if(Context.Session.GetString("ConsultarAsignacionRol") == "True")
+        {
+            <div class="col item">
+                <a a asp-controller="GestionAsignacionDeRoles" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreAsignacionRol")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+        @if(Context.Session.GetString("ConsultarDocumental") == "True")
+        {
+            <div class="col item">
+                <a a asp-controller="GestionDocumental" asp-action="Index">
+                    <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                    <h2>@Context.Session.GetString("NombreDocumental")</h2>
+                    <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    let spanUsario=document.getElementById('spanUsario');
+
+    $(document).ready(function(){
+        var usuario = '@ViewBag.usuario';
+        spanUsario.innerText=`Usuario: ${usuario}`;
+
+        //localizacion barra de navegacion
+        $(`.Administracion #padre`).addClass("active-within");
+    });
+</script>

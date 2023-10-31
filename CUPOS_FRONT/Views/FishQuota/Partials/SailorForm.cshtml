@@ -1,0 +1,112 @@
+﻿<hr>
+<div class="row mt-2">
+        <p id="DescriptionDiv">Establescase las cuotas globales de pesca:</p>
+        <h5 class="titulos-h5" id="TitleDivCS">Mar Caribe</h5>
+        <div class="col-md-4 mb-1" id="ResourceDivCS">
+            <label for="ResourceSelectLbl" class="form-label required">Recurso</label>
+            <select name="ResourceSelectTxtCS" id="ResourceTxtCS" class="form-control">
+                <option value="">Seleccione</option>
+            </select> 
+            <span id="ValidateResourceCS" class="span-advertencia d-none">Campo Obligatorio</span>                                    
+        </div>
+        <div class="col-md-4 mb-1" id="QuotaDivCS">
+            <label for="QuotaLbl" class="form-label required">Cuota</label>                           
+            <input type="text" class="form-control" id="QuotaTxtCS" onkeypress="return OnlyNumberKey(event)" maxlength="20">                    
+            <span id="ValidateQuotaCS" class="span-advertencia d-none">Campo Obligatorio</span>                                    
+        </div>    
+        <div class="col-md-4 mb-1" id="TotalDivCS">
+            <label for="TotalLbl" class="form-label required">Total</label>                           
+            <input type="text" class="form-control" id="TotalTxtCS" onkeypress="return OnlyNumberKey(event)" maxlength="20">        
+            <span id="ValidateTotalCS" class="span-advertencia d-none">Campo Obligatorio</span>                                    
+        </div>     
+        <div class="col-md-2 mb-1" id="SaveDivCS">
+            <button type="button" onclick="SaveFishQuotaAmount('caribbeanSea')" id="ConfirmSaveAmountBtn" class="btn btn-primary btn-bandeja-regresar m-2" title="Guardar cuotas globales para pesca">Guardar</button>
+        </div> 
+        <table id="CaribbeanSea" class="table w-100">
+            <caption class="d-none">Table Description</caption>
+            <thead>
+                <tr>
+                    <th class="d-none">Codigo</th>          
+                    <th class="d-none">Codigo especie</th>                                                         
+                    <th class="th-shortText">Recurso</th>                                                         
+                    <th class="th-shortText">Cuotas</th>                            
+                    <th class="th-shortText">Total</th>                                
+                    <th class="th-shortText" id="TitleTableActionsTxtCS">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>        
+        <h5 class="titulos-h5" id="TitleDivOP">Océano Pacífico</h5>
+        <div class="col-md-4 mb-1" id="ResourceDivOP">
+            <label for="ResourceSelectLbl" class="form-label required">Recurso</label>
+            <select name="ResourceSelectTxtOP" id="ResourceTxtOP" class="form-control">
+                <option value="">Seleccione</option>
+            </select>     
+            <span id="ValidateResourceOP" class="span-advertencia d-none">Campo Obligatorio</span>                                    
+        </div>
+        <div class="col-md-4 mb-1" id="QuotaDivOP">
+            <label for="QuotaLbl" class="form-label required">Cuota</label>                           
+            <input type="text" class="form-control" id="QuotaTxtOP" onkeypress="return OnlyNumberKey(event)" maxlength="20">                    
+            <span id="ValidateQuotaOP" class="span-advertencia d-none">Campo Obligatorio</span>                                    
+        </div>  
+        <div class="col-md-4 mb-1" id="TotalDivOP">
+            <label for="TotalLbl" class="form-label required">Total</label>                           
+            <input type="text" class="form-control" id="TotalTxtOP" onkeypress="return OnlyNumberKey(event)" maxlength="20">
+            <span id="ValidateTotalOP" class="span-advertencia d-none">Campo Obligatorio</span>                                    
+        </div>
+        <div class="col-md-2 mb-1" id="SaveDivOP">
+            <button type="button" onclick="SaveFishQuotaAmount('oceanPacific')" id="ConfirmSaveAmountBtn" class="btn btn-primary btn-bandeja-regresar m-2" title="Guardar cuotas globales para pesca">Guardar</button>
+        </div>  
+        <table id="OceanPacificTable" class="table w-100">
+            <caption class="d-none">Table Description</caption>
+            <thead>
+                <tr>
+                    <th class="d-none">Codigo</th>     
+                    <th class="d-none">Codigo especie</th>                                                         
+                    <th class="th-shortText">Recurso</th>                                                         
+                    <th class="th-shortText">Cuotas</th>                            
+                    <th class="th-shortText">Total</th>                                
+                    <th class="th-shortText" id="TitleTableActionsTxtOP">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table> 
+        <h5 class="titulos-h5" id="TitleDivAR">Archipiélago de San Andres, Providencia y Santa Catalina</h5>
+        <div class="col-md-4 mb-1" id="ResourceDivAR">
+            <label for="ResourceSelectLbl" class="form-label required">Recurso</label>
+            <select name="ResourceSelectTxtArc" id="ResourceTxtArc" class="form-control">
+                <option value="">Seleccione</option>
+            </select>                        
+            <span id="ValidateResourceARC" class="span-advertencia d-none">Campo Obligatorio</span>                                    
+        </div>    
+        <div class="col-md-4 mb-1" id="QuotaDivAR">
+            <label for="QuotaLbl" class="form-label required">Cuota</label>                           
+            <input type="text" class="form-control" id="QuotaTxtArc" onkeypress="return OnlyNumberKey(event)" maxlength="20">
+            <span id="ValidateQuotaARC" class="span-advertencia d-none">Campo Obligatorio</span>                                    
+        </div>    
+        <div class="col-md-4 mb-1" id="TotalDivAR">
+            <label for="TotalLbl" class="form-label required">Total</label>                           
+            <input type="text" class="form-control" id="TotalTxtArc" onkeypress="return OnlyNumberKey(event)" maxlength="20">        
+            <span id="ValidateTotalARC" class="span-advertencia d-none">Campo Obligatorio</span>                                    
+        </div> 
+        <div class="col-md-2 mb-1" id="SaveDivAR">
+            <button type="button" onclick="SaveFishQuotaAmount('archipelago')" id="ConfirmSaveAmountBtn" class="btn btn-primary btn-bandeja-regresar m-2" title="Guardar cuotas globales para pesca">Guardar</button>
+        </div>  
+        <table id="ArchipelagoTable" class="table w-100">
+        <caption class="d-none">Table Description</caption>
+            <thead>
+                <tr>
+                    <th class="d-none">Codigo</th>           
+                    <th class="d-none">Codigo especie</th>                                                         
+                    <th class="th-shortText">Recurso</th>                                                         
+                    <th class="th-shortText">Cuotas</th>                            
+                    <th class="th-shortText">Total</th>                                
+                    <th class="th-shortText" id="TitleTableActionsTxtAR">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>                                                      
+</div>

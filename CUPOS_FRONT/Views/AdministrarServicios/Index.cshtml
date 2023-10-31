@@ -1,0 +1,138 @@
+﻿@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<body>
+    <div class="row">
+        <div class="col-md-8 mt-2">
+            <a asp-controller="Home" asp-action="Index" title="Modulo de CUPOS">Modulo de CUPOS</a>  >
+            <a asp-controller="Home" asp-action="Administracion" title="Administración">Administración</a>  >
+            <strong>Administración de servicios</strong>
+        </div>
+        <div class="col-md-4 mt-2">
+            <a class="btn btn-secondary" type="button" asp-controller="" asp-action="Ayuda" title="Ayuda">AYUDA</a>
+            <a class="btn btn-secondary" type="button" asp-controller="Home" asp-action="Index" title="Inicio">INICIO</a>
+        </div>
+        <hr size="5" />
+        <h1>Administración de servicio</h1>
+    </div>
+    <div class="col-11 mx-auto mt-2">
+        <!-- data table -->
+        <div class="table-responsive">
+            <table id="tablaServcios" class="table w-100">
+                <caption class="d-none">Table Description</caption>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="th-bigText">Nombre Servicio</th>
+                        <th class="th-shortText">Estado Servicio</th>
+                        <th class="th-shortText">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4 row justify-content-center">
+            <div class="col-2">
+                <a class="btn btn-primary" type="button" asp-controller="Home" asp-action="Administracion" title="Volver">Regresar</a>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    $(document).ready(async function () {
+        visualizarFondoProcesando();
+        let servicios = [
+            {
+                nombre: "WS-CITES-011_Consultar Salvoconducto CITES - a SUNL",
+                url: "http://test-sunl-api.minambiente.gov.co/api/GetDataSUNL?SunlNumber=1234564&Identification=1",
+                estado: ""
+            },
+            {
+                nombre: "WS-CITES-012_Actualizar información de cupos,precintos y marquillas en Ventanilla CITES- A Cupos",
+                url: "",
+                estado: ""
+            },
+            {
+                nombre: "Acceso a servicio de autenticación VITAL",
+                url: "http://vital-api.minambiente.gov.co/docs",
+                estado: ""
+            }
+        ];
+
+        json = {
+            servicios: servicios
+        }
+
+        let url = "@Url.Action("EvaluarServicios","AdministrarServicios")";
+        let resp = await Get(url, json);
+        console.log(resp);
+        ocultarFondoProcesando();
+
+        $tablaServcios = $('#tablaServcios').DataTable({
+            searching: false,
+            destroy: true,
+            scrollX: true,
+            lengthChange: true,
+            lengthMenu: [5, 10, 20, 50, 100],
+            paging: true,
+            info: true,
+            dom:
+                "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+            language: {
+                lengthMenu: "Resultados pág. _MENU_",
+                info: "_START_ al _TOTAL_ Resultados",
+                search: "",
+                searchPlaceholder: "Buscar",
+                zeroRecords: "No se encontraron resultados",
+                infoEmpty: "0 al 0 Resultados",
+                paginate: {
+                    previous: "Anterior",
+                    next: "Siguiente",
+                },
+            },
+            data: resp,
+            columns: [
+                {
+                    "data": "nombre",
+                    className: "d-none"
+                },
+                {
+                    "data": "nombre"
+                },
+                {
+                    "data": "estado",
+                    render: function (data, type, row) {
+                        var colorDiv = "";
+                        if (data == "Sin conexión") {
+                            colorDiv = "danger";
+                            return `<div class="p-3 mb-2 bg-${colorDiv} text-${colorDiv} bg-opacity-75 text-white">SIN CONEXIÓN</div>`;
+                        } else {
+                            colorDiv = "success";
+                            return `<div class="p-3 mb-2 bg-${colorDiv} text-${colorDiv} bg-opacity-75 text-white">CONEXIÓN EXITOSA</div>`;
+                        }
+
+                    },
+                },
+                {
+                    "data": "estado",
+                    render: function (data, type, row) {
+                        return `<a class="button" href="AdministrarServicios/DetalleServicio?name=${row.nombre}">Ver</a>`;
+                    },
+                },
+            ],
+            columnDefs: [{
+                targets: 2
+            }]
+        });
+
+
+        if ($(`#tablaServcios`).find('tbody tr').length < 5) {
+            $('#tablaServcios_paginate').hide($('#tablaServcios_paginate thead'));
+        } else {
+            $('#tablaServcios_paginate').show();
+        }
+    });
+</script>

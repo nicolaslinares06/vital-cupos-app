@@ -1,0 +1,346 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Web</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/datatable/css/dataTables.bootstrap4.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/fontawesome/css/fontawesome.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatable/css/jquery-ui.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatable/css/buttons.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datepicker/css/bootstrap-datepicker.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" asp-append-version="true" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/datatable/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatable/js/dataTables.bootstrap4.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatable/js/dataTables.responsive.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatable/js/jquery-ui.js" asp-append-version="true"></script>
+    <script src="~/lib/datatable/js/dataTables.buttons.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatable/js/buttons.html5.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatable/js/pdfmake.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatable/js/jszip.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatable/js/vfs_fonts.js" asp-append-version="true"></script>
+    <script src="~/lib/datepicker/js/bootstrap-datepicker.min.js" asp-append-version="true"></script>
+    <script src="~/lib/select2/js/select2.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js" asp-append-version="true"></script>
+    <script src="~/lib/list/list.min.js" asp-append-version="true"></script>
+    <script src="~/lib/moment/moment.min.js" asp-append-version="true"></script>
+    <script src="~/lib/LoadingOverlay/dist/loadingoverlay.min.js" asp-append-version="true"></script>
+
+</head>
+
+<body>
+    <header>
+        <div class="header">
+            <div class="col-md-2 col-4 text-left">
+                <a href="https://www.gov.co/" target="_blank" title="Ir al portal GOV.CO"
+                   aria-label="Ir al portal GOV.CO">
+                    <img alt="logo GOV.CO" title="Ir al portal GOV.CO" src="~/images/logo.svg" class="logo-gov-co" />
+                </a>
+            </div>
+        </div>
+        <div class="main">
+            <div class="container">
+                <div class="col-md-5 logo-box">
+                    <span class="logo-cell"><img alt="image description" class="img-min-login" src="~/images/logo_cupos.jpeg" /></span>
+                    <span class="logo-cell"><img alt="image description" class="img-min-login" src="~/images/minambiente-logo.png" /></span>
+                </div>
+                <partial name="Partials/_MenuSuperior"></partial>
+            </div>
+        </div>
+        <div class="container-fluid barnav-box">
+            <ul class="barnav container" id="barraNavegacion">
+                <li class="barnav-cell Inicio"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+
+                @*<li class="barnav-cell Administracion" id="BarraNavegacionAdmin">
+                    <a id="padre" asp-controller="Home" asp-action="Administracion">Administración</a>
+                    <ul class="submenu">
+                        <li id="GestionUsuario"><a asp-controller="Usuarios" asp-action="GestionUsuarios">Gestion de usuarios</a></li>
+                        @if(Context.Session.GetString("ConsultarRoles") == "True")
+                        {
+                            <li id="AdministrarRoles"><a asp-controller="AdministrarRoles" asp-action="Index">Administración de roles</a></li>
+                        }
+                        @if(Context.Session.GetString("ConsultarAsignacionRol") == "True")
+                        {
+                            <li id="GestionAsignacionRoles"><a asp-controller="GestionAsignacionDeRoles" asp-action="Index">Gestion de solicitudes de asignación de rol</a></li>
+                        }
+                        @if(Context.Session.GetString("ConsultarEstados") == "True")
+                        {
+                            <li id="AdministrarEstados"><a asp-controller="AdministrarEstados" asp-action="Index">Administración de estados</a></li>
+                        }
+                        @if(Context.Session.GetString("ConsultarParametrica") == "True")
+                        {
+                            <li id="Parametrica"><a asp-controller="Parametrica" asp-action="Index">Administración de tablas paramétricas y reglas de negocio</a></li>    
+                            <li id="Parametrica"><a asp-controller="Parametrica" asp-action="Index">Administración de tablas paramétricas y reglas de negocio</a></li>    
+                        }
+                        @if(Context.Session.GetString("ConsultarAuditoria") == "True")
+                        {
+                            <li id="Auditoria"><a asp-controller="Auditoria" asp-action="GestionAuditoria">Gestión de auditoría</a></li>
+                        }
+                        <li id="GestionDocumental"><a asp-controller="" asp-action="">Gestión documental</a></li>
+                        <li id="AdministracionTecnica"><a asp-controller="AdministracionTecnica" asp-action="Index">Administración técnica</a></li>
+                    </ul>
+                </li>
+
+                <li class="barnav-cell FlujoNegocio" id="BarraNavegacionFlujoNegocio">
+                    <a id="padre" asp-controller="Home" asp-action="FlujoNegocio">Flujo de negocio</a>
+                    <ul class="submenu">
+                        <li id=""><a onclick="resolucionCupos()">Resoluciòn de asignaciòn de CUPOS</a></li>
+                        <li id=""><a asp-controller="SaleDocument" asp-action="SaleDocuments">Registro documentos de venta</a></li>
+                        <li id=""><a asp-controller="GestionEntidades" asp-action="Index">Gestionar entidad</a></li>
+                        <li id=""><a onclick="hojadevida()">Hoja de vida entidad</a></li>
+                        <li id=""><a asp-controller="NonTimberFloraCertificate" asp-action="NonTimberFloraCertificate">Certificacion flora no maderable</a></li>
+                        <li id=""><a asp-controller="FishQuota" asp-action="FishQuotas">Presoluciones peces nivel nacional</a></li>
+                        <li id=""><a asp-controller="ControlFishRequest" asp-action="ControlFishRequest">Resolucion peces para entidad</a></li>
+                        <li id=""><a asp-controller="PrecintosMarquillas" asp-action="Index">Consulta de precintos y marquillas</a></li>
+                        <li id=""><a asp-controller="" asp-action="">Bandeja de solicitud de precintos Nacionales - Usuario externo</a></li>
+                        <li id=""><a asp-controller="" asp-action="">Bandeja de trabajo usuario interno coordinador</a></li>
+                        <li id=""><a asp-controller="" asp-action="">Bandeja de trabajo de validacion de solicitud - precintos nacionales</a></li>
+                        <li id=""><a asp-controller="" asp-action="">Bandeja de trabajo de firma de la respuesta al solicitante - director</a></li>
+                        <li id=""><a asp-controller="RegistroVisitaDeCortes" asp-action="Index">Registro de acta de visita de cortes</a></li>
+                        <li id=""><a onclick="ManageCitesPermits()">Gestionar solicitudes de permisos CITES</a></li>
+                        <li id=""><a asp-controller="GestionPrencintosNacionales" asp-action="Index">Gestionar Prencintos Nacionales</a></li>
+                    </ul>
+                </li>*@
+
+                @*<li class="barnav-cell Reportes">
+                    <a id="padre" asp-controller="Home" asp-action="Reportes">Reportes</a>
+                    <ul class="submenu">*@
+                        @*<li id="ReporteAnual"><a asp-controller="" asp-action="">Reporte anual</a></li>
+                        <li id="ReporteCITES"><a asp-controller="" asp-action="">Reporte CITES</a></li>
+                        <li id="ReporteInspecciones"><a asp-controller="" asp-action="">Reporte inspecciones</a></li>
+                        <li id="ReporteCupos"><a asp-controller="" asp-action="">Reporte Cupos, Establecimientos y Marcaje</a></li>
+                    </ul>
+                </li>*@
+            </ul>
+        </div>
+    </header>
+    <div class="container">
+        <div id="accesibilidad-menu" class="accesibilidad-menu">
+            <ul class="accesibilidad-items">
+                <li>
+                    <a type="button" id="highContrast" class="d-flex" title="Cambiar niveles de contraste">
+                        <img src="~/images/channels-616_icon_contrast.svg" alt="Botón contraste" class="img-fluid">
+                        <span> Contraste </span>
+                    </a>
+                </li>
+                <li>
+                    <a type="button" id="a_less" class="d-flex" title="Reducir el tamaño del texto">
+                        <img src="~/images/channels-616_icon_less_size.svg" alt="Botón Reducir el tamaño del texto"
+                            class="img-fluid">
+                        <span> Reducir letra </span>
+                    </a>
+                </li>
+                <li>
+                    <a type="button" id="a_more" class="d-flex" title="Aumentar el tamaño del texto">
+                        <img src="~/images/channels-616_icon_more_size.svg" alt="Botón Aumentar tamaño del texto"
+                            class="img-fluid">
+                        <span> Aumentar letra </span>
+                    </a>
+                </li>
+                <li>
+                    <a type="button" id="c_relevo" href="https://centroderelevo.gov.co/632/w3-channel.html"
+                        target="_blank" class="d-flex" title="Ir a Centro de Relevo">
+                        <img src="~/images/channels-616_icon_centro_relevo.svg" alt="Botón Reducir el tamaño del texto"
+                            class="img-fluid">
+                        <span> Centro de relevo </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <main role="main">
+            <!-- Aca carga la pagina -->
+            @RenderBody()
+            <!-- Aca carga la pagina fin -->
+        </main>
+    </div>
+
+    <partial name="Partials/_Footer"></partial>
+
+    <script>
+        $(document).ready(async function () {
+            if (localStorage.getItem('highContrast') == 'dark') {
+                $("body").addClass("dark");
+            }
+            else {
+                $("body").removeClass("dark");
+            }
+            await crearBarraNavegacion();
+        });
+
+        $("#highContrast").on("click", function () {
+            if (!$("body").hasClass("dark")) {
+                $("body").addClass("dark");
+                localStorage.setItem('highContrast', 'dark');
+            } else {
+                $("body").removeClass("dark");
+                localStorage.setItem('highContrast', 'white');
+            }
+        });
+
+
+        $('#a_less').on('click', () => {
+            let fontSize = getFontSize();
+            if(fontSize>12){
+                document.documentElement
+                    .style.setProperty('--font-size', `${fontSize - 2}`)
+            }
+        })
+
+
+        $('#a_more').on('click', () => {
+            let fontSize = getFontSize();
+            if(fontSize<22){
+                document.documentElement
+                    .style.setProperty('--font-size', `${fontSize + 2}`)
+            }
+        });
+
+        const getFontSize = () =>
+            parseFloat(getComputedStyle(document.documentElement)
+                .getPropertyValue('--font-size'))
+
+        function resolucionCupos(){
+            url = `@Url.Action("FlujoNegocio", "Home")` + `?validar=1`;
+            window.location = url;
+        }
+        function hojadevida() {
+            url = `@Url.Action("FlujoNegocio", "Home")` + `?cv=1`;
+            window.location = url;
+        }
+        function GestionUsuarios(){
+            url = `@Url.Action("GestionUsuarios", "Usuarios")`;
+            window.location = url;
+        }
+        function AdministrarRoles(){
+            url = `@Url.Action("Index","AdministrarRoles")`;
+            window.location = url;
+        }
+        function GestionAsignacionRoles(){
+            url = `@Url.Action("Index","GestionAsignacionDeRoles")`;
+            window.location = url;
+        }
+        function AdministrarEstados(){
+            url = `@Url.Action("Index","AdministrarEstados")`;
+            window.location = url;
+        }
+        function AdministrarTablasParametricas(){
+            url = `@Url.Action("Index","Parametrica")`;
+            window.location = url;
+        }
+        function AdministrarServicios() {
+            url = `@Url.Action("Index","AdministrarServicios")`;
+            window.location = url;
+        }
+        function GestionAuditoria(){
+            url = `@Url.Action("GestionAuditoria","Auditoria")`;
+            window.location = url;
+        }
+        function GestionDocumental(){
+            url = `@Url.Action("Index","GestionDocumental")`;
+            window.location = url;
+        }
+        function AdministracionTecnica(){
+            url = `@Url.Action("Index","AdministracionTecnica")`;
+            window.location = url;
+        }
+        function RegistroDocumentosVenta(){
+            url = `@Url.Action("SaleDocuments","SaleDocument")`;
+            window.location = url;
+        }
+        function GestionarEntidad(){
+            url = `@Url.Action("Index","GestionEntidades")`;
+            window.location = url;
+        }
+        function FloraNoMaderable(){
+            url = `@Url.Action("NonTimberFloraCertificate","NonTimberFloraCertificate")`;
+            window.location = url;
+        }
+        function PresolucionesPecesNivelNacional(){
+            url = `@Url.Action("FishQuotas","FishQuota")`;
+            window.location = url;
+        }
+        function ResolucionPecesEntidad(){
+            url = `@Url.Action("ControlFishRequest","ControlFishRequest")`;
+            window.location = url;
+        }
+        function PrecintosMarquillas(){
+            url = `@Url.Action("Index","PrecintosMarquillas")`;
+            window.location = url;
+        }
+        function RegistroActaVisitaCortes(){
+            url = `@Url.Action("Index","RegistroVisitaDeCortes")`;
+            window.location = url;
+        }
+        function GestionarPermisosCITES(){
+            url = `@Url.Action("Index","ManageCitesPermits")`;
+            window.location = url;
+        }
+        function BandejaSolicitudPrecintosNacionales(){
+            url = `@Url.Action("FlujoNegocio", "Home")` + `?validar=2`;
+            window.location = url;
+        }
+
+        function CoordinadorGestionPrecintosNacionales(){
+            url = `@Url.Action("Index","CoordinadorGestionPrecintosNacionales")`;
+            window.location = url;
+        }
+        function Administracion(){
+            url = `@Url.Action("Administracion","Home")`;
+            window.location = url;
+        }
+        function FlujoNegocio(){
+            url = `@Url.Action("FlujoNegocio","Home")`;
+            window.location = url;
+        }
+        function Reportes() {
+            url = `@Url.Action("Reportes","Home")`;
+            window.location = url;
+        }
+        function GestionPrencintosNacionalesAnalista() {
+            url = `@Url.Action("Index","GestionPrencintosNacionales")`;
+            window.location = url;
+        }
+        function GestionPrencintosNacionalesDirector() {
+            url = `@Url.Action("Index","GestionPrencintosNacionalesDirector")`;
+            window.location = url;
+        }
+        function ReportesCupos() {
+            url = `@Url.Action("Index","QuotasReports")`;
+            window.location = url;
+        }
+        function ReportesEmpresasMarcaje() {
+            url = `@Url.Action("Index", "ReportesCuposEmpresasMarcaje")`;
+            window.location = url;
+        }
+        function ReportesPrecintos() {
+            url = `@Url.Action("Index", "ReportesPrecintos")`;
+            window.location = url;
+        }
+        function ReportesMarquillas() {
+            url = `@Url.Action("Index", "ReportesMarquillas")`;
+            window.location = url;
+        }
+
+        async function crearBarraNavegacion(){
+            let url = "@Url.Action("ConsultarRol","Home")";
+            let r = await Get(url);
+            var navAdmin = document.getElementById('barraNavegacion');
+            navAdmin.innerHTML += r[0];
+            navAdmin.innerHTML += r[1];
+            navAdmin.innerHTML += r[2];
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+
+</html>

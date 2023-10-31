@@ -1,0 +1,160 @@
+﻿@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<body>
+    <div class="row content">
+        <h2>Detalle registro auditoria</h2>
+        <div class="tab-pane container" id="datatable">
+            <div class="mt-2 table-responsive">
+                <table class="table table-detallesAuditoria w-100" id="tabla-control-cambios">
+                    <caption class="d-none">Table Description</caption>
+                    <thead>
+                        <tr>
+                            <th class="th-bigText">Nombre de campo</th>
+                            <th class="th-bigText">Nombre Registro</th>
+                            <th class="th-mediumText">Valor anterior</th>
+                            <th class="th-mediumText">Valor actual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="mt-2 row justify-content-center">
+            <div class="col-2">
+                <button type="button" class="btn-volver-auditoria btn btn-primary w-100">Volver</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- Modal Mensaje Detalle No Autorizado -->
+<div class="modal fade" id="fechas-incorrectas-auditoria" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<h2>Información</h2>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>El usuario no cuenta con los permisos para visualizar detalles de Auditoria</p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary cerrar-modal w-100" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".btn-volver-auditoria").click(function() {
+    document.location.href = "/Auditoria/GestionAuditoria"
+});
+
+$(document).ready(async function() {
+        visualizarFondoProcesando();
+    var data = '@ViewBag.FechaAuditoria';
+    let url = "@Url.Action("ConsultarDetalles","Auditoria")";
+    let resp = await Get(url, {fecha: data})
+    ocultarFondoProcesando();
+
+    $tblPendientes=$('#tabla-control-cambios').DataTable({
+        destroy: true,
+        scrollX: true,
+        lengthChange: true,
+        lengthMenu: [5, 10, 20, 50, 100],
+        paging: true,
+        info: true,
+        dom: `<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>`,
+        language: { 
+            lengthMenu:"Resultados pág. _MENU_",
+            search: '', 
+            info:"_START_ de _TOTAL_ Resultados",
+            searchPlaceholder: "Buscar" ,
+            zeroRecords: "No se encontraron resultados",
+            infoEmpty:"No se encontraron resultados",
+            paginate: {
+                previous: 'Anterior',
+                next:     'Siguiente'
+            }
+        },
+        data:resp,
+        columns:[
+            {
+                "data":"a013camposModificados",
+                className:"tb-control-cambios-body-tr-td"
+            },
+            {
+                "data": "a013registroModificado",
+                className:"tb-control-cambios-body-tr-td"
+            },
+            {
+                "data":"a013estadoAnterior",
+                render: function (data, type, row){
+                    var campo = row.a013camposModificados;
+                    if (campo.includes("estadoRegistro")) {
+                        var estado;
+                        if (data == "72") {
+                            estado = "Activo";
+                        }
+                        else if (data == "73") {
+                            estado = "Inactivo";
+                        }
+                        else {
+                            estado = data;
+                        }
+                        return estado;
+                    }
+                    else if (campo.includes("fecha")) {
+                        if (data == null || data == ""){
+                            return data;
+                        }
+                        return moment(data).format('yyyy-MM-DD');
+                    }
+                    return data;
+                },
+                className:"tb-control-cambios-body-tr-td"
+            },
+            {
+                "data":"a013estadoActual",
+                render: function (data, type, row){
+                    var campo = row.a013camposModificados;
+                    if (campo.includes("estadoRegistro")) {
+                        var estado;
+                        if (data == "72") {
+                            estado = "Activo";
+                        }
+                        else if (data == "73") {
+                            estado = "Inactivo";
+                        }
+                        else {
+                            estado = data;
+                        }
+                        return estado;
+                    }
+                    else if (campo.includes("fecha")) {
+                        debugger
+                        if (data == null || data == ""){
+                            return data;
+                        }
+                        return data.substr(0, 10);
+                    }
+                    return data;
+                },
+                className:"tb-control-cambios-body-tr-td"
+            }
+        ],
+        columnDefs: [{
+            targets: 3
+        }]
+    });
+});
+</script>

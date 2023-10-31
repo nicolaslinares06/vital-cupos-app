@@ -1,0 +1,286 @@
+﻿@{
+    Layout = "_LayoutBandejaReceptor";
+}
+<body>
+    <div class="row">
+        <div class="col-md-8 mt-2">
+            <a asp-controller="Home" asp-action="Index">Inicio</a>  >
+            <a asp-controller="Home" asp-action="Index">Iniciar Tramites</a>  >
+            <a asp-controller="Home" asp-action="FlujoNegocio">Modulo de Cupos Precintos y Marquillas</a>  >
+            <strong>Consulta de precintos y marquillas</strong>
+        </div>
+        <div class="col-md-4 text-center mt-2">
+            <a class="btn btn-secondary" type="button" asp-controller="PrecintosMarquillas" asp-action="Ayuda">AYUDA</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a class="btn btn-secondary"  asp-controller="Home" asp-action="Index">INICIO</a>
+        </div>
+    </div>
+    <div class="col-11 mx-auto py-2">
+        <h2>Consulta de precintos y marquillas</h2>
+        <hr size="5" />
+    </div>
+    <div class="col-11 mx-auto">
+        <div class="row">
+            <div class="col-md-3 mb-1">
+                <label for="tipoDocumentoEmpresa" class="form-label">Tipo documento del establecimiento</label>
+                <select id="tipoDocumentoEmpresa" class="form-control">
+                </select>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="numeroDocumentoEmpresa" class="form-label">Número documento del establecimiento</label>
+                <input type="number" class="form-control" id="numeroDocumentoEmpresa" placeholder=" Número documento del establecimiento" maxlength="25">
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="nombreEmpresa" class="form-label">Nombre del establecimiento</label>
+                <input type="text" class="form-control" id="nombreEmpresa" placeholder=" Nombre del establecimiento" maxlength="25">
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="numero" class="form-label">Número Radicado</label>
+                <input type="text" class="form-control" id="numero" placeholder=" Número" maxlength="25">
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="fechaInicial" class="form-label">Fecha Inicial</label>
+                <input type="date" class="form-control" id="fechaInicial">
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="fechaFinal" class="form-label">Fecha Final</label>
+                <input type="date" class="form-control" id="fechaFinal">
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="color" class="form-label">Color</label>
+                <select id="color" class="form-control">
+                </select>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="vigencia" class="form-label">Vigencia</label>
+                <select id="vigencia" class="form-control">
+                    <option value="" selected> Seleccione...</option>
+                </select>
+            </div>
+            <div class="mt-4 row justify-content-center">
+                <button type="button" class="btn btn-primary col-12" id="btnBuscar">Buscar</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-11 mx-auto py-2">
+        <hr size="5" />
+    </div>
+    <div class="col-11 mx-auto py-2">
+        <!-- data table -->
+        <div class="divConsultaTablaPrecintosMarquillas table-responsive d-none">
+            <table id="tablaPrecintosMarquillas" class="table w-100">
+                <caption class="d-none">Table Description</caption>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="th-mediumText">Tipo documento del establecimiento</th>
+                        <th class="th-mediumText">Número documento del establecimiento</th>
+                        <th class="th-mediumText">Nombre del establecimiento</th>
+                        <th class="th-mediumText">Número Radicado</th>
+                        <th class="th-mediumText">Número de Permiso CITES</th>
+                        <th class="th-mediumText">Fecha Inicial</th>
+                        <th class="th-mediumText">Fecha Final</th>
+                        <th class="th-mediumText">Nombre Especie</th>
+                        <th class="th-mediumText">Número Inicial</th>
+                        <th class="th-mediumText">Número Final</th>
+                        <th class="th-mediumText">Número Interno Inicial</th>
+                        <th class="th-mediumText">Número Interno Final</th>
+                        <th class="th-mediumText">Fecha Asignación</th>
+                        <th class="th-shortText">Cantidad</th>
+                        <th class="th-shortText">Vigencia</th>
+                        <th class="th-shortText">Color</th>
+                        <th class="th-shortText">Precintos Disponibles</th>
+                        <th class="th-shortText">Precintos Utilizados</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+<partial name="Modales/Modales.cshtml" />
+<script>
+    $(document).ready(function () {
+        // Genera las opciones de años
+        for (let i = 2023; i >= 2000; i--) {
+          let option = document.createElement("option");
+          option.value = i;
+          option.text = i;
+          document.getElementById("vigencia").appendChild(option);
+        }
+        //Select de TipoDocumentoEmpresa
+        $.ajax({
+            type: "POST",
+            url: "/PrecintosMarquillas/TipoDocumentoEmpresa",
+            success: function (response) {
+                console.log(response);
+                $('#tipoDocumentoEmpresa').html("").append(`<option value="" selected> Seleccione...</option>`);
+                $.each(response, (key, value) => {
+                    $('#tipoDocumentoEmpresa').append(`<option value="${value.a008Valor}">${value.a008Valor}</option>`);
+                });
+            }
+        })
+        //Select de colores
+        $.ajax({
+            type: "POST",
+            url: "/PrecintosMarquillas/Color",
+            success: function (response) {
+                $('#color').html("").append(`<option value="" selected> Seleccione...</option>`);
+                $.each(response, (key, value) => {
+                    $('#color').append(`<option value="${value.a008Valor}">${value.a008Valor}</option>`);
+                });
+            }
+        })
+
+    });
+    //Traer datos de consultas
+    $("#btnBuscar").click(async function () {
+        var tipoDocumentoEmpresa = $('#tipoDocumentoEmpresa').val();
+        var fechaInicial = $('#fechaInicial').val();
+        var numero = $('#numero').val();
+        var numeroDocumentoEmpresa = $('#numeroDocumentoEmpresa').val();
+        var fechaFinal = $('#fechaFinal').val();
+        var color = $('#color').val();
+        var nombreEmpresa = $('#nombreEmpresa').val();
+        var vigencia = $('#vigencia').val();
+
+        if (tipoDocumentoEmpresa == '' && fechaInicial == '' && numero == '' && numeroDocumentoEmpresa == '' &&
+            fechaFinal == '' && color == '' && nombreEmpresa == '' && vigencia == '') {
+            $('#datos-obligatorios').modal('show');
+        }
+        else {
+            $('.divConsultaTablaPrecintosMarquillas').removeClass("d-none");
+
+            var tipoDocumentoEmpresa = $("#tipoDocumentoEmpresa").val();
+            var fechaInicial = $("#fechaInicial").val();
+            var numero = $("#numero").val();
+            var numeroDocumentoEmpresa = $("#numeroDocumentoEmpresa").val();
+            var fechaFinal = $("#fechaFinal").val();
+            var color = $("#color").val();
+            var nombreEmpresa = $("#nombreEmpresa").val();
+            var vigencia = $("#vigencia").val();
+
+            let url = "@Url.Action("Filtrar","PrecintosMarquillas")";
+            let resp = await Get(url, {
+                tipoDocumento: tipoDocumentoEmpresa,
+                fechaInicial: fechaInicial,
+                numero: numero,
+                numeroDocumento: numeroDocumentoEmpresa,
+                fechaFinal: fechaFinal,
+                color: color,
+                nombreEmpresa: nombreEmpresa,
+                vigencia: vigencia
+            });
+            console.log(resp);
+            if (resp.length == 0) {
+                $('#datos-no-encontrados').modal('show');
+            }
+            else {
+                $tblPrecintosMarquillas = $('#tablaPrecintosMarquillas').DataTable({
+                    searching: true,
+                    destroy: true,
+                    scrollX: true,
+                    lengthChange: true,
+                    lengthMenu: [5, 10, 20, 50, 100],
+                    paging: true,
+                    info: true,
+                    dom:
+                        "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                        "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+                    language: {
+                        lengthMenu: "Resultados pág. _MENU_",
+                        info: "_START_ al _TOTAL_ Resultados",
+                        search: "",
+                        searchPlaceholder: "Buscar",
+                        zeroRecords: "No se encontraron resultados",
+                        infoEmpty: "0 al 0 Resultados",
+                        paginate: {
+                            previous: "Anterior",
+                            next: "Siguiente",
+                        },
+                    },
+                    data: resp,
+                    columns: [
+                        {
+                            "data": "pkV001CODIGO",
+                            className: "d-none"
+                        },
+                        { "data": "tipodocumento" },
+                        { "data": "numero" },
+                        { "data": "nombre" },
+                        { "data": "numeroradicado" },
+                        {
+                            "data": "numeropermisocites",
+                            render: function (data, type, row) {
+                                var numeropermisocites = '';
+                                return numeropermisocites;
+                            },
+                        },
+                        {
+                            "data": "fechainicial",
+                            render: function (data, type, row) {
+                                if (data != null) {
+                                    var fecha = data.split('T');
+                                    return fecha[0];
+                                } else {
+                                    return data;
+                                }
+                            },
+                        },
+                        {
+                            "data": "fechafinal",
+                            render: function (data, type, row) {
+                                if (data != null) {
+                                    var fecha = data.split('T');
+                                    return fecha[0];
+                                } else {
+                                    return data;
+                                }
+                            },
+                        },
+                        { "data": "especie" },
+                        { "data": "numeroinicial" },
+                        { "data": "numerofinal" },
+                        { "data": "numerointernoinicial" },
+                        { "data": "numerointernofinal" },
+                        {
+                            "data": "fechafinal",
+                            render: function (data, type, row) {
+                                if (data != null) {
+                                    var fecha = data.split('T');
+                                    return fecha[0];
+                                } else {
+                                    return data;
+                                }
+                            },
+                        },
+                        { "data": "cantidad" },
+                        {
+                            "data": "vigencia",
+                            render: function (data, type, row) {
+                                if (data != null) {
+                                    var fecha = data.split('T');
+                                    return fecha[0];
+                                } else {
+                                    return data;
+                                }
+                            },
+                        },
+                        { "data": "color" },
+                        { "data": "cuposdisponibles" },
+                        { "data": "cupostotal" }
+                    ]
+                });
+
+                $('#tablaPrecintosMarquillas_filter label').addClass('col-md-12 label-datatable');
+                $('#tablaPrecintosMarquillas_filter input').addClass('input-datatable');
+
+                if ($(`#tablaPrecintosMarquillas`).find('tbody tr').length < 5) {
+                    $('#tablaPrecintosMarquillas_paginate').hide($('#tablaPrecintosMarquillas_paginate thead'));
+                } else {
+                    $('#tablaPrecintosMarquillas_paginate').show();
+                }
+            }
+        }
+    });
+</script>

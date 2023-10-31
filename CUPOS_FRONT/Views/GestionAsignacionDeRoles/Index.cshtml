@@ -1,0 +1,329 @@
+﻿@model Web.Models.Roles;
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+<body>
+    <div class="row content">
+        <div class="col-md-8 resume">
+            <a asp-controller="Home" asp-action="Index">Modulo de CUPOS</a>  >   <a asp-controller="Home" asp-action="Administracion">Administración</a>  >   <strong>@Context.Session.GetString("NombreAsignacionRol")</strong>
+        </div>
+        <div class="col-md-4 iconos">
+            <a type="button" class="btn btn-secondary" title="Ayuda" asp-controller="" asp-action="" >AYUDA</></a>
+            <a type="button" class="btn btn-secondary" title="Inicio" asp-controller="Home" asp-action="Index" >INICIO</></a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content-fluid">
+            <h2>@Context.Session.GetString("NombreAsignacionRol")</h2>
+            <form method="post">
+                <div class="form-group row">
+                    <label class="col-form-label">Digitar el nombre de Usuario</label>
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <input type="text" id="busqueda-nombre-AsigRoles" class="col-12"/>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="boton-consultar-AsigRoles btn btn-primary">Consultar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+<!-- DataTable Asignacion Roles-->
+<div class="tab-pane container" id="datatable">
+    <div class="table-responsive">
+        <table id="tabla-asignacion-roles" class="table tables-asigRoles w-100">
+            <caption class="d-none">Table Description</caption>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th class="th-mediumText">Correo electrónico</th>
+                    <th class="th-shortText">Nombre</th>
+                    <th class="th-shortText">N° Identificación</th>
+                    <th class="th-shortText">Rol solicitado</th>
+                    <th class="th-veryShortText">Permisos</th>
+                    <th class="th-shortText">Solicitud</th>
+                    <th class="th-shortText">Acciones</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div> 
+</div>
+
+<!-- modal pregunta confirmacion eliminar Datos -->
+<div class="modal fade" id="confirmacion-editar-asig-rol" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro de que desea guardar la información?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="boton-si-editar btn btn-primary w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal mensaje eliminacion -->
+<div class="modal fade" id="mensaje-rolAsig" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="modalText-mensaje-rolAsig"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="aceptar-msj btn btn-primary w-100" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var datatable = document.getElementById("datatable");
+$(document).ready(async function() {
+    datatableAsigRoles();
+    $(`.Administracion #padre`).addClass("active-within");
+    $(`#GestionAsignacionRoles a`).addClass("active");
+});
+
+$(".boton-consultar-AsigRoles").click(async function() {
+    var Nombre = $("#busqueda-nombre-AsigRoles").val();
+    datatableAsigRoles(Nombre);
+});
+
+$(".boton-si-editar").click(async function() {
+    $("#confirmacion-editar-asig-rol").modal("hide");
+    var idt = sessionStorage.getItem("IdEstado");
+    var estado = sessionStorage.getItem("SelectEditar");
+    var msj = document.getElementById("modalText-mensaje-rolAsig");
+
+    json = {
+        id : idt,
+        estadoSolicitud : estado
+    }
+
+    let url = "@Url.Action("Actualizar","GestionAsignacionDeRoles")";
+    let resp = await Get(url, json);
+
+    msj.innerHTML = resp[0];
+    $("#mensaje-rolAsig").modal("show");
+});
+
+$(".aceptar-msj").click(function() {
+    $(".boton-consultar-AsigRoles").click();
+});
+
+async function datatableAsigRoles(Nombre) {
+    let url = "@Url.Action("filtroValor","GestionAsignacionDeRoles")";
+    let resp = await Get(url, { nombre: Nombre});
+
+    $tblRoles=$('#tabla-asignacion-roles').DataTable({
+        destroy: true,
+        scrollX: true,
+        lengthChange: true,
+        lengthMenu:[5,10,20,50,100],
+        info: true,
+        paging:true,
+        dom: "<'row'<'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+        language: { 
+            lengthMenu:"Resultados pág. _MENU_",
+            search: '', 
+            info:"_START_ de _TOTAL_ Resultados",
+            searchPlaceholder: "Buscar" ,
+            zeroRecords: "No se encontraron resultados",
+            infoEmpty:"0 al 0 Resultados",
+            paginate: {
+                previous: 'Anterior',
+                next:     'Siguiente'
+            }
+        },
+        data:resp,
+        columns:[
+            {
+                "data":"pkT0015codigo",
+                className:"d-none"
+            },
+            {
+                "data":"a012correoElectronico",
+                className:"tb-asignacion-roles-body-tr-td"
+            },
+            {
+                "data":"nombre",
+                className:"tb-asignacion-roles-body-tr-td"
+            },
+            {
+                "data":"a012identificacion",
+                className:"tb-asignacion-roles-body-tr-td"
+            },
+            { 
+                "data":"nombreRol",
+                className:"tb-asignacion-roles-body-tr-td"
+
+            },
+            {
+                render: function(data, type, row){
+                    return `<a type="button" class="btn-permisos" id="btnPermisos${row.pkT0015codigo}">ASIGNAR</a>`
+                },
+                className:"tb-asignacion-roles-body-tr-td"
+            },
+            {
+                "data":"a015estadoSolicitud",
+                render: function (data, type, row){
+                    var opcion2 = '';
+                    var opcion3 = '';
+                    if (data == 'Aceptado') {
+                        opcion2 = 'Pendiente';
+                        opcion3 = 'Rechazado';
+                    }
+                    else {
+                        if(data == 'Pendiente'){
+                            opcion2 = 'Aceptado';
+                            opcion3 = 'Rechazado';
+                        }
+                        else{
+                            opcion2 = 'Aceptado';
+                            opcion3 = 'Pendiente';
+                        }
+                    }
+                    return `<select id='EstadoSolicitudRol${row.pkT0015codigo}' class='selectEstados${row.pkT0015codigo}' disabled><option id='opcion1${row.pkT0015codigo}' value='${data}' selected>${data}</option><option id='opcion2${row.pkT0015codigo}' value='${opcion2}' disabled>${opcion2}</option><option id='opcion3${row.pkT0015codigo}' value='${opcion3}' disabled>${opcion3}</option></select>`
+                },
+                className:"tb-asignacion-roles-body-tr-td"
+            },
+            {
+                render: function(data, type, row){
+                    return `<a type="button" class="btn-editar-asignacion-roles" id="btnEditarAsigRoles">EDITAR</a><a type="button" class="btn-guardar-asignacion-roles d-none" id="btnGuardarAsigRoles${row.pkT0015codigo}">GUARDAR /</a>&nbsp<a type="button" class="btn-cerrar-asignacion-roles d-none" id="btnCerrarAsigRoles${row.pkT0015codigo}">CERRAR</a>`
+                },
+                className:"tb-asignacion-roles-body-tr-td"
+            },
+            {
+                "data":"codigoRol",
+                className:"d-none"
+            }
+        ],
+        columnDefs: [{
+            targets: 8
+        }]
+    });
+
+    var idDatatable = "#tabla-asignacion-roles";
+        agregarClasesDatatable(idDatatable);
+
+    $('#tabla-asignacion-roles tbody').on('click', '.btn-permisos', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var codRol = $(this).parents("tr").find("td")[8].innerText;
+        var nomRol = $(this).parents("tr").find("td")[4].innerText;
+        var estado = false;
+        
+        document.location.href = '/AdministrarRolesFuncionalidades/Index?rol=' + nomRol + '&cargo=' + nomRol + '&estado=' + estado + "&idRol=" + codRol;
+    });
+
+    $('#tabla-asignacion-roles tbody').on('click', '.btn-editar-asignacion-roles', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var valSelect = $(".selectEstados" + data).val();
+
+        var lista = document.getElementById('EstadoSolicitudRol' + data);
+        lista.removeAttribute('disabled');
+
+        var option2 = document.getElementById('opcion2' + data);
+        option2.removeAttribute('disabled');
+        
+        var option3 = document.getElementById('opcion3' + data);
+        option3.removeAttribute('disabled');
+
+        $(".selectEstados" + data).css("border", "2px solid #CECECE");
+        $(".selectEstados" + data).css("appearance", "auto");
+
+        var editar = document.getElementsByClassName("btn-editar-asignacion-roles");
+        ocultarElemento(editar, true);
+
+        var guardarUno = document.getElementById(`btnGuardarAsigRoles${data}`);
+        ocultarElemento(guardarUno, false);
+
+        var cerrarUno = document.getElementById(`btnCerrarAsigRoles${data}`);
+        ocultarElemento(cerrarUno, false);
+
+        sessionStorage.setItem("SelectCancel", valSelect);
+    });
+
+    $('#tabla-asignacion-roles tbody').on('click', '.btn-guardar-asignacion-roles', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var valSelect = $(".selectEstados" + data).val();
+
+        var editar = document.getElementById("btnEditarAsigRoles");
+        ocultarElemento(editar, false);
+
+        var guardarUno = document.getElementById(`btnGuardarAsigRoles${data}`);
+        ocultarElemento(guardarUno, true);
+
+        var cerrarUno = document.getElementById(`btnCerrarAsigRoles${data}`);
+        ocultarElemento(cerrarUno, true);
+
+        $(".selectEstados" + data).css("border", "none");
+        $(".selectEstados" + data).css("appearance", "none");
+
+        $("#confirmacion-editar-asig-rol").modal("show");
+
+        sessionStorage.setItem("SelectEditar", valSelect);
+        sessionStorage.setItem("IdEstado", data);
+    });
+
+    $('#tabla-asignacion-roles tbody').on('click', '.btn-cerrar-asignacion-roles', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var selectVal = sessionStorage.getItem("SelectCancel");
+
+        var lista = document.getElementById('EstadoSolicitudRol' + data);
+        lista.setAttribute('disabled', 'disabled');
+
+        var option2 = document.getElementById('opcion2' + data);
+        option2.setAttribute('disabled', 'disabled');
+        
+        var option3 = document.getElementById('opcion3' + data);
+        option3.setAttribute('disabled', 'disabled');
+
+        $('.selectEstados' + data).val(selectVal);
+        $(".selectEstados" + data).css("border", "none");
+        $(".selectEstados" + data).css("appearance", "none");
+
+        var editar = document.getElementsByClassName("btn-editar-asignacion-roles");
+        ocultarElemento(editar, false);
+
+        var guardarUno = document.getElementById(`btnGuardarAsigRoles${data}`);
+        ocultarElemento(guardarUno, true);
+
+        var cerrarUno = document.getElementById(`btnCerrarAsigRoles${data}`);
+        ocultarElemento(cerrarUno, true);
+
+    });
+}
+</script>

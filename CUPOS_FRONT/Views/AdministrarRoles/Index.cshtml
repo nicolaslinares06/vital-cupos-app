@@ -1,0 +1,778 @@
+﻿@model Web.Models.rolesList;
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+<body>
+    <div class="row content">
+        <div class="col-md-8 resume">
+            <a asp-controller="Home" asp-action="Index">Modulo de CUPOS</a>  >   <a asp-controller="Home" asp-action="Administracion">Administración</a>  >   <strong>@Context.Session.GetString("NombreRoles")</strong>
+        </div>
+        <div class="col-md-4 iconos">
+            <a type="button" class="btn btn-secondary" title="Ayuda" asp-action="Ayuda" asp-controller="AdministrarRoles">AYUDA</a>
+            <a type="button" class="btn btn-secondary" title="Inicio" asp-action="Index" asp-controller="Home">INICIO</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content-fluid">
+            <h2>@Context.Session.GetString("NombreRoles")</h2>
+            <form method="post">
+                <div class="form-group row mb-12">
+                    <label class="col-form-label col-md-5">Digitar el nombre del rol</label>
+                    <label class="col-form-label col-md-7">Estado</label>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <input type="text" id="busqueda-rol" class="col-12"/>
+                    </div>
+                    <div class="col-md-5">
+                        <select id="select-estado" class="col-12">
+                            <option value="" selected>Seleccionar</option>
+                            <option value="ACTIVO">Activo</option>
+                            <option value="INACTIVO">Inactivo</option></select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="boton-consultar btn btn-primary">CONSULTAR</button>
+                    </div>
+                </div>
+            </form>
+            <div class="col-12">
+                <button type="button" class="boton-agregar-rol btn btn-primary">AGREGAR ROL</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- DataTable -->
+<div class="tab-pane container" id="datatable">
+    <div class="table-responsive">
+        <table id="tabla-admin-roles" class="table tables-adminRoles w-100">
+            <caption class="d-none">Table Description</caption>
+            <thead>
+                <tr>
+                    <th class="d-none"></th>
+                    <th class="th-mediumText">Nombre de rol</th>
+                    <th class="th-mediumText">Cargo</th>
+                    <th class="th-shortText">Estado</th>
+                    <th class="d-none"></th>
+                    <th class="th-shortText">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    if (Model.rolsList.Any())
+                    {
+                        foreach (var item in Model.rolsList)
+                        {
+                            <tr>
+                                <td class="d-none">@item.id</td>
+                                <td><input type='text' class='login-datatable d-none' value='@item.name' id='@("rol" + item.id)' /><a type='button' class='nombre-rol' id='@("labelrol" + item.id)'>@item.name</a></td>
+                                <td><p class='d-none'>@item.cargo</p><input type='text' class='login-datatable' value='@item.cargo' id='@("cargo" + item.id)' readonly /></td>
+                                <td><select class="@("estado" + item.id)" id="@("estado" + item.id)" asp-items="@item.estate" disabled></select></td>
+                                <td class="d-none">@item.descripcion</td>
+                                <td>
+                                    @if (@item.estado == "ACTIVO")
+                                    {
+                                        <p class='d-none'>@item.estado</p><div class="btn-switch" id="@("btnSwitch" + item.id)"><input type="checkbox" name="btn-switch" id="@("label-switch" + item.id)" class="btn-checkbox-switch" checked />
+                                        <label for="@("label-switch" + item.id)" class="btn-label-switch"></label></div><a type="button" class="btn-guardar-roles d-none" id="@("btnGuardar" + item.id)">GUARDAR</a>  
+                                        <a type="button" class="btn-editar-roles" id="@("btnEditar" + item.id)">EDITAR</a><a type="button" class="btn-cerrar-roles d-none" id="@("btnCerrar" + item.id)">CERRAR</a>
+                                    }
+                                    else
+                                    {
+                                        <p class='d-none'>@item.estado</p><div class="btn-switch" id="@("btnSwitch" + item.id)"><input type="checkbox" name="btn-switch" id="@("label-switch" + item.id)" class="btn-checkbox-switch" />
+                                        <label for="@("label-switch" + item.id)" class="btn-label-switch"></label></div><a type="button" class="btn-guardar-roles d-none" id="@("btnGuardar" + item.id)">GUARDAR</a>  
+                                        <a type="button" class="btn-editar-roles" id="@("btnEditar" + item.id)">EDITAR</a><a type="button" class="btn-cerrar-roles d-none" id="@("btnCerrar" + item.id)">CERRAR</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div> 
+</div>
+
+<!-- Modal Activacion/Inactivacion -->
+<div class="modal fade" id="cambio-estado-rol" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="mensaje-estado-rol"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-primary boton-si-cambiar-estado w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary no-cambiar-estado w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal respuesta actualizacion de estados -->
+<div class="modal fade" id="resp-cambio-estado-rol" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="respuesta-cambio-estado"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn-aceptar btn btn-primary w-100" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal pregunta confirmacion actualizacion Datos -->
+<div class="modal fade" id="confirmacion-actualizar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro de que desea guardar la informacion?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-primary boton-si-guardar-info w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn-no-guardar-info btn btn-secondary w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal mensaje cambio respuesta Actualizacion -->
+<div class="modal fade" id="mensaje-Actualizacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Información</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="modalText-actualizacion"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn-aceptar btn btn-primary w-100" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var rol = document.getElementById("select-rol");
+
+$(document).ready(async function() {
+    visualizarFondoProcesando();
+    inicializarDatatable();
+    $(`.Administracion #padre`).addClass("active-within");
+    $(`#AdministrarRoles a`).addClass("active");
+    ocultarFondoProcesando();
+});
+
+$(".btn-aceptar").click(function() {
+    $(".boton-consultar").click();
+});
+
+$(".boton-consultar").click(async function() {
+    visualizarFondoProcesando();
+    var rol = $("#busqueda-rol").val();
+    var estado = $("#select-estado").val();
+
+    datatableAdminRoles(rol, estado);
+    ocultarFondoProcesando();
+});
+
+$(".boton-si-guardar-info").click(async function() {
+    visualizarFondoProcesando();
+    var data = sessionStorage.getItem("codigoRol");
+    var nombre = sessionStorage.getItem("nombreRol");
+    var estado = sessionStorage.getItem("estadoRol");
+    var cargo = sessionStorage.getItem("cargoRol");
+    var desc = sessionStorage.getItem("descripcionRol");
+    var modal = document.getElementById("modalText-actualizacion");
+
+    json = {
+        rolId : data,
+        name : nombre,
+        estate : estado,
+        position : cargo,
+        description : desc
+    }
+
+    $("#confirmacion-actualizar").modal("hide");
+
+    let url = "@Url.Action("ActualizarEstado","AdministrarRoles")";
+    let resp = await Get(url, json);
+    ocultarFondoProcesando();
+    if(resp != null){
+        modal.innerHTML = resp;
+        $("#mensaje-Actualizacion").modal("show");
+    }
+
+    var editar = document.getElementsByClassName(`btn-editar-roles`);
+    var toogle = document.getElementsByClassName(`btn-switch`);
+    var cerrarUno = document.getElementById(`btnCerrar${data}`);
+    var guardarUno = document.getElementById(`btnGuardar${data}`);
+
+    ocultarElemento(guardarUno, true);
+    ocultarElemento(cerrarUno, true);
+    ocultarElemento(editar, false);
+    ocultarElemento(toogle, false);
+
+    var nombre = $("#rol" + data).val();
+    var input = document.getElementById('rol' + data);
+    ocultarElemento(input, true);
+        
+    $("#labelrol" + data).val(nombre);
+    var nombrelabel = document.getElementById("labelrol" + data);
+    ocultarElemento(nombrelabel, false);
+
+    var lista = document.getElementById("estado" + data);
+    lista.setAttribute('disabled', 'readonly');
+
+    var cargo = document.getElementById(`cargo${data}`);
+    cargo.setAttribute('readonly', 'readonly');
+});
+
+$(".btn-no-guardar-info").click(function() {
+    //debugger
+    //var data = sessionStorage.getItem("IdData");
+    //var position = sessionStorage.getItem("cargoCancel");
+    //var estate = sessionStorage.getItem("estadoCancel");
+    //var name = sessionStorage.getItem("nomCancel");
+
+    //$(`#rol${data}`).val(name);
+    //$(`#cargo${data}`).val(position);
+    //$(`#estado${data}`).val(estate);
+});
+
+$(".boton-agregar-rol").click(function() {
+    document.location.href = "/AdministrarRoles/CrearRol"
+});
+
+$(".boton-si-cambiar-estado").click(async function() {
+    visualizarFondoProcesando();
+    var estado = sessionStorage.getItem("estadoRolActEstado");
+    var id = sessionStorage.getItem("idRolActEstado");
+    var respuestaModal = document.getElementById("respuesta-cambio-estado");
+    var nombre = sessionStorage.getItem("name");
+    var cargo = sessionStorage.getItem("cargo");
+    var descripcion = sessionStorage.getItem("descripcion");
+
+    json = {
+        rolId : id,
+        estate : estado,
+        position : cargo,
+        name : nombre,
+        description : descripcion
+    }
+
+    let url = "@Url.Action("ActualizarEstado","AdministrarRoles")";
+    let resp = await Get(url, json);
+    ocultarFondoProcesando();
+    respuestaModal.innerHTML = resp;
+    $("#resp-cambio-estado-rol").modal("show");
+    $("#cambio-estado-rol").modal("hide");
+});
+
+$(".no-cambiar-estado").click(function() {
+    $("#cambio-estado-rol").modal("hide");
+
+    var idCheck = sessionStorage.getItem("idCheck");
+
+    if($(idCheck).prop('checked')){
+        $(idCheck).prop('checked', false);
+    }
+    else{
+        $(idCheck).prop('checked', true);
+    }
+
+});
+
+async function inicializarDatatable() {
+    $tblRoles=$('#tabla-admin-roles').DataTable({
+        destroy: true,
+        scrollX: true,
+        lengthChange: true,
+        lengthMenu:[5,10,20,50,100],
+        info: true,
+        paging:true,
+        dom: "<'row'<'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-9'l><'col-md-3'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+        language: { 
+            lengthMenu:"Resultados pág. _MENU_",
+            search: '', 
+            info:"_START_ de _TOTAL_ Resultados",
+            searchPlaceholder: "Buscar" ,
+            zeroRecords: "No se encontraron resultados",
+            infoEmpty:"No se encontraron resultados",
+            paginate: {
+                previous: 'Anterior',
+                next:     'Siguiente'
+            }
+        }
+    });
+
+    var idDatatable = "#tabla-admin-roles";
+        agregarClasesDatatable(idDatatable);
+
+    $('#tabla-admin-roles tbody').on('click', '.nombre-rol', function() {
+        debugger
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var nombre = $(this).parents("tr").find("td")[1].innerText;
+        var cargo = $("#cargo" + data).val();
+        var estado = $("#estado" + data).val();
+
+        document.location.href = '/AdministrarRolesFuncionalidades/Index?rol=' + nombre + '&cargo=' + cargo + '&estado=' + estado + '&idRol=' + data;
+    });
+
+    $('#tabla-admin-roles tbody').on('click', '.btn-editar-roles', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var nom = $("#rol" + data).val();
+
+        var position = $(`#cargo${data}`).val();
+        var estate = $(`#estado${data}`).val();
+
+        sessionStorage.setItem("IdData", data);
+        sessionStorage.setItem("cargoCancel", position);
+        sessionStorage.setItem("estadoCancel", estate);
+
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        var editar = document.getElementsByClassName(`btn-editar-roles`);
+        var toogle = document.getElementsByClassName(`btn-switch`);
+
+        ocultarElemento(cerrarUno, false);
+        ocultarElemento(guardarUno, false);
+        ocultarElemento(editar, true);
+        ocultarElemento(toogle, true);
+        
+        var nombre = document.getElementById("rol" + data);
+        var nombrelabel = document.getElementById("labelrol" + data);
+        //var estado = document.getElementById("opcion2" + data);
+        var cargo = document.getElementById(`cargo${data}`);
+        
+        var lista = document.getElementById("estado" + data);
+        lista.removeAttribute('disabled');
+        cargo.removeAttribute('readonly');
+        ocultarElemento(nombre, false);
+        ocultarElemento(nombrelabel, true);
+        //estado.removeAttribute('disabled');
+        sessionStorage.setItem("nomCancel", nom);
+    });
+
+    $('#tabla-admin-roles tbody').on('click', '.btn-cerrar-roles', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        
+        var editar = document.getElementsByClassName(`btn-editar-roles`);
+        var toogle = document.getElementsByClassName(`btn-switch`);
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        
+        ocultarElemento(guardarUno, true);
+        ocultarElemento(cerrarUno, true);
+        ocultarElemento(editar, false);
+        ocultarElemento(toogle, false);
+
+        var nombre = sessionStorage.getItem("nomCancel");
+        var position = sessionStorage.getItem("cargoCancel");
+        var estate = sessionStorage.getItem("estadoCancel");
+
+        $(`#cargo${data}`).val(position);
+        $(`#estado${data}`).val(estate);
+
+        $("#rol" + data).val(nombre);
+
+        var input = document.getElementById('rol' + data);
+        ocultarElemento(input, true);
+        
+        var nombrelabel = document.getElementById("labelrol" + data);
+        ocultarElemento(nombrelabel, false);
+
+        var cargo = document.getElementById(`cargo${data}`);
+        cargo.setAttribute('readonly', 'readonly');
+
+        var lista = document.getElementById("estado" + data);
+        lista.setAttribute('disabled', 'readonly');
+
+        //var select = document.getElementById('opcion2' + data);
+        //select.setAttribute('disabled', 'readonly');
+    });
+
+    $('#tabla-admin-roles tbody').on('click', '.btn-guardar-roles', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+
+        //var editar = document.getElementsByClassName(`btn-editar-roles`);
+        //var toogle = document.getElementsByClassName(`btn-switch`);
+        //var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        //var guardarUno = document.getElementById(`btnGuardar${data}`);
+
+        //ocultarElemento(guardarUno, true);
+        //ocultarElemento(cerrarUno, true);
+        //ocultarElemento(editar, false);
+        //ocultarElemento(toogle, false);
+
+        var name = $("#rol" + data).val();
+        var cargo = $("#cargo" + data).val();
+        var desc = $(this).parents("tr").find("td")[4].innerText;
+        var idCheck = "#label-switch" + data;
+        var estado = $(".estado" + data).val();
+
+        if (estado == "INACTIVO") {
+            estado1 = false;
+        }
+        if (estado == "ACTIVO") {
+            estado1 = true;
+        }
+
+        sessionStorage.setItem("codigoRol", data);
+        sessionStorage.setItem("nombreRol", name);
+        sessionStorage.setItem("estadoRol", estado1);
+        sessionStorage.setItem("descripcionRol", desc);
+        sessionStorage.setItem("cargoRol", cargo);
+
+        //var nombre = $("#rol" + data).val();
+        //var input = document.getElementById('rol' + data);
+        //ocultarElemento(input, true);
+        
+        //$("#labelrol" + data).val(nombre);
+        //var nombrelabel = document.getElementById("labelrol" + data);
+        //ocultarElemento(nombrelabel, false);
+
+        //var lista = document.getElementById("estado" + data);
+        //lista.setAttribute('disabled', 'readonly');
+
+        //var cargo = document.getElementById(`cargo${data}`);
+        //cargo.setAttribute('readonly', 'readonly');
+
+        //var select = document.getElementById('opcion2' + data);
+        //select.setAttribute('disabled', 'readonly');
+
+        $("#confirmacion-actualizar").modal("show");
+    });
+
+    $('#tabla-admin-roles tbody').on('click', '.btn-checkbox-switch', function () {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var name = $("#rol" + data).val();
+        var cargo = $("#cargo" + data).val();
+        var desc = $(this).parents("tr").find("td")[4].innerText;
+        var idCheck = "#label-switch" + data;
+        var estado;
+        var labelMensaje = document.getElementById("mensaje-estado-rol");
+
+        if($(idCheck).prop('checked')){
+            estado = true;
+        }
+        else{
+            estado = false;
+        }
+
+        if(estado == true){
+            labelMensaje.innerHTML = "¿Está seguro que desea activar el rol?";
+            $("#cambio-estado-rol").modal("show");
+        }
+        else{
+            labelMensaje.innerHTML = "¿Está seguro que desea inactivar el rol?";
+            $("#cambio-estado-rol").modal("show");
+        }
+
+        sessionStorage.setItem("estadoRolActEstado", estado);
+        sessionStorage.setItem("idRolActEstado",data);
+        sessionStorage.setItem("name",name);
+        sessionStorage.setItem("cargo",cargo);
+        sessionStorage.setItem("descripcion",desc);
+        sessionStorage.setItem("idCheck", idCheck);
+    });
+}
+
+async function datatableAdminRoles(rol, estado) {
+    let url = "@Url.Action("filtroRoles","AdministrarRoles")";
+    let resp = await Get(url, { nombreRol: rol, valEstado: estado});
+
+    $tblRoles=$('#tabla-admin-roles').DataTable({
+        destroy: true,
+        scrollX: true,
+        lengthChange: true,
+        lengthMenu:[5,10,20,50,100],
+        info: true,
+        paging:true,
+        dom: "<'row'<'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-9'l><'col-md-3'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+        language: { 
+            lengthMenu:"Resultados pág. _MENU_",
+            search: '', 
+            info:"_START_ de _TOTAL_ Resultados",
+            searchPlaceholder: "Buscar" ,
+            zeroRecords: "No se encontraron resultados",
+            infoEmpty:"No se encontraron resultados",
+            paginate: {
+                previous: 'Anterior',
+                next:     'Siguiente'
+            }
+        },
+        data:resp,
+        columns:[
+            {
+                "data":"id",
+                className:"d-none"
+            },
+            {
+                "data":"name",
+                render: function(data, type, row) {
+                    return `<input type='text' class='login-datatable d-none' value='${data}' id='rol${row.id}'></input><a type='button' class='nombre-rol' id='labelrol${row.id}'>${data}</a>`
+                },
+                className:"tb-admin-roles-body-tr-td"
+            },
+            {
+                "data":"cargo",
+                render: function(data, type, row){
+                    return `<p class='d-none'>${data}</p><input type='text' class='login-datatable' value='${data}' id='cargo${row.id}' readonly></input>`
+                },
+                className:"tb-admin-roles-body-tr-td"
+            },
+            {
+                "data":"estado",
+                render: function(data, type, row) {
+                    var option2 = "";
+                    if (data == "ACTIVO") {
+                        option2 = "INACTIVO";
+                    }
+                    else {
+                        option2 = "ACTIVO";
+                    }
+                    return `<select class='estado${row.id}' id='estado${row.id}' disabled><option id='opcion1${row.id}' value='${data}' selected>${data}</option><option id='opcion2${row.id}' value='${option2}' disabled>${option2}</option></select>`
+                },
+                className:"tb-admin-roles-body-tr-td"
+            },
+            {
+                "data":"descripcion",
+                className:"d-none"
+            },
+            { 
+                "data": "estado",
+                render: function(data, type, row) {
+                    if (row.estado == "ACTIVO") {
+                        return `<p class='d-none'>${data}</p><div class="btn-switch" id="btnSwitch${row.id}"><input type="checkbox" name="btn-switch" id="label-switch${row.id}" class="btn-checkbox-switch" checked /><label for="label-switch${row.id}" class="btn-label-switch"></label></div><a type="button" class="btn-guardar-roles d-none" id="btnGuardar${row.id}">GUARDAR</a> / <a type="button" class="btn-editar-roles" id="btnEditar${row.id}">EDITAR</a><a type="button" class="btn-cerrar-roles d-none" id="btnCerrar${row.id}">CERRAR</a>`
+                    }
+                    else {
+                        return `<p class='d-none'>${data}</p><div class="btn-switch" id="btnSwitch${row.id}"><input type="checkbox" name="btn-switch" id="label-switch${row.id}" class="btn-checkbox-switch" /><label for="label-switch${row.id}" class="btn-label-switch"></label></div><a type="button" class="btn-guardar-roles d-none" id="btnGuardar${row.id}">GUARDAR</a> / <a type="button" class="btn-editar-roles" id="btnEditar${row.id}">EDITAR</a><a type="button" class="btn-cerrar-roles d-none" id="btnCerrar${row.id}">CERRAR</a>`
+                    }                 
+                },
+                className: "tb-admin-roles-body-tr-td"
+
+            }
+        ],
+        columnDefs: [{
+            targets: 5
+        }]
+    });
+
+    var idDatatable = "#tabla-admin-roles";
+        agregarClasesDatatable(idDatatable);
+
+    $('#tabla-admin-roles tbody').on('click', '.nombre-rol', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var nombre = $(this).parents("tr").find("td")[1].innerText;
+        var cargo = $("#cargo" + data).val();
+        var estado = $("#estado" + data).val();
+
+        document.location.href = '/AdministrarRolesFuncionalidades/Index?rol=' + nombre + '&cargo=' + cargo + '&estado=' + estado + '&idRol=' + data;
+    });
+
+    $('#tabla-admin-roles tbody').on('click', '.btn-editar-roles', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var nom = $("#rol" + data).val();
+
+        var position = $(`#cargo${data}`).val();
+        var estate = $(`#estado${data}`).val();
+
+        sessionStorage.setItem("IdData", data);
+        sessionStorage.setItem("cargoCancel", position);
+        sessionStorage.setItem("estadoCancel", estate);
+
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        var editar = document.getElementsByClassName(`btn-editar-roles`);
+        var toogle = document.getElementsByClassName(`btn-switch`);
+
+        ocultarElemento(cerrarUno, false);
+        ocultarElemento(guardarUno, false);
+        ocultarElemento(editar, true);
+        ocultarElemento(toogle, true);
+        
+        var nombre = document.getElementById("rol" + data);
+        var nombrelabel = document.getElementById("labelrol" + data);
+        var estado = document.getElementById("opcion2" + data);
+        var cargo = document.getElementById(`cargo${data}`);
+        
+        var lista = document.getElementById("estado" + data);
+        lista.removeAttribute('disabled');
+        cargo.removeAttribute('readonly');
+        ocultarElemento(nombre, false);
+        ocultarElemento(nombrelabel, true);
+        estado.removeAttribute('disabled');
+        sessionStorage.setItem("nomCancel", nom);
+    });
+
+    $('#tabla-admin-roles tbody').on('click', '.btn-cerrar-roles', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        
+        var editar = document.getElementsByClassName(`btn-editar-roles`);
+        var toogle = document.getElementsByClassName(`btn-switch`);
+        var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        var guardarUno = document.getElementById(`btnGuardar${data}`);
+        
+        ocultarElemento(guardarUno, true);
+        ocultarElemento(cerrarUno, true);
+        ocultarElemento(editar, false);
+        ocultarElemento(toogle, false);
+
+        var nombre = sessionStorage.getItem("nomCancel");
+        var position = sessionStorage.getItem("cargoCancel");
+        var estate = sessionStorage.getItem("estadoCancel");
+
+        $(`#cargo${data}`).val(position);
+        $(`#estado${data}`).val(estate);
+
+        $("#rol" + data).val(nombre);
+
+        var input = document.getElementById('rol' + data);
+        ocultarElemento(input, true);
+        
+        var nombrelabel = document.getElementById("labelrol" + data);
+        ocultarElemento(nombrelabel, false);
+
+        var cargo = document.getElementById(`cargo${data}`);
+        cargo.setAttribute('readonly', 'readonly');
+
+        var lista = document.getElementById("estado" + data);
+        lista.setAttribute('disabled', 'readonly');
+
+        var select = document.getElementById('opcion2' + data);
+        select.setAttribute('disabled', 'readonly');
+    });
+
+    $('#tabla-admin-roles tbody').on('click', '.btn-guardar-roles', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+
+        //var editar = document.getElementsByClassName(`btn-editar-roles`);
+        //var toogle = document.getElementsByClassName(`btn-switch`);
+        //var cerrarUno = document.getElementById(`btnCerrar${data}`);
+        //var guardarUno = document.getElementById(`btnGuardar${data}`);
+
+        //ocultarElemento(guardarUno, true);
+        //ocultarElemento(cerrarUno, true);
+        //ocultarElemento(editar, false);
+        //ocultarElemento(toogle, false);
+
+        var name = $("#rol" + data).val();
+        var cargo = $("#cargo" + data).val();
+        var desc = $(this).parents("tr").find("td")[4].innerText;
+        var idCheck = "#label-switch" + data;
+        var estado = $(".estado" + data).val();
+
+        if (estado == "INACTIVO") {
+            estado1 = false;
+        }
+        if (estado == "ACTIVO") {
+            estado1 = true;
+        }
+
+        sessionStorage.setItem("codigoRol", data);
+        sessionStorage.setItem("nombreRol", name);
+        sessionStorage.setItem("estadoRol", estado1);
+        sessionStorage.setItem("descripcionRol", desc);
+        sessionStorage.setItem("cargoRol", cargo);
+
+        //var nombre = $("#rol" + data).val();
+        //var input = document.getElementById('rol' + data);
+        //ocultarElemento(input, true);
+        
+        //$("#labelrol" + data).val(nombre);
+        //var nombrelabel = document.getElementById("labelrol" + data);
+        //ocultarElemento(nombrelabel, false);
+
+        //var lista = document.getElementById("estado" + data);
+        //lista.setAttribute('disabled', 'readonly');
+
+        //var cargo = document.getElementById(`cargo${data}`);
+        //cargo.setAttribute('readonly', 'readonly');
+
+        //var select = document.getElementById('opcion2' + data);
+        //select.setAttribute('disabled', 'readonly');
+
+        $("#confirmacion-actualizar").modal("show");
+    });
+
+    $('#tabla-admin-roles tbody').on('click', '.btn-checkbox-switch', function () {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var name = $("#rol" + data).val();
+        var cargo = $("#cargo" + data).val();
+        var desc = $(this).parents("tr").find("td")[4].innerText;
+        var idCheck = "#label-switch" + data;
+        var estado;
+        var labelMensaje = document.getElementById("mensaje-estado-rol");
+
+        if($(idCheck).prop('checked')){
+            estado = true;
+        }
+        else{
+            estado = false;
+        }
+
+        if(estado == true){
+            labelMensaje.innerHTML = "¿Está seguro que desea activar el rol?";
+            $("#cambio-estado-rol").modal("show");
+        }
+        else{
+            labelMensaje.innerHTML = "¿Está seguro que desea inactivar el rol?";
+            $("#cambio-estado-rol").modal("show");
+        }
+
+        sessionStorage.setItem("estadoRolActEstado", estado);
+        sessionStorage.setItem("idRolActEstado",data);
+        sessionStorage.setItem("name",name);
+        sessionStorage.setItem("cargo",cargo);
+        sessionStorage.setItem("descripcion",desc);
+        sessionStorage.setItem("idCheck", idCheck);
+    });
+}
+</script>

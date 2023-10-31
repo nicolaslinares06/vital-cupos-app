@@ -1,0 +1,70 @@
+<div class="container">
+    <div class="row mb-3" id="divCertificado">
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtAutoridadEmiteCertificado" class="form-label required">Autoridad ambiental que emite certificado</label>
+            <select type="text" class="form-select" id="txtAutoridadEmiteCertificado">
+
+            </select>
+            <span id="validaciontxtAutoridadEmiteCertificado" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtNumeroCertificacion" class="form-label required">Número de certificación</label>
+            <input type="text" class="form-control" id="txtNumeroCertificacion" placeholder="Número de certificación">
+            <span id="validaciontxtNumeroCertificacion" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtFechaCertificacion" class="form-label required">Fecha de certificación</label>
+            <input type="date" class="form-control" id="txtFechaCertificacion" placeholder="Fecha de certificación">
+            <span id="validaciontxtFechaCertificacion" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label for="txtVigenciaCertificacion" class="form-label required">Vigencia de certificación</label>
+            <input type="date" class="form-control" id="txtVigenciaCertificacion" placeholder="Vigencia de certificación">
+            <span id="validaciontxtVigenciaCertificacion" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="mb-1 mt-1 col-6">
+            <label class="form-label required" for="chksTipoPermiso">Tipo de permiso</label>
+            <div id="chksTipoPermiso" class="text-center">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="chksTipoPermisoImportacion" id="chksTipoPermisoImportacion" value="48">
+                    <label class="form-check-label" for="chksTipoPermisoImportacion">Importación</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="chksTipoPermisoExportacion" id="chksTipoPermisoExportacion" value="47">
+                    <label class="form-check-label" for="chksTipoPermisoExportacion">Exportación</label>
+                </div>
+            </div>
+            <span id="validacionchksTipoPermiso" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        
+        <div class="mb-1 mt-1 col-6">
+            <label class="form-label required">Tipo de especímenes o productos a importar o exportar</label>
+            <div class="marginL-25">
+                <div id="divChecksTipoEspecímenesProductosImpExp">
+                </div>
+            </div>
+            <span id="validacionTipoEspecímenesProductosImpExp" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+
+        <div class="mb-1 mt-1 col-6">
+            <div id="divAdjuntoArrastreArchivo">
+                <label class="form-label required">Documento de Soporte</label>
+                <label type="button" class="file text-center" for="formFileSoporte" id="fileContenedorMultipleFile">
+                    <p id="placeHolderMultipleFile">
+                        <span class="fas fa-paperclip"></span> Adjunte o arrastre aquí uno o varios
+                        documentos.
+                    </p>
+                    <input type="file" id="formFileSoporte">
+                </label>
+                <span class="span-advertencia d-none" id="spanAdjuntos"></span>
+            </div>      
+            <div id="divAdjunto">
+
+            </div>
+        </div>
+        <div class="mb-1 mt-1 col-12" id="divObservacionesCertificado">
+            <label for="txtObservacionesCertificado" class="form-label">Observaciones</label>
+            <textarea class="form-control" id="txtObservacionesCertificado" rows="4"></textarea>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,711 @@
+﻿<script>
+    var pegado="";
+    var activo=0;
+    var pagina_actual=1;
+	var orientacion=1;
+	var textBox = document.getElementById("textBox");
+
+    $("#cmbOrientacion").change(function()
+	{
+		var ori=$(this).val();
+		if(ori=="1")
+		{
+			orientacion=1;
+            $("#textBox").removeClass("cuerpo2");
+			$("#textBox").addClass("cuerpo");
+		}
+		else if(ori=="2")
+		{
+			orientacion=2;
+            $("#textBox").removeClass("cuerpo");
+			$("#textBox").addClass("cuerpo2");
+		}
+	});
+
+    $("#btnModalTabla").click(function(){
+		if($("#nmbFilasTabla").val().trim()=="")
+		{
+			$("#errorTabla").html("El n&uacute;mero de filas no puede estar en blanco");
+		}
+		else if($("#nmbColumnasTabla").val().trim()=="")
+		{
+			$("#errorTabla").html("El n&uacute;mero de columnas debe ser mayor a cero");
+		}
+		else if(parseInt($("#nmbFilasTabla").val())<=0)
+		{
+			$("#errorTabla").html("El n&uacute;mero de filas debe ser mayor a cero");
+		}
+		else if(parseInt($("#nmbColumnasTabla").val())<=0)
+		{
+			$("#errorTabla").html("El n&uacute;mero de columnas debe ser mayor a cero");
+		}
+		else
+		{
+			var alineacion="";
+			if($("#cmbUbicacionTabla").val()=="0")
+			{
+				alineacion="style='max-width:290mm;'";
+			}	
+			else if($("#cmbUbicacionTabla").val()=="1")
+			{
+				alineacion="style='margin:0 auto;max-width:290mm;'";
+			}
+			else
+			{
+				alineacion="style='margin-left:auto;margin-right:5px;max-width:290mm;'";
+			}
+			var i=0,j=0,cad="<div style='overflow:hidden'/><table border='1' " + alineacion + " >";
+			for(i=0;i<$("#nmbFilasTabla").val();i++)
+			{
+				cad=cad+"<tr>";
+				for(j=0;j<$("#nmbColumnasTabla").val();j++)
+				{
+					cad=cad+"<td>&nbsp;</td>";	
+				}
+				cad=cad+"</tr>";
+			}
+			cad=cad+"</table></div>";
+			$("#textBox").focus();
+			activo=1;
+			pegado=cad;
+			$("#modalTabla").modal("hide");
+			alert("Haga clic donde desea agregar la tabla");
+		}
+	});
+	
+	$("#textBox").click(function(){
+		if(activo==1)
+		{
+			activo=0;
+			formatDoc('insertHTML',pegado);
+		}
+	});
+
+    $("#btnModalControl").click(function()
+	{
+		if($("#txtNombreControl").val().trim()=="")
+		{
+			$("#errorModal").html("El nombre del control no puede estar vacio");
+			return;
+		}
+		if($("#txtTipoControl").val()=="TEXTO")
+		{
+			var requerido="";
+			if($("#chkRequeridoControl").prop("checked"))
+				requerido="required";
+			var cad="<input type='text' class='fd-control txt-control' size='" + $("#txtLongitudControl").val() + "' maxlength='" + $("#txtMaxCaracControl").val() + "' " + requerido + " id='" + $("#txtNombreControl").val() + "' name='" + $("#txtNombreControl").val() + "' />";
+		}
+		else if($("#txtTipoControl").val()=="NUMERO")
+		{
+		    var min="";
+			var max="";
+			var requerido="";
+			if($("#chkRequeridoControl").prop("checked"))
+				requerido="required";
+			if($("#txtMinValorNum").val()!="")
+				min="min='" + $("#txtMinValorNum").val() + "'";
+			if($("#txtMaxValorNum").val()!="")
+				max="max='" + $("#txtMaxValorNum").val() + "'";
+			var cad="<input type='number' class='fd-control nbm-control' " + min + " " + max + " " + requerido + " id='" + $("#txtNombreControl").val() + "' name='" + $("#txtNombreControl").val() + "' />";
+		}
+		else if($("#txtTipoControl").val()=="FECHA")
+		{
+			var min="";
+			var max="";
+			var requerido="";
+			if($("#chkRequeridoControl").prop("checked"))
+				requerido="required";
+			if($("#txtMinValorDat").val()!="")
+				min="min='" + $("#txtMinValorDat").val() + "'";
+			if($("#txtMaxValorDat").val()!="")
+				max="max='" + $("#txtMaxValorDat").val() + "'";
+			var cad="<input type='date' class='fd-control fec-control' " + min + " " + max + " " + requerido + " id='" + $("#txtNombreControl").val() + "' name='" + $("#txtNombreControl").val() + "'  />";
+		}
+		else if($("#txtTipoControl").val()=="HORA")
+		{
+			var min="";
+			var max="";
+			var requerido="";
+			if($("#chkRequeridoControl").prop("checked"))
+				requerido="required";
+			if($("#txtMinValorHor").val()!="")
+				min="min='" + $("#txtMinValorHor").val() + "'";
+			if($("#txtMaxValorHor").val()!="")
+				max="max='" + $("#txtMaxValorHor").val() + "'";
+			var cad="<input type='time' class='fd-control tim-control' " + min + " " + max + " " + requerido + " id='" + $("#txtNombreControl").val() + "' name='" + $("#txtNombreControl").val() + "'  />";
+		}
+		else if($("#txtTipoControl").val()=="AREA-TEXTO")
+		{
+			var rows="rows='3'";
+			var requerido="";
+			if($("#chkRequeridoControl").prop("checked"))
+				requerido="required";
+			if($("#txtMaxFilas").val()!="")
+				rows="rows='" + $("#txtMaxFilas").val() + "'";
+			var cad="<textarea class='fd-control txa-control' " + rows + " " + requerido + " id='" + $("#txtNombreControl").val() + "' name='" + $("#txtNombreControl").val() + "' ></textarea>";
+		}
+		else if($("#txtTipoControl").val()=="CHEQUEO")
+		{
+			var requerido="";
+			if($("#chkRequeridoControl").prop("checked"))
+				requerido="required";
+			var cad="<input type='checkbox' "  + " " + requerido + " class='fd-control chk-control' id='" + $("#txtNombreControl").val() + "'  name='" + $("#txtNombreControl").val() + "'  />";
+		}
+		else if($("#txtTipoControl").val()=="LISTA")
+		{
+			var requerido="";
+			if($("#chkRequeridoControl").prop("checked"))
+				requerido="required";
+			var idl=$("#cmbListaOrigen").val();
+			var cad="<select class='fd-control cmb-control lista-" + idl + "' " + requerido + " id='" + $("#txtNombreControl").val() + "'  name='" + $("#txtNombreControl").val() + "' >";
+			
+			$.ajax({
+				async: false,
+				url:'view/opcionlista/opcionlista_consultar.php?id='+idl,
+				dataType:'html',
+				method:'get',
+				success: function(respuesta) {
+					//console.log(respuesta);
+					cad+=respuesta;
+				},
+				error: function() {
+					console.log("No se ha podido obtener la información");
+				}							
+			});
+			cad=cad + "</select>";
+		}
+		$("#textBox").focus();
+		activo=1;
+		pegado=cad;
+		$("#modalControl").modal("hide");
+		alert("Haga clic donde desea agregar el control");
+	});
+	
+	$("#txtNombreControl").keypress(function(e){
+        var tecla = e.which;
+        return ((tecla>=48 && tecla<=57) || (tecla >= 65 && tecla <= 90) || (tecla >= 97 && tecla <= 122) || tecla==8);
+      }); 
+      $("#txtNombreControl").bind("paste", function(e){
+        var text = e.originalEvent.clipboardData.getData('text');
+        var i=0;
+        for(i=0;i<text.length;i++)        
+        {
+          var codigo=text.charCodeAt(i);
+          if(!((codigo >= 48 && codigo <= 57) ||(codigo >= 65 && codigo <= 90) || (codigo >= 97 && codigo <= 122) || codigo==8))
+          {
+            _this._toastr.warning("El texto pegado no es válido, caracter invalido: " + text[i], 'Error');
+            _this._spinnerService.hide();
+            return false;
+          }
+        }
+      });
+	
+	function limpiarControles()
+	{
+		$("#txtTipoControl").val("");
+		$("#txtLongitudControl").val("");
+		$("#txtMaxCaracControl").val("");
+		$("#txtNombreControl").val("");
+		$("#txtMinValorNum").val("");
+		$("#txtMaxValorNum").val("");
+		$("#txtMinValorDat").val("");
+		$("#txtMaxValorDat").val("");
+		$("#txtMinValorHor").val("");
+		$("#txtMaxValorHor").val("");
+		$("#txtMaxFilas").val("");
+		$("#cmbListaOrigen").val("");
+	}
+
+	$("#icoTabla").click(function(){
+		$("#modalTabla").modal("show");
+	});
+	
+	$("#icoTexto").click(function(){
+		limpiarControles();
+		$("#txtTipoControl").val("TEXTO");
+		$("#divLongitud").css("display","flex");
+		$("#divMaxCarac").css("display","flex");
+		$("#divMinValorNum").css("display","none");
+		$("#divMaxValorNum").css("display","none");
+		$("#divMinValorDat").css("display","none");
+		$("#divMaxValorDat").css("display","none");
+		$("#divMinValorHor").css("display","none");
+		$("#divMaxValorHor").css("display","none");
+		$("#divMaxFilas").css("display","none");
+		$("#divListaOrigen").css("display","none");
+		$("#modalControl").modal("show");
+	});
+	
+	$("#icoNumero").click(function(){
+		limpiarControles();
+		$("#txtTipoControl").val("NUMERO");
+		$("#divLongitud").css("display","none");
+		$("#divMaxCarac").css("display","none");
+		$("#divMinValorNum").css("display","flex");
+		$("#divMaxValorNum").css("display","flex");
+		$("#divMinValorDat").css("display","none");
+		$("#divMaxValorDat").css("display","none");
+		$("#divMinValorHor").css("display","none");
+		$("#divMaxValorHor").css("display","none");
+		$("#divMaxFilas").css("display","none");
+		$("#divListaOrigen").css("display","none");
+		$("#modalControl").modal("show");
+	});
+	
+	$("#icoFecha").click(function(){
+		limpiarControles();
+		$("#txtTipoControl").val("FECHA");
+		$("#divLongitud").css("display","none");
+		$("#divMaxCarac").css("display","none");
+		$("#divMinValorNum").css("display","none");
+		$("#divMaxValorNum").css("display","none");
+		$("#divMinValorDat").css("display","flex");
+		$("#divMaxValorDat").css("display","flex");
+		$("#divMinValorHor").css("display","none");
+		$("#divMaxValorHor").css("display","none");
+		$("#divMaxFilas").css("display","none");
+		$("#divListaOrigen").css("display","none");
+		$("#modalControl").modal("show");
+	});
+	
+	$("#icoHora").click(function(){
+		limpiarControles();
+		$("#txtTipoControl").val("HORA");
+		$("#divLongitud").css("display","none");
+		$("#divMaxCarac").css("display","none");
+		$("#divMinValorNum").css("display","none");
+		$("#divMaxValorNum").css("display","none");
+		$("#divMinValorDat").css("display","none");
+		$("#divMaxValorDat").css("display","none");
+		$("#divMinValorHor").css("display","flex");
+		$("#divMaxValorHor").css("display","flex");
+		$("#divMaxFilas").css("display","none");
+		$("#divListaOrigen").css("display","none");
+		$("#modalControl").modal("show");
+	});
+	
+	$("#icoTextArea").click(function(){
+		limpiarControles();
+		$("#txtTipoControl").val("AREA-TEXTO");
+		$("#divLongitud").css("display","none");
+		$("#divMaxCarac").css("display","none");
+		$("#divMinValorNum").css("display","none");
+		$("#divMaxValorNum").css("display","none");
+		$("#divMinValorDat").css("display","none");
+		$("#divMaxValorDat").css("display","none");
+		$("#divMinValorHor").css("display","none");
+		$("#divMaxValorHor").css("display","none");
+		$("#divMaxFilas").css("display","flex");
+		$("#divListaOrigen").css("display","none");
+		$("#modalControl").modal("show");
+	});
+	
+	$("#icoCheck").click(function(){
+		limpiarControles();
+		$("#txtTipoControl").val("CHEQUEO");
+		$("#divLongitud").css("display","none");
+		$("#divMaxCarac").css("display","none");
+		$("#divMinValorNum").css("display","none");
+		$("#divMaxValorNum").css("display","none");
+		$("#divMinValorDat").css("display","none");
+		$("#divMaxValorDat").css("display","none");
+		$("#divMinValorHor").css("display","none");
+		$("#divMaxValorHor").css("display","none");
+		$("#divMaxFilas").css("display","none");
+		$("#divListaOrigen").css("display","none");
+		$("#modalControl").modal("show");
+	});
+	
+	$("#icoLista").click(function(){
+		limpiarControles();
+		$("#txtTipoControl").val("LISTA");
+		$("#divLongitud").css("display","none");
+		$("#divMaxCarac").css("display","none");
+		$("#divMinValorNum").css("display","none");
+		$("#divMaxValorNum").css("display","none");
+		$("#divMinValorDat").css("display","none");
+		$("#divMaxValorDat").css("display","none");
+		$("#divMinValorHor").css("display","none");
+		$("#divMaxValorHor").css("display","none");
+		$("#divMaxFilas").css("display","none");
+		$("#divListaOrigen").css("display","flex");
+		$("#modalControl").modal("show");
+	});
+
+    $("#btn1").click(function(){
+		$("#error1").html("");
+		if($("#txtNombreFormato").val()=="")
+		{
+			$("#error1").html("ERROR: Debe digitar un nombre para el formato (ej: Acta de inspecci&oacute;n)");
+		}
+		else if($("#txtVersionFormato").val()=="")
+		{
+			$("#error1").html("ERROR: Debe digitar una version para el formato (ej: 1.0)");
+		}
+		else if($("#txtIdFormato").val()=="")
+		{
+			$("#error1").html("ERROR: Debe digitar un codigo para el formato (ej: FO-SO-01)");
+		}
+		else if($("#datVigenciaFormato").val()=="")
+		{
+			$("#error1").html("ERROR: Debe digitar una fecha de vigencia (ej: 01/03/2025)");
+		}
+		else if($("#datVigenciaFormato").val()=="")
+		{
+			$("#error1").html("ERROR: Debe digitar un codigo para el formato (ej: FO-SO-01)");
+		}
+		else if($('#filImagenFormato')[0].files.length==0)
+		{
+			$("#error1").html("ERROR: El formato debe tener un logotipo");
+		}
+		else if($("#cmbOrientacion").val()=="")
+		{
+			$("#error1").html("ERROR: Debe elegir una orientaci&oacute;n para el formato");
+		}
+		else if($("#datVigenciaFormato").val()!="")
+		{
+			var hoy=new Date();
+			if(new Date($('#datVigenciaFormato').val())<=hoy)
+			{
+				$("#error1").html("ERROR: La fecha de vigencia del formato no puede ser inferior o igual al dia de hoy.");
+			}
+		}
+		var bandera=0;
+		var formatos=$("#hdnListaFormatos").val().split("|");
+		for(i=0;i<formatos.length;i++)
+		{
+			if($("#txtIdFormato").val()==formatos[i])
+			{
+				bandera=1;
+			}
+		}
+		if(bandera==1)
+		{
+			$("#error1").html("El código del formato de acta ya existe");
+		}
+		
+        if($("#error1").html()=="")
+		{
+			$("#error1").html("");
+			$("#formato1").css("display","none");
+			$("#formato2").css("display","block");
+			$("#formato3").css("display","none");
+		}
+	});
+	
+	$("#btnPosImagen").click(function(){
+		var valor=$("#cmbPosImagen").val();
+		if(valor=="0")
+		{
+			$("#imagen1").css("display","none");
+			$("#imagen2").css("display","none");
+		}
+		else if(valor=="1")
+		{
+			$("#imagen1").css("display","table-cell");
+			$("#imagen2").css("display","none");
+		}
+		else if(valor=="2")
+		{
+			$("#imagen1").css("display","none");
+			$("#imagen2").css("display","table-cell");
+		}
+		else if(valor=="3")
+		{
+			$("#imagen1").css("display","table-cell");
+			$("#imagen2").css("display","table-cell");
+		}
+	});
+	
+	$("#btnColorFondoImagen").click(function(){
+		$("#imagen1").css("background-color",$("#ColorImagen").val());
+		$("#imagen2").css("background-color",$("#ColorImagen").val());
+	});
+	
+	$("#btnEstilo").click(function(){
+		var valor=$("#cmbEstilo").val();
+		switch(valor)
+		{
+			case '1':
+			    $("#tblEncabezado").html('<tr><td rowspan="3" style="width:20%;text-align:center;" id="imagen1"><img alt="image description" src="assets/images/Logo.png" style="width:75%;" /></td><td colspan="2" style="text-align:center;">TITULO</td><td rowspan="3" style="width:20%;text-align:center;" id="imagen2"><img src="assets/images/Logo.png" style="width:75%;" /></td></tr><tr><td style="text-align:center;">FORMATO</td><td style="text-align:center;">VERSION</td></tr><tr><td style="text-align:center;">VIGENCIA</td><td style="text-align:center;">PAGINAS</td></tr>');
+				break;
+			case '2':
+			    $("#tblEncabezado").html('<tr><td rowspan="3" style="width:20%;text-align:center;" id="imagen1"><img alt="image description" src="assets/images/Logo.png" style="width:75%;" /></td><td style="text-align:center;">TITULO</td><td style="text-align:center;">FORMATO</td><td rowspan="3" style="width:20%;text-align:center;" id="imagen2"><img src="assets/images/Logo.png" style="width:75%;" /></td></tr><tr><td colspan="2" style="text-align:center;">VERSION</td></tr><tr><td style="text-align:center;">VIGENCIA</td><td style="text-align:center;">PAGINAS</td></tr>');
+				break;
+			case '3':
+				$("#tblEncabezado").html('<tr><td rowspan="3" style="width:20%;text-align:center;" id="imagen1"><img alt="image description" src="assets/images/Logo.png" style="width:75%;" /></td><td style="text-align:center;">TITULO</td><td style="text-align:center;">FORMATO</td><td rowspan="3" style="width:20%;text-align:center;" id="imagen2"><img src="assets/images/Logo.png" style="width:75%;" /></td></tr><tr><td  style="text-align:center;">VERSION</td><td style="text-align:center;">VIGENCIA</td></tr><tr><td colspan="2" style="text-align:center;">PAGINAS</td></tr>');
+				break;
+			case '4':
+			    $("#tblEncabezado").html('<tr><td rowspan="3" style="width:20%;text-align:center;" id="imagen1"><img alt="image description" src="assets/images/Logo.png" style="width:75%;" /></td><td colspan="3" style="text-align:center;">TITULO</td><td rowspan="3" style="width:20%;text-align:center;" id="imagen2"><img src="assets/images/Logo.png" style="width:75%;" /></td></tr><tr><td style="text-align:center;">FORMATO</td><td  style="text-align:center;">VERSION</td><td style="text-align:center;">VIGENCIA</td></tr><tr><td colspan="3" style="text-align:center;">PAGINAS</td></tr>');
+				break;
+			case '5':
+			    $("#tblEncabezado").html('<tr><td rowspan="3" style="width:20%;text-align:center;" id="imagen1"><img alt="image description" src="assets/images/Logo.png" style="width:75%;" /></td><td style="text-align:center;">TITULO</td><td style="text-align:center;">FORMATO</td><td  style="text-align:center;">VERSION</td><td rowspan="3" style="width:20%;text-align:center;" id="imagen2"><img src="assets/images/Logo.png" style="width:75%;" /></td></tr><tr><td colspan="3"  style="text-align:center;">VIGENCIA</td></tr><tr><td colspan="3" style="text-align:center;">PAGINAS</td></tr>');
+				break;
+			case '6':
+			    $("#tblEncabezado").html('<tr><td rowspan="3" style="width:20%;text-align:center;" id="imagen1"><img alt="image description" src="assets/images/Logo.png" style="width:75%;" /></td><td colspan="3" style="text-align:center;">TITULO</td><td rowspan="3" style="width:20%;text-align:center;" id="imagen2"><img src="assets/images/Logo.png" style="width:75%;" /></td></tr><tr><td colspan="3" style="text-align:center;">FORMATO</td></tr><tr><td  style="text-align:center;">VERSION</td><td  style="text-align:center;">VIGENCIA</td><td  style="text-align:center;">PAGINAS</td></tr>');
+				break;
+			case '7':
+			    $("#tblEncabezado").html('<tr><td rowspan="2" style="width:20%;text-align:center;" id="imagen1"><img alt="image description" src="assets/images/Logo.png" style="width:75%;" /></td><td style="text-align:center;">TITULO</td><td style="text-align:center;">FORMATO</td><td style="text-align:center;">VERSION</td><td style="text-align:center;">VIGENCIA</td><td rowspan="2" style="width:20%;text-align:center;" id="imagen2"><img src="assets/images/Logo.png" style="width:75%;" /></td></tr><tr><td colspan="4" style="text-align:center;">PAGINAS</td></tr>');
+				break;
+			case '8':
+				$("#tblEncabezado").html('<tr><td rowspan="2" style="width:20%;text-align:center;" id="imagen1"><img alt="image description" src="assets/images/Logo.png" style="width:75%;" /></td><td  colspan="4" style="text-align:center;">TITULO</td><td rowspan="2" style="width:20%;text-align:center;" id="imagen2"><img src="assets/images/Logo.png" style="width:75%;" /></td></tr><tr><td style="text-align:center;">FORMATO</td><td style="text-align:center;">VERSION</td><td style="text-align:center;">VIGENCIA</td><td style="text-align:center;">PAGINAS</td></tr>');
+				break;
+		}
+	});
+	
+	$("#btnElemento").click(function(){
+		$("#tblEncabezado tr td").each(function(){
+			if($(this).html().trim()==$("#cmbElemento").val().trim())
+			{
+				if($("#cmbEstiloElemento").val()=='0')
+				{
+					$(this).css("font-weight","400");
+					$(this).css("font-style","normal");
+				}
+				else if($("#cmbEstiloElemento").val()=='1')
+				{
+					$(this).css("font-weight","700");
+					$(this).css("font-style","normal");
+				}
+				else if($("#cmbEstiloElemento").val()=='2')
+				{
+					$(this).css("font-weight","400");
+					$(this).css("font-style","italic");
+				}
+				else if($("#cmbEstiloElemento").val()=='3')
+				{
+					$(this).css("font-weight","700");
+					$(this).css("font-style","italic");
+				}
+				$(this).css("font-size",$("#cmbTamano").val());
+				$(this).css("font-family",$("#cmbLetra").val());
+				$(this).css("color",$("#ColorLetra").val());
+				$(this).css("background-color",$("#ColorFondoElemento").val());
+			}
+		});
+	});
+	
+	$("#btnCambiar").click(function(){
+		if($("#cmbCambio1").val()!=$("#cmbCambio2").val())
+		{
+			var celda1="";
+			var celda2="";
+			$("#tblEncabezado tr td").each(function(){
+				if($(this).html().trim()==$("#cmbCambio1").val().trim())
+				{
+				  celda1=$(this);
+				}
+			    if($(this).html().trim()==$("#cmbCambio2").val().trim())
+				{
+				  celda2=$(this);
+				} 
+			});
+			var temporal="";
+			temporal=celda1.css("font-size");
+			celda1.css("font-size",celda2.css("font-size"));
+			celda2.css("font-size",temporal);
+			temporal=celda1.css("font-family");
+			celda1.css("font-family",celda2.css("font-family"));
+			celda2.css("font-family",temporal);
+			temporal=celda1.css("color");
+			celda1.css("color",celda2.css("color"));
+			celda2.css("color",temporal);
+			temporal=celda1.css("background-color");
+			celda1.css("background-color",celda2.css("background-color"));
+			celda2.css("background-color",temporal);
+            temporal=celda1.css("font-weight");
+			celda1.css("font-weight",celda2.css("font-weight"));
+			celda2.css("font-weight",temporal);
+			temporal=celda1.css("font-style");
+			celda1.css("font-style",celda2.css("font-style"));
+			celda2.css("font-style",temporal);
+			temporal=celda1.html();
+			celda1.html(celda2.html());
+			celda2.html(temporal);
+		}
+	})
+	
+	$("#btn2").click(function(){
+		$("#formato1").css("display","block");
+		$("#formato2").css("display","none");
+		$("#formato3").css("display","none");
+	});
+	$("#btn3").click(function(){
+		$("#hdndiseno").val($("#cabecera").html());
+		$("#formato1").css("display","none");
+		$("#formato2").css("display","none");
+		$("#formato3").css("display","block");
+	});
+	$("#btn4").click(function(){
+		$("#formato1").css("display","none");
+		$("#formato2").css("display","block");
+		$("#formato3").css("display","none");
+	});
+	$("#btnGuardar").click(function(){
+		document.getElementById('hdnPage'+pagina_actual).value=oDoc.innerHTML;
+		//document.getElementById('hdnCuerpoFinal').value=oDoc.innerHTML;
+		$("#frmCrearFormatoActa").submit();
+	});
+	
+	$('#filImagenFormato').change(function(e){
+		if($('#filImagenFormato')[0].files.length>0)
+		{
+		var reader = new FileReader();
+		   reader.readAsDataURL($('#filImagenFormato')[0].files[0]);
+		   reader.onload = function () { 
+			 $('#hdnimg').val(reader.result);
+		   };
+		   reader.onerror = function (error) {
+			 console.log('Error: ', error);
+		   };
+		}
+	});
+	
+	var oDoc, sDefTxt;
+
+	function initDoc() 
+	{
+	  oDoc = document.getElementById("textBox");
+	  sDefTxt = oDoc.innerHTML;
+	}
+	
+	initDoc();
+
+    function formatDoc(sCmd, sValue) 
+	{
+	    document.execCommand(sCmd, false, sValue); oDoc.focus();
+    }
+
+	function validateMode() 
+	{
+	    oDoc.focus();
+	    return false;
+	}
+
+    function setDocMode(bToSource) 
+	{
+        var oContent;
+        if (bToSource) 
+		{
+            oContent = document.createTextNode(oDoc.innerHTML);
+		    oDoc.innerHTML = "";
+            var oPre = document.createElement("pre");
+            oDoc.contentEditable = false;
+            oPre.id = "sourceText";
+            oPre.contentEditable = true;
+            oPre.appendChild(oContent);
+            oDoc.appendChild(oPre);
+        } 
+		else 
+		{
+            if (document.all) 
+			{
+                oDoc.innerHTML = oDoc.innerText;
+            } 
+			else 
+			{
+                oContent = document.createRange();
+                oContent.selectNodeContents(oDoc.firstChild);
+                oDoc.innerHTML = oContent.toString();
+            }
+            oDoc.contentEditable = true;
+        }
+        oDoc.focus();
+    }		
+		
+	$(function() {
+		var pressed = false;
+		var start = undefined;
+		var startX, startWidth;
+		
+		$(".txt-control").mousedown(function(e) {
+			start = $(this);
+			pressed = true;
+			startX = e.pageX;
+			startWidth = $(this).width();
+			$(start).addClass("resizing");
+		});
+		
+		$(document).mousemove(function(e) {
+			if(pressed) {
+				$(start).width(startWidth+(e.pageX-startX));
+			}
+		});
+		
+		$(document).mouseup(function() {
+			if(pressed) {
+				$(start).removeClass("resizing");
+				pressed = false;
+			}
+		});
+	});	
+	
+	$("#btnNuevaPagina").click(function(){
+		var i=1;
+		var bandera=false;
+		for(i=1;i<=12;i++)
+		{
+			if($("#page"+i).html()=="")
+			{
+				$("#page"+i).html('<button type="button" id="btnPage' + i + '" class="btn btn-warning paginador" onclick="cambiarPagina(' + i + ')">' + i + '</button><input type="hidden" name="hdnPage' + i + '" id="hdnPage' + i + '" value=""> ');
+				bandera=true;
+				break;
+			}
+		}
+		if(bandera==false)
+		{
+			alert("No se pueden crear mas paginas");
+		}
+		else
+		{
+			cambiarPagina(i);
+		}
+	});
+
+	function cambiarPagina(id)
+	{
+		document.getElementById('hdnPage'+pagina_actual).value=oDoc.innerHTML;
+		oDoc.innerHTML=document.getElementById('hdnPage'+id).value;
+		pagina_actual=id;
+	}
+
+	///ABRIR EL ARCHIVO
+	async function LeerArchivo() {
+        var id = @ViewBag.idArchivo;
+
+        let url = `@Url.Action("LeerDocumento","GestionDocumental")` + `?id=` + id;
+        let r = await Get(url);
+        textBox.innerHTML = r;
+    }
+
+	$(document).ready(function() {
+        LeerArchivo();
+	});
+
+
+	///GUARDAR EL DOCUMENTO
+$("#btnGuardar").click(async function() {
+        var msj = document.getElementById("msjActualizadoArchivo");
+        var id = @ViewBag.idArchivo;
+        var cadena = textBox.innerHTML;
+		json = {
+			id: id,
+			cambiosDoc: cadena
+		}
+
+        let url = `@Url.Action("ActualizarDocumento","GestionDocumental")`;
+        let r = await Get(url, json);
+
+        msj.innerHTML = r;
+        $("#msjrespuesta").modal("show");
+	});
+
+	///BOTON DE VOLVER
+	$("#btnVolver").click(function(){
+		document.location.href = "/GestionDocumental/Index";
+	});
+
+	$(".cerrarModalMsj").click(function() {
+		document.location.href = "/GestionDocumental/Index";
+	});
+</script>

@@ -1,0 +1,360 @@
+﻿@model Web.Models.LoginRequest;
+
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<div class="tab-pane container active p-2" id="formCambioConstrasenaOlvido">
+    <form asp-controller="Login" asp-action="CambiarOlvido" method="post" id="form-cambio-olvido">
+        <div class="col-form-label mt-1 mb-1">
+            <h1>Recuperación de Usuario</h1>
+        </div>
+        <div class="col-form-label mt-1 mb-1">
+            <h2>Cambiar Contraseña</h2>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 mb-1">
+                <label for="NuevaContrasena" class="form-label">Nueva contraseña</label>
+                <input type="password" asp-for="newPassword" class="form-control" placeholder="&#xf023 Ingresa una nueva contraseña" id="NuevaContrasena" onkeyup="validacion()" required/>
+                <span id="validacionNuevaContrasena" class="span-advertencia d-none">Campo Obligatorio</span>
+                <span id="caracteresMinAdvertencia" class="span-advertencia">8 caracteres mínimo</span><span id="caracteresMinCumplido" class="span-cumplido d-none">8 caracteres mínimo</span><br />
+                <span id="numerosMinAdvertencia" class="span-advertencia">2 numeros mínimo</span><span id="numerosMinCumplido" class="span-cumplido d-none">2 numeros mínimo</span><br />
+                <span id="caracterEspMinAdvertencia" class="span-advertencia">1 carácter especial mínimo</span><span id="caracterEspMinCumplido" class="span-cumplido d-none">1 carácter especial mínimo</span><br />
+                <span id="mayusculaMinAdvertencia" class="span-advertencia">1 mayúscula minimo</span><span id="mayusculaMinCumplido" class="span-cumplido d-none">1 mayúscula minimo</span><br />
+                <span id="minusculaMinAdvertencia" class="span-advertencia">1 minúscula minimo</span><span id="minusculaMinCumplido" class="span-cumplido d-none">1 minúscula minimo</span>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label for="ConfirmarContrasena" class="form-label">Confirmar contraseña</label>
+                <input type="password" asp-for="newPassword" class="form-control" placeholder="&#xf023 Confirmar contraseña" id="ConfirmarContrasena" required/>
+                <span id="validacionConfirmarContrasena" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mt-2 row justify-content-center">
+                <div class="col-2">
+                    <button type="button" class="btn-guardar-cambio-contrasena-olvido btn btn-primary w-100">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- modal pregunta confirmacion de cambio de contraseña -->
+<div class="modal fade" id="confirmacion-cambio" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro de que desea guardar la información?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="boton-si-cambiar btn btn-primary w-100">Si</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="boton-no-cambiar btn btn-secondary w-100" data-bs-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal mensaje cambio contraseña existoso -->
+<div class="modal fade" id="mensaje-cambioPass" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Información</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="modalText-mensaje-cambio"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn-cerrarModal btn btn-primary w-100" data-bs-dismiss="modal">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal mensaje cambio contraseña existoso -->
+<div class="modal fade" id="mensajeCaracteristicasContrasena" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Información</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>La contraseña no cumple con los requisitos indicados</p>
+                        <p>Minimo 8 caracteres</p>
+                        <p>Minimo 2 numeros</p>
+                        <p>Minimo 1 caracter especial</p>
+                        <p>Minimo 1 mayuscula</p>
+                        <p>Minimo 1 minuscula</p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+//let usuario = document.getElementById("Usuario");
+//let contrasenaTemporal = document.getElementById("ContrasenaTemp");
+let NuevaContrasena = document.getElementById("NuevaContrasena");
+let ConfirmarContrasena = document.getElementById("ConfirmarContrasena");
+let spanContrasenaConfirmacion = document.getElementById("validacionConfirmarContrasena");
+
+//span validacion caracteristicas contraseña
+let caracteresMinAdvertencia = document.getElementById("caracteresMinAdvertencia");
+let numerosMinAdvertencia = document.getElementById("numerosMinAdvertencia");
+let caracterEspMinAdvertencia = document.getElementById("caracterEspMinAdvertencia");
+let mayusculaMinAdvertencia = document.getElementById("mayusculaMinAdvertencia");
+let minusculaMinAdvertencia = document.getElementById("minusculaMinAdvertencia");
+let caracteresMinCumplido = document.getElementById("caracteresMinCumplido");
+let numerosMinCumplido = document.getElementById("numerosMinCumplido");
+let caracterEspMinCumplido = document.getElementById("caracterEspMinCumplido");
+let mayusculaMinCumplido = document.getElementById("mayusculaMinCumplido");
+let minusculaMinCumplido = document.getElementById("minusculaMinCumplido");
+
+var numero1 = false;
+var numero2 = false;
+var caracter = false;
+var mayuscula = false;
+var minuscula = false;
+var maximo = false;
+
+$(".btn-guardar-cambio-contrasena-olvido").click(function() {
+    if (ValidarCampos()) {
+        var passNew1 = $("#NuevaContrasena").val();
+        //var usuario = $("#Usuario").val();
+        //var passTemporal = $("#ContrasenaTemp").val();
+
+        json = {
+            newPassword : passNew1
+        }
+        sessionStorage.setItem("DatosJson", json);
+        $("#confirmacion-cambio").modal("show");
+    }
+});
+
+$("#cerrar-alert-password").click(function() {
+    $("#alerta-password-diferentes").css("display", "none");
+});
+
+$(".boton-si-cambiar").click(async function() {
+    var Alert = document.getElementById("mensajeError");
+    var Modal = document.getElementById("modalText-mensaje-cambio");
+
+    let url = "@Url.Action("CambiarOlvido","Login")";
+    let resp = await Get(url, json);
+
+    if (resp[1] == "true") {
+        $("#alerta-password-diferentes").css("display", "block");
+        Alert.innerHTML = resp[0];
+    }
+    else{
+        Modal.innerHTML = resp[0];
+        $("#confirmacion-cambio").modal("hide");
+        $("#mensaje-cambioPass").modal("show");
+    }
+});
+   
+$(document).ready(function() {
+    $('.barnav-box').addClass('d-none');
+    $('.MenuSuperior ').addClass('d-none');
+});
+
+function validar(elemento, span, val = false, elemento2 = null) {
+    //se validan elementos de input normales si estan llenos
+    if (elemento != null) {
+        if ($(elemento).val()==null || $(elemento).val() == '' || $(elemento).val() == '0' || $(elemento).val() == 0 || $(elemento).val().length == 0) {
+            spanContrasenaConfirmacion.innerHTML = "Campo Obligatorio";
+            ocultarElemento(span, false);
+            if (elemento2 != null) {
+                if (!elemento2.hasClass('required-validate')) {
+                    elemento2.addClass('required-validate');
+                }
+                return false;
+            }
+            if (!$(elemento).hasClass('required-validate')) {
+                $(elemento).addClass('required-validate');
+            }
+            return false;
+        }
+    }
+    return true;
+}
+
+function validarCoincidencia(elemento, span2, elemento2){
+    //se validan las igualdades de las contraseñas
+    if (elemento != elemento2) {
+        spanContrasenaConfirmacion.innerHTML = "Las contraseñas deben coincidir";
+        ocultarElemento(span2, false);
+        if (!$(elemento2).hasClass("required-validate")) {
+            $(elemento2).addClass("required-validate");
+        }
+        return false;
+    }
+    else {
+        spanContrasenaConfirmacion.innerHTML = "Campo Obligatorio";
+        return true;
+    }
+}
+
+function ValidarCampos() {
+    let ValNuevaContrasena = $("#NuevaContrasena").val();
+    let ValConfirmacionContrasena = $("#ConfirmarContrasena").val();
+
+    let validarCoincidenciaContrasena = validarCoincidencia(ValNuevaContrasena, validacionConfirmarContrasena, ValConfirmacionContrasena);
+    let validarNuevaContrasena = validar(NuevaContrasena, validacionNuevaContrasena);
+    let validarConfirmarContrasena = validar(ConfirmarContrasena, validacionConfirmarContrasena);
+
+    validarCaracteristicas(ValNuevaContrasena);
+
+    if (numero2 & mayuscula & minuscula & maximo) {
+        if (validarCoincidenciaContrasena & validarNuevaContrasena && validarConfirmarContrasena) {
+            return true;
+        }
+    }
+    else {
+        $("#mensajeCaracteristicasContrasena").modal("show");
+    }
+    return false;
+};
+
+$(".btn-cerrarModal").click(function() {
+    document.location.href = "/Login/Index";
+});
+
+$(NuevaContrasena).on('change', function() {
+    reiniciarElementos(NuevaContrasena, validacionNuevaContrasena);
+});
+
+$(ConfirmarContrasena).on('change', function(){
+    reiniciarElementos(ConfirmarContrasena, validacionConfirmarContrasena);
+});
+
+async function validacion() {
+    let passNueva = $("#pass-nueva").val();
+    await validarCaracteristicas(passNueva);
+}
+
+function validarCaracteristicas(text) {
+    numero1 = false;
+    numero2 = false;
+    mayuscula = false;
+    minuscula = false;
+    maximo = false;
+    caracter = false;
+
+    var Numeros = "0123456789";
+
+    for (i = 0; i < text.length; i++) {
+        if (Numeros.indexOf(text.charAt(i), 0) != -1) {
+            if (numero1) {
+                numero2 = true;
+                //ocultarElemento(numerosMinAdvertencia, true);
+                //ocultarElemento(numerosMinCumplido, false);
+            }
+            else {
+                numero1 = true;
+                numero2 = false;
+                //ocultarElemento(numerosMinAdvertencia, false);
+                //ocultarElemento(numerosMinCumplido, true);
+            }
+        }
+        else {
+            if (text.charCodeAt(i) == 33 || text.charCodeAt(i) == 35 || text.charCodeAt(i) == 36 || text.charCodeAt(i) == 42 || text.charCodeAt(i) == 45 || text.charCodeAt(i) == 47 || text.charCodeAt(i) == 64 || text.charCodeAt(i) == 95) {
+                caracter = true;
+            }
+            if (esMayuscula(text.charAt(i))) {
+                mayuscula = true;
+                //ocultarElemento(mayusculaMinAdvertencia, true);
+                //ocultarElemento(mayusculaMinCumplido, false);
+            }
+            else if (esMinuscula(text.charAt(i))) {
+                minuscula = true;
+                //ocultarElemento(minusculaMinAdvertencia, true);
+                //ocultarElemento(minusculaMinCumplido, false);
+            }
+            //else {
+            //    if (!minuscula) {
+            //        ocultarElemento(minusculaMinAdvertencia, false);
+            //        ocultarElemento(minusculaMinCumplido, true);
+            //    }
+            //}
+        }
+    }
+    if (text.length > 7) {
+        maximo = true;
+        ocultarElemento(caracteresMinAdvertencia, true);
+        ocultarElemento(caracteresMinCumplido, false);
+    }
+    else {
+        maximo = false;
+        ocultarElemento(caracteresMinAdvertencia, false);
+        ocultarElemento(caracteresMinCumplido, true);
+    }
+
+    if (numero2) {
+        ocultarElemento(numerosMinAdvertencia, true);
+        ocultarElemento(numerosMinCumplido, false);
+    }
+    else {
+        ocultarElemento(numerosMinAdvertencia, false);
+        ocultarElemento(numerosMinCumplido, true);
+    }
+    if (caracter) {
+        ocultarElemento(caracterEspMinAdvertencia, true);
+        ocultarElemento(caracterEspMinCumplido, false);
+    }
+    else {
+        ocultarElemento(caracterEspMinAdvertencia, false);
+        ocultarElemento(caracterEspMinCumplido, true);
+    }
+    if (mayuscula) {
+        ocultarElemento(mayusculaMinAdvertencia, true);
+        ocultarElemento(mayusculaMinCumplido, false);
+    }
+    else{
+        ocultarElemento(mayusculaMinAdvertencia, false);
+        ocultarElemento(mayusculaMinCumplido, true);
+    }
+    if (minuscula) {
+        ocultarElemento(minusculaMinAdvertencia, true);
+        ocultarElemento(minusculaMinCumplido, false);
+    }
+    else {
+        ocultarElemento(minusculaMinAdvertencia, false);
+        ocultarElemento(minusculaMinCumplido, true);
+    }
+}
+
+function esMayuscula(letra) {
+    return letra === letra.toUpperCase();
+}
+function esMinuscula(letra) {
+    return letra === letra.toLowerCase();
+}
+</script>

@@ -1,0 +1,64 @@
+﻿<div class="container">
+    <div class="row mt-2">
+        <div class="col-md-4 mb-1">
+            <label for="CarteNumber" class="form-label">Número carta de venta y/o factura</label>
+            <input type="text" class="form-control" readonly id="CarteNumber">
+            <span id="ValidateCarteNumber" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-4 mb-1">
+            <label for="SaleDate" class="form-label">Fecha de carta de venta y/o factura</label>
+            <input type="date" class="form-control" readonly id="SaleDate">
+            <span id="ValidateSaleDate" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-4 mb-1">
+            <label for="NumberSold" class="form-label">Vendidos</label>
+            <input type="text" class="form-control" readonly id="NumberSold">
+            <span id="ValidateNumberSold" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-4 mb-1">
+            <label for="BusinessSale" class="form-label">¿Quién realiza la venta?</label>
+            <select name="BusinessSale" id="BusinessSale" class="form-control" disabled>
+                <option value="">Seleccione</option>
+                <option value="60">Zoocriadero</option>
+                <option value="61">Comerzializadora</option>
+                <option value="62">Manofacturera</option>
+                <option value="63">Curtiembre</option>
+            </select>
+            <span id="ValidateBusinessSale" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-4 mb-1">
+            <label for="TypeDocumentSeller" class="form-label">Tipo de documento</label>
+            <select name="TypeDocumentSeller" id="TypeDocumentSeller" class="form-control" disabled>
+                <option value="">Seleccione</option>
+                <option value="1">Cédula</option>
+                <option value="95">Nit</option>
+            </select>
+            <span id="ValidateTypeDocumentSeller" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-3 mb-1">
+            <label for="DocumentNumberSeller" class="form-label">Número documento</label>
+            <input type="text" class="form-control" readonly id="DocumentNumberSeller">
+            <span id="ValidateDocumentNumberSeller" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-4 mb-1">
+            <label for="ReasonSocial" class="form-label">Nombre / Razón Social</label>
+            <input type="text" class="form-control" id="ReasonSocial" disabled>
+            <span id="ValidateReasonSocial" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-4 mb-1">
+            <label for="BalanceBusinessTxt" class="form-label">Saldo inicial empresa</label>
+            <input type="text" class="form-control" readonly id="InitialBalanceBusiness" placeholder="Saldo inicial" disabled>
+            <span id="ValidateInitialBalanceBusiness" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-4 mb-1">
+            <label for="BalanceBusinessTxt" class="form-label">Saldo final</label>
+            <input type="text" class="form-control" readonly id="FinalBalanceBusiness" placeholder="Saldo final" disabled>
+            <span id="ValidateFinalBalanceBusiness" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+        <div class="col-md-12 mb-1">
+            <label for="Observations" class="form-label">Observaciones</label>
+            <textarea type="text" class="form-control" readonly id="Observations"></textarea>
+            <span id="ValidateObservations" class="span-advertencia d-none">Campo Obligatorio</span>
+        </div>
+    </div>
+</div>

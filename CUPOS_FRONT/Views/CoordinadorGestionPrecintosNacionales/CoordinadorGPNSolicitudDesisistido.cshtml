@@ -1,0 +1,77 @@
+﻿@model Web.Models.CoordinadorGPNDesistimientoModel;
+
+@{
+    ViewData["Title"] = "Solicitudes aprobadas";
+}
+
+<div>
+    <a asp-controller="Home" asp-action="Index">Inicio </a>  >  <a asp-controller="CoordinadorGestionPrecintosNacionales" asp-action="Index">Gestionar Precintos Nacionales y marquillas</a> > <strong> Solicitud radicada</strong>
+</div>
+<partial name="Partials/_SeccionBotonesAyuda"></partial>
+
+<div class="container mt-5 mb-5">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active"
+               data-bs-toggle="tab"
+               href="#tab1"
+               id="tab-1">Solicitud</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab2" id="tab-2">Desistimiento</a>
+        </li>
+    </ul>
+</div>
+<div class="tab-content">
+    <div class="tab-pane container active p-2" id="tab1">
+        <!-- #region formulario -->
+        <partial name="Partials/_PartialInfoSolicitud" model="@Model.InfoSolicitud"></partial>
+        <!-- #endregion -->
+    </div>
+    <div class="tab-pane container fade p-2" id="tab2">
+        <h1>Desistimiento</h1>
+        <div class="row">
+            <hr size="5" />
+            <div class="col-md-9 my-auto mb-1">
+                <div class="form-check form-check-inline">
+                    <label class="form-check-label" for="inlineCheckbox1">Estado:</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <a id="estadoDesistimiento">Desistimiento</a>
+                </div>
+            </div>
+            <div class="col-md-9 my-auto mb-1">
+                <div class="form-check form-check-inline">
+                    <label class="form-check-label" for="inlineCheckbox1">Fecha de radicación del desistimiento:</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="date" asp-for="DatosDesistimiento.FechaRadicacionDesistimiento" readonly />
+                </div>
+            </div>
+            <div class="col-md-9 my-auto mb-1">
+                <div class="form-check form-check-inline">
+                    <label class="form-check-label" for="inlineCheckbox1">Documento soporte:</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <a id="btnSoporteDesistimiento">Desistimiento</a>
+                </div>
+            </div>
+            <div class="col-md-9 my-auto mb-1">
+                <label for="observacionesDesistimiento" class="form-label">Observaciones</label>
+                <textarea class="form-control" asp-for="DatosDesistimiento.ObservacionesDesistimiento" rows="3" placeholder=" Observaciones" readonly></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="mt-1 row justify-content-center">
+        
+        <div class="col-2">
+            <a class="btn btn-primary w-100" asp-action="Index" asp-controller="CoordinadorGestionPrecintosNacionales">Regresar</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+<script src="~/js/CoordinadorGestionPrecintosNacionales/CoordinadorGPNGeneric-min.js" asp-append-version="true"></script>
+
+}

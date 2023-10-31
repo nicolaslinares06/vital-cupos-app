@@ -1,0 +1,33 @@
+﻿@model Web.Models.EditVisitaActaCortes
+
+
+
+<div class="col-12 mb-3 row">
+    <div class="form-group col-md-6">
+        <label class="form-label required" for="TipoEstablecimiento">Nit Establecimiento</label>
+        <input type="hidden" id="HiddenNITEstablecimiento" name="HiddenNITEstablecimiento" value="@Model.NitEstablecimiento"/>
+        <input type="text" class="form-control inputValidation" asp-for="NitEstablecimiento">    
+        <span class="SPANValidation span-advertencia" id="SPANNITEstablecimiento"></span>
+    </div>
+    <div class="col-md-6 d-flex align-items-end" >
+          <button type="button" id="btnBuscarNitEmpresa" class="btn btn-secondary"> Buscar </button>
+    </div>
+</div>
+
+<div class="col-12 mb-3 row">
+    <input type="hidden" asp-for="ActaVisitaId" />
+    <div class="form-group col-md-6">
+        <label class="form-label required" for="TipoEstablecimiento">Tipo de Establecimiento</label>
+        <input type="hidden" asp-for="TipoEstablecimiento"/>
+        <input type="text" class="form-control inputValidation" asp-for="TipoEstablecimientoNombre" disabled>
+    
+        <span class="SPANValidation span-advertencia" id="SPANTipoEstablecimientoNombre"></span>
+
+    </div>
+    <div class="form-group col-md-6">
+        <input type="hidden" asp-for="EstablecimientoID"/>
+        <label class="form-label required" for="NombreEstablecimiento">Nombre</label>
+        <input type="text" class="form-control inputValidation" asp-for="NombreEstablecimiento" disabled>
+        <span class="SPANValidation span-advertencia" id="SPANNombreEstablecimiento"></span>
+    </div>
+</div>

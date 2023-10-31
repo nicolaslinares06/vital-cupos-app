@@ -1,0 +1,166 @@
+﻿<div class="container">
+    <h2>Resolución de Asignación de Cupos</h2>
+    <div id="divBuscador" class="dataTables_filter w-100">
+        <div class="label-datatable">
+            <label for="txtResolutionNumbre" class="form-label">Numero resolución</label>
+            <div class="row">
+                <div class="col-10">
+                    <input type="text" class="form-control " id="txtResolutionNumbre" placeholder="Numero resolucion">
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-primary w-100" onclick="buscarResolucion()">Buscar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-3">
+        <h2>Resoluciones Registradas</h2>
+        <div class="mt-2 mb-2">
+            <table id="TableResolucionesRegistradas" class="table w-100" aria-describedby="Tabla resoluciones registradas">
+                <caption class="d-none">Table Description</caption>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="th-mediumText">Número de resolución</th>
+                        <th class="th-mediumText">Fecha de resolución</th>
+                        <th class="th-mediumText">Fecha de registo de resolución</th>
+                        <th class="th-bigText">Autoridad ambiental que emite la resolución</th>
+                        <th class="th-mediumText">Nombre de especie</th>
+                        <th class="th-mediumText">Año de producción</th>
+                        <th class="th-bigText">Cupos de aprovechamiento y comercialización</th>
+                        <th class="th-mediumText">Cuota de repoblación</th>
+                        <th class="th-mediumText">Total cupos asignados</th>
+                        <th class="th-mediumText">Cupos Disponibles</th>
+                        <th class="th-bigText">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="cetrarSoloItems">
+            <button class="btn btn-primary mb-2" onclick="RegistrarResolucion()" type="button">Registrar
+                Resolución</button>
+            <div class="spinner-border text-primary mb-2 spinner d-none" role="status" id="divSpinner2">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div id="divregistrarResolucion" class="d-none mt-1 mb-1 row">
+            <div class="col-12">
+                <h2 id="tituloAccionResolucion"></h2>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtAutoridadEmiteResolucion" class="form-label required">Autoridad ambiental que emite
+                    reolución</label>
+                <select type="text" class="form-select" id="txtAutoridadEmiteResolucion">
+                </select>
+                <span id="validaciontxtAutoridadEmiteResolucion" class="span-advertencia d-none">Campo
+                    Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtnumeroResolucion" class="form-label required">Numero de Resolución</label>
+                <input type="number" class="form-control" id="txtnumeroResolucion" placeholder="Numero de Resolucion">
+                <span id="validacionNumeroResolucion" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtFechaResolucion" class="form-label required">Fecha de emisión de la resolución</label>
+                <input type="date" class="form-control" id="txtFechaResolucion" placeholder="Fecha de Resolucion">
+                <span id="validacionFechaResolucion" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtFechaRegistroResolucion" class="form-label required">Fecha de registro resolución</label>
+                <input type="date" class="form-control" id="txtFechaRegistroResolucion"
+                    placeholder="Fecha de registro resolución" readonly>
+                <span id="validacionFechaRegistroResolucion" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtCodigoZoocriadero" class="form-label required">Código de zoocriadero</label>
+                <input type="text" class="form-control" id="txtCodigoZoocriadero" placeholder="Código de zoocriadero">
+                <span id="validaciontxtCodigoZoocriadero" class="span-advertencia d-none">Campo Obligatorio</span>
+            </div>
+            <div class="mb-1 mt-1 col-6">
+                <label for="txtObservaciones" class="form-label">Observaciones</label>
+                <textarea class="form-control" id="txtObservaciones" rows="3"></textarea>
+            </div>
+            <div class="row" id="divSoloRegistrarEspecies">
+                <h2 class="mt-2 mb-2 col-12" id="TituloRegistroEspecieComercializar">Registrar especie a comercializar</h2>
+                <div class="mb-1 mt-1 col-md-4" id="divSltTipoEspecimenValido">
+                    <label for="sltTipoEspecimenValido" class="form-label required">Nombre especie</label>
+                    <select class="select2" name="states[]" id="sltTipoEspecimenValido">
+                    </select>
+                    <span id="validacionTipoEspecimenValido" class="span-advertencia d-none">Campo Obligatorio</span>
+                </div>
+                <div class="mb-1 mt-1 col-md-4">
+                    <label for="txtAnioProduccion" class="form-label required">Año de Producción</label>
+                    <input type="text" class="form-control" name="txtAnioProduccion" id="txtAnioProduccion"
+                        placeholder="Año de Produccion" />
+                    <span id="validaciontxtAnioProduccion" class="span-advertencia d-none">Campo Obligatorio</span>
+                </div>
+                <div class="mb-1 mt-1 col-md-4">
+                    <label for="txtCuposRegistrar" class="form-label required">Cupos de Aprovechamiento y
+                        Comercialización</label>
+                    <input type="number" class="form-control" id="txtCuposRegistrar" placeholder="Cupos">
+                    <span id="validaciontxtCuposRegistrar" class="span-advertencia d-none">Campo Obligatorio</span>
+                </div>
+                <div class="mb-1 mt-1 col-md-3">
+                    <label for="txtCuotaRepoblacion" class="form-label required">Cuota de Repoblación</label>
+                    <input type="number" class="form-control" id="txtCuotaRepoblacion"
+                        placeholder="Cuota de Repoblación">
+                    <span id="validaciontxtCuotaRepoblacion" class="span-advertencia d-none">Campo Obligatorio</span>
+                </div>
+                <div class="mb-1 mt-1 col-md-3">
+                    <label for="txtTotalCuposOtorgados" class="form-label required">Total Cupos Otorgados</label>
+                    <input type="number" class="form-control" id="txtTotalCuposOtorgados"
+                        placeholder="Total Cupos Otorgados" readonly>
+                    <span id="validacionTotalCuposOtorgados" class="span-advertencia d-none">Campo Obligatorio</span>
+                </div>
+                <div class="mb-1 mt-1 col-md-3">
+                    <label for="txtNumeroInternoInicial" class="form-label required">N° interno inicial</label>
+                    <input type="number" class="form-control" id="txtNumeroInternoInicial"
+                        placeholder="N° interno inicial" readonly>
+                    <span id="validaciontxtNumeroInternoInicial" class="span-advertencia d-none">Campo
+                        Obligatorio</span>
+                </div>
+                <div class="mb-1 mt-1 col-md-3">
+                    <label for="txtNumeroInternoFinal" class="form-label required">N° interno final</label>
+                    <input type="number" class="form-control w-100" id="txtNumeroInternoFinal"
+                        placeholder="N° interno final" readonly>
+                    <span id="validaciontxtNumeroInternoFinal" class="span-advertencia d-none">Campo Obligatorio</span>
+                </div>
+                <div class="mb-1 mt-1 col-12 text-end">
+                    <button type="button" class="btn btn-primary w-100" onclick="agregarRegistroCuposAnio()"
+                        id="btnAgregarRegistroCuposAnio" data-bs-toggle="tooltip" data-bs-placement="top"></button>
+                </div>
+            </div>
+            <div class="mb-1 mt-1 col-12 d-none" id="divTableCuposAnio">
+                <table id="TableCuposPorAnio" class="table w-100" aria-describedby="Tabla cupos por especie">
+                    <caption class="d-none">Table Description</caption>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th class="th-mediumText">Especie</th>
+                            <th class="th-shortText">Año</th>
+                            <th class="th-bigText">Cupos de Aprovechamiento y Comercialización</th>
+                            <th class="th-bigText">Cuota de Repoblación</th>
+                            <th class="th-bigText">Total cupos otorgados</th>
+                            <th class="th-bigText">N° interno inicial</th>
+                            <th class="th-bigText">N° interno final</th>
+                            <th class="th-bigText">N° interno inicial de cuota de repoblación</th>
+                            <th class="th-bigText">N° interno final de cuota de repoblación</th>
+                            <th class="th-bigText">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <span id="validacionCuposAnioProduccion" class="span-advertencia d-none">Debe agregar por lo menos un
+                registro</span>
+        </div>
+        <div class="col-12">
+            <ul class="list-group" id="idListAdvertencia">
+
+            </ul>
+        </div>
+    </div>
+</div>

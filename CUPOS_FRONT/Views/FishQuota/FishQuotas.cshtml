@@ -1,0 +1,330 @@
+﻿@using Repository.Helpers.Models;
+@model List<FishQuota>
+
+@{
+    Layout = "_LayoutFishQuotas";
+}
+<div class="container">         
+    <div id="QuotasTable">  
+        <div class="row content">
+            <div class="col-md-8 resume">
+                <a asp-controller="Home" asp-action="Index">Inicio</a> > <strong>Resolución cuotas globales de pesca</strong>
+            </div>
+            <div class="col-md-4 iconos">
+                <a class="btn btn-secondary" type="button" asp-controller="FishQuota" asp-action="Ayuda" title="Ayuda">AYUDA</a>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">INICIO</a>
+            </div>
+        </div>     
+        <div id="divBuscador">
+            <h3 class="titulos-h3">Resolución cuotas globales de pesca</h3>
+            <div class="row mt-2">
+                <div class="col-md-3 mb-1">
+                        <label for="numberResolution" class="form-label">Número resolución</label>                           
+                        <input type="text" class="form-control" id="NumberResolutionTxtSearch" placeholder="Número resolución" onkeypress="return OnlyNumberKey(event)" maxlength="20">
+                </div>
+                <div class="col-md-3 mb-1">
+                        <label for="initialDateLbl" class="form-label">Fecha Inicio</label>                           
+                        <input type="date" class="form-control" id="InitialVigencyDateTxtSearch">
+                </div>   
+                <div class="col-md-6 row mb-1">
+                    <label for="finalDateLbl" class="form-label">Fecha Fin</label>
+                    <div class="col-md-8">               
+                        <input type="date" class="form-control" id="FinalVigencyDateTxtSearch">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-primary" onclick="GetFishesQuotas('search')">Buscar</button>
+                    </div>
+                </div>                       
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary bordesButon mb-2 mt-4" onclick="ShowFishQuotaForm()" title="Ir a registrar resolución cuotas globales de pesca">Registrar Resolución</button>
+        <div class="mt-3">
+            <div class="mt-2 mb-2 divTabla">
+                <table id="TableFishesQuotas" class="table w-100" aria-describedby="Tabla cuota peces">
+                    <thead>
+                        <tr>
+                            <th class="d-none">Code</th>                                                         
+                            <th class="th-mediumText">N° Resolución</th>                                                         
+                            <th class="th-mediumText">Fecha Resolución</th>
+                            <th class="th-mediumText">Fecha Inicio / Vigencia</th>
+                            <th class="th-mediumText">Fecha Fin / Vigencia</th>
+                            <th class="th-mediumText">Objeto Resolución</th>                                
+                            <th class="th-mediumText">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            if(Model.Any())
+                            {
+                                foreach(var item in Model)
+                                {
+                                    <tr>
+                                        <td class="d-none">@item.Code</td>
+                                        <td>@item.NumberResolution</td>
+                                        <td>@item.ResolutionDate.ToString("dd-MM-yyyy")</td>
+                                        @{
+                                            var fechaValidityString = "";
+                                            if (item.InitialValidityDate != DateTime.MinValue)
+                                                fechaValidityString = item.InitialValidityDate.ToString("dd-MM-yyyy");
+
+                                        } 
+                                        <td>@fechaValidityString</td>
+                                        @{
+                                            var fechaValidityFinalString = "";
+                                            if (item.FinalValidityDate != null)
+                                                fechaValidityFinalString = item.FinalValidityDate?.ToString("dd-MM-yyyy");
+                                        }
+                                        <td>@fechaValidityFinalString</td>
+                                        <td>@item.ResolutionObject</td>
+                                        <td><a type="button" class="text-primary" id="btnViewDetail" title="Ver detalle">VER</a> / <a type="button" class="text-primary" id="btnEdit" title="Editar">EDITAR</a> / <a type="button" class="text-primary" id="btnDelete" title="Eliminar">ELIMINAR</a></td>
+                                       
+                                    
+                                    </tr>                                    
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>                        
+            </div>                                        
+        </div>
+    </div>
+    <div id="SaveDiv">
+        <div class="row content">
+            <div class="col-md-8 resume">
+            <a asp-controller="Home" asp-action="Index">Inicio</a> > <a asp-controller="FishQuota" asp-action="FishQuotas">Cuotas globales de pesca</a> > <strong id="TitleSaveDivPanel">Editar resolución cuotas globales de pesca</strong>
+            </div>
+            <div class="col-md-4 iconos">
+                <button type="submit" class="btn btn-secondary" title="Ayuda">AYUDA</button>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">INICIO</a>
+            </div>
+        </div> 
+        <h3 id="titleSaveDiv" class="titulos-h3">Editar Resolución cuotas globales de pesca</h3>
+        <div class="container">
+            <partial name="Partials/FishQuotaForm" />
+        </div>
+        <div class="row justify-content-center">
+            <button type="button" id="BtnReturnFQ" class="btn btn-primary btn-bandeja-regresar m-2" onclick="ConfirmCancelOrReturn('return')" title="Regresar a Resolución cuotas globales de pesca">Salir</button>
+            <button type="button" id="BtnCancelFQ" class="btn btn-primary btn-bandeja-regresar m-2" onclick="ConfirmCancelOrReturn('cancel')" title="Cancelar el guardado de cuota para peces">Cancelar</button>
+            <button type="button" onclick="ConfirmSave()" id="BtnSaveFQ" class="btn btn-primary btn-bandeja-regresar m-2" title="Guardar cuota para peces">Guardar</button>
+        </div>         
+    </div>
+</div>
+<div class="modal fade" id="MessageTextModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="messageText"></p>
+                    </div>
+                    <div id="divBotonesConfirmacion" class="text-center col-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnAccept" onclick="ConfirmAcceptModal()">Aceptar</button>
+                            </div>
+                        </div>
+                    </div>                            
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="MessageTextModalInformative" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p id="TitleModalConfirmation">Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="MessageTextInformative"></p>
+                    </div>
+                    <div id="divBotonesConfirmacion" class="text-center col-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnAccept">Aceptar</button>
+                            </div>
+                        </div>
+                    </div>                            
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ConfirmModalDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center row" id="divConfirmacionMensaje">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-md-12 mensajes-modal">
+                        <p id="MessageTextConfirmDelete"></p>
+                    </div>
+                </div>
+                <div class="text-center d-none" id="divSpinner3">
+                    <div class="spinner-border text-primary mb-2 spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="divBotonesConfirmacion" class="text-center col-12">
+                    <div class="row">
+                        <div class="col-6" class="d-none" id="divBtnSiModal">
+                            <a type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnSiModal" onclick="ConfirmDelete(true)">Si</a>
+                        </div>
+                        <div class="col-6" class="d-none" id="divBtnNoModal">
+                            <a type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnNoModal" onclick="ConfirmDelete(false)">No</a>
+                        </div>        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ConfirmModalSave" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center row" id="divConfirmacionMensaje">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-md-12 mensajes-modal">
+                        <p id="MessageTextConfirmSave"></p>
+                    </div>
+                </div>
+                <div class="text-center d-none" id="divSpinner3">
+                    <div class="spinner-border text-primary mb-2 spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="divBotonesConfirmacion" class="text-center col-12">
+                    <div class="row">
+                        <div class="col-6" class="d-none" id="divBtnSiModal">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnSiModal" onclick="SaveFishQuota(true)">Si</button>
+                        </div>
+                        <div class="col-6" class="d-none" id="divBtnNoModal">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnNoModal" onclick="SaveFishQuota(false)">No</button>
+                        </div>        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>    
+<div class="modal fade" id="ConfirmModalDeleteAmount" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center row" id="divConfirmacionMensaje">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-md-12 mensajes-modal">
+                        <p id="MessageTextConfirmDeleteAmount"></p>
+                    </div>
+                </div>
+                <div class="text-center d-none" id="divSpinner3">
+                    <div class="spinner-border text-primary mb-2 spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="divBotonesConfirmacion" class="text-center col-12">
+                    <div class="row">
+                        <div class="col-6" class="d-none" id="divBtnSiModal">
+                            <a type="button" class="btn btn-primary" data-bs-dismiss="modal" id="deleteAmountBtnYes">Si</a>
+                        </div>
+                        <div class="col-6" class="d-none" id="divBtnNoModal">
+                            <a type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="deleteAmountBtnNo">No</a>
+                        </div>        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ConfirmModalCancelSave" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center row" id="divConfirmacionMensaje">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-md-12 mensajes-modal">
+                        <p id="MessageTextConfirmCancelSave"></p>
+                    </div>
+                </div>
+                <div class="text-center d-none" id="divSpinner3">
+                    <div class="spinner-border text-primary mb-2 spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="divBotonesConfirmacion" class="text-center col-12">
+                    <div class="row">
+                        <div class="col-6" class="d-none" id="divBtnSiModal">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnSiModal" onclick="RedirectCancelSave(true)">Si</button>
+                        </div>
+                        <div class="col-6" class="d-none" id="divBtnNoModal">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnNoModal" onclick="RedirectCancelSave(false)">No</button>
+                        </div>        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>   
+<div class="modal fade" id="modalAlerta" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fas fa-exclamation-circle i-modal-alerta"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal-alerta">
+                        <p>Alerta</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>Los siguientes campos son obligatorios</p>
+                        <ul id="ulCamposOblgatorios" class="list-group">
+
+                        </ul>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                ACEPTAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<partial name="Scripts\FishQuotaScripts" />

@@ -1,0 +1,152 @@
+<head>
+    <meta charset="utf-8">
+    <title>Generar Numero Radicado Salida</title>
+</head>
+<body>
+    <div class="row">
+        <h1>Radicar solicitud salida</h1>
+        <div class="col-md-3 mb-1">
+            <label for="numeroRadicadoSalida" class="form-label required">Número Radicado Salida</label>
+            <input type="text" class="form-control" id="numeroRadicadoSalida" placeholder=" Número Radicado Salida" maxlength="15">
+        </div>
+        <div class="col-md-3 mb-1">
+            <label for="fechaRadicadoSalida" class="form-label required">Fecha de Radicación Salida</label>
+            <input type="date" class="form-control" id="fechaRadicadoSalida">
+        </div>
+    </div>
+    <div class="mt-4 row justify-content-center">
+        <div class="col-2">
+            <button type="button" id="guardarNumeroRadicadoSalida" class="btn btn-primary col-12" title="Guardar">GUARDAR</button>
+        </div>
+        <div class="col-2">
+            <a class="btn btn-secondary" type="button" asp-controller="GestionPrencintosNacionales" asp-action="Index" title="Volver">VOLVER</a>
+        </div>
+    </div>
+</body>
+<partial name="./../Modales/Modales.cshtml" />
+<script>
+    $( document ).ready(function() {
+        var today = new Date();
+        var date = today.getFullYear() + "-" + today.getMonth() + 1 + "-" + today.getDate();
+        $("#fechaRadicadoSalida").prop("max", date);
+    });
+
+    $("#guardarNumeroRadicadoSalida").click(async function () {
+        var id = @ViewBag.code;
+        var numeroRadicado = $('#numeroRadicadoSalida').val();
+        var fechaRadicado = $('#fechaRadicadoSalida').val();
+        if (numeroRadicado == "" || fechaRadicado == "") {
+            $('.mensaje-datos-obligatorio').html('');
+            numeroRadicado == "" ? $('.mensaje-datos-obligatorio').append("<p>Numero radicado<p>") : '';
+            fechaRadicado == "" ? $('.mensaje-datos-obligatorio').append("<p>Fecha de radicado<p>") : '';
+
+            $('#datos-obligatorios').modal('show');
+        }
+        else {
+            var fecha = new Date();
+            var año = fecha.getFullYear();
+            var dia = fecha.getDate();
+            var mes = fecha.getMonth() + 1;
+            var hoy = año + "-" + mes + "-" + dia;
+            var fechaRadicado = $("#fechaRadicadoSalida").val().split('-');
+            var f1 = new Date(año, mes, dia);
+            var f2 = new Date(fechaRadicado[0], fechaRadicado[1], fechaRadicado[2]);
+
+            if (f1 < f2) {
+                $("#fechaRadicadoSalida").val('');
+                $('.mensaje-datos-obligatorio').html('');
+                $('.mensaje-datos-obligatorio').html('La fecha ingresada no puede superior a la fecha actual');
+                $('#datos-obligatorios').modal('show');
+            } else {
+                visualizarFondoProcesando();
+                let url = "@Url.Action("DetalleSolicitud","GestionPrencintosNacionales")";
+                let resp = await Get(url, { id: id });
+
+                if (resp[0].fecharadicacion != null){
+                    debugger;
+                    var fecha = moment(resp[0].fecharadicacion).format('DD/MM/yyyy');
+                    fecha = fecha.split('/');
+
+                    var fechaRadicado = $("#fechaRadicadoSalida").val();
+                    fechaRadicado = moment(fechaRadicado).format('DD/MM/yyyy');
+                    fechaRadicado = fechaRadicado.split('/');
+
+                    var f3 = new Date(fecha[2], fecha[1], fecha[0]);
+                    var f4 = new Date(fechaRadicado[2], fechaRadicado[1], fechaRadicado[0]);
+                    console.log(f3);
+                    console.log(f4);
+
+                    if (f3 >  f4) {
+                        $('.mensaje-datos-obligatorio').html('');
+                        $('.mensaje-datos-obligatorio').html('La fecha ingresada no puede inferior a la fecha de radicación inicial');
+                        $('#datos-obligatorios').modal('show');
+                    }else{
+                        $('#datos-obligatorios').modal('hide');
+                        $("#confirmacionNumeroRadicado").modal('show');
+                    }
+                }
+                ocultarFondoProcesando();
+            }
+        }
+    });
+
+    $("#confirmarGuardarNumeroRadicado").click(async function () {
+        visualizarFondoProcesando();
+        var id = @ViewBag.code;
+        var numeroRadicado = $('#numeroRadicadoSalida').val();
+        var fechaRadicado = $('#fechaRadicadoSalida').val();
+
+        $("#confirmacionNumeroRadicado").modal('hide');
+
+        json = {
+            code: id,
+            codeSettled: numeroRadicado,
+            date: fechaRadicado
+        }
+
+        let url = "@Url.Action("RadicarSolicitudSalida","GestionPrencintosNacionales")";
+        let resp = await Get(url, json);
+
+        if (resp != null) {
+            await GuardarCodigoPrecintosPendiente();
+            $("#creacionNumeroRadicado").modal('show');
+        }
+        ocultarFondoProcesando();
+    });
+
+    async function GuardarCodigoPrecintosPendiente() {
+        var nombreEspecie = @ViewBag.nameSpecie;
+        var numeracionIncial = @ViewBag.codeIni;
+        var numeracionFinal = @ViewBag.codeFin;
+        var color = @ViewBag.colorCode;
+        var cantidad = @ViewBag.amount;
+        var valorConsignacion = @ViewBag.valueConsignment;
+        var observaciones = '@Html.Raw(ViewBag.observations)';
+        var tipoSolicitud = '@Html.Raw(ViewBag.tipoSolicitud)';
+
+        json = {
+            code: @ViewBag.code,
+            codeSpecies: nombreEspecie,
+            initialNumber: numeracionIncial,
+            finalNumber: numeracionFinal,
+            color: color,
+            amount: cantidad,
+            worth: valorConsignacion,
+            observations: observaciones,
+            tipoSolicitud: tipoSolicitud
+        }
+
+        let url = "@Url.Action("GuardarCodigosPrecintos","GestionPrencintosNacionales")";
+        let resp = await Get(url, json);
+
+        if (resp != null) {
+            if (resp == "Ya existen los codigo a generar para la empresa solicitada.") {
+                $('.mensaje-datos-obligatorio').html('');
+                $('.mensaje-datos-obligatorio').append("<p>Ya existen los c�digos a generar para el establecimiento solicitado.<p>");
+
+                $('#datos-obligatorios').modal('show');
+            }
+        }
+    }
+
+</script>

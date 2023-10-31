@@ -1,0 +1,51 @@
+﻿<script>
+
+    let businessSelect = document.getElementById('businessSelect');
+    let typeDocumentSelect = document.getElementById('typeDocumentSelect');
+    let documentNumberTxt=document.getElementById('documentNumberTxt');
+
+//valida registro de la empresa
+function ValidateCompany(){
+    GetValidateCompany($(businessSelect).val(), $(typeDocumentSelect).val(), $(documentNumberTxt).val());
+}
+
+//obtiene la empresa
+async function GetValidateCompany(company,typeDocument,documentNumber){
+    var messageText=document.getElementById('messageText');
+    let url = `@Url.Action("ValidateCompany", "SaleDocument")` + `?company=${company}&typeDocument=${typeDocument}&documentNumber=${documentNumber}`;
+    let response = await Get(url);
+    if(response.length > 0){         
+        messageText.innerText='El establecimeinto SI se encuentra registrada';
+        document.getElementById("btnAccept").onclick = function() {Accept()};        
+        $('#MessageTextModal').modal('show');
+        return
+    }else{        
+        messageText.innerText='El establecimeinto NO se encuentra registrada';
+        $('#MessageTextModal').modal('show');
+        return        
+    }
+}
+
+//evento aceptar redirecciona a formulario registro de venta
+async function Accept(){
+    window.location = '@Url.Action("SaleDocumentForm", "SaleDocument")'
+}
+
+//oculta elementos html
+function HideElement(element,validate){
+    if(validate){
+        if($(element).hasClass('d-none')){
+            $(element).removeClass('d-none')
+        }              
+    }else{ 
+        if (!$(element).hasClass('d-none')) {
+            $(element).addClass('d-none')
+        }                 
+    }
+}
+
+//Regresa a la pantalla registro documento de venta
+function Return(){
+    window.location.href = '@Url.Action("SaleDocuments", "SaleDocument")'
+}
+</script>

@@ -1,0 +1,96 @@
+﻿@model Web.Models.InformacionSolicitud;
+
+@{
+    var nombreVistaParcial = "";
+    if(Model.ListaTiposSolicitud.Any())
+    {
+        nombreVistaParcial = Model.ListaTiposSolicitud.Where(s => s.IdTipoSolicitud == Model.TypeRequestCode)
+                                                      .Select(p => p.VistaParcial).FirstOrDefault() ?? "";
+    }
+}
+
+
+<div class="row">
+    <hr size="5" />
+    <h1>Ver Solicitud</h1>
+    <input type="hidden" asp-for="IdSolicitud">
+    <div class="col-md-3 mb-1">
+        <label for="@Model.Ciudad" class="form-label">Ciudad</label>
+        <input type="text" class="form-control" asp-for="Ciudad" readonly>
+    </div>
+    <div class="col-md-3 mb-1">
+        <label for="@Model.Fecha" class="form-label">Fecha</label>
+        <input type="text" class="form-control" asp-for="Fecha" readonly>
+    </div>
+    <div class="col-md-3 mb-1">
+        <label for="@Model.Establecimiento" class="form-label">Establecimiento</label>
+        <input type="text" class="form-control" asp-for="Establecimiento" readonly>
+    </div>
+    <h2>Representante legal</h2>
+    <div class="col-md-3 mb-1">
+        <label for="@Model.PrimerNombre" class="form-label">Primer Nombre</label>
+        <input type="text" class="form-control" asp-for="PrimerNombre" readonly>
+    </div>
+    <div class="col-md-3 mb-1">
+        <label for="@Model.SegundoNombre" class="form-label">Segundo Nombre</label>
+        <input type="text" class="form-control" asp-for="SegundoNombre" readonly>
+    </div>
+    <div class="col-md-3 mb-1">
+        <label for="@Model.PrimerApellido" class="form-label">Primer Apellido</label>
+        <input type="text" class="form-control" asp-for="PrimerApellido" readonly>
+    </div>
+    <div class="col-md-3 mb-1">
+        <label for="@Model.SegundoApellido" class="form-label">Segundo Apellido</label>
+        <input type="text" class="form-control" asp-for="SegundoApellido" readonly>
+    </div>
+    <div class="col-md-3 mb-1">
+        <label for="@Model.TipoIdentificacion" class="form-label">Tipo de identificación</label>
+        <input type="text" class="form-control" asp-for="TipoIdentificacion" readonly>
+    </div>
+    <div class="col-md-3 mb-1">
+        <label for="@Model.NumeroIdentificacion" class="form-label">Número de identificación</label>
+        <input type="number" class="form-control" asp-for="NumeroIdentificacion" readonly>
+    </div>
+    <div class="col-md-3 mb-1">
+        <label for="telefono" class="form-label">Teléfono</label>
+        <input type="number" class="form-control" asp-for="Telefonos" readonly>
+    </div>
+    <div class="col-md-3 mb-1">
+        <label for="@Model.CorreoElectronico" class="form-label">Correo electrónico</label>
+        <input type="text" class="form-control" asp-for="CorreoElectronico" readonly>
+    </div>
+
+    <div class="col-md-12">
+        <h2 class="mb-3">Solicitud</h2> 
+        <div class="col-md-7 mb-4">
+            <label for="@Model.TipoSolicitud" class="form-label">Tipo de Solicitud</label>
+            <input type="text" class="form-control" asp-for="TipoSolicitud" readonly>
+        </div>    
+    </div>
+
+    @{
+        if(!String.IsNullOrEmpty(nombreVistaParcial))
+        {
+            <partial name="@nombreVistaParcial" model="@Model"></partial>
+        }
+    }
+
+    
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

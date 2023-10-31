@@ -1,0 +1,427 @@
+﻿@model Web.Models.EditActaVisitaIdentificableModelView;
+
+
+<div class="container">
+    <div>
+        <a asp-controller="Home" asp-action="Index">Modulo de Cupos </a>  > <a asp-controller="RegistroVisitaDeCortes" asp-action="CreateTipoActaCorte">Registrar visita de Cortes</a> > <strong>Acta de control corte pieles partes identificables</strong>
+    </div>
+    <partial name="Partials/_SeccionBotonAyuda"></partial>
+
+
+    <div>
+        <h3>Editar Visita de Cortes Identificables</h3>
+    </div>
+
+    <div class="col-sm-12">
+        <label>Visita Nro</label>
+    </div>
+
+    <fieldset class="form-group  mb-3">
+        <legend class="d-none">Fieldset Description</legend>
+        <div class="row">
+            <div class="col-sm-10">
+                <input type="hidden" id="HiddenVisitaNro" value="@Model.ActaVisitaCortes.VisitaNumero">
+                <div class="form-check">
+                    @{
+                        var valorseleccionado = "";
+                        if (Model.ActaVisitaCortes.VisitaNumero1)
+                            valorseleccionado = "checked";
+                    }
+                    <input class="form-check-input" type="checkbox" name="radioVisita" id="radioVisita1" @valorseleccionado>
+                    <label class="form-check-label" for="radioVisita1">
+                        1
+                    </label>
+                </div>
+                <div class="form-check">
+                    @{
+                        valorseleccionado = "";
+                        if (Model.ActaVisitaCortes.VisitaNumero2)
+                            valorseleccionado = "checked";
+                    }
+                    <input class="form-check-input" type="checkbox" name="radioVisita" id="radioVisita2" @valorseleccionado>
+                    <label class="form-check-label" for="radioVisita2">
+                        2
+                    </label>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <partial name="Partials/_SeccionEstablecimiento" model="Model.ActaVisitaCortes"></partial>
+    <div class="row col-12  mb-3">
+        @if (Model.DocumentoOrigenPiel != null && Model.DocumentoOrigenPiel.Count() > 0)
+        {
+            <div class="form-group col-md-6" id="divOrigenPielNroDoc_0">
+                <label class="form-label required" for="DocumentoOrigenPiel">Documento de origen de las pieles</label>
+                <div class="mb-3 row col-12 align-items-center" name="divOrigenPielNroDoc">
+                    <div class="col-11">
+                        <input class="form-control inputValidation" name="DocumentoOrigenPiel" value="@Model.DocumentoOrigenPiel[0].NumeroDocumento" id="DocumentoOrigenPiel_0" placeholder="Nro de Documento" />
+                        <span class="SPANValidation span-advertencia" id="SPANDocumentoOrigenPiel_0"> </span>
+                    </div>
+                    <div id="btnAgregarInputDocumento" class="col-1 align-middle">
+                        <span class="fa-sharp fa-solid fa-square-plus fa-lg"></span>
+                    </div>
+                </div>
+                @if (Model.DocumentoOrigenPiel.Count() > 1)
+                {
+                    @for (int i = 1; i < Model.DocumentoOrigenPiel.Count(); i++)
+                    {
+                        <div class="mb-3 col-12 row align-items-center">
+                            <div class="col-11">
+                                <input class="form-control inputValidation" name="DocumentoOrigenPiel" value="@Model.DocumentoOrigenPiel[i].NumeroDocumento" id="DocumentoOrigenPiel_@i" placeholder="Nro de Documento" />
+                                <span class="SPANValidation span-advertencia" id="SPANDocumentoOrigenPiel_@i"> </span>
+                            </div>
+                            <div style="color:red;" class="col-1 fa-sharp fa-solid fa-square-minus fa-lg btnEliminarDocumentoOrigenPiel">
+                            </div>
+                        </div>
+                    }
+
+                }
+            </div>
+
+
+
+        }
+        else
+        {
+            <div class="form-group col-md-6" id="divOrigenPielNroDoc_0">
+                <div class="mb-3 row col-12 align-items-center" name="divOrigenPielNroDoc">
+                    <div class="col-11">
+                        <input class="form-control inputValidation" name="DocumentoOrigenPiel" id="DocumentoOrigenPiel_0" placeholder="Nro de Documento" />
+                        <span class="SPANValidation span-advertencia" id="SPANDocumentoOrigenPiel_0"> </span>
+                    </div>
+                    <div id="btnAgregarInputDocumento" class="col-1 align-middle">
+                        <span class="fa-sharp fa-solid fa-square-plus fa-lg"></span>
+                    </div>
+                </div>
+            </div>
+
+        }
+        @if (Model.ResolucionorigenPiel != null && Model.ResolucionorigenPiel.Count() > 0)
+        {
+            <div class="form-group col-md-3" name="divOrigenPielNroResolucion" id="divOrigenPielNroResolucion_0">
+                <label class="form-label required" for="ResolucionNroOrigenPiel">Resolución Nro</label>
+                <div class="mb-3 row col-12 align-items-center">
+                    <div class="col-11">
+                        <input type="text" class="form-control inputValidation" name="ResolucionNroOrigenPiel" value="@Model.ResolucionorigenPiel[0].NumeroDocumento" id="ResolucionNroOrigenPiel_0" placeholder="Nro de Resolucion">
+                        <span class="SPANValidation span-advertencia" id="SPANResolucionNroOrigenPiel_0"> </span>
+                    </div>
+                    <div id="btnAgregarInputResolucionNro" class="col-1 align-middle">
+                        <span class="fa-sharp fa-solid fa-square-plus fa-lg"></span>
+                    </div>
+                </div>
+
+                @if (Model.ResolucionorigenPiel.Count() > 1)
+                {
+                    @for (int i = 1; i < Model.ResolucionorigenPiel.Count(); i++)
+                    {
+                        <div class="mb-3 row col-12 align-items-center">
+                            <div class="col-11">
+                                <input type="text" class="form-control inputValidation" name="ResolucionNroOrigenPiel" value="@Model.ResolucionorigenPiel[i].NumeroDocumento" id="ResolucionNroOrigenPiel_@i" placeholder="Nro de Resolucion">
+                                <span class="SPANValidation span-advertencia" id="SPANResolucionNroOrigenPiel_@i"> </span>
+                            </div>
+                            <div style="color:red;" class="col-1 fa-sharp fa-solid fa-square-minus fa-lg btnEliminarResolucionNroOrigenPiel">
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+        }
+        else
+        {
+            <div class="form-group col-md-3" name="divOrigenPielNroResolucion" id="divOrigenPielNroResolucion_0">
+                <label class="form-label required" for="ResolucionNroOrigenPiel">Resolución Nro</label>
+                <div class="mb-3 row col-12 align-items-center">
+                    <div class="col-11">
+                        <input type="text" class="form-control inputValidation" name="ResolucionNroOrigenPiel" id="ResolucionNroOrigenPiel_0" placeholder="Nro de Resolucion">
+                        <span class="SPANValidation span-advertencia" id="SPANResolucionNroOrigenPiel_0"> </span>
+                    </div>
+                    <div id="btnAgregarInputResolucionNro" class="col-1 align-middle">
+                        <span class="fa-sharp fa-solid fa-square-plus fa-lg"></span>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.SalvoCondcutoNumeroOrigenPiel != null && Model.SalvoCondcutoNumeroOrigenPiel.Count() > 0)
+        {
+            <div class="form-group col-md-3" id="divOrigenPielNroSalvoConducto_0">
+                <label class="form-label required" for="SalvoConductoNro">Salvoconducto Nro</label>
+                <div class="mb-3 row col-12 align-items-center">
+                    <div class="col-11">
+                        <input type="text" class="form-control inputValidation" name="SalvoConductoNro" id="SalvoConductoNro_0" value="@Model.SalvoCondcutoNumeroOrigenPiel[0].NumeroDocumento" placeholder="Nro de salvoConducto">
+                        <span class="SPANValidation span-advertencia" id="SPANSalvoConductoNro_0"> </span>
+                    </div>
+                    <div id="btnAgregarInputSalvoConductoNro" class="col-1 align-middle">
+                        <span class="fa-sharp fa-solid fa-square-plus fa-lg"></span>
+                    </div>
+                </div>
+                @if (Model.SalvoCondcutoNumeroOrigenPiel.Count() > 1)
+                {
+                    @for (int i = 1; i < Model.SalvoCondcutoNumeroOrigenPiel.Count(); i++)
+                    {
+
+                        <div class="mb-3 row col-12 align-items-center">
+                            <div class="col-11">
+                                <input type="text" class="form-control inputValidation" name="SalvoConductoNro" id="SalvoConductoNro_@i" value="@Model.SalvoCondcutoNumeroOrigenPiel[i].NumeroDocumento" placeholder="Nro de salvoConducto">
+                                <span class="SPANValidation span-advertencia" id="SPANSalvoConductoNro_@i"> </span>
+                            </div>
+                            <div style="color:red;" class="col-1 fa-sharp fa-solid fa-square-minus fa-lg btnEliminarSalvoConductoNro">
+                            </div>
+                        </div>
+
+                    }
+
+                }
+            </div>
+
+        }
+        else
+        {
+            <div class="form-group col-md-3" id="divOrigenPielNroSalvoConducto_0">
+                <label class="form-label required" for="SalvoConductoNro">Salvoconducto Nro</label>
+                <div class="mb-3 row col-12 align-items-center">
+                    <div class="col-11">
+                        <input type="text" class="form-control inputValidation" name="SalvoConductoNro" id="SalvoConductoNro_0" placeholder="Nro de salvoConducto">
+                        <span class="SPANValidation span-advertencia" id="SPANSalvoConductoNro_0"> </span>
+                    </div>
+                    <div id="btnAgregarInputSalvoConductoNro" class="col-1 align-middle">
+                        <span class="fa-sharp fa-solid fa-square-plus fa-lg"></span>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+    <partial name="Partials/_SeccionPielesPrecinto" model="Model.ActaVisitaCortes"></partial>
+    <div class="divCantidadPieles row col-md-12 mb-3">
+        <div class="divContenedorCantidadPieles row col-md-6 d-flex justify-content-center" id="divContenedorCantidadPieles">
+            <div class="subseccion1 col-md-6" id="divSubSeccion1TipoPiel">
+                <div class="divTitulos">
+                    <label>Tipo de Piel</label>
+                </div>
+                @{
+                    @if (Model.TipoCortesPiel != null && Model.TipoCortesPiel.Count() > 0)
+                    {
+                        @for (int i = 0; i < Model.TipoCortesPiel.Count(); i++)
+                        {
+                            <div class="DivInput mb-3">
+                                <input class="form-control inputSeccionCortesPieles inputValidation" name="TipoPielidntificable" id="TipoPielidntificable_@i" value="@Model.TipoCortesPiel[i].TipoPiel" placeholder="Inserte un tipo de piel" />
+                                <span class="SPANValidation span-advertencia" id="SPANTipoPielidntificable_@i"> </span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="DivInput mb-3">
+                            <input class="form-control inputSeccionCortesPieles inputValidation" name="TipoPielidntificable" id="TipoPielidntificable_0" placeholder="Inserte un tipo de piel" />
+                             <span class="SPANValidation span-advertencia" id="SPANTipoPielidntificable_0"> </span>
+                        </div>
+                    }
+                }
+
+                <div class="DivAdBtonAdiccionSeccion">
+                    <div class="AgregarTipoPiel SeccionBotonAgregarDiv" id="btnAgregarTipoPiel">
+                        <span class="fa-sharp fa-solid fa-square-plus"></span>
+                        <span>Agregar piel</span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="subseccion2 col-md-4" id="divSubSeccion1TipoPielCantidad">
+                <div class="divTitulos">
+                    <label>Cantidad de piel</label>
+                </div>
+
+                @{
+                    @if (Model.TipoCortesPiel != null && Model.TipoCortesPiel.Count() > 0)
+                    {
+                        @for (int i = 0; i < Model.TipoCortesPiel.Count(); i++)
+                        {
+                            <div class="DivInput row  align-items-center mb-3">
+                                <div class="col-11">
+                                    <input class="form-control inputSeccionCortesPieles" name="CantidadTipoPielidntificable" id="CantidadTipoPielidntificable_@i" value="@Model.TipoCortesPiel[i].Cantidad" placeholder="Inserte cantidad" />
+                                </div>
+
+                                @if (i > 0)
+                                {
+                                    <div style="color:red;" class="p-0 col-1 col-1 fa-sharp fa-solid fa-square-minus fa-lg btnEliminarInputsTipoPiel" id="divEliminarTipoPielIdentificable_@i"> </div>
+                                }
+                            </div>
+
+                        }
+                    }
+                    else
+                    {
+                        <div class="DivInput mb-3">
+                            <input class="form-control inputSeccionCortesPieles" name="CantidadTipoPielidntificable" id="CantidadTipoPielidntificable_0" placeholder="Inserte cantidad" />
+                        </div>
+                    }
+                }
+
+            </div>
+
+
+        </div>
+        <div class="divContenedorCantidadPieles row col-md-6 mb-3 d-flex justify-content-center" id="divContenedorCantidadPartesPieles">
+            <div class="subseccion1 col-md-6" id="divSubSeccion1TipoParte">
+                <div class="divTitulos">
+                    <label>Tipo de partes obtenidas</label>
+                </div>
+              
+                @{
+                    @if (Model.TipoPartes != null && Model.TipoPartes.Count() > 0)
+                    {
+                        @for (int i = 0; i < Model.TipoPartes.Count(); i++)
+                        {
+                            <div class="DivInput mb-3">
+                                <select class="form-control inputValidation inputSeccionCortesPieles" id="TipoParteidntificable_@i"  name="TipoParteidntificable" asp-items="Model.TiposPartesPiel" asp-for="@Model.TipoPartes[i].TipoParte">   </select>                                 
+                                  <span class="SPANValidation span-advertencia" id="SPANTipoParteidntificable_@i"> </span>
+                            </div>
+
+                        }
+                    }
+                    else
+                    {
+                        <div class="DivInput mb-3">
+                           <select class="form-control inputValidation inputSeccionCortesPieles" id="TipoParteidntificable_0"  name="TipoParteidntificable" asp-items="Model.TiposPartesPiel">   </select> 
+                            <span class="SPANValidation span-advertencia" id="SPANTipoParteidntificable_0"> </span>
+                        </div>
+                    }
+                }
+
+                <div class="DivAdBtonAdiccionSeccion">
+                    <div class="AgregarTipoParte SeccionBotonAgregarDiv" id="btnAgregarParte">
+                        <span class="fa-sharp fa-solid fa-square-plus"></span>
+                        <span>Agregar Parte</span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="subseccion2 col-md-4" id="divSubSeccion2TipoParte">
+                <div class="divTitulos">
+                    <label>Cantidad </label>
+                </div>
+                @{
+                    @if (Model.TipoPartes != null && Model.TipoPartes.Count() > 0)
+                    {
+                        @for (int i = 0; i < Model.TipoPartes.Count(); i++)
+                        {
+                            <div class="DivInput row align-items-center mb-3">
+                                <div class="col-11">
+                                    <input class="form-control inputSeccionCortesPieles" name="CantidadTipoParteidntificable" id="CantidadTipoParteidntificable_@i" value="@Model.TipoPartes[i].Cantidad" placeholder="Inserte cantidad" />
+                                </div>
+                                @if (i > 0)
+                                {
+                                    <div style="color:red;" class="p-0  col-1 fa-sharp fa-solid fa-square-minus fa-lg btnEliminarInputsTipoParteIdentificable" id="divEliminarInputsTipoParteIdentificable_@i"> </div>
+                                }
+
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="DivInput mb-3">
+                            <input class="form-control inputSeccionCortesPieles" name="CantidadTipoParteidntificable" id="CantidadTipoParteidntificable_0" placeholder="Inserte cantidad" />
+                        </div>
+                    }
+                }
+
+
+            </div>
+        </div>
+    </div>
+    <partial name="Partials/_SeccionInfoRepresentanteEstablecimiento" model="Model.ActaVisitaCortes"></partial>
+    <partial name="Partials/_SeccionUploadDocumentosPDF"></partial>
+    <div class="mt-1 row justify-content-center">
+        <div class="col-2">
+            <button type="button"
+                    class="btn btn-primary w-100" id="btnEditFormularioCorteIdentificable">
+                Guardar
+            </button>
+        </div>
+        <div class="col-2">
+            <a class="btn btn-primary w-100" asp-action="Index" asp-controller="RegistroVisitaDeCortes">
+                Cancelar
+            </a>
+        </div>
+    </div>
+    <input type="hidden" id="HiddenResultadoProceso" />
+</div>
+
+<div class="modal fade"
+     id="modalGuardar"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>Está seguro de guardar la información?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" id="btnConfirmarGuardar" class="btn btn-primary">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+                                NO
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade"
+     id="modalMensaje"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fa-solid fa-circle-check i-modal"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Datos procesados</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="PmensajeProcesado"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" id="btnAceptarModal" class="btn btn-primary">Aceptar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<partial name="Partials/_modalCamposObligatorios"></partial>
+
+@section Scripts{
+<partial name="_ValidationScriptsPartial"></partial>
+<script src="~/js/RegistroDeVisitaDeCortes/EditActaVisitaCortesPartesIdentificables.js" asp-append-version="true"></script>
+<script src="~/js/RegistroDeVisitaDeCortes/RegistroDeVisitaDeCortesGeneric.js" asp-append-version="true"></script>
+}

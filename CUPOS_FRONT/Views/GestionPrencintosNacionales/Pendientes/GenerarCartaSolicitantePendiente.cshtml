@@ -1,0 +1,65 @@
+<head>
+    <meta charset="utf-8">
+    <title>Carta solicitante pendiente</title>
+</head>
+<body>
+    <div class="row">
+        <hr size="5" />
+        <h1>Formato carta al solicitante</h1>
+        <iframe title="Document" src="" id="visualizarDocumento" type="application/pdf" width="100" height="800">
+        </iframe>
+    </div>
+    <div class="mt-4 row justify-content-center">
+        <div class="col-2">
+            <a class="btn btn-primary" id="GenerarNumeroRadicadoSalida">RADICAR</a>
+        </div>
+        <div class="col-2">
+            <a class="btn btn-primary" type="button" asp-controller="GestionPrencintosNacionales" asp-action="Index" title="Volver">VOLVER</a>
+        </div>
+    </div>
+</body>
+<partial name="./../Modales/Modales.cshtml"/>
+<script>
+    $(document).ready(async function() {
+        var tipoSolicitud='@ViewBag.tipoSolicitud';
+        var id = @ViewBag.code;
+        var cantidad = @ViewBag.amount;
+        var codeIni = @ViewBag.codeIni;
+        var codeFin = @ViewBag.codeFin;
+        var color = '@ViewBag.color';
+
+        let url = "@Url.Action("CrearCartaSolicitantePendiente","GestionPrencintosNacionales")";
+        let resp = await Get(url, { code : id,
+                                    amount: cantidad,
+                                    color : color,
+                                    codeIni: codeIni,
+                                    codeFin: codeFin,
+                                    tipoSolicitud : tipoSolicitud
+                                    });
+
+        $("#visualizarDocumento").attr("src", "data:application/pdf;base64," + resp.adjuntoBase64);
+    });
+
+    $("#imprimirDocumento").click(async function () {
+        $("#print").trigger("click");
+    });
+
+    $("#guardarCartaSolicitud").click(async function () {
+        $("#guardarCartaExitosa").modal("show");
+    });
+
+    $("#GenerarNumeroRadicadoSalida").click(async function () {
+
+        var id = @ViewBag.code;
+        var cantidad = @ViewBag.amount;
+        var colorCode = @ViewBag.colorCode;
+        var codeIni = @ViewBag.codeIni;
+        var codeFin = @ViewBag.codeFin;
+        var nameSpecie = '@ViewBag.nameSpecie';
+        var valueConsignment = @ViewBag.valueConsignment;
+        var observations = '@Html.Raw(ViewBag.observations)';
+        var tipoSolicitud = '@Html.Raw(ViewBag.tipoSolicitud)';
+
+        window.location.href = "GenerarNumeroRadicadoSalida?code=" + id + "&amount=" + cantidad + "&colorCode=" + colorCode + "&codeIni=" + codeIni + "&codeFin=" + codeFin + "&nameSpecie=" + nameSpecie + "&valueConsignment=" + valueConsignment + "&observations=" + observations + "&tipoSolicitud=" + tipoSolicitud;
+    });
+</script>

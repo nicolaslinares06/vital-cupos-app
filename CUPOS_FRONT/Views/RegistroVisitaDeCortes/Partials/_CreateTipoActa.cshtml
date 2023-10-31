@@ -1,0 +1,50 @@
+﻿
+
+
+<div class="row">
+    <div class="container">
+        <div id="divBuscador" class="w-100">
+            <h4>Registrar visita de cortes</h4>
+            <div class="mb-2 mt-2 ">
+                <form asp-action="Index">
+                    <div class="d-flex">
+                        <div class="col-6">
+                            <label for="SelectNombreEstablecimiento" class="form-label">Tipo de Acta de Visita</label>
+                        </div>
+                        <div class="col-6"></div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="col-6">
+                            <select class="form-control" id="SelectTipoActaCorte" name="SelectTipoActaCorte">
+                                <option value="0">Selecione</option>
+                                <option value="1">Acta de control Corte de pieles partes identificables</option>
+                                <option value="2">Acta de control Corte de pieles fracciones irregulares</option>
+                            </select>
+                        </div>
+                        <div class="col-1"></div>
+
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        <br />
+    </div>
+</div>
+
+
+<script>
+    $("#SelectTipoActaCorte").change(async function(){
+        const TipoActa = parseInt($(this).val());
+        if(TipoActa  === 1)
+        {
+            location.href =`/RegistroVisitaDeCortes/CreateActaCortePartesIdentificables`;
+        }
+
+        if(TipoActa === 2)
+        {
+            location.href =`/RegistroVisitaDeCortes/CreateActaCortesPartesIrregulares`;
+        }
+    });
+</script>
+

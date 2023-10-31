@@ -1,0 +1,254 @@
+﻿@model Web.Models.ConsultActaVisitaModelView
+
+
+
+<div class="container">
+    <div class="col-xl-12">
+        @{
+            if (Model.DatosActaVisita.TipoActaVisita == 1)
+            {
+                <h4>Acta de control  y seguimiento de corte de Pieles para pieles identificables</h4>
+
+            }
+
+            if (Model.DatosActaVisita.TipoActaVisita == 2)
+            {
+                <h4>Acta de control  y seguimiento de corte de Pieles para pieles irregulares</h4>
+
+            }
+        }
+
+    </div>
+    <div class="row">
+        <div class="col-xl-6">
+            <p>Tipo de establecimientos : <span>@Model.DatosActaVisita.TipoEstablecimientoNombre</span></p>
+        </div>
+        <div class="col-xl-6">
+            <p>Nombre : <span>@Model.DatosActaVisita.NombreEstablecimiento</span></p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-6">
+            @{
+                var numerosOrigenPiel = "";
+                @if (Model.DocumentoOrigenPiel.Count() > 0)
+                {
+                    @foreach (var item in Model.DocumentoOrigenPiel)
+                    {
+
+                        numerosOrigenPiel += $"{item.NumeroDocumento} ";
+                    }
+                }
+
+            }
+            <p>Documento de origen de las pieles : <span>@numerosOrigenPiel</span></p>
+        </div>
+        <div class="col-xl-3">
+            @{
+                var numerosResolucion = "";
+                @if (Model.ResolucionorigenPiel.Count() > 0)
+                {
+                    @foreach (var item in Model.ResolucionorigenPiel)
+                    {
+
+                        numerosResolucion += $"{item.NumeroDocumento} ";
+                    }
+                }
+
+            }
+            <p>Resolucion No: <span>@numerosResolucion</span></p>
+        </div>
+        <div class="col-xl-3">
+            @{
+                var numerosSalvoConductos = "";
+                @if (Model.SalvoCondcutoNumeroOrigenPiel.Count() > 0)
+                {
+                    @foreach (var item in Model.SalvoCondcutoNumeroOrigenPiel)
+                    {
+
+                        numerosSalvoConductos += $"{item.NumeroDocumento} ";
+                    }
+                }
+
+            }
+            <p>SalvoConducto No: <span>@numerosSalvoConductos</span></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-6">
+            <p>Tipo de Pieles a cortar: <span>@Model.DatosActaVisita.CantidadPielACortar</span></p>
+        </div>
+        <div class="col-xl-6">
+            <p>Precintos de identificacion : <span>@Model.DatosActaVisita.PrecintoIdentificacion</span></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-3">
+            <p>Crudas</p>
+        </div>
+        <div class="col-xl-3">
+            <p>Azul Humedo</p>
+        </div>
+        <div class="col-xl-3">
+            <p>Curtidas</p>
+        </div>
+        <div class="col-xl-3">
+            <p>Terminadas</p>
+        </div>
+    </div>
+
+    <div class="row col-lg-12">
+        <div class="col-lg-6">
+            @{
+                if (Model.DatosActaVisita.TipoActaVisita == 1)
+                {
+                    <table class="table">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th>Tipo de Piel</th>
+                                <th>Cantidad de pieles</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TipoCortesPielIdentificable.Count() > 0)
+                            {
+                                @foreach (var item in Model.TipoCortesPielIdentificable)
+                                {
+                                    <tr>
+                                        <td>@item.TipoPiel</td>
+                                        <td>@item.Cantidad.ToString()</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                }
+
+                @if (Model.DatosActaVisita.TipoActaVisita == 2)
+                {
+                    <h6>Primer Control y seguimiento</h6>
+                    <table class="table">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th>Tallas en rangos de 5cm</th>
+                                <th>Area promedio</th>
+                                <th>Cantidad pieles</th>
+                                <th>Área Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TipoCortesPielIrregulares.Count() > 0)
+                            {
+                                @foreach (var item in Model.TipoCortesPielIrregulares)
+                                {
+                                    <tr>
+                                        <td>@item.TipoPielIrregular</td>
+                                        <td>@item.AreaPromedioTipoPiel</td>
+                                        <td>@item.CantidadTipoPiel.ToString()</td>
+                                        <td>@item.AreaTotalTipoPiel.ToString()</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                }
+            }
+
+        </div>
+        <div class="col-lg-6">
+            @{
+                if (Model.DatosActaVisita.TipoActaVisita == 1)
+                {
+                    <table class="table">
+                            <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th>Tipo de Partes Obtenidas</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TipoPartesIdentificables.Count() > 0)
+                            {
+                                @foreach (var item in Model.TipoPartesIdentificables)
+                                {
+                                    <tr>
+                                        <td>@item.TipoParte</td>
+                                        <td>@item.Cantidad.ToString()</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                }
+
+                @if (Model.DatosActaVisita.TipoActaVisita == 2)
+                {
+                    <h6>Segundo Control y Seguimiento</h6>
+                    <table class="table">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th>Tipo de fracciones</th>
+                                <th>Cantidad</th>
+                                <th>Área Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TipoPartesIrregulares.Count() > 0)
+                            {
+                                @foreach (var item in Model.TipoPartesIrregulares)
+                                {
+                                    <tr>
+                                        <td>@item.TipoParte</td>
+                                        <td>@item.CantidadTipoParte.ToString()</td>
+                                        <td>@item.AreaTotalTipoParte.ToString()</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                }
+            }
+
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-2">
+            <label>Funcionario Autoridad Cites</label>
+        </div>
+        <div class="col-lg-4">
+            <p>Nombre : <span>@Model.DatosActaVisita.FuncionarioAutoridadCites</span></p>
+        </div>
+        <div class="col-lg-6">
+            <p>Firma : </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-2">
+            <label>Representante Establecimiento</label>
+        </div>
+        <div class="col-lg-4">
+            <p>Nombre : <span>@Model.DatosActaVisita.RepresentanteEstablecimiento</span></p>
+        </div>
+        <div class="col-lg-6">
+            <p>Firma : </p>
+        </div>
+    </div>
+    <div class="row col-lg-12">    
+        <div class="col-lg-6">
+            <p>Ciudad, Departamento : <span>@Model.DatosActaVisita.Ciudad</span></p>
+        </div>
+        <div class="col-lg-6">
+            <p>Fecha : <span>@Model.DatosActaVisita.FechaFormat</span></p>
+        </div>
+    </div>
+</div>

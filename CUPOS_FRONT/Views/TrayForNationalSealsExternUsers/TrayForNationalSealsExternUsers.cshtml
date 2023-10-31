@@ -1,0 +1,189 @@
+﻿@{
+    Layout = "_LayoutRegistrarResolucion";
+}
+<div class="container mt-5 mb-5">
+    <div>
+        <a asp-controller="Home" asp-action="Index">Inicio</a> > <a asp-controller="Home"
+            asp-action="FlujoNegocio">Flujo de negocio</a> > <strong>Bandeja de solicitud de precintos nacionales y marquillas - Usuario externo</strong>
+    </div>
+    <div class="text-end mb-2">
+        <a class="btn btn-secondary" type="button" asp-controller="TrayForNationalSealsExternUsers" asp-action="Ayuda" title="Ayuda">AYUDA</a>
+        <a type="button" class="btn btn-secondary" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip"
+            data-bs-placement="top" title="Inicio">inicio</a>
+    </div>
+    <ul class="nav nav-tabs" id="ulMenu">
+        <li class="nav-item" id="navHistorialCupos">
+            <a class="nav-link active" data-bs-toggle="tab" href="#tab9" id="tab-9" onclick="tabHistorial()">Historial de cupos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab1" id="tab-1" onclick="tabRadicar()">Solicitud</a>
+        </li>
+        <li class="nav-item" id="navRadicadas">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab3" id="tab-3" onclick="tabRadicadas()">Solicitudes
+                Radicadas</a>
+        </li>
+        <li class="nav-item" id="navRequerimiento">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab4" id="tab-4"
+                onclick="tabRequerimiento()">Requerimiento</a>
+        </li>
+        <li class="nav-item" id="navAprobados">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab5" id="tab-5" onclick="tabAprobadas()">Solicitudes
+                Aprobadas</a>
+        </li>
+        <li class="nav-item" id="navDesistimiento">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab6" id="tab-6"
+               onclick="tabDesistimiento()">Desistimiento / Anulación</a>
+        </li>
+        <li class="nav-item d-none" id="navCarta">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab7" id="tab-7">Carta</a>
+        </li>
+        <li class="nav-item d-none" id="navDesistido">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab8" id="tab-8">Desistimiento</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane container active p-2" id="tab9">
+            <partial name="Partials/HistorialCupos" />
+        </div>
+        <div class="tab-pane container fade p-2" id="tab1">
+            <partial name="Partials/RadicarSolicitud" />
+        </div>
+        <div class="tab-pane container fade p-2" id="tab3">
+            <partial name="Partials/SolicitudesRadicadas" />
+        </div>
+        <div class="tab-pane container fade p-2" id="tab4">
+            <partial name="Partials/Requerimiento" />
+        </div>
+        <div class="tab-pane container fade p-2" id="tab5">
+            <partial name="Partials/SolicitudesAprobadas" />
+        </div>
+        <div class="tab-pane container fade p-2" id="tab6">
+            <partial name="Partials/Desistimiento" />
+        </div>
+        <div class="tab-pane container fade p-2" id="tab7">
+            <partial name="Partials/Carta" />
+        </div>
+        <div class="tab-pane container fade p-2" id="tab8">
+            <partial name="Partials/Desistido" />
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div id="divBtnRegresar" class="col-2">
+            <a type="button" class="btn btn-primary" asp-controller="Home" asp-action="FlujoNegocio" data-bs-toggle="tooltip"
+                data-bs-placement="top" alt="Regresar" title="Regresar">Regresar</a>
+        </div>
+        <div id="divBtnRadicar" class="col-2 d-none">
+            <button alt="Radicar" title="Radicar solicitud" type="button" onclick="radicar()" id="btnRadicar"
+                class="btn btn-primary w-100">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirmaciones" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center d-none" id="divSpinner">
+                        <div class="spinner-border text-primary mb-2 spinner" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <div id="divValidacion" class="d-none">
+                        <div class="text-center col-12">
+                            <span class="fa-solid fa-circle-check i-modal"></span>
+                        </div>
+                        <div class="text-center col-12 titulo-modal">
+                            <p>Confirmación</p>
+                        </div>
+                        <div class="col-12 mensajes-modal">
+                            <p id="mensajeConfirmacion"></p>
+                        </div>
+                        <div class="row">
+                            <div id="divBtnsSiNoModal" class="row d-none">
+                                <div class="col-6 d-none" id="divBtnSiRadicar">
+                                    <button type="button" class="btn btn-primary" onclick="siRadicar()">Si</button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnNoModal">
+                                        NO
+                                    </button>
+                                </div>
+                                <div class="col-6 d-none" id="divBtnSiSalir">
+                                    <button type="button" class="btn btn-secondary" onclick="siSalir()">Si</button>
+                                </div>
+                            </div>
+                            <div class="d-none" id="divBtnAceptarModal">
+                                <div id="divBtnAceptarRadicar" class="text-center d-none">
+                                    <button type="button" class="btn btn-primary w-100" onclick="aceptarRadicar()">Aceptar</button>
+                                </div>
+                                <div id="divBtnAceptar" class="text-center d-none">
+                                    <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Aceptar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalAlerta" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fas fa-exclamation-circle i-modal-alerta"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal-alerta">
+                        <p>Alerta</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>Los siguientes campos son obligatorios</p>
+                        <ul id="ulCamposOblgatorios" class="list-group">
+
+                        </ul>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                ACEPTAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalAlertaTablas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+                        <span class="fas fa-exclamation-circle i-modal-alerta"></span>
+                    </div>
+                    <div class="text-center col-12 titulo-modal-alerta">
+                        <p>Alerta</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="textAlertaNumeraciones"></p>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                ACEPTAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<partial name="Scripts\TrayForNationalSealsExternUsersScript" />

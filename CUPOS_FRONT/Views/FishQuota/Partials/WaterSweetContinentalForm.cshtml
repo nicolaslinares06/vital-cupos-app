@@ -1,0 +1,80 @@
+﻿<hr>
+<div class="row mt-2">
+    <p>Establézcase las cuotas globales de pesca:</p>
+    <h5 class="titulos-h5">Cuencas Continentales</h5>
+    <div class="col-md-3 mb-1" id="GroupDivWC">
+        <label for="GroupTxtWC" class="form-label">Grupo</label>
+        <select class="select2" name="states[]" id="GroupTxtWC" onchange="GetSpeciesByGroup()">
+            <option value="0" selected>Seleccione grupo...</option>
+        </select>          
+        <span id="ValidateGroupWC" class="span-advertencia d-none">Campo Obligatorio</span> 
+    </div>
+    <div class="col-md-3 mb-1" id="SpecieDivWC">
+        <label for="SpecieTxtWC" class="form-label">Especie</label>
+        <select class="select2" name="states[]" id="SpecieTxtWC" onchange="SetCommonName()">
+        </select>     
+        <span id="ValidateSpecieWC" class="span-advertencia d-none">Campo Obligatorio</span> 
+    </div>
+    <div class="col-md-6 mb-1" id="CommonNameDivWC">
+        <label for="CommonNameTxtWC" class="form-label">Nombre común</label>   
+        <div class="row cetrarItems">
+            <div class="col-8" id="divCommonNameTxtWC">
+                <select class="select2" name="states[]" id="CommonNameTxtWC" disabled>
+                    <option value="0" selected></option>
+                </select>  
+            </div> 
+            <div class="col-4" id="OtherDivBtn">
+                <button type="button" id="OtherBtn" onclick="ShowOtherField(true)" class="btn btn-primary">Otro</button>
+            </div>     
+        </div>  
+        <span id="ValidateCommonNameWC" class="span-advertencia d-none">Campo Obligatorio</span> 
+    </div>      
+    <div class="col-md-3 mb-1" id="OtherDivWC">
+        <label for="OtherLbl" class="form-label">Otro</label>
+        <div class="mb-3 row cetrarItems">
+            <div class="col-8">
+                <input type="text" class="form-control" id="OtherTxtWC" maxlength="20">       
+            </div>
+            <div class="col-4" id="HideOtherFieldDiv"> 
+                <button class="bt btn-danger w-100">
+                    <span class="fa-sharp fa-solid fa-square-minus fa-lg"></span>
+                </button>
+            </div>
+        </div>    
+        <span id="ValidateOtherWC" class="span-advertencia d-none">Campo Obligatorio</span> 
+    </div>        
+    <div class="col-md-3 mb-1" id="QuotaSpecieDivWC">
+        <label for="QuotaLbl" class="form-label">Cuota por especie</label>                           
+        <input type="text" class="form-control" id="QuotaTxtWC" onkeypress="return OnlyNumberKey(event)" maxlength="20">       
+        <span id="ValidateQuotaWC" class="span-advertencia d-none">Campo Obligatorio</span> 
+    </div>    
+    <div class="col-md-3 mb-1" id="QuotaGroupDivWC">
+        <label for="TotalLbl" class="form-label">Cuota por grupo</label>  
+        <div class="row cetrarItems">
+            <div class="col-8" id="divTotalTxtWC">
+                <input type="text" class="form-control" id="TotalTxtWC" onkeypress="return OnlyNumberKey(event)" maxlength="20">  
+            </div> 
+            <div class="col-4" id="SaveDivWC">
+                <button type="button" onclick="SaveFishQuotaAmount('waterContinental')" id="ConfirmSaveAmountBtn" class="btn btn-primary">Guardar</button>
+            </div>      
+        </div> 
+        <span id="ValidateTotalWC" class="span-advertencia d-none">Campo Obligatorio</span> 
+    </div>         
+</div>
+<table id="WaterSweetContinentalTable" class="table w-100" aria-describedby="Tabla agua dulce continental">
+    <thead>
+        <tr>
+            <th class="d-none">Codigo</th>         
+            <th class="d-none">Codigo Grupo</th>           
+            <th class="th-mediumText">Grupo</th>                                                         
+            <th class="d-none">Codigo especie</th>                                                         
+            <th class="th-mediumText">Especie</th>
+            <th class="th-mediumText">Nombre común especie</th>
+            <th class="th-mediumText">Cuota por especie</th>                            
+            <th class="th-mediumText">Cuota por grupo</th>                                
+            <th class="th-mediumText" id="TitleTableActionsTxtWC">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>  

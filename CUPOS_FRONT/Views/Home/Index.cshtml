@@ -1,0 +1,75 @@
+﻿@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<div class="container">
+    <div class="row home-opciones">
+        <h1>Servicios</h1>
+        <div class="col item" id="BoxAdmin">
+            <a a asp-controller="Home" asp-action="Administracion">
+                <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                <h2>Administración</h2>
+                <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+            </a>
+        </div>
+        <div class="col item" id="BoxFlujo">
+            <a a asp-controller="Home" asp-action="FlujoNegocio">
+                <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                <h2>Flujo de negocio</h2>
+                <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+            </a>
+        </div>
+        <div class="col item" id="BoxReportes">
+            <a a asp-controller="Home" asp-action="Reportes">
+                <span class="img"><img alt="image description" src="~/images/imagen-placeholder-21.png" /></span>
+                <h2>Reportes</h2>
+                <span class="texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In malesuada gravida vestibulum.</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+let spanUsario=document.getElementById('spanUsario');
+
+$(document).ready(async function(){
+    var usuario = '@ViewBag.usuario';
+    spanUsario.innerText=`Usuario: ${usuario}`;
+
+    sessionStorage.setItem("userLogin", "@ViewBag.usuario");
+
+    //marcar ventana en la barra de navegacion
+    $(`.Inicio #padre`).addClass("active-within");
+
+    //etiquetas inicio
+    var boxAdmin = document.getElementById("BoxAdmin");
+    var boxReportes = document.getElementById("BoxReportes");
+    var boxFlujoNegocio = document.getElementById("BoxFlujo");
+    ocultarElemento(boxAdmin, true);
+    ocultarElemento(boxReportes, true);
+    ocultarElemento(boxFlujoNegocio, true);
+
+    consultarEtiqueta();
+});
+
+async function consultarEtiqueta(){
+    let url = "@Url.Action("ConsultarRol","Home")";
+    let r = await Get(url);
+
+    var boxAdmin = document.getElementById("BoxAdmin");
+    var boxFlujoNegocio = document.getElementById("BoxFlujo");
+    var boxReportes = document.getElementById("BoxReportes");
+
+    if (r[3] != "0") {
+        ocultarElemento(boxAdmin, false);
+    }
+
+    if (r[4] != "0") {
+        ocultarElemento(boxFlujoNegocio, false);
+    }
+    
+    if (r[5] != "0") {
+        ocultarElemento(boxReportes, false);
+    }
+}
+</script>

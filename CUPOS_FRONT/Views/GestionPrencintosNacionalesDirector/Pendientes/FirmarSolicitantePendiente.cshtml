@@ -1,0 +1,453 @@
+﻿<body>
+    <div class="row">
+        <hr size="5" />
+        <div class="col-12" id="divFirmarCarta">
+            <h1>Firmar carta solicitud</h1>
+            <div class="col-md-9">
+                <label class="form-label required">Firma para carta de solicitud</label>
+            </div>
+            <div class="col-md-9">
+                <img src="~/images/FirmaDirector.png" class="img-fluid" alt="Firma Director">
+            </div>
+        </div>
+        <div class="col-12 mt-4 d-none" id="divCorreoElectronico">
+            <div class="col-12 d-flex">
+                <h1>Envío a proveedor de marcaje</h1>
+            </div>
+            <div class="table-responsive">
+                @if(@ViewBag.requestType == 20207){
+                    <table id="tablaInformacionCorreoMin" class="table w-100">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th class="th-shortText">Radicado</th>
+                                <th class="th-shortText">Fecha Radicacion</th>
+                                <th class="th-shortText">Establecimiento</th>
+                                <th class="th-shortText">Nit</th>
+                                <th class="th-shortText">Ciudad</th>
+                                <th class="th-shortText">Direccion</th>
+                                <th class="th-shortText">Telefono</th>
+                                <th class="th-shortText">Cantidad Total</th>
+                                <th class="th-shortText">Color</th>
+                                <th class="th-shortText">Cantidad fracciónes</th>
+                                <th class="th-shortText">Area total </th>
+                                <th class="th-shortText">Tipo fracción </th>
+                                <th class="th-shortText">Salvoconductos </th>
+                                <th class="th-shortText">Codificacion Inicial</th>
+                                <th class="th-shortText">Codificacion Final</th>
+                                <th class="th-shortText">Subtotal</th>
+                                <th class="th-shortText">Valor de la consignacion</th>
+                                <th class="th-shortText">Fecha de Envio</th>
+                                <th class="th-shortText">Analista</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach(var item in @ViewBag.RequestCutting){
+                            <tr>
+                                <td>@item.NUMERORADICACION</td>
+                                <td>@item.FECHARADICACION.ToString("dd-MM-yyyy")</td>
+                                <td>@item.ESTABLECIMIENTO</td>
+                                <td>@item.NITEMPRESA</td>
+                                <td>@item.CIUDADENTREGA</td>
+                                <td>@item.DIRECCIONENTREGA</td>
+                                <td>@item.TELEFONO</td>
+                                <td>@item.CANTIDAD</td>
+                                <td>@ViewBag.color</td>
+                                <td>@item.cantCut</td>
+                                <td>@item.areaCut</td>
+                                <td>@item.tipoPart</td>
+                                <td>@item.safeGuard</td>
+                                <td>@ViewBag.numeracionInicialPrecintos</td>
+                                <td>@ViewBag.numeracionFinalPrecintos</td>
+                                <td>@item.CANTIDAD</td>
+                                <td>@item.VALORCONSIGNACION</td>
+                                <td>@item.FECHA.ToString("dd-MM-yyyy")</td>
+                                <td>@item.ANALISTA</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }else if(@ViewBag.requestType == 60240){
+                    <table id="tablaInformacionCorreoMin" class="table w-100">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th class="th-shortText">Radicado</th>
+                                <th class="th-shortText">Fecha Radicacion</th>
+                                <th class="th-shortText">Establecimiento</th>
+                                <th class="th-shortText">Nit</th>
+                                <th class="th-shortText">Ciudad</th>
+                                <th class="th-shortText">Direccion</th>
+                                <th class="th-shortText">Telefono</th>
+                                <th class="th-shortText">Cantidad Total</th>
+                                <th class="th-shortText">Color</th>
+                                <th class="th-shortText">Codificacion Inicial</th>
+                                <th class="th-shortText">Codificacion Final</th>
+                                <th class="th-shortText">Subtotal</th>
+                                <th class="th-shortText">Valor de la consignacion</th>
+                                <th class="th-shortText">Fecha de Envio</th>
+                                <th class="th-shortText">Analista</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach(var item in @ViewBag.RequestCutting){
+                            <tr>
+                                <td>@item.NUMERORADICACION</td>
+                                <td>@item.FECHARADICACION.ToString("dd-MM-yyyy")</td>
+                                <td>@item.ESTABLECIMIENTO</td>
+                                <td>@item.NITEMPRESA</td>
+                                <td>@item.CIUDADENTREGA</td>
+                                <td>@item.DIRECCIONENTREGA</td>
+                                <td>@item.TELEFONO</td>
+                                <td>@item.CANTIDAD</td>
+                                <td>@ViewBag.color</td>
+                                <td>@ViewBag.numeracionInicialPrecintos</td>
+                                <td>@ViewBag.numeracionFinalPrecintos</td>
+                                <td>@item.CANTIDAD</td>
+                                <td>@item.VALORCONSIGNACION</td>
+                                <td>@item.FECHA.ToString("dd-MM-yyyy")</td>
+                                <td>@item.ANALISTA</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }else{
+                    <table id="tablaInformacionCorreo" class="table w-100">
+                        <caption class="d-none">Table Description</caption>
+                        <thead>
+                            <tr>
+                                <th class="th-shortText">Radicado</th>
+                                <th class="th-shortText">Fecha Radicacion</th>
+                                <th class="th-shortText">Establecimiento</th>
+                                <th class="th-shortText">Nit</th>
+                                <th class="th-shortText">Ciudad</th>
+                                <th class="th-shortText">Direccion</th>
+                                <th class="th-shortText">Telefono</th>
+                                <th class="th-shortText">Cantidad Total</th>
+                                <th class="th-shortText">Color</th>
+                                <th class="th-shortText">Numeración Interna Inicial</th>
+                                <th class="th-shortText">Numeración Interna Final</th>
+                                <th class="th-shortText">Código de zoocriadero de origen</th>
+                                <th class="th-shortText">Codificacion Inicial</th>
+                                <th class="th-shortText">Codificacion Final</th>
+                                <th class="th-shortText">Subtotal</th>
+                                <th class="th-shortText">Valor de la consignacion</th>
+                                <th class="th-shortText">Fecha de Envio</th>
+                                <th class="th-shortText">Analista</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 row justify-content-center">
+        <div class="col-2" id="botonFirmarCarta">
+            <button type="button" id="guardarCartaFirmadaSolicitante" class="btn btn-primary col-12" title="Aceptar">ACEPTAR</button>
+        </div>
+        <div class="col-2 d-none" id="divBotonEnviarCorreo">
+            <button type="button" id="enviarCorreoCartaFirmadaSolicitante" class="btn btn-primary col-12" title="Enviar Correo">ENVIAR CORREO</button>
+        </div>
+    </div>
+</body>
+<partial name="./../Modales/Modales.cshtml" />
+<script>
+    var numeracionIncial = 0;
+    var numeracionFinal = 0;
+    var codificacioninternainicial = 0;
+    var codificacioninternafinal = 0;
+    var cantidadPrencintos = 0;
+    let listaCorreo = [];
+    let correoEnviar = {};
+    let correo = new Object();
+    var listaCorreoEnviar = {
+        datos: []
+    };
+    const listaFiltrada = [];
+
+    $(document).ready(async function () {
+    
+        var id = @ViewBag.idSolicitud;
+        var cantidad = 0;
+        var today = new Date();
+        var year = today.getFullYear();
+
+        if(@ViewBag.requestType == 10200){
+            visualizarFondoProcesando();
+
+            let urlDet = "@Url.Action("DetalleSolicitud","GestionPrencintosNacionales")";
+            let respDet = await Get(urlDet, { id: id });
+    
+            let urlNit = "@Url.Action("ConsultarNitEmpresa","GestionPrencintosNacionales")";
+            let respNit = await Get(urlNit, { idSolicitud: id });
+
+            let urlNum = "@Url.Action("ConsultarNumeraciones","GestionPrencintosNacionales")";
+            let respNum = await Get(urlNum, { idSolicitud: id });
+
+            if (respDet != null) {
+                respDet.forEach((elemento) => {
+                    
+                    cantidad = cantidad + parseInt(@ViewBag.numeracionCantidaPrecintos);
+                    numeracionIncial = '@ViewBag.numeracionInicialPrecintos';
+                    numeracionFinal = '@ViewBag.numeracionFinalPrecintos';
+    
+                    correo.codigonumeraciones = elemento.codigonumeraciones
+                    correo.code = id;
+                    correo.numeroradicacion = elemento.numeroradicacion;
+                    correo.fecharadicacion = moment(elemento.fecharadicacion).format('DD/MM/yyyy');
+                    correo.establecimiento = elemento.establecimiento;
+                    correo.nit = respNit[0].a001nit;
+                    correo.ciudad = respDet[0].ciudadentrega;
+                    correo.direccion = elemento.direccionentrega;
+                    correo.telefono = elemento.telefono;
+                    correo.cantidad = elemento.cantidad;
+                    correo.color = '@ViewBag.color';
+                    correo.codificacioninternainicial = numeracionIncial;
+                    correo.codificacioninternafinal = numeracionFinal;
+                    correo.subtotal = elemento.cantidad;
+                    correo.valorconsignacion = elemento.valorconsignacion;
+                    correo.fechaenvio = moment(elemento.fecha).format('DD/MM/yyyy');
+                    correo.analista = elemento.analista;
+                    
+                    correo.numeracioninicial = elemento.codigoinicial;
+                    correo.numeracionfinal = elemento.codigofinal;
+                    correo.codigozoocriadero = elemento.codigozoocriadero;
+                    correo.codigonumeraciones = elemento.codigonumeraciones;
+
+                    listaCorreo.push(correo);
+                    correo = {};
+                });
+            }
+
+            // Iterar a través de la listaCorreo
+            for (const correo of listaCorreo) {
+                let cumpleValidacion = false;
+
+                // Iterar a través de respNum para verificar la validación
+                for (const elemento of respNum) {
+                    // Aplicar las validaciones
+                    if (
+                        correo.codigozoocriadero === elemento.zoocriadero &&
+                        correo.numeracioninicial === elemento.inicial &&
+                        correo.numeracionfinal === elemento.final &&
+                        correo.codigonumeraciones === elemento.subtotal
+                    ) {
+                        cumpleValidacion = true;
+                        break; // Salir del bucle interno si se cumple la validación
+                    }
+                }
+
+                // Si cumpleValidacion es verdadero y el elemento no está en listaFiltrada, agregar el correo a la lista filtrada
+                if (cumpleValidacion && !listaFiltrada.some((c) => c.codigozoocriadero === correo.codigozoocriadero)) {
+                    listaFiltrada.push(correo);
+                }
+            }
+
+            var table = $('#tablaInformacionCorreo').DataTable({
+                searching: false,
+                destroy: true,
+                scrollX: true,
+                lengthChange: true,
+                lengthMenu: [5, 10, 20, 50, 100],
+                paging: true,
+                info: true,
+                dom:
+                    "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" +
+                    "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+                language: {
+                    lengthMenu: "Resultados pág. _MENU_",
+                    info: "_START_ al _TOTAL_ Resultados",
+                    search: "",
+                    searchPlaceholder: "Buscar",
+                    zeroRecords: "No se encontraron resultados",
+                    infoEmpty: "0 al 0 Resultados",
+                    paginate: {
+                        previous: "Anterior",
+                        next: "Siguiente",
+                    },
+                },
+                data: listaFiltrada,
+                columns: [
+                    { "data": "numeroradicacion" },
+                    { "data": "fecharadicacion" },
+                    { "data": "establecimiento" },
+                    { "data": "nit" },
+                    { "data": "ciudad" },
+                    { "data": "direccion" },
+                    { "data": "telefono" },
+                    { "data": "cantidad" },
+                    { "data": "color" },
+                    { "data": "numeracioninicial" },
+                    { "data": "numeracionfinal" },
+                    { "data": "codigozoocriadero" },
+                    { "data": "codificacioninternainicial" },
+                    { "data": "codificacioninternafinal" },
+                    { "data": "cantidad" },
+                    { "data": "valorconsignacion" },
+                    { "data": "fechaenvio" },
+                    { "data": "analista" }
+                ]
+            });
+            agregarClasesDatatable('#tablaInformacionCorreo');
+            ocultarFondoProcesando();
+        }
+
+        
+    })
+
+    $("#guardarCartaFirmadaSolicitante").click(async function () {
+        $('#confirmacionFirmaCartaSolicitud').modal('show');
+    });
+
+    $("#confirmarFirmarCartaSolicitud").click(async function () {
+        visualizarFondoProcesando();
+        var id = @ViewBag.idSolicitud;
+
+        $('#confirmacionFirmaCartaSolicitud').modal('hide');
+
+        json = {
+            code: id,
+            initialNumbering: numeracionIncial,
+            finalNumbering: numeracionFinal,
+            amount: cantidadPrencintos
+        }
+
+        let url = "@Url.Action("FirmarCartaSolicitud","GestionPrencintosNacionalesDirector")";
+        let resp = await Get(url, json);
+
+        if (resp != null) {
+            $('#cartaFirmadaSolicitudExitoso').modal('show');
+            $('#divBotonEnviarCorreo').removeClass('d-none');
+            $('#divCorreoElectronico').removeClass('d-none');
+            $('#divFirmarCarta').addClass('d-none');
+            $('#botonFirmarCarta').addClass('d-none');
+        }
+        ocultarFondoProcesando();
+    });
+
+    $("#confirmarCartaFirmadaSolicitudExitoso").click(async function () {
+        $('#cartaFirmadaSolicitudExitoso').modal('hide');
+    });
+
+    $("#enviarCorreoCartaFirmadaSolicitante").click(async function () {
+        $('#confirmacionEnviarCorreo').modal('show');
+    });
+    
+    $("#confirmarEnviarCorreo").click(async function () {
+        
+        
+        if(@ViewBag.requestType == 10200){
+            for (let i = 0; i < listaFiltrada.length; i++) {
+            const correo = listaFiltrada[i];
+
+            // Agrega los datos de "correo" a la variable JSON
+            correoEnviar.codigonumeraciones =correo.codigonumeraciones;
+            correoEnviar.code = correo.code;
+            correoEnviar.numberradication = correo.numeroradicacion;
+            correoEnviar.filingDate = correo.fecharadicacion;
+            correoEnviar.establishment = correo.establecimiento;
+            correoEnviar.nit = correo.nit;
+            correoEnviar.city = correo.ciudad;
+            correoEnviar.address = correo.direccion;
+            correoEnviar.phone = correo.telefono;
+            correoEnviar.amount = correo.cantidad;
+            correoEnviar.color = correo.color;
+            correoEnviar.initialNumbering = correo.numeracioninicial;
+            correoEnviar.finalNumbering = correo.numeracionfinal;
+            correoEnviar.initialInternalCoding = correo.codificacioninternainicial;
+            correoEnviar.finalInternalCoding = correo.codificacioninternafinal;
+            correoEnviar.subtotal = correo.subtotal;
+            correoEnviar.consignmentValue = correo.valorconsignacion;
+            correoEnviar.sendDate = correo.fechaenvio;
+            correoEnviar.analyst = correo.analista;
+            correoEnviar.zoo = correo.codigozoocriadero;
+
+            listaCorreoEnviar.datos.push(correoEnviar);
+            correoEnviar = {};
+        }
+        }
+        else if(@ViewBag.requestType == 20207)
+        {
+            
+            let urlMail = "@Url.Action("FirmarCartaSolicitudMin","GestionPrencintosNacionalesDirector")";
+            let resMail = await Get(urlMail, { code : @ViewBag.idSolicitud });
+
+            resMail.forEach((el)=>{
+
+                correoEnviar.codigonumeraciones =0;
+                correoEnviar.code = @ViewBag.idSolicitud;
+                correoEnviar.numberradication = el.numeroradicacion;
+                correoEnviar.filingDate = el.fecharadicacion;
+                correoEnviar.establishment = el.establecimiento;
+                correoEnviar.nit = el.nitempresa;
+                correoEnviar.city = el.ciudad;
+                correoEnviar.address = el.direccionentrega;
+                correoEnviar.phone = el.telefono;
+                correoEnviar.amount = el.cantidad;
+                correoEnviar.color = '@ViewBag.color';
+                correoEnviar.cantCut = el.cantCut;
+                correoEnviar.areaCut = el.areaCut;
+                correoEnviar.tipoPart = el.tipoPart;
+                correoEnviar.safeGuard = el.safeGuard;
+                correoEnviar.initialNumbering = '@ViewBag.numeracionInicialPrecintos';
+                correoEnviar.finalNumbering = '@ViewBag.numeracionFinalPrecintos';
+                correoEnviar.initialInternalCoding = "";
+                correoEnviar.finalInternalCoding = "";
+                correoEnviar.subtotal = el.cantidad;
+                correoEnviar.consignmentValue = el.valorconsignacion;
+                correoEnviar.sendDate = el.fecha;
+                correoEnviar.analyst = el.analista;
+
+                listaCorreoEnviar.datos.push(correoEnviar);
+                correoEnviar = {};
+            })             
+            
+        }else{
+            
+            let urlMail = "@Url.Action("FirmarCartaSolicitudMin","GestionPrencintosNacionalesDirector")";
+            let resMail = await Get(urlMail, { code : @ViewBag.idSolicitud });
+
+            resMail.forEach((el)=>{
+
+                correoEnviar.codigonumeraciones =0;
+                correoEnviar.code = @ViewBag.idSolicitud;
+                correoEnviar.numberradication = el.numeroradicacion;
+                correoEnviar.filingDate = el.fecharadicacion;
+                correoEnviar.establishment = el.establecimiento;
+                correoEnviar.nit = el.nitempresa;
+                correoEnviar.city = el.ciudad;
+                correoEnviar.address = el.direccionentrega;
+                correoEnviar.phone = el.telefono;
+                correoEnviar.amount = el.cantidad;
+                correoEnviar.color = '@ViewBag.color';
+                correoEnviar.cantCut = 0;
+                correoEnviar.areaCut = 0;
+                correoEnviar.tipoPart =0;
+                correoEnviar.safeGuard = "";
+                correoEnviar.initialNumbering = '@ViewBag.numeracionInicialPrecintos';
+                correoEnviar.finalNumbering = '@ViewBag.numeracionFinalPrecintos';
+                correoEnviar.initialInternalCoding = "";
+                correoEnviar.finalInternalCoding = "";
+                correoEnviar.subtotal = el.cantidad;
+                correoEnviar.consignmentValue = el.valorconsignacion;
+                correoEnviar.sendDate = el.fecha;
+                correoEnviar.analyst = el.analista;
+
+                listaCorreoEnviar.datos.push(correoEnviar);
+                correoEnviar = {};
+            })             
+            
+        }
+        
+        json = listaCorreoEnviar;
+        let url = "@Url.Action("EnviarCorreoAprobacionSolicitud","GestionPrencintosNacionalesDirector")";
+        let resp = await Get(url, json);
+        console.log(resp);
+        if (resp != null) {
+            $('#confirmacionEnviarCorreo').modal('hide');
+            $('#enviarEnviarCorreoExitoso').modal('show');
+        }
+    });
+</script>

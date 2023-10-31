@@ -1,0 +1,72 @@
+﻿<div class="container">
+          <div class="row mt-2">
+            <div class="col-md-4 mb-1">
+                <label for="CarteNumber" class="form-label">Número carta de venta y/o factura</label> 
+                <input type="text" class="form-control disabledField" id="CarteNumber" maxlength="10">
+                <span id="ValidateCarteNumber" class="span-advertencia d-none">Campo Obligatorio</span> 
+            </div>
+            <div class="col-md-4 mb-1">
+                <label for="SaleDate" class="form-label required">Fecha de carta de venta y/o factura</label>
+                <input type="date" class="form-control disabledField" id="SaleDate">
+                <span id="ValidateSaleDate" class="span-advertencia d-none">Campo Obligatorio</span>                        
+            </div>
+            <div class="col-md-4 mb-1">
+                <label for="SaleDateRegistrationLbl" class="form-label required">Fecha de registro carta de venta y/o factura</label>
+                <input type="date" class="form-control disabledField" id="SaleDateRegistrationTxt" disabled>
+                <span id="ValidateSaleDateRegistration" class="span-advertencia d-none">Campo Obligatorio</span>                        
+            </div>            
+            <div class="col-md-4 mb-1">
+                <label for="NumberSoldLbl" class="form-label required">Cupos vendidos</label>                           
+                <input type="text" class="form-control disabledField" id="numberSold" onkeypress="return OnlyNumberKey(event)" maxlength="20" disabled>
+                <span id="ValidateNumberSold" class="span-advertencia d-none">Campo Obligatorio</span>                        
+            </div>
+            <div class="col-md-4 mb-1">
+                <label for="TypeSpecimen" class="form-label">Tipo espécimen</label> 
+                <input type="text" class="form-control disabledField" id="TypeSpecimenSellerTxt" maxlength="50">
+            </div>            
+            <div class="col-md-4 mb-1">
+                <label for="BusinessSale" class="form-label required">¿Quién realiza la venta?</label>                           
+                <select name="BusinessSale" id="BusinessSale" class="form-control disabledField">
+                    <option value="">Seleccione</option>
+                    <option value="60">Zoocriadero</option>
+                    <option value="61">Comerzializadora</option>
+                    <option value="62">Manofacturera</option>
+                    <option value="63">Curtiembre</option>
+                </select>
+                <span id="ValidateBusinessSale" class="span-advertencia d-none">Campo Obligatorio</span>                        
+            </div>
+            <div class="col-md-4 mb-1">
+                <label for="TypeDocumentSeller" class="form-label required">Tipo de documento</label>                           
+                <select name="TypeDocumentSeller" id="TypeDocumentSeller" class="form-control disabledField">
+                    <option value="">Seleccione</option>
+                    <option value="1">Cédula</option>
+                    <option value="95">Nit</option> 
+                </select>
+                <span id="ValidateTypeDocumentSeller" class="span-advertencia d-none">Campo Obligatorio</span>                        
+            </div>
+            <div class="col-md-3 mb-1" id="divNumeroDocSeller">
+                <label for="DocumentNumberSeller" class="form-label required">Número documento</label>                           
+                <input type="number" class="form-control disabledField" id="DocumentNumberSeller">
+                <span id="ValidateDocumentNumberSeller" class="span-advertencia d-none">Campo Obligatorio</span>     
+            </div>
+            <div class="col-md-1 mb-1" id="divBtnSearchCompanySeller">   
+                <button type="button" class="bt btn-primary disabledField" onclick="SearchCompany('seller')" id="btnSearchCompanySeller" data-bs-toggle="tooltip" data-bs-placement="top" title="Buscar empresa o representante legal"><span class="fas fa-search"></span></button>                
+            </div>
+            <div class="col-md-4 mb-1">
+                <label for="ReasonSocial" class="form-label required">Nombre / Razón Social</label>                           
+                <input type="text" class="form-control disabledField" id="ReasonSocial" disabled>
+                <span id="ValidateReasonSocial" class="span-advertencia d-none">Campo Obligatorio</span>                         
+            </div>
+            <div class="col-md-2 mb-1">
+                <label for="quotaTxt" class="form-label" id="lblSeleccionCupos">Seleccionar cupos</label>                                              
+            </div>
+            <div class="col-md-2 mb-1">
+                <button type="button" class="bt btn-primary disabledField" onclick="AddQuotas()" id="btnAddQuota" data-bs-toggle="tooltip" data-bs-placement="top" title="Selecciona resolucion y/o inventario del cual se vende"><span class="fas fa-plus"></span></button>
+            </div>                       
+            <div class="col-md-12 mb-1">
+                <label for="Observations" class="form-label required">Observaciones</label>                           
+                <textarea type="text" class="form-control disabledField" id="Observations" maxlength="200"></textarea>
+                <span id="ValidateObservations" class="span-advertencia d-none">Campo Obligatorio</span>                        
+            </div>                                                       
+          </div>          
+</div>

@@ -1,0 +1,714 @@
+﻿<script>
+var messageText=document.getElementById('messageText');
+var messageTextConfirmCancelSave = document.getElementById('MessageTextConfirmCancelSave');
+var messageTextConfirmSave = document.getElementById('MessageTextConfirmSave');
+var quotasSoldTxt = document.getElementById('QuotasSoldTxt');
+var messageTextAlert = document.getElementById('messageTextAlert');
+var messageTextAlertModal = document.getElementById('MessageTextAlertModal');
+var divEstadisticas=document.getElementById('divEstadisticas');
+var code = "";
+var numberResolution = "";
+var quotasGrant = "";
+var quotasAdvantageCommercialization = "";
+var quotasRePoblation = "";
+var quotasAvailable = "";
+var quotasSold = "";
+var yearProduction = "";
+var speciesCode = "";
+var speciesName = "";
+var companyCode = "0";
+var initialNumeration = "";
+var finalNumeration = "";
+var initialNumerationSeal = "0";
+var finalNumerationSeal = "0";
+var quotaListTemp = [];
+var inventoryListTemp = [];
+var addCheckedBtn = false;
+var validateFields = false; 
+var totalGrantedControlQuotas = 0;
+var initialNumerationRange;
+var finalNumerationRange;
+var initialNumerationRepoblation = "";
+var finalNumerationRepoblation = "";
+var initialNumerationRePoblationRange;
+var finalNumerationRePoblationRange;
+var responseJsonQuotas;
+var codeInventory = 0; 
+var quotaCode=0;
+var numberSaleCarte =""; 
+var reasonSocial = ""; 
+var saleDate = ""; 
+var availabilityInventory = ""; 
+var year = ""; 
+var availableInventory = 0;
+var inventorySold = 0; 
+var initialNumerationInv = ""; 
+var finalNumerationInv = ""; 
+var initialNumerationRePoblationInv = ""; 
+var finalNumerationRePoblationInv = "";
+var initialNumerationSealInv = ""; 
+var finalNumerationSealInv = "";  
+var cuposPorEspecie;
+var inventarioEspecies;
+var responseJsonSpecies = [];
+var speciesCodeInv = "";
+var speciesNameInv = "";
+var responseJsonInventory = [];
+let especies;
+let inputSold;
+let inputCheckBox;
+let contadorPreselected=0;
+let preseleccionados=[];
+let preseleccionadosCopia=[];
+let editarPreseleccionado;
+let editarPreseleccionadoInv;
+let inventario=false;
+let cupos=false;
+let tituloNoDisp=document.getElementById('tituloNoDisp');
+let spinnerButton =document.getElementById('spinnerButton');
+let divNumeraciones=document.getElementById('divNumeraciones');
+let QuotasInventoryTableDiv=document.getElementById('QuotasInventoryTableDiv');
+let divNumSelected=document.getElementById('divNumSelected');
+let txtNumeroInicialSelected=document.getElementById('txtNumeroInicialSelected');
+let txtNumerofinalSelected=document.getElementById('txtNumerofinalSelected');
+let textAlertaNumeraciones=document.getElementById('textAlertaNumeraciones');
+let btnQuotaSave =document.getElementById('btnQuotaSave');
+let initialNumber=document.getElementById('initialNumber');
+let finalNumber =document.getElementById('finalNumber');
+let initialNumberRep=document.getElementById('initialNumberRep');
+let finalNumberRep=document.getElementById('finalNumberRep');
+let txtRep=document.getElementById('txtRep');
+
+$(document).ready(async function(){
+    await traerEspecies();
+    LoadQuotasAndInventory();
+    HiddeElement(btnQuotaSave,true);
+});
+
+async function traerEspecies(){
+    let urlGetSpecies = `@Url.Action("GetSpecies", "SaleDocument")`;
+    responseJsonSpecies = await Get(urlGetSpecies);
+}
+
+//permite consultar informacion de cupos e inventario
+async function LoadQuotasAndInventory() {
+    await GetQuotas(@ViewBag.typeDocument, @ViewBag.documentNumber, @ViewBag.company);
+    await GetInventory(@ViewBag.documentNumber);
+    await cargarTotales();
+}
+
+//Obtienen los cupos
+async function GetQuotas(typeDocument, documentNumber, company) {
+    
+    let urlGetCompany = `@Url.Action("SearchCompany", "SaleDocument")` + `?number=${documentNumber}` + `&typeDocument=${typeDocument}` + `&companyCode=${company}`;
+    let responseJsonCompany = await Get(urlGetCompany);
+    if(responseJsonCompany != null){
+        responseJsonCompany.forEach((element) => {
+            companyCode = element["code"];
+        });
+    }
+
+    let urlGetQuotas = `@Url.Action("GetQuotas", "SaleDocument")` + `?documentNumber=${documentNumber}`;
+    responseJsonQuotas = await Get(urlGetQuotas);
+    cuposPorEspecie = responseJsonQuotas;
+    var columns = [
+        {
+            "data":"code",
+            className:"d-none"
+        },                
+        {
+            "data":"numberResolution",
+        },
+        {
+            "data" : "speciesCode",
+            className :"d-none"
+        },          
+        {
+            "data": "speciesCode",
+            render: function (data) {
+                var especieNombre;
+                responseJsonSpecies.forEach(el => {
+                    if (el.code == data) {
+                        especieNombre = el.scientificName;
+                    }
+                });
+                return especieNombre;
+            }
+        },        
+        {
+            "data": "yearProduction",
+        },   
+        {
+            "data": "quotasAdvantageCommercialization",
+        },
+        {
+            "data": "quotasRePoblation",
+        },
+        {
+            "data": "quotasGrant",
+        },
+        {
+            "data": "quotasAvailable",
+        },
+        {
+            "data":"code",
+            render: function (data) { 
+                var validar = quotaListTemp.find(el=>parseInt(el.code) == parseInt(data));
+                if(validar!=undefined){
+                    return `<a class="btnEdit" type="button">EDITAR</a>`;
+                }
+                return `<a class="btnAdd" type="button">AGREGAR</a>`;
+            }
+        }                                              
+    ];
+    DataTableGenerico('#TableCupos', columns, responseJsonQuotas, 9);
+    HiddeElement(document.querySelectorAll('#divCuposShow'), true);
+    HiddeElement(document.querySelectorAll('#divCupos'), false);
+}
+
+$('#TableCupos tbody').on('click', '.btnAdd', async function () {
+    editarPreseleccionado=false;
+    preseleccionOeditarCupos(this);
+} );
+
+$('#TableCupos tbody').on('click', '.btnEdit', async function () {
+    editarPreseleccionado=true;
+    preseleccionOeditarCupos(this);
+} );
+
+async function preseleccionOeditarCupos(tabla){
+    inventario=false;
+    cupos=true;  
+    code = $(tabla).parents("tr").find("td")[0].innerText; 
+    if(editarPreseleccionado){
+        var preselec = quotaListTemp.filter(el=>parseInt(el.code) == parseInt(code));
+        preselec.forEach(el=>{
+            preseleccionadosCopia.push({
+                'codeTemporal' : el.codeTemporal,
+                'initial' : el.initialNumeration,
+                'final' : el.finalNumeration,
+                'numeracionInicial': el.initialNumerationSeal,
+                'numeracionFinal' : el.finalNumerationSeal,
+                'cantidad': el.quotasSold,
+            });
+            preseleccionados.push({
+                'codeTemporal' : el.codeTemporal,
+                'initial' : el.initialNumeration,
+                'final' : el.finalNumeration,
+                'numeracionInicial': el.initialNumerationSeal,
+                'numeracionFinal' : el.finalNumerationSeal,
+                'cantidad': el.quotasSold,
+            });
+        });
+        await cargarTablaSeleccionadas(preseleccionados);
+        quotaListTemp= quotaListTemp.filter(el=>parseInt(el.code) != parseInt(code));
+    }
+
+    numberResolution = $(tabla).parents("tr").find("td")[1].innerText; 
+    quotasGrant = $(tabla).parents("tr").find("td")[7].innerText; 
+    quotasAdvantageCommercialization = $(tabla).parents("tr").find("td")[5].innerText; 
+    quotasRePoblation = $(tabla).parents("tr").find("td")[6].innerText; 
+    quotasAvailable = $(tabla).parents("tr").find("td")[8].innerText; 
+    yearProduction = $(tabla).parents("tr").find("td")[4].innerText;
+    speciesCode = $(tabla).parents("tr").find("td")[2].innerText; 
+    speciesName = $(tabla).parents("tr").find("td")[3].innerText; 
+    
+    var cupo = responseJsonQuotas.find(p=>parseInt(p.code)==parseInt(code));
+
+    initialNumeration = parseInt(cupo.initialNumeration); 
+    finalNumeration = parseInt(cupo.finalNumeration); 
+    initialNumerationRepoblation = parseInt(cupo.initialNumerationRePoblation); 
+    finalNumerationRepoblation = parseInt(cupo.finalNumerationRePoblation);      
+    initialNumber.innerText= initialNumeration;
+    finalNumber.innerText=finalNumeration;
+    if(initialNumerationRepoblation!=0 && finalNumerationRepoblation!=0){
+        initialNumberRep.innerText=initialNumerationRepoblation;
+        finalNumberRep.innerText=finalNumerationRepoblation;
+        ocultarElemento(txtRep, false);
+    }else{
+        ocultarElemento(txtRep, true);
+    }
+    let url1 = `@Url.Action("GetQuotasNumeraciones", "SaleDocument")` + `?codigoCupo=${code}&documentNumber=${@ViewBag.documentNumber}`;
+    let numeraciones = await Get(url1);
+    
+    await cargarTablaNoDisponibles(numeraciones);
+    tituloNoDisp.innerText="Numeraciones no disponibles";
+    HiddeElement(QuotasInventoryTableDiv, true);
+    HiddeElement(divEstadisticas, true);
+    HiddeElement(divNumeraciones, false);
+        ajustarColumnasTabla('TableCuposOcupados');
+}
+
+function cargarTablaNoDisponibles(data){
+    var columns = [
+        {
+            "data":"initial"
+        },                
+        {
+            "data":"final",
+        }
+    ];
+    DataTableGenerico('#TableCuposOcupados', columns, data, 1);
+}
+
+function cargarTablaSeleccionadas(data){
+    var columns = [
+        {
+            "data":"codeTemporal",
+            className:"d-none"
+        },  
+        {
+            "data":"initial"
+        },                
+        {
+            "data":"final",
+        },
+        {
+            "data":"numeracionInicial",
+        },
+        {
+            "data":"numeracionFinal",
+        },
+        {
+            "data":"cantidad",
+        },
+        {
+            render: function(){
+                return "<a class='btnEliminarPreseleccion' type='Button'>ELIMINAR</a>"
+            }
+        }
+    ];
+    DataTableGenerico('#TableCuposSeleccionados', columns, data, 6);
+    ajustarColumnasTabla('TableCuposSeleccionados');
+    HiddeElement(divNumSelected, false);
+}
+
+$('#TableCuposSeleccionados tbody').on('click', '.btnEliminarPreseleccion', async function () {
+    var id = parseInt($(this).parents("tr").find("td")[0].innerText);
+    preseleccionados = preseleccionados.filter(p=>parseInt(p.codeTemporal) != id);
+    await cargarTablaSeleccionadas(preseleccionados)
+});
+
+function volverResoluciones(validacion){
+    if(validacion && (editarPreseleccionado || editarPreseleccionadoInv)){
+        guardarPreseleccionados(false);
+        editarPreseleccionado=false;
+        editarPreseleccionadoInv=false;
+        return;
+    }
+    if((quotaListTemp==undefined || quotaListTemp==null ||quotaListTemp.length==0) && (inventoryListTemp==undefined || inventoryListTemp==null || inventoryListTemp.length==0)){
+        HiddeElement(btnQuotaSave, true)
+    }else{
+        HiddeElement(btnQuotaSave, false)
+    }
+    HiddeElement(divNumeraciones, true);
+    HiddeElement(divEstadisticas, false);
+    HiddeElement(QuotasInventoryTableDiv, false);
+    HiddeElement(divNumSelected, true);
+    preseleccionados=[];
+    preseleccionadosCopia=[];
+}
+
+async function ValidarNumeraciones(){
+    HiddeElement(spinnerButton, false);
+    var validacionPreselect=[];
+    if(parseInt($(txtNumeroInicialSelected).val()) > parseInt($(txtNumerofinalSelected).val())){
+        textAlertaNumeraciones.innerText=`El numero inicial no puede ser mayor al final`;
+        $('#modalAlertaNumeraciones').modal('show');
+        $(txtNumeroInicialSelected).val('');
+        $(txtNumerofinalSelected).val('');
+        HiddeElement(spinnerButton, true);
+        return;
+    }
+    if((initialNumeration>parseInt($(txtNumeroInicialSelected).val())) 
+        || (parseInt($(txtNumeroInicialSelected).val()) > finalNumeration) 
+        || (parseInt($(txtNumerofinalSelected).val())<initialNumeration) 
+        || (parseInt($(txtNumerofinalSelected).val())>finalNumeration)
+    ){
+        if((initialNumerationRepoblation>parseInt($(txtNumeroInicialSelected).val()) 
+        || parseInt($(txtNumeroInicialSelected).val()) > finalNumerationRepoblation 
+        || parseInt($(txtNumerofinalSelected).val())<initialNumerationRepoblation 
+        || parseInt($(txtNumerofinalSelected).val())>finalNumerationRepoblation) ){
+            if(initialNumerationRepoblation!=0 && finalNumerationRepoblation !=0){
+                textAlertaNumeraciones.innerText=`las numeraciones deben estar por dentro del rango: ${initialNumeration} - ${finalNumeration} o ${initialNumerationRepoblation} - ${finalNumerationRepoblation}`;
+            }else{
+                textAlertaNumeraciones.innerText=`las numeraciones deben estar por dentro del rango: ${initialNumeration} - ${finalNumeration}`;
+            }
+            $('#modalAlertaNumeraciones').modal('show');
+            $(txtNumeroInicialSelected).val('');
+            $(txtNumerofinalSelected).val('');
+            HiddeElement(spinnerButton, true);
+            return;
+        }
+    }
+    if(preseleccionados.length>0){
+        validacionPreselect = preseleccionados.find(p=>(parseInt($(txtNumeroInicialSelected).val()) >= p.initial && parseInt($(txtNumeroInicialSelected).val()) <= p.final) || (parseInt($(txtNumerofinalSelected).val()) >= p.initial && parseInt($(txtNumerofinalSelected).val())<= p.final));
+    }
+    if( validacionPreselect == undefined || validacionPreselect.length==0){    
+        let validacion =true;
+        if(cupos){
+            var num = {
+                "numeracionInicial":$(txtNumeroInicialSelected).val(),
+                "numeracionFinal":$(txtNumerofinalSelected).val(),
+                "codigoCupo":code
+            }
+            let url = `@Url.Action("ValidateNumbers", "SaleDocument")`;
+            validacion = await Get(url, num);
+        }
+
+        if(validacion || inventario){
+            var data={
+            'initial' : parseInt($(txtNumeroInicialSelected).val()),
+            'final' : parseInt($(txtNumerofinalSelected).val()),
+            'initialRep': parseInt($(txtNumeroInicialSelected).val()),
+            'finalRep' : parseInt($(txtNumerofinalSelected).val())
+            }
+            let url = `@Url.Action("SearchSeals", "SaleDocument")`;
+            let r = await Get(url, data);
+            contadorPreselected++;
+            preseleccionados.push({
+                'codeTemporal' : contadorPreselected,
+                'initial' : parseInt($(txtNumeroInicialSelected).val()),
+                'final' : parseInt($(txtNumerofinalSelected).val()),
+                'numeracionInicial': parseInt(r.numeracionInicial),
+                'numeracionFinal' : parseInt(r.numeracionFinal),
+                'cantidad': parseInt($(txtNumerofinalSelected).val()) - parseInt($(txtNumeroInicialSelected).val()) + 1,
+            });
+
+            await cargarTablaSeleccionadas(preseleccionados);
+        }else{
+            textAlertaNumeraciones.innerText=`Hay numeraciones no disponibles`;
+            $('#modalAlertaNumeraciones').modal('show');
+        }
+    }else{
+        textAlertaNumeraciones.innerText=`Hay numeraciones ya pre-seleccionadas`;
+        $('#modalAlertaNumeraciones').modal('show');
+    }
+    $(txtNumeroInicialSelected).val('');
+    $(txtNumerofinalSelected).val('');
+    HiddeElement(spinnerButton, true);
+}
+
+async function guardarPreseleccionados(validar){
+    
+    if((preseleccionados!=undefined && preseleccionados.length>0) || (preseleccionadosCopia!=undefined && preseleccionadosCopia.length>0)){
+        
+        if(quotaListTemp==undefined){
+            quotaListTemp=[];
+        }
+        if(inventoryListTemp==undefined){
+            inventoryListTemp=[];
+        }
+        if(!validar && (editarPreseleccionado || editarPreseleccionadoInv)){
+            guardarPreseleccionadosAListas(preseleccionadosCopia)
+        }else{
+            guardarPreseleccionadosAListas(preseleccionados)
+        }
+        if(cupos){
+            await GetQuotas(@ViewBag.typeDocument, @ViewBag.documentNumber, @ViewBag.company);
+        }else{
+            await GetInventory(@ViewBag.documentNumber);
+        }
+        if((quotaListTemp==undefined || quotaListTemp==null ||quotaListTemp.length==0) && (inventoryListTemp==undefined || inventoryListTemp==null || inventoryListTemp.length==0)){
+            HiddeElement(btnQuotaSave, true)
+        }else{
+            HiddeElement(btnQuotaSave, false)
+        }
+        volverResoluciones(false);
+    }
+}
+
+function guardarPreseleccionadosAListas(preselected){
+
+    preselected.forEach(el=>{
+        quotasAvailable = quotasAvailable - el.cantidad;
+    });
+
+    preselected.forEach(el=>{
+        if(inventario){
+            inventoryListTemp.push({
+                'codeTemporal':el.codeTemporal,
+                'quotaCode':quotaCode,
+                'code': codeInventory,
+                'numberSaleCarte' : numberSaleCarte,
+                'reasonSocial' : reasonSocial,
+                'saleDate' : saleDate,
+                'availabilityInventory' : availabilityInventory,
+                'year' : year,
+                'speciesCode' : speciesCodeInv, 
+                'speciesName' : speciesNameInv,         
+                'availableInventory' : quotasAvailable,
+                'inventorySold' : el.cantidad,
+                'initialNumeration' : el.initial,
+                'finalNumeration' : el.final,       
+                'initialNumerationSeal' : el.numeracionInicial,
+                'finalNumerationSeal' : el.numeracionFinal,
+            })
+        }else{
+            quotaListTemp.push({
+                'codeTemporal':el.codeTemporal,
+                'code': code,
+                'numberResolution' : numberResolution,
+                'quotasGrant' : quotasGrant,
+                'quotasAdvantageCommercialization' : quotasAdvantageCommercialization,
+                'quotasRePoblation' : quotasRePoblation,
+                'quotasAvailable' : quotasAvailable,
+                'quotasSold' : el.cantidad,
+                'yearProduction' : yearProduction,
+                'speciesCode' : speciesCode, 
+                'speciesName' : speciesName, 
+                'companyCode' : companyCode, 
+                'initialNumeration' : el.initial,
+                'finalNumeration' : el.final,       
+                'initialNumerationSeal' : el.numeracionInicial,
+                'finalNumerationSeal' : el.numeracionFinal,
+            });
+        }
+    });
+}
+
+$('#TableInventory tbody').on('click', '.btnAddInventory', async function () {
+    editarPreseleccionadoInv=false;
+    preseleccionOeditarInventario(this);
+} );
+
+$('#TableInventory tbody').on('click', '.btnEditInventory', async function () {
+    editarPreseleccionadoInv=true;
+    preseleccionOeditarInventario(this);
+} );
+
+async function preseleccionOeditarInventario(tabla){
+    inventario=true;
+    cupos=false;
+    codeInventory = $(tabla).parents("tr").find("td")[0].innerText; 
+    if(editarPreseleccionadoInv){
+        var preselec = inventoryListTemp.filter(el=>parseInt(el.code) == parseInt(codeInventory));
+        preselec.forEach(el=>{
+            preseleccionadosCopia.push({
+                'codeTemporal' : el.codeTemporal,
+                'initial' : el.initialNumeration,
+                'final' : el.finalNumeration,
+                'numeracionInicial': el.initialNumerationSeal,
+                'numeracionFinal' : el.finalNumerationSeal,
+                'cantidad': el.inventorySold,
+            });
+            preseleccionados.push({
+                'codeTemporal' : el.codeTemporal,
+                'initial' : el.initialNumeration,
+                'final' : el.finalNumeration,
+                'numeracionInicial': el.initialNumerationSeal,
+                'numeracionFinal' : el.finalNumerationSeal,
+                'cantidad': el.inventorySold,
+            });
+        });
+        await cargarTablaSeleccionadas(preseleccionados);
+        inventoryListTemp= inventoryListTemp.filter(el=>parseInt(el.code) != parseInt(codeInventory));
+    }
+    quotaCode=$(tabla).parents("tr").find("td")[10].innerText; 
+    numberSaleCarte = $(tabla).parents("tr").find("td")[1].innerText; 
+    reasonSocial = $(tabla).parents("tr").find("td")[2].innerText; 
+    saleDate = $(tabla).parents("tr").find("td")[3].innerText; 
+    availabilityInventory = $(tabla).parents("tr").find("td")[4].innerText; 
+    year = $(tabla).parents("tr").find("td")[5].innerText; 
+    speciesCodeInv = $(tabla).parents("tr").find("td")[6].innerText;
+    speciesNameInv = $(tabla).parents("tr").find("td")[7].innerText;
+    quotasAvailable = $(tabla).parents("tr").find("td")[8].innerText;
+
+    var inv = responseJsonInventory.find(p=>parseInt(p.code)==parseInt(codeInventory));
+
+    initialNumeration = parseInt(inv.initialNumeration); 
+    finalNumeration = parseInt(inv.finalNumeration); 
+    initialNumber.innerText=initialNumeration;
+    finalNumber.innerText=finalNumeration;
+    ocultarElemento(txtRep, true);
+    var numeraciones=[];
+    numeraciones.push({
+        "initial":initialNumeration,
+        "final":finalNumeration
+    })
+    await cargarTablaNoDisponibles(numeraciones);
+    tituloNoDisp.innerText="Numeraciones disponibles";
+    HiddeElement(QuotasInventoryTableDiv, true);
+    HiddeElement(divEstadisticas, true);
+    HiddeElement(divNumeraciones, false);
+    ajustarColumnasTabla('TableCuposOcupados');
+}
+
+//Guarda el cupo
+async function SaveQuota(validate){
+    if(validate){
+        sessionStorage.setItem("QuotaListTemp", JSON.stringify(quotaListTemp));
+        sessionStorage.setItem("InventoryListTemp", JSON.stringify(inventoryListTemp));
+        messageText.innerText='La información se guardo con éxito';
+        $('#MessageTextModal').modal('show');        
+    }
+}  
+
+//Obtiene Inventario
+async function GetInventory(documentNumber) {
+    let url = `@Url.Action("GetInventory","SaleDocument")` + `?documentNumber=${documentNumber}` ;
+    responseJsonInventory = await Get(url);
+    inventarioEspecies = responseJsonInventory;
+    let columns = [
+        {
+            "data": "code",
+            className:"d-none"
+        },                  
+        {
+            "data": "numberSaleCarte",
+        },
+        {
+            "data": "reasonSocial",
+        },
+        {
+            "data": "saleDate",
+            render: function (data) {
+                if (data != null) {
+                return moment(data).format("DD-MM-yyyy");
+                }
+                return data;
+            },               
+        },
+        {
+            "data": "availabilityInventory",
+        },
+        {
+            "data": "year",
+        },
+        {
+            "data": "speciesCode",
+            className:"d-none"
+        },               
+        {
+            "data": "speciesCode",
+            render: function (data) {
+                var especieNombre;
+                responseJsonSpecies.forEach(el => {
+                    if (el.code == data) {
+                        especieNombre = el.scientificName;
+                    }
+                });
+                return especieNombre;
+            }
+        },          
+        {
+            "data": "availableInventory",
+        },                 
+        {   "data":"code",
+            render: function (data) {
+                var validar = inventoryListTemp.find(el=>parseInt(el.code) == parseInt(data));
+                if(validar!=undefined){
+                    return `<a class="btnEditInventory" type="button">EDITAR</a>`;
+                }
+                return `<a class="btnAddInventory" type="button">AGREGAR</a>`;
+            }
+        },
+        {
+            "data":"quotaCode",
+            className:"d-none"
+        }                                              
+    ];
+    DataTableGenerico('#TableInventory', columns, responseJsonInventory, 10);
+    HiddeElement(document.querySelectorAll('#divInventoryShow'), true);
+    HiddeElement(document.querySelectorAll('#divInventory'), false);
+}
+
+//Muestra el modal de confirmacion para cancelar la operacion
+function ConfirmCancelSave(){
+    messageTextConfirmCancelSave.innerText='¿Esta seguro que desea cancelar?';
+    $('#ConfirmModalCancelSave').modal('show');        
+}    
+
+//Redireciona al registro de documento de venta
+function RedirectCancelSave(param){
+    contadorPreselected=0;
+    if(param){
+        window.location.href = '@Url.Action("SaleDocumentForm", "SaleDocument")'
+    }
+}
+
+//Muestra el modal de confirmacion para guardar cupos
+function ConfirmSave(){
+    messageTextConfirmSave.innerText='¿Esta seguro de guardar la información?';
+    $('#ConfirmModalSave').modal('show');    
+}    
+
+//Oculta elementos html
+function HiddeElement(element,validate){
+    if(validate){
+        if (!$(element).hasClass('d-none')) {
+            $(element).addClass('d-none')
+        }                      
+    }else{ 
+        if($(element).hasClass('d-none')){
+            $(element).removeClass('d-none')
+        }                 
+    }
+}
+
+// Permite campos solo numeros
+function OnlyNumberKey(evt) {       
+    var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+    if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+        return false;
+    return true;
+}
+
+//Redirecciona a fomrulario de documento de venta
+function RedirectSaleDocument(){
+    window.location.href = '@Url.Action("SaleDocumentForm", "SaleDocument")'
+}
+
+
+function cargarTotales(){
+    divEstadisticas.innerHTML='';
+    var especiesAgrupadas = [];
+    if(cuposPorEspecie!=null && cuposPorEspecie!=undefined && cuposPorEspecie.length>0){
+        cuposPorEspecie.forEach(el => {
+            const found = especiesAgrupadas.findIndex(element => element.speciesCode === el.speciesCode);
+            if (found === -1) {
+                especiesAgrupadas.push({
+                    "speciesCode":el.speciesCode,
+                    "quotasAvailable":el.quotasAvailable,
+                    "totalSpeciesInventory":0
+                });
+            } else {
+                especiesAgrupadas[found].quotasAvailable += el.quotasAvailable;  
+            }
+        });
+    }
+    if(inventarioEspecies!=null && inventarioEspecies!=undefined && inventarioEspecies.length>0){
+        inventarioEspecies.forEach(el => {
+            const found = especiesAgrupadas.findIndex(element => element.speciesCode === el.speciesCode);
+            if (found != -1) {
+                especiesAgrupadas[found].totalSpeciesInventory += el.availableInventory;  
+            }else{
+                especiesAgrupadas.push({
+                    "speciesCode":el.speciesCode,
+                    "quotasAvailable":0,
+                    "totalSpeciesInventory":el.availableInventory
+                });
+            }
+        });
+    }
+    if(especiesAgrupadas!=null && especiesAgrupadas!=undefined && especiesAgrupadas.length>0){
+        especiesAgrupadas = especiesAgrupadas.filter(p=>(parseInt(p.quotasAvailable)!=0) || (parseInt(p.totalSpeciesInventory)!=0));
+        if(especiesAgrupadas.length>0){
+            especiesAgrupadas.forEach(el=>{
+                var especieNombre;
+                responseJsonSpecies.forEach(ele => {
+                    if (ele.code == parseInt(el.speciesCode)) {
+                        especieNombre = ele.scientificName;
+                    }
+                });
+                divEstadisticas.innerHTML+=
+                    `<div class="row div-totales col-4">
+                        <label class="col-12 titulo-especie">${especieNombre}</label>
+                        <p><span >${el.quotasAvailable}</span> cupos disponibles</p>
+                        <p><span>${el.totalSpeciesInventory}</span> inventario disponibles</p>
+                    </div>`;
+            });
+        }
+    }
+}
+</script>

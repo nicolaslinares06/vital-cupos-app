@@ -1,0 +1,530 @@
+﻿@*@model Web.Models;
+*@
+@{
+    Layout = "_LayoutBandejaReceptor";
+}
+
+<body>
+    <div class="row content">
+        <div class="col-md-8 resume">
+            <a asp-controller="Home" asp-action="Index">Modulo de CUPOS</a> > <a asp-controller="Home"
+                asp-action="Administracion">Administración</a> > <a asp-controller="AdministrarRoles"
+                asp-action="Index">@Context.Session.GetString("NombreRoles")</a> > <strong>@Context.Session.GetString("NombreFuncionalidades")</strong>
+        </div>
+        <div class="col-md-4 iconos">
+            <a type="button" class="btn btn-secondary" title="ayuda" asp-action="Ayuda" asp-controller="AdministrarRolesFuncionalidades">AYUDA</a>
+            <a type="button" class="btn btn-secondary" title="Inicio" asp-action="Index" asp-controller="Home">INICIO</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content-fluid">
+            <h2>@Context.Session.GetString("NombreFuncionalidades")</h2>
+            <form method="post">
+                <div class="row text-center">
+                    <div class="row">
+                        <label class="col-form-label col-1">Rol</label>
+                        <input type="text" class="col-7" id="busqueda-gestion" value="@ViewBag.nombreRolFuncionalidades" readonly />
+                        <label class="col-form-label col-1 text-center">Activo</label>
+                        <input type="checkbox" class="col-1" id="checkbox-rol" disabled />
+                    </div>
+                    <div class="row">
+                        <label class="col-form-label col-1">Cargos</label>
+                        <input type="text" class="col-11" id="busqueda-gestion" value="@ViewBag.cargoFuncionalidades" readonly />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+@*Tabla de permisos*@
+<div class="tab-pain container" id="datatable">
+    <div class="mt-2 table-responsive">
+        <table id="tabla-roles-funcionalidad" class="table tables-roles-funcionalidad w-100">
+            <caption class="d-none">Table Description</caption>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th class="th-bigText">Submódulos</th>
+                    <th class="th-veryShortText">Consultar</th>
+                    <th class="th-veryShortText">Crear</th>
+                    <th class="th-veryShortText">Editar</th>
+                    <th class="th-veryShortText">Eliminar</th>
+                    <th class="th-veryShortText">Ver detalle</th>
+                    <th class="th-mediumText">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-2 row justify-content-center">
+        <div class="col-2">
+            <button type="button" class="btn-volver-roles btn btn-primary w-100">Volver</button>
+        </div>
+    </div>
+</div>
+
+@*Modal confirmacion*@
+<div class="modal fade" id="conf-cambio-funcionalidades" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Confirmación</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro de que desea guardar la información?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-primary w-100 boton-si-guardar-info">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary boton-no-guardar-info w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Mensaje*@
+<div class="modal fade" id="mensajeCambioRealizado" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+                        <p>Información</p>
+                    </div>
+                    <div class="col-12 mensajes-modal">
+                        <p id="modalText-actualizacion"></p>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn-aceptar btn btn-primary" data-bs-dismiss="modal">ACEPTAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Modal Confirmacion Salir*@
+<div class="modal fade" id="confirmacion-salir" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row text-center">
+                    <div class="text-center col-12">
+						<span class="fa-solid fa-circle-check i-modal"></span> 
+					</div>
+                    <div class="text-center col-12 titulo-modal">
+						<p>Confirmación</p>
+					</div>
+                    <div class="col-12 mensajes-modal">
+                        <p>¿Está seguro de que desea salir de la edición de información?</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-primary boton-si-salir w-100">SI</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary boton-no-salir w-100" data-bs-dismiss="modal">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(async function() {
+    visualizarFondoProcesando();
+    $(`.Administracion #padre`).addClass("active-within");
+   
+    var estadoRol = '@ViewBag.estadoFuncionalidades';
+    var rol = '@ViewBag.idRolFuncionalidades';
+    var cargo = '@ViewBag.cargoFuncionalidades';
+
+    let url2 = "@Url.Action("consultar","AdministrarRolesFuncionalidades")";
+    let r = await Get(url2);
+
+    let url = "@Url.Action("consultarModulos","AdministrarRolesFuncionalidades")";
+    let resp = await Get(url, {codRol: rol, nomCargo: cargo});
+    ocultarFondoProcesando();
+
+    if(estadoRol == "ACTIVO"){
+        $("#checkbox-rol").prop('checked', true);
+    }
+    else{
+        $("#checkbox-rol").prop('checked', false);
+    }
+
+    $tblRoles=$('#tabla-roles-funcionalidad').DataTable({
+        destroy: true,
+        scrollX: true,
+        lengthChange: true,
+        lengthMenu:[5,10,20,50,100],
+        info: true,
+        paging:true,
+        dom: "<'row'<'col-md-12'f><'col-md-12 text-end'<'d-flex align-items-center mt-1'<'col-md-10'l><'col-md-2'i>>>>" + "<'row'<'col-md-12'rt><'col-md-12 text-center'p>>",
+        language: { 
+            lengthMenu:"Resultados pág. _MENU_",
+            search: '', 
+            info:"_START_ de _TOTAL_ Resultados",
+            searchPlaceholder: "Buscar" ,
+            zeroRecords: "No se encontraron resultados",
+            infoEmpty:"No se encontraron resultados",
+            paginate: {
+                previous: 'Anterior',
+                next:     'Siguiente'
+            }
+        },
+        data:resp,
+        columns:[
+            {
+                "data":"rolId",
+                className:"d-none"
+            },
+            {
+                "data":"moduleId",
+                className:"d-none"
+            },
+            {
+                "data":"moduleId",
+                render: function (data, type, row){
+                    var text = '';
+                    r.forEach(x => {
+                        if (data == x.id)
+                        {
+                            text = x.name;
+                        }
+                    });
+                    return `<p class='d-none'>${text}</p><input type='text' class='login-datatable' id="nombre${row.moduleId}" value='${text}' disabled></input>`
+                }
+            },
+            {
+                "data":"consult",
+                render: function(data, type, row) {
+                    var x = '';
+                    if(data == true)
+                    {
+                        x = `<input type='checkbox' class='chk-consultar' id='consultar${row.moduleId}' checked disabled />`;
+                    }
+                    else{
+                        x = `<input type='checkbox' class='chk-consultar' id='consultar${row.moduleId}' disabled/>`;
+                    }
+                    return x
+                }
+            },
+            {
+                "data":"create",
+                render: function(data, type, row) {
+                    var x = '';
+                    if(data == true)
+                    {
+                        x = `<input type='checkbox' class='chk-crear' id='crear${row.moduleId}' checked disabled />`;
+                    }
+                    else{
+                        x = `<input type='checkbox' class='chk-crear' id='crear${row.moduleId}' disabled />`;
+                    }
+                    return x
+                }
+            },
+            {
+                "data":"update",
+                render: function(data, type, row) {
+                    var x = '';
+                    if(data == true)
+                    {
+                        x = `<input type='checkbox' class='chk-editar' id='actualizar${row.moduleId}' checked disabled />`;
+                    }
+                    else{
+                        x = `<input type='checkbox' class='chk-editar' id='actualizar${row.moduleId}' disabled />`;
+                    }
+                    return x
+                }
+            },
+            {
+                "data":"delete",
+                render: function(data, type, row) {
+                    var x = '';
+                    if(data == true)
+                    {
+                        x = `<input type='checkbox' class='chk-eliminar' id='eliminar${row.moduleId}' checked disabled />`;
+                    }
+                    else{
+                        x = `<input type='checkbox' class='chk-eliminar' id='eliminar${row.moduleId}' disabled />`;
+                    }
+                    return x
+                }
+            },
+            {
+                "data":"see",
+                render: function(data, type, row) {
+                    var x = '';
+                    if(data == true)
+                    {
+                        x = `<input type='checkbox' class='chk-verDetalle' id='ver${row.moduleId}' checked disabled />`;
+                    }
+                    else{
+                        x = `<input type='checkbox' class='chk-verDetalle' id='ver${row.moduleId}' disabled />`;
+                    }
+                    return x
+                }
+            },
+            { 
+                render: function(data, type, row) {
+                    return `<a type="button" class="editar-funcionalidad">EDITAR</a><a type="button" id="guardarFuncionalidad${row.moduleId}" class="guardar-funcionalidad d-none">GUARDAR /</a>&nbsp<a type="button" id="cerrarFuncionalidad${row.moduleId}" class="cerrar-funcionalidad d-none">CERRAR</a>`
+                }
+
+            }
+          ],
+        columnDefs: [{
+            targets: 8
+        }]
+    });
+
+    var idDatatable = "#tabla-roles-funcionalidad";
+        agregarClasesDatatable(idDatatable);
+
+    $("#tabla-roles-funcionalidad tbody").on('click', '.editar-funcionalidad', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var datamodule = $(this).parents("tr").find("td")[1].innerText;
+        var consult = false;
+        var create = false;
+        var update = false;
+        var deletes = false;
+        var see = false;
+
+        if($(`#consultar${datamodule}`).prop('checked')) {consult = true;}
+        else {consult = false;}
+
+        if($("#crear" + datamodule).prop('checked')) {create = true;}
+        else {create = false;}
+
+        if($("#actualizar" + datamodule).prop('checked')) {update = true;}
+        else {update = false;}
+
+        if($("#eliminar" + datamodule).prop('checked')) {deletes = true;}
+        else {deletes = false;}
+
+        if($("#ver" + datamodule).prop('checked')) {see = true;}
+        else {see = false;}
+
+        sessionStorage.setItem('ConsultarCancel', consult);
+        sessionStorage.setItem('CrearCancel', create);
+        sessionStorage.setItem('ActualizarCancel', update);
+        sessionStorage.setItem('EliminarCancel', deletes);
+        sessionStorage.setItem('VerCancel', see);
+
+        var consultar = document.getElementById(`consultar${datamodule}`);
+        consultar.removeAttribute('disabled');
+
+        var crear = document.getElementById(`crear${datamodule}`);
+        crear.removeAttribute('disabled');
+        
+        var actualizar = document.getElementById(`actualizar${datamodule}`);
+        actualizar.removeAttribute('disabled');
+
+        var eliminar = document.getElementById(`eliminar${datamodule}`);
+        eliminar.removeAttribute('disabled');
+
+        var ver = document.getElementById(`ver${datamodule}`);
+        ver.removeAttribute('disabled');
+
+        var nombre = document.getElementById(`nombre${datamodule}`);
+        nombre.removeAttribute('disabled');
+
+        var cerrarUno = document.getElementById(`cerrarFuncionalidad${datamodule}`);
+        var guardarUno = document.getElementById(`guardarFuncionalidad${datamodule}`);
+        var editar = document.getElementsByClassName(`editar-funcionalidad`);
+
+        ocultarElemento(cerrarUno, false);
+        ocultarElemento(guardarUno, false);
+        ocultarElemento(editar, true);
+    });
+
+    $('#tabla-roles-funcionalidad tbody').on('click', '.guardar-funcionalidad', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var datamodule = $(this).parents("tr").find("td")[1].innerText;
+
+        var consultar = document.getElementById(`consultar${datamodule}`);
+        consultar.setAttribute('disabled', 'disabled');
+
+        var crear = document.getElementById(`crear${datamodule}`);
+        crear.setAttribute('disabled', 'disabled');
+        
+        var actualizar = document.getElementById(`actualizar${datamodule}`);
+        actualizar.setAttribute('disabled', 'disabled');
+
+        var eliminar = document.getElementById(`eliminar${datamodule}`);
+        eliminar.setAttribute('disabled', 'disabled');
+
+        var ver = document.getElementById(`ver${datamodule}`);
+        ver.setAttribute('disabled', 'disabled');
+
+        var nombre = document.getElementById(`nombre${datamodule}`);
+        nombre.setAttribute('disabled', 'disabled');
+
+        sessionStorage.setItem("key", datamodule);
+        sessionStorage.setItem("keyRol", data);
+        $("#conf-cambio-funcionalidades").modal("show");
+    });
+
+    $('#tabla-roles-funcionalidad tbody').on('click', '.cerrar-funcionalidad', function() {
+        var data = $(this).parents("tr").find("td")[0].innerText;
+        var datamodule = $(this).parents("tr").find("td")[1].innerText;
+
+        sessionStorage.setItem("keySalir", data);
+        sessionStorage.setItem("keyModule", datamodule);
+        $("#confirmacion-salir").modal("show");
+    });
+});
+
+$(".boton-si-guardar-info").click(async function() {
+    visualizarFondoProcesando();
+    var msjConfirmacion = document.getElementById(`modalText-actualizacion`);
+    datamodule = sessionStorage.getItem("key");
+    data = sessionStorage.getItem("keyRol");
+    var consultar = false;
+    var crear = false;
+    var actualizar = false;
+    var eliminar = false;
+    var ver = false;
+
+    var nombre = $(`#nombre${datamodule}`).val();
+
+    if($(`#consultar${datamodule}`).prop('checked')) {consultar = true;}
+    else {consultar = false;}
+
+    if($("#crear" + datamodule).prop('checked')) {crear = true;}
+    else {crear = false;}
+
+    if($("#actualizar" + datamodule).prop('checked')) {actualizar = true;}
+    else {actualizar = false;}
+
+    if($("#eliminar" + datamodule).prop('checked')) {eliminar = true;}
+    else {eliminar = false;}
+
+    if($("#ver" + datamodule).prop('checked')) {ver = true;}
+    else {ver = false;}
+
+    json = {
+        rolId: data,
+        moduleId: datamodule,
+        consult: consultar,
+        create: crear,
+        update: actualizar,
+        delete: eliminar,
+        see: ver,
+        name: nombre
+    }
+
+    let url3 = "@Url.Action("actualizar","AdministrarRolesFuncionalidades")";
+    let resp3 = await Get(url3, json);
+    ocultarFondoProcesando();
+
+    msjConfirmacion.innerHTML = resp3;
+
+    var cerrarUno = document.getElementById(`cerrarFuncionalidad${datamodule}`);
+    var guardarUno = document.getElementById(`guardarFuncionalidad${datamodule}`);
+    var editar = document.getElementsByClassName(`editar-funcionalidad`);
+
+    ocultarElemento(cerrarUno, true);
+    ocultarElemento(guardarUno, true);
+    ocultarElemento(editar, false);
+
+    $("#conf-cambio-funcionalidades").modal("hide");
+    $("#mensajeCambioRealizado").modal("show");
+});
+
+$(".boton-si-salir").click(function() {
+    var data = sessionStorage.getItem("keySalir");
+    var datamodule = sessionStorage.getItem("keyModule");
+
+    var consult = sessionStorage.getItem('ConsultarCancel');
+    var create = sessionStorage.getItem('CrearCancel');
+    var update = sessionStorage.getItem('ActualizarCancel');
+    var deletes = sessionStorage.getItem('EliminarCancel');
+    var see = sessionStorage.getItem('VerCancel');
+
+    if (consult == 'false') { $("#consultar" + datamodule).prop('checked', false); }
+    else { $("#consultar" + datamodule).prop('checked', true); }
+
+    if (create == 'false') { $("#crear" + datamodule).prop('checked', false); }
+    else { $("#crear" + datamodule).prop('checked', true); }
+
+    if (update == 'false') { $("#actualizar" + datamodule).prop('checked', false); }
+    else { $("#actualizar" + datamodule).prop('checked', true); }
+
+    if (deletes == 'false') { $("#eliminar" + datamodule).prop('checked', false); }
+    else { $("#eliminar" + datamodule).prop('checked', true); }
+
+    if (see == 'false') { $("#ver" + datamodule).prop('checked', false); }
+    else { $("#ver" + datamodule).prop('checked', true); }
+
+    var consultar = document.getElementById(`consultar${datamodule}`);
+    consultar.setAttribute('disabled', 'disabled');
+
+    var crear = document.getElementById(`crear${datamodule}`);
+    crear.setAttribute('disabled', 'disabled');
+        
+    var actualizar = document.getElementById(`actualizar${datamodule}`);
+    actualizar.setAttribute('disabled', 'disabled');
+
+    var eliminar = document.getElementById(`eliminar${datamodule}`);
+    eliminar.setAttribute('disabled', 'disabled');
+
+    var ver = document.getElementById(`ver${datamodule}`);
+    ver.setAttribute('disabled', 'disabled');
+
+    var nombre = document.getElementById(`nombre${datamodule}`);
+    nombre.setAttribute('disabled', 'disabled');
+
+    var cerrarUno = document.getElementById(`cerrarFuncionalidad${datamodule}`);
+    var guardarUno = document.getElementById(`guardarFuncionalidad${datamodule}`);
+    var editar = document.getElementsByClassName(`editar-funcionalidad`);
+
+    ocultarElemento(cerrarUno, true);
+    ocultarElemento(guardarUno, true);
+    ocultarElemento(editar, false);
+
+    $("#confirmacion-salir").modal("hide");
+});
+
+$(".boton-no-guardar-info").click(function() {
+    var datamodule = sessionStorage.getItem("key");
+
+    var cerrarUno = document.getElementById(`cerrarFuncionalidad${datamodule}`);
+    var guardarUno = document.getElementById(`guardarFuncionalidad${datamodule}`);
+    var editar = document.getElementsByClassName(`editar-funcionalidad`);
+
+    ocultarElemento(cerrarUno, true);
+    ocultarElemento(guardarUno, true);
+    ocultarElemento(editar, false);
+
+    //$("#confirmacion-actualizar").modal("hide");
+});
+
+$(".btn-volver-roles").click(function() {
+    document.location.href = "/AdministrarRoles/Index";
+});
+
+$(".btn-aceptar").click(function() {
+    location.reload();
+});
+</script>

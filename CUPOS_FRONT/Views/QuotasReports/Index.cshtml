@@ -1,0 +1,76 @@
+﻿@{
+    Layout = "_LayoutRegistrarResolucion";
+}
+<div class="container mt-5 mb-5">
+    <div>
+        <a asp-controller="Home" asp-action="Index">Inicio</a> > <a asp-controller="Home"
+            asp-action="Reportes">Reportes</a> > <strong>Reporte Cupos</strong>
+    </div>
+    <div class="text-end">
+        <a type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
+            title="Ayuda" href="#">ayuda</a>
+        <a type="button" class="btn btn-secondary" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip"
+            data-bs-placement="top" title="Inicio">inicio</a>
+    </div>
+    <div class="row">
+        <div class="mb-1 mt-1 col-md-3">
+            <label for="txtNNumeroResolucion" class="form-label">Número resolución</label>
+            <input type="text" class="form-control" id="txtNNumeroResolucion" placeholder="Numero resolución">
+        </div>
+        <div class="mb-1 mt-1 col-md-3">
+            <label for="txtNombreEmpresa" class="form-label">Nombre empresa</label>
+            <input type="text" class="form-control" id="txtNombreEmpresa" placeholder="Nombre empresa">
+        </div>
+        <div class="mb-1 mt-1 col-md-3">
+            <label for="txtNit" class="form-label">Nit</label>
+            <input type="text" class="form-control" id="txtNit" placeholder="Nit">
+        </div>
+        <div class="mb-1 mt-1 col-md-3">
+            <label for="txtFechaResolucionDesde" class="form-label">Fecha de emisión de la resolución desde</label>
+            <input type="date" class="form-control" id="txtFechaResolucionDesde" placeholder="Fecha de Resolucion desde">
+        </div>
+        <div class="mb-1 mt-1 col-md-3">
+            <label for="txtFechaResolucionHasta" class="form-label">Fecha de emisión de la resolución hasta</label>
+            <input type="date" class="form-control" id="txtFechaResolucionHasta" placeholder="Fecha de Resolucion hasta">
+        </div>
+        <div class="mb-1 mt-1 col-md-12 text-end">
+            <button class="btn btn-primary" onclick="Buscar()">
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinnerButton"></span> Buscar
+            </button>
+        </div>
+    </div>
+    <div class="mt-2 mb-2">
+            <table id="TableResoluciones" class="table w-100" aria-describedby="Tabla resoluciones registradas">
+                <caption class="d-none">Table Description</caption>
+                <thead>
+                    <tr>
+                        <th class="th-mediumText">Nombre de empresa</th>
+                        <th class="th-mediumText">Nit</th>
+                        <th class="th-mediumText">Tipo de empresa</th>
+                        <th class="th-mediumText">Número de resolución</th>
+                        <th class="th-mediumText">Fecha de registro de resolución</th>
+                        <th class="th-mediumText">Fecha de emisión de resolución</th>
+                        <th class="th-bigText">Autoridad ambiental que emite la resolución</th>
+                        <th class="th-mediumText">Especie</th>
+                        <th class="th-mediumText">Tipo espécimen valido exportar</th>
+                        <th class="th-mediumText">Año de producción</th>
+                        <th class="th-bigText">Cupos de aprovechamiento y comercialización</th>
+                        <th class="th-mediumText">Cuota de repoblación</th>
+                        <th class="th-mediumText">Total cupos asignados</th>
+                        <th class="th-mediumText">Pago cuota de repoblación</th>
+                        <th class="th-mediumText">Fecha pago de repoblación</th>
+                        <th class="th-mediumText">Soportes repoblación</th>
+                        <th class="th-mediumText">Cupos Utilizados</th>
+                        <th class="th-mediumText">Cupos Disponibles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="text-center mt-2">
+            <a type="button" class="btn btn-primary" asp-controller="Home"
+            asp-action="Reportes">Regresar</a>
+        </div>
+</div>
+<partial name="Scripts\QuotasReportsScript" />
