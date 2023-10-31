@@ -14,7 +14,7 @@ namespace Web.Controllers
     {
         private readonly ILogger<AdministracionTecnicaController> _logger;
         private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -118,12 +118,12 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 List<ReqValorTecnica> r = new List<ReqValorTecnica>();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/TechnicalAdmin/Consult";
                 var httpClient = getHttpClient();
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                 }
@@ -136,8 +136,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        r = JsonConvert.DeserializeObject<List<ReqValorTecnica>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        r = JsonConvert.DeserializeObject<List<ReqValorTecnica>>(respuesta.Response.ToString() ?? "") ?? new List<ReqValorTecnica>();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -184,7 +184,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 List<ReqValorTecnica> r = new List<ReqValorTecnica>();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/TechnicalAdmin/Consult?value=" + nombreValor;
                 var httpClient = getHttpClient();
@@ -203,8 +203,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        r = JsonConvert.DeserializeObject<List<ReqValorTecnica>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        r = JsonConvert.DeserializeObject<List<ReqValorTecnica>>(respuesta.Response.ToString() ?? "") ?? new List<ReqValorTecnica>();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                         return r;
@@ -225,7 +225,7 @@ namespace Web.Controllers
         /// <param name="_datosAct"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<string> Actualizar(AdminTecnicaReq _datosAct)
+        public string Actualizar(AdminTecnicaReq _datosAct)
         {
             try
             {
@@ -236,7 +236,7 @@ namespace Web.Controllers
                 }
 
                 string r = "";
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/TechnicalAdmin/Update";
                 var httpClient = getHttpClient();
@@ -254,7 +254,7 @@ namespace Web.Controllers
                 var response = httpClient.PutAsJsonAsync(URI, req).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                 HttpContext.Session.SetString("token", respuesta.Token);
 
                 r = respuesta.Message;
@@ -272,7 +272,7 @@ namespace Web.Controllers
         /// <param name="idEliminar"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<string> Eliminar(ReqId idEliminar)
+        public string Eliminar(ReqId idEliminar)
         {
             try
             {
@@ -283,7 +283,7 @@ namespace Web.Controllers
                 }
 
                 string r = "";
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/TechnicalAdmin/Delete";
                 var httpClient = getHttpClient();
@@ -291,7 +291,7 @@ namespace Web.Controllers
                 var response = httpClient.PostAsJsonAsync(URI, idEliminar).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                 HttpContext.Session.SetString("token", respuesta.Token);
 
                 r = respuesta.Message;
@@ -309,7 +309,7 @@ namespace Web.Controllers
         /// <param name="_datosCreacion"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Crear(AdminTecnicaReq _datosCreacion)
+        public IActionResult Crear(AdminTecnicaReq _datosCreacion)
         {
             try
             {
@@ -321,7 +321,7 @@ namespace Web.Controllers
                     return View("AgregarValor");
                 }
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/TechnicalAdmin/Create";
                 var httpClient = getHttpClient();
@@ -339,7 +339,7 @@ namespace Web.Controllers
                 var response = httpClient.PostAsJsonAsync(URI, req).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                 HttpContext.Session.SetString("token", respuesta.Token);
 
                 if (!respuesta.Error)
@@ -375,7 +375,7 @@ namespace Web.Controllers
 
                 string term = HttpContext.Request.Query["term"].ToString();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/TechnicalAdmin/ConsultTechnicalValues?parameter=" + term;
                 var httpClient = getHttpClient();
@@ -383,12 +383,12 @@ namespace Web.Controllers
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                List<ValorEstado> datos = JsonConvert.DeserializeObject<List<ValorEstado>>(respuesta.Response.ToString());
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                List<ValorEstado> datos = JsonConvert.DeserializeObject<List<ValorEstado>>(respuesta.Response.ToString() ?? "") ?? new List<ValorEstado>();
 
                 foreach (var etapa in datos)
                 {
-                    valores.Add(Convert.ToString(etapa.etapa));
+                    valores.Add(Convert.ToString(etapa.etapa) ?? "");
                 }
 
                 return valores;

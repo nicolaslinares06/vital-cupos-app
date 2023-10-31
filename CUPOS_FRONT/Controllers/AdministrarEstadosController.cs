@@ -16,7 +16,7 @@ namespace Web.Controllers
     {
         private readonly ILogger<AdministrarEstadosController> _logger;
         private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -130,12 +130,12 @@ namespace Web.Controllers
         {
             List<ReqEstados> r = new List<ReqEstados>();
 
-            string token = HttpContext.Session.GetString("token");
+            string token = HttpContext.Session.GetString("token") ?? "";
 
             string URI = UrlApi + "/Estate/Consult";
             var httpClient = getHttpClient();
 
-            if (token == null)
+            if (token == "")
             {
                 HttpContext.Session.Remove("token");
             }
@@ -148,8 +148,8 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     string jsonInput = responseString;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                    r = JsonConvert.DeserializeObject<List<ReqEstados>>(respuesta.Response.ToString());
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                    r = JsonConvert.DeserializeObject<List<ReqEstados>>(respuesta.Response.ToString() ?? "") ?? new List<ReqEstados>();
                     HttpContext.Session.SetString("token", respuesta.Token);
                 }
             }
@@ -177,16 +177,16 @@ namespace Web.Controllers
                     resultadoListado.Insert(1, opcion2);
                 }
 
-                foreach (var estadoCert in estadosCertificado)
+                foreach (var estadoCert in estadosCertificado.Select(x => x.nombre)
                 {
-                    if (estadoCert.nombre == actividad.a008codigoParametricaEstado)
+                    if (estadoCert == actividad.a008codigoParametricaEstado)
                     {
-                        var optionSelected = new SelectListItem(estadoCert.nombre, estadoCert.nombre, true);
+                        var optionSelected = new SelectListItem(estadoCert, estadoCert, true);
                         resultadoEstadosCert.Insert(contador, optionSelected);
                     }
                     else
                     {
-                        var option = new SelectListItem(estadoCert.nombre, estadoCert.nombre, false);
+                        var option = new SelectListItem(estadoCert, estadoCert, false);
                         resultadoEstadosCert.Insert(contador, option);
                     }
                     contador++;
@@ -210,12 +210,12 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 List<ReqEstados> r = new List<ReqEstados>();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Estate/Consult?name=" + nombreEstado + "&registrationStatus=" + estadoRegistro;
                 var httpClient = getHttpClient();
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return r;
@@ -229,8 +229,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        r = JsonConvert.DeserializeObject<List<ReqEstados>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        r = JsonConvert.DeserializeObject<List<ReqEstados>>(respuesta.Response.ToString() ?? "") ?? new List<ReqEstados>();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                         return r;
@@ -262,14 +262,14 @@ namespace Web.Controllers
                 }
 
                 string r = "";
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 if (_datosAct.description == null)
                 {
                     _datosAct.description = "";
                 }
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                 }
@@ -281,7 +281,7 @@ namespace Web.Controllers
                     var response = httpClient.PutAsJsonAsync(URI, _datosAct).Result;
 
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     r = resp.Message;
                     if (!resp.Error)
@@ -303,12 +303,12 @@ namespace Web.Controllers
         /// <param name="_datosCreacion"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Crear(ReqAdminEstados _datosCreacion)
+        public IActionResult Crear(ReqAdminEstados _datosCreacion)
         {
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Estate/Create";
                 var httpClient = getHttpClient();
@@ -324,7 +324,7 @@ namespace Web.Controllers
                 var response = httpClient.PostAsJsonAsync(URI, req).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                 HttpContext.Session.SetString("token", respuesta.Token);
 
                 ViewBag.ErrorCreacionEstado = "false";
@@ -347,7 +347,7 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Parametric/ConsultEstateCertificate";
                 var httpClient = getHttpClient();
@@ -355,8 +355,8 @@ namespace Web.Controllers
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                List<ReqEstadoCertificado> docs = JsonConvert.DeserializeObject<List<ReqEstadoCertificado>>(respuesta.Response.ToString());
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                List<ReqEstadoCertificado> docs = JsonConvert.DeserializeObject<List<ReqEstadoCertificado>>(respuesta.Response.ToString() ?? "") ?? new List<ReqEstadoCertificado>();
 
                 return docs;
             }
@@ -381,7 +381,7 @@ namespace Web.Controllers
 
                 string term = HttpContext.Request.Query["term"].ToString();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Estate/ConsultEstates?parameter=" + term;
                 var httpClient = getHttpClient();
@@ -389,12 +389,12 @@ namespace Web.Controllers
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                List<ValorEstado> datos = JsonConvert.DeserializeObject<List<ValorEstado>>(respuesta.Response.ToString());
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                List<ValorEstado> datos = JsonConvert.DeserializeObject<List<ValorEstado>>(respuesta.Response.ToString() ?? "") ?? new List<ValorEstado>();
 
                 foreach (var etapa in datos)
                 {
-                    valores.Add(Convert.ToString(etapa.etapa));
+                    valores.Add(Convert.ToString(etapa.etapa) ?? "");
                 }
 
                 return valores;
