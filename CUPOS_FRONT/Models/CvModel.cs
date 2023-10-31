@@ -6,8 +6,8 @@ namespace Web.Models
 {
     public class CvModel
     {
-        public string nombreEntidadhj { get; set; }
-        public string tipo_de_documento { get; set; }
+        public string nombreEntidadhj { get; set; } = string.Empty;
+        public string tipo_de_documento { get; set; } = string.Empty;
         public int nithj { get; set; }
         public string? telefonohj { get; set; }
         public string? paishj { get; set; }
@@ -18,14 +18,14 @@ namespace Web.Models
         public string? direccionhj { get; set; }
 
         public int id { get; set; }
-        public string nitsitu { get; set; }
-        public string nombresitu { get; set; }
+        public string nitsitu { get; set; } = string.Empty;
+        public string nombresitu { get; set; } = string.Empty;
 
-        public string empresasitu  { get; set; }
-        public string estadositu  { get; set; }
-        public string observacionesitu  { get; set; }
-        public string nombreTipoNovedad  { get; set; }
-        public string ultimomodificado  { get; set; }
+        public string empresasitu { get; set; } = string.Empty;
+        public string estadositu { get; set; } = string.Empty;
+        public string observacionesitu { get; set; } = string.Empty;
+        public string nombreTipoNovedad { get; set; } = string.Empty;
+        public string ultimomodificado { get; set; } = string.Empty;
 
         
 
@@ -36,7 +36,7 @@ namespace Web.Models
 
         public decimal? codigoCupo { get; set; }
         public decimal? numeroResolucion { get; set; }
-        public string autoridadEmiteResolucion { get; set; }
+        public string autoridadEmiteResolucion { get; set; } = string.Empty;
         public DateTime? fechaResolucion { get; set; }
         public DateTime? fechaRadicado { get; set; }
         public decimal? cuposOtorgados { get; set; }
@@ -98,22 +98,22 @@ namespace Web.Models
         public string? CarteNumber { get; set; }
         public DateTime SaleDate { get; set; }
         public decimal NumberSold { get; set; }
-        public string BusinessSale { get; set; }
+        public string BusinessSale { get; set; } = string.Empty;
         public decimal TypeCarte { get; set; }
         public int? TypeDocumentSeller { get; set; }
         public string? DocumentNumberSeller { get; set; }
         public string? ReasonSocial { get; set; }
         public decimal InitialBalanceBusiness { get; set; }
         public decimal FinalBalanceBusiness { get; set; }
-        public string Observations { get; set; }
-        public string BusinessShopper { get; set; }
+        public string Observations { get; set; } = string.Empty;
+        public string BusinessShopper { get; set; } = string.Empty;
         public decimal InventoryAvailability { get; set; }
         public int? TypeDocumentShopper { get; set; }
         public string? DocumentNumberShopper { get; set; }
         public string? ReasonSocialShopper { get; set; }
         public decimal InitialBalanceBusinessShopper { get; set; }
         public decimal FinalBalanceBusinessShopper { get; set; }
-        public string ObservationsShopper { get; set; }
+        public string ObservationsShopper { get; set; } = string.Empty;
         public int? Quota { get; set; }
         public int? Solds { get; set; }
         public decimal? QuotasSold { get; set; }
@@ -124,11 +124,7 @@ namespace Web.Models
         public List<soportsDocuments>? documentosSoporte { get; set; }
         public List<SupportDocuments>? SupportDocumentsRemoved { get; set; }
 
-        //public decimal? codigoCertificado { get; set; }
-        //public string? numeroCertificacion { get; set; }
-        //public DateTime? fechaCertificacion { get; set; }
-        //public decimal? nit { get; set; }
-        //public DateTime? vigenciaCertificacion { get; set; }
+      
         public class soportsDocuments
         {
             public decimal? codigo { get; set; }
@@ -161,8 +157,8 @@ namespace Web.Models
 
     public class CVDEnityData
     {
-        public string nombreEntidadhj { get; set; }
-        public string tipo_de_documento { get; set; }
+        public string nombreEntidadhj { get; set; } = string.Empty;
+        public string tipo_de_documento { get; set; } = string.Empty;
         public int nithj { get; set; }
         public string? telefonohj { get; set; }
         public string? paishj { get; set; }

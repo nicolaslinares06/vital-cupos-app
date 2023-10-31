@@ -14,7 +14,7 @@ namespace Web.Controllers
     {
         private readonly string UrlApi;
         private readonly ILogger<CvController> _logger;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -52,7 +52,12 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -73,7 +78,12 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -94,7 +104,12 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("Index", "Cv");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
 
@@ -108,13 +123,18 @@ namespace Web.Controllers
         {
             try
             {
-                _logger.LogInformation("method called");               
+                _logger.LogInformation("method called");
                 return View();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -129,7 +149,7 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
                 List<CvModel> hojadevida = new List<CvModel>();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/CvA/Search?documentTypeCV=" + documentypecv + "&documentId=" + documentid;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -145,11 +165,11 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        hojadevida = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString());
+                        hojadevida = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -159,7 +179,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<CvModel> hojadevida = new List<CvModel>();
+                return hojadevida;
             }
         }
         /// <summary>
@@ -174,7 +195,7 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
                 List<CvModel> situacionhj = new List<CvModel>();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/CvA/Situation?documentTypeCV=" + documentypecv + "&documentId=" + documentid;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -190,10 +211,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        situacionhj = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString());
+                        situacionhj = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -203,7 +224,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<CvModel> situacionhj = new List<CvModel>();
+                return situacionhj;
             }
         }
         /// <summary>
@@ -219,7 +241,7 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
                 List<CvModel> resolucioncuposhj = new List<CvModel>();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/QuotaResolution?documentTypeCV=" + documentypecv + "&documentId=" + documentid;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -234,13 +256,13 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+
                     if (respuesta != null)
                     {
-                        resolucioncuposhj = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString());
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        if (resolucioncuposhj != null && resolucioncuposhj.Count > 0)
+                        resolucioncuposhj = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
+                        HttpContext.Session.SetString("token", respuesta.Token ?? "");
+                        if (resolucioncuposhj.Count > 0)
                         {
                             resolucioncuposhj.ForEach(el =>
                             {
@@ -248,6 +270,7 @@ namespace Web.Controllers
                             });
                         }
                     }
+
                 }
 
                 return resolucioncuposhj;
@@ -255,7 +278,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<CvModel> resolucioncuposhj = new List<CvModel>();
+                return resolucioncuposhj;
             }
         }
         /// <summary>
@@ -269,7 +293,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 List<CvModel> certificadoshj = new List<CvModel>();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/ConsultCertificateshj";
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -285,10 +309,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        certificadoshj = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString());
+                        certificadoshj = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -298,7 +322,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<CvModel> certificadoshj = new List<CvModel>();
+                return certificadoshj;
             }
         }
         /// <summary>
@@ -314,7 +339,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 List<ResolucionPermisos> datos = new List<ResolucionPermisos>();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/FishQuery?documentId=" + documentid;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -330,10 +355,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        datos = JsonConvert.DeserializeObject<List<ResolucionPermisos>>(respuesta.Response.ToString());
+                        datos = JsonConvert.DeserializeObject<List<ResolucionPermisos>>(respuesta.Response.ToString() ?? "")?? new List<ResolucionPermisos>();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -343,7 +368,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<ResolucionPermisos> datos = new List<ResolucionPermisos>();
+                return datos;
             }
         }
         /// <summary>
@@ -358,7 +384,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 List<CvModel> documento = new List<CvModel>();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/SalesDocument?nit=" + nit;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -374,10 +400,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        documento = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString());
+                        documento = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -388,7 +414,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<CvModel> documento = new List<CvModel>();
+                return documento;
             }
         }
         /// <summary>
@@ -402,26 +429,19 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 List<CvModel> documento2 = new List<CvModel>();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/SalesDocument";
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                //if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                //{
-                //    return new
-                //    {
-                //        volverInicio = true
-                //    };
-                //}
+                var response = httpClient.GetAsync(URI).Result;        
 
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        documento2 = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString());
+                        documento2 = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -431,7 +451,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<CvModel> documento2 = new List<CvModel>();
+                return documento2;
             }
         }
         /// <summary>
@@ -447,7 +468,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 resolutionQuota resolutionQuota = new resolutionQuota();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/ConsultOneQuota2?quotaCode=" + quotaCode;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -463,10 +484,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        resolutionQuota = JsonConvert.DeserializeObject<resolutionQuota>(respuesta.Response.ToString());
+                        resolutionQuota = JsonConvert.DeserializeObject<resolutionQuota>(respuesta.Response.ToString() ?? "") ?? new resolutionQuota();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -477,7 +498,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                resolutionQuota resolutionQuota = new resolutionQuota();
+                return resolutionQuota;
             }
         }
         /// <summary>
@@ -493,7 +515,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 CertificatesDatas resouna2 = new CertificatesDatas();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/ConsultDocument2?docId=" + docuid;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -509,8 +531,8 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                    resouna2 = JsonConvert.DeserializeObject<CertificatesDatas>(respuesta.Response.ToString());
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                    resouna2 = JsonConvert.DeserializeObject<CertificatesDatas>(respuesta.Response.ToString() ?? "") ?? new CertificatesDatas();
                     HttpContext.Session.SetString("token", respuesta.Token);
                 }
 
@@ -519,7 +541,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                CertificatesDatas resouna2 = new CertificatesDatas();
+                return resouna2;
             }
         }
         /// <summary>
@@ -535,7 +558,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 List<CvModel> resouna2 = new List<CvModel>();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/ConsultDocumentid?docId=" + docuid;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -551,10 +574,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        resouna2 = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString());
+                        resouna2 = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -565,7 +588,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<CvModel> resouna2 = new List<CvModel>();
+                return resouna2;
             }
         }
         /// <summary>
@@ -581,7 +605,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 CertificatesDatas resouna3 = new CertificatesDatas();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/ConsultCertificateshj2?certificateId=" + idcertificado;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -597,10 +621,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        resouna3 = JsonConvert.DeserializeObject<CertificatesDatas>(respuesta.Response.ToString());
+                        resouna3 = JsonConvert.DeserializeObject<CertificatesDatas>(respuesta.Response.ToString() ?? "") ?? new CertificatesDatas();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -610,7 +634,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                CertificatesDatas resouna3 = new CertificatesDatas();
+                return resouna3;
             }
         }
         /// <summary>
@@ -626,7 +651,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 CertificatesDatas resopdf = new CertificatesDatas();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/QuerySituationPDF?situationId=" + situacionid;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -642,10 +667,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        resopdf = JsonConvert.DeserializeObject<CertificatesDatas>(respuesta.Response.ToString());
+                        resopdf = JsonConvert.DeserializeObject<CertificatesDatas>(respuesta.Response.ToString() ?? "") ?? new CertificatesDatas();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -655,7 +680,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                CertificatesDatas resopdf = new CertificatesDatas();
+                return resopdf;
             }
         }
         /// <summary>
@@ -672,7 +698,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 List<CvModel> resoidd = new List<CvModel>();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/QuerySituationId?companyCode=" + codigoEmpresa + "&situationId=" + situacionid;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -688,10 +714,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        resoidd = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString());
+                        resoidd = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -701,7 +727,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<CvModel> resoidd = new List<CvModel>();
+                return resoidd;
             }
         }
         /// <summary>
@@ -717,7 +744,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 List<CvModel> resoidd = new List<CvModel>();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/QueryNoveltySituation?companyCode=" + codigoEmpresa;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -733,10 +760,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        resoidd = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString());
+                        resoidd = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -746,7 +773,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<CvModel> resoidd = new List<CvModel>();
+                return resoidd;
             }
         }
         /// <summary>
@@ -762,26 +790,20 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 List<CvModel> resoidd = new List<CvModel>();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/QueryLatestNoveltySituation?companyCode=" + codigoEmpresa;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
-                //if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                //{
-                //    return new
-                //    {
-                //        volverInicio = true
-                //    };
-                //}
+           
 
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
                     {
-                        resoidd = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString());
+                        resoidd = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -791,7 +813,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<CvModel> resoidd = new List<CvModel>();
+                return resoidd;
             }
         }
         /// <summary>
@@ -805,7 +828,7 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
                 ResolucionPermisos datos = new ResolucionPermisos();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Cva/QueryFishPDF?resolutionId=" + idresolucionp;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -820,8 +843,8 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                    datos = JsonConvert.DeserializeObject<ResolucionPermisos>(respuesta.Response.ToString());
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                    datos = JsonConvert.DeserializeObject<ResolucionPermisos>(respuesta.Response.ToString() ?? "") ?? new ResolucionPermisos();
                     HttpContext.Session.SetString("token", respuesta.Token);
                 }
                 return datos;
@@ -829,7 +852,8 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                ResolucionPermisos datos = new ResolucionPermisos();
+                return datos;
             }
         }
     }
