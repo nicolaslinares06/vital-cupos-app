@@ -14,7 +14,7 @@ namespace Web.Controllers
     {
         private readonly ILogger<PrecintosMarquillasController> _logger;
         private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -48,7 +48,11 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -70,7 +74,11 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string? token = HttpContext.Session.GetString("token");
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -92,7 +100,11 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string? token = HttpContext.Session.GetString("token");
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -147,8 +159,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        listaDatos = JsonConvert.DeserializeObject<List<CuposV001Precintoymarquilla>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        listaDatos = JsonConvert.DeserializeObject<List<CuposV001Precintoymarquilla>>(respuesta.Response.ToString() ?? "") ?? new List<CuposV001Precintoymarquilla>();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                         return listaDatos;
@@ -170,7 +182,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<CuposV001Precintoymarquilla>();
             }
         }
         /// <summary>
@@ -202,8 +214,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        tiposDocumentosEmpresas = JsonConvert.DeserializeObject<List<TiposDocumentosEmpresas>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        tiposDocumentosEmpresas = JsonConvert.DeserializeObject<List<TiposDocumentosEmpresas>>(respuesta.Response.ToString() ?? "") ?? new List<TiposDocumentosEmpresas>();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                         return tiposDocumentosEmpresas;
@@ -215,7 +227,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<TiposDocumentosEmpresas>();
             }
         }
         /// <summary>
@@ -247,8 +259,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        colores = JsonConvert.DeserializeObject<List<Colores>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        colores = JsonConvert.DeserializeObject<List<Colores>>(respuesta.Response.ToString() ?? "") ?? new List<Colores>();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                         return colores;
@@ -260,7 +272,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<Colores>();
             }
         }
     }
