@@ -15,7 +15,7 @@ namespace Web.Controllers
     {
         private readonly ILogger<GestionEntidadesController> _logger;
         private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -49,7 +49,11 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -67,7 +71,11 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -84,7 +92,11 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -99,9 +111,9 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
                 string r = "";
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
-                if (token == null)
+                if (String.IsNullOrEmpty(token))
                 {
                     HttpContext.Session.Remove("token");
                     ViewBag.AlertaPass = "false";
@@ -138,10 +150,10 @@ namespace Web.Controllers
                     }
 
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     r = resp.Message;
-                    if (resp.Error == false)
+                    if (!resp.Error)
                     {
                         HttpContext.Session.SetString("token", resp.Token);
                     }
@@ -151,7 +163,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return "";
             }
         }
         /// <summary>
@@ -166,7 +178,7 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
                 List<Novedad> datos = new List<Novedad>();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Company/ConsultNovedades?companyCode=" + codigoEmpresa + (idNovedad != null ? "&noveltyId=" + idNovedad : "");
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -181,10 +193,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
-                        datos = JsonConvert.DeserializeObject<List<Novedad>>(respuesta.Response.ToString());
+                        datos = JsonConvert.DeserializeObject<List<Novedad>>(respuesta.Response.ToString() ?? "") ?? new List<Novedad>();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -194,7 +206,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<Novedad>();
             }
         }
         /// <summary>
@@ -207,7 +219,7 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Company/Save";
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -246,7 +258,7 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     if (respuesta.Response != null)
                     {
@@ -264,7 +276,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return false;
             }
         }
         /// <summary>
@@ -278,7 +290,7 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
                 cupoTotales datos = new cupoTotales();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/Company/ConsultQuotas?companyId=" + idEmpresa;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -293,10 +305,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
-                        datos = JsonConvert.DeserializeObject<cupoTotales>(respuesta.Response.ToString());
+                        datos = JsonConvert.DeserializeObject<cupoTotales>(respuesta.Response.ToString() ?? "") ?? new cupoTotales();
                         HttpContext.Session.SetString("token", respuesta.Token);
                     }
                 }
@@ -306,7 +318,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new cupoTotales();
             }
         }
     }
