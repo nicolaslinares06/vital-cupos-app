@@ -15,7 +15,7 @@ namespace WebFront.Controllers
 
         private readonly string UrlApi;
         private readonly ILogger<NonTimberFloraCertificateController> _logger;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -49,7 +49,11 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
 
@@ -72,7 +76,11 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -100,7 +108,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         Authority = JsonConvert.DeserializeObject<List<ElementTypes>>(respuesta.Response.ToString() ?? "");
@@ -113,7 +121,8 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<ElementTypes>? Authority = new List<ElementTypes>();
+                return Authority;
             }
         }
 
@@ -142,7 +151,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         EspecimensProductsType = JsonConvert.DeserializeObject<List<ElementTypes>>(respuesta.Response.ToString() ?? "");
@@ -156,7 +165,8 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<ElementTypes>? EspecimensProductsType = new List<ElementTypes>();
+                return EspecimensProductsType;
             }
         }
 
@@ -185,7 +195,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         DocumentsTypes = JsonConvert.DeserializeObject<List<ElementTypes>>(respuesta.Response.ToString() ?? "");
@@ -199,7 +209,8 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<ElementTypes>? DocumentsTypes = new List<ElementTypes>();
+                return DocumentsTypes;
             }
         }
 
@@ -230,7 +241,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         certificados = JsonConvert.DeserializeObject<List<CertificadosFloraNoMaderable>>(respuesta.Response.ToString() ?? "");
@@ -244,7 +255,8 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<CertificadosFloraNoMaderable>? certificados = new List<CertificadosFloraNoMaderable>();
+                return certificados;
             }
         }
 
@@ -275,7 +287,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         datos = JsonConvert.DeserializeObject<List<DatosEntidad>>(respuesta.Response.ToString() ?? "");
@@ -288,7 +300,8 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<DatosEntidad>? datos = new List<DatosEntidad>();
+                return datos;
             }
         }
 
@@ -317,7 +330,7 @@ namespace WebFront.Controllers
             if (response.IsSuccessStatusCode)
             {
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                 if (respuesta.Response != null)
                 {
                     certificates = JsonConvert.DeserializeObject<List<CertificadosFloraNoMaderable>>(respuesta.Response.ToString() ?? "");
@@ -353,7 +366,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         EspecimentsTypes = JsonConvert.DeserializeObject<List<ElementTypesEspecies>>(respuesta.Response.ToString() ?? "");
@@ -366,7 +379,8 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                List<ElementTypesEspecies>? EspecimentsTypes = new List<ElementTypesEspecies>();
+                return EspecimentsTypes;
             }
         }
 
@@ -432,7 +446,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -448,7 +462,7 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return false;
             }
         }
 
@@ -478,7 +492,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         certificates = JsonConvert.DeserializeObject<CertificatesDatas>(respuesta.Response.ToString() ?? "");
@@ -490,7 +504,8 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                CertificatesDatas? certificates = new CertificatesDatas();
+                return certificates;
             }
         }
 
@@ -556,7 +571,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -572,7 +587,7 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return false;
             }
         }
 
@@ -603,7 +618,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -619,7 +634,7 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return false;
             }
         }
     }
