@@ -127,7 +127,7 @@ namespace Web.Controllers
                 var httpClient = getHttpClient();
                 string token = HttpContext.Session.GetString("token") ?? "";
 
-                List<Auditoria> r = new List<Auditoria>();
+                List<Auditoria> r = new();
 
                 if (token == "")
                 {
@@ -173,7 +173,7 @@ namespace Web.Controllers
                 var httpClient = getHttpClient();
                 string token = HttpContext.Session.GetString("token") ?? "";
 
-                List<Auditoria> r = new List<Auditoria>();
+                List<Auditoria> r = new();
 
                 if (token == "")
                 {
