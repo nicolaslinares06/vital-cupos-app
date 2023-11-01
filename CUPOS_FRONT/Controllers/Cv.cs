@@ -167,7 +167,7 @@ namespace Web.Controllers
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    if (respuesta.Response != null)
                     {
                         hojadevida = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -212,7 +212,7 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    if (respuesta.Response != null)
                     {
                         situacionhj = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -310,7 +310,7 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    if (respuesta.Response != null)
                     {
                         certificadoshj = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -356,7 +356,7 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    if (respuesta.Response != null)
                     {
                         datos = JsonConvert.DeserializeObject<List<ResolucionPermisos>>(respuesta.Response.ToString() ?? "")?? new List<ResolucionPermisos>();
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -401,7 +401,7 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    if (respuesta.Response != null)
                     {
                         documento = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -439,7 +439,7 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    if (respuesta.Response != null)
                     {
                         documento2 = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -485,7 +485,7 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    if (respuesta.Response != null)
                     {
                         resolutionQuota = JsonConvert.DeserializeObject<resolutionQuota>(respuesta.Response.ToString() ?? "") ?? new resolutionQuota();
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -531,9 +531,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    resouna2 = JsonConvert.DeserializeObject<CertificatesDatas>(respuesta.Response.ToString() ?? "") ?? new CertificatesDatas();
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();                    
                     HttpContext.Session.SetString("token", respuesta.Token);
+                    if(respuesta.Response != null)
+                        resouna2 = JsonConvert.DeserializeObject<CertificatesDatas>(respuesta.Response.ToString() ?? "") ?? new CertificatesDatas();
                 }
 
                 return resouna2;
@@ -575,7 +576,7 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    if (respuesta.Response != null)
                     {
                         resouna2 = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -622,7 +623,7 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    if (respuesta.Response != null)
                     {
                         resouna3 = JsonConvert.DeserializeObject<CertificatesDatas>(respuesta.Response.ToString() ?? "") ?? new CertificatesDatas();
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -668,7 +669,7 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    if (respuesta.Response != null)
                     {
                         resopdf = JsonConvert.DeserializeObject<CertificatesDatas>(respuesta.Response.ToString() ?? "") ?? new CertificatesDatas();
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -715,7 +716,7 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    if (respuesta.Response != null)
                     {
                         resoidd = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -761,10 +762,10 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    HttpContext.Session.SetString("token", respuesta.Token);
+                    if (respuesta.Response != null)
                     {
-                        resoidd = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
+                        resoidd = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();                       
                     }
                 }
 
@@ -801,10 +802,10 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null && !string.IsNullOrEmpty(respuesta.Response as string))
+                    HttpContext.Session.SetString("token", respuesta.Token);
+                    if (respuesta.Response != null)
                     {
-                        resoidd = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
+                        resoidd = JsonConvert.DeserializeObject<List<CvModel>>(respuesta.Response.ToString() ?? "") ?? new List<CvModel>();                       
                     }
                 }
 
