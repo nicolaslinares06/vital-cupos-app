@@ -14,7 +14,7 @@ namespace Web.Controllers
     {
         private readonly ILogger<GestionDocumentalController> _logger;
         private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -123,13 +123,13 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<ConsultDocument> r = new List<ConsultDocument>();
+                List<ConsultDocument> r = new();
 
                 string URI = UrlApi + "/DocumentManagement/Consult?searchString=" + cadBusqueda;
                 var httpClient = getHttpClient();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return r;
@@ -143,8 +143,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        r = JsonConvert.DeserializeObject<List<ConsultDocument>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        r = JsonConvert.DeserializeObject<List<ConsultDocument>>(respuesta.Response.ToString() ?? "") ?? new List<ConsultDocument>();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                         return r;
@@ -170,13 +170,13 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                soportsDocuments r = new soportsDocuments();
+                soportsDocuments r = new();
 
                 string URI = UrlApi + "/DocumentManagement/GetDocument?id=" + id;
                 var httpClient = getHttpClient();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return r;
@@ -190,13 +190,13 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
 
                         if (respuesta.Error)
                         {
                             return r;
                         }
-                        r = JsonConvert.DeserializeObject<soportsDocuments>(respuesta.Response.ToString());
+                        r = JsonConvert.DeserializeObject<soportsDocuments>(respuesta.Response.ToString() ?? "") ?? new soportsDocuments();
 
                         return r;
                     }
@@ -221,14 +221,14 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
                 string r = "";
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = UrlApi + "/DocumentManagement/SaveDocument";
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var req = new
                 {
-                    id = documento.id,
+                    documento.id,
                     document = new
                     {
                         code = documento.archivo.codigo,
@@ -243,7 +243,7 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     if(respuesta.Response != null)
                     {
@@ -276,9 +276,9 @@ namespace Web.Controllers
 
                 string URI = UrlApi + "/DocumentManagement/ReadDocument?id=" + id;
                 var httpClient = getHttpClient();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return r;
@@ -292,13 +292,13 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
 
                         if (respuesta.Error)
                         {
                             return r;
                         }
-                        r = respuesta.Response.ToString();
+                        r = respuesta.Response.ToString() ?? "";
 
                         return r;
                     }
@@ -328,9 +328,9 @@ namespace Web.Controllers
 
                 string URI = UrlApi + "/DocumentManagement/UpdateDocument";
                 var httpClient = getHttpClient();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return r;
@@ -341,7 +341,7 @@ namespace Web.Controllers
 
                     var req = new
                     {
-                        id = datosDoc.id,
+                        datosDoc.id,
                         documentChanges = datosDoc.cambiosDoc
                     };
 
@@ -351,7 +351,7 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
 
                         if (respuesta.Error)
                         {
