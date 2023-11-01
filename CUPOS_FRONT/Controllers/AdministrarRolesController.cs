@@ -16,7 +16,7 @@ namespace Web.Controllers
     {
         private readonly ILogger<AdministrarRolesController> _logger;
         private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -115,13 +115,13 @@ namespace Web.Controllers
         {
             List<ReqRoles> r = new List<ReqRoles>();
 
-            string token = HttpContext.Session.GetString("token");
+            string token = HttpContext.Session.GetString("token") ?? "";
 
             string URI = UrlApi + "/Rol/Consult";
 
             var httpClient = getHttpClient();
 
-            if (token == null)
+            if (token == "")
             {
                 HttpContext.Session.Remove("token");
             }
@@ -134,8 +134,8 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     string jsonInput = responseString;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                    r = JsonConvert.DeserializeObject<List<ReqRoles>>(respuesta.Response.ToString());
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                    r = JsonConvert.DeserializeObject<List<ReqRoles>>(respuesta.Response.ToString() ?? "") ?? new List<ReqRoles>();
                     HttpContext.Session.SetString("token", respuesta.Token);
                 }
             }
@@ -176,13 +176,13 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 List<ReqRoles> r = new List<ReqRoles>();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Rol/Consult?searchQuery=" + nombreRol + "&state=" + valEstado;
 
                 var httpClient = getHttpClient();
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return r;
@@ -196,8 +196,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        r = JsonConvert.DeserializeObject<List<ReqRoles>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        r = JsonConvert.DeserializeObject<List<ReqRoles>>(respuesta.Response.ToString() ?? "") ?? new List<ReqRoles>();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                         return r;
@@ -229,14 +229,14 @@ namespace Web.Controllers
                 }
 
                 string r = "";
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 if (_datosAct.description == null)
                 {
                     _datosAct.description = "";
                 }
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                 }
@@ -248,7 +248,7 @@ namespace Web.Controllers
                     var response = httpClient.PutAsJsonAsync(URI, _datosAct).Result;
 
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     r = resp.Message;
                     if (!resp.Error)
@@ -270,7 +270,7 @@ namespace Web.Controllers
         /// <param name="_datosCreacion"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreacionRol(CreateRolRequest _datosCreacion)
+        public IActionResult CreacionRol(CreateRolRequest _datosCreacion)
         {
             try
             {
@@ -283,11 +283,11 @@ namespace Web.Controllers
                     return View("CrearRol");
                 }
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 _datosCreacion.description = "";
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                 }
@@ -299,7 +299,7 @@ namespace Web.Controllers
                     var response = httpClient.PostAsJsonAsync(URL, _datosCreacion).Result;
 
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     if (!resp.Error)
                     {
@@ -332,7 +332,7 @@ namespace Web.Controllers
 
                 string term = HttpContext.Request.Query["term"].ToString();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Rol/ConsultAllRols?parameter=" + term;
                 var httpClient = getHttpClient();
@@ -340,12 +340,12 @@ namespace Web.Controllers
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                List<ValorEstado> datos = JsonConvert.DeserializeObject<List<ValorEstado>>(respuesta.Response.ToString());
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                List<ValorEstado> datos = JsonConvert.DeserializeObject<List<ValorEstado>>(respuesta.Response.ToString() ?? "") ?? new List<ValorEstado>();
 
                 foreach (var etapa in datos)
                 {
-                    valores.Add(Convert.ToString(etapa.etapa));
+                    valores.Add(Convert.ToString(etapa.etapa) ?? "");
                 }
 
                 return valores;

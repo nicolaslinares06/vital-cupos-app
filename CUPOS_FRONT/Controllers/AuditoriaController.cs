@@ -14,7 +14,7 @@ namespace Web.Controllers
     {
         private readonly ILogger<AuditoriaController> _logger;
         private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -125,11 +125,11 @@ namespace Web.Controllers
 
                 string URI = UrlApi + "/Audit/Consult?startDate=" + nuevaFechaInicio + "&endDate=" + nuevaFechaFinal + "&page=";
                 var httpClient = getHttpClient();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
-                List<Auditoria> r = new List<Auditoria>();
+                List<Auditoria> r = new();
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return r;
@@ -143,8 +143,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        r = JsonConvert.DeserializeObject<List<Auditoria>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        r = JsonConvert.DeserializeObject<List<Auditoria>>(respuesta.Response.ToString() ?? "") ?? new List<Auditoria>();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                         return r;
@@ -171,11 +171,11 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 string URI = UrlApi + "/Audit/ConsultDetails?date=" + fecha;
                 var httpClient = getHttpClient();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
-                List<Auditoria> r = new List<Auditoria>();
+                List<Auditoria> r = new();
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return r;
@@ -189,8 +189,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        r = JsonConvert.DeserializeObject<List<Auditoria>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        r = JsonConvert.DeserializeObject<List<Auditoria>>(respuesta.Response.ToString() ?? "") ?? new List<Auditoria>();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                         return r;
@@ -214,7 +214,7 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Module/Consult";
                 var httpClient = getHttpClient();
@@ -222,14 +222,14 @@ namespace Web.Controllers
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                 if (respuesta.Response == null)
                 {
                     return new List<ModulosReq>();
                 }
 
-                List<ModulosReq> modulos = JsonConvert.DeserializeObject<List<ModulosReq>>(respuesta.Response.ToString());
+                List<ModulosReq> modulos = JsonConvert.DeserializeObject<List<ModulosReq>>(respuesta.Response.ToString() ?? "") ?? new List<ModulosReq>();
 
                 return modulos;
             }

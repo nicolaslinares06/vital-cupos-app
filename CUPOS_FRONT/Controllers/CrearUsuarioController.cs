@@ -16,7 +16,7 @@ namespace Web.Controllers
     {
         private readonly ILogger<CrearUsuarioController> _logger;
         private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -30,7 +30,7 @@ namespace Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public HttpClient getHttpClient()
+        public HttpClient GetHttpClient()
         {
             HttpClientHandler clientHandler = new HttpClientHandler();
             clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
@@ -72,9 +72,9 @@ namespace Web.Controllers
                     return View("CreacionUsuario");
                 }
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return RedirectToAction("Index", "Login");
@@ -82,12 +82,12 @@ namespace Web.Controllers
                 else
                 {
                     string URI = UrlApi + "/User/Create";
-                    var httpClient = getHttpClient();
+                    var httpClient = GetHttpClient();
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                     var response = httpClient.PostAsJsonAsync(URI, _datosUsu).Result;
 
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -115,16 +115,16 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Parametric/ConsultDocumentType";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                List<ReqDocumentType> docs = JsonConvert.DeserializeObject<List<ReqDocumentType>>(respuesta.Response.ToString());
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                List<ReqDocumentType> docs = JsonConvert.DeserializeObject<List<ReqDocumentType>>(respuesta.Response.ToString() ?? "") ?? new List<ReqDocumentType>();
 
 
                 return docs;
@@ -144,16 +144,16 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Parametric/ConsultDependence";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                List<ReqEstadoCertificado> docs = JsonConvert.DeserializeObject<List<ReqEstadoCertificado>>(respuesta.Response.ToString());
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                List<ReqEstadoCertificado> docs = JsonConvert.DeserializeObject<List<ReqEstadoCertificado>>(respuesta.Response.ToString() ?? "") ?? new List<ReqEstadoCertificado>();
 
 
                 return docs;
