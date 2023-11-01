@@ -18,7 +18,7 @@ namespace WebFront.Controllers
 
         private readonly string UrlApi;
         private readonly ILogger<ControlFishRequestController> _logger;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
 
         public ControlFishRequestController(ILogger<ControlFishRequestController> logger)
         {
@@ -102,7 +102,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         datos = JsonConvert.DeserializeObject<List<DatosEntidad>>(respuesta.Response.ToString() ?? "");
@@ -144,7 +144,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         datos = JsonConvert.DeserializeObject<List<ResolucionPermisos>>(respuesta.Response.ToString() ?? "");
@@ -186,7 +186,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         datos = JsonConvert.DeserializeObject<ResolucionPermisos>(respuesta.Response.ToString() ?? "");
@@ -211,6 +211,9 @@ namespace WebFront.Controllers
         {
             try
             {
+
+                if(resolution is null)
+                    resolution = new ResolucionPermisos();
                 _logger.LogInformation("method called");
                 string? token = HttpContext.Session.GetString("token");
                 string URI = UrlApi + "/ControlFishRequest/SaveResolution";
@@ -314,7 +317,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         HttpContext.Session.SetString("token", respuesta.Token);
@@ -361,7 +364,7 @@ namespace WebFront.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                     if (respuesta.Response != null)
                     {
                         HttpContext.Session.SetString("token", respuesta.Token);

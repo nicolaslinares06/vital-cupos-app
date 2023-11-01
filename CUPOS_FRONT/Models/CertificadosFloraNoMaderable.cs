@@ -63,17 +63,17 @@ namespace Web.Models
     public class soportsDocuments
     {
         [JsonProperty("code")]
-        public decimal? codigo { get; set; }
+        public decimal codigo { get; set; }
 
         [JsonProperty("base64Attachment")]
-        public string? adjuntoBase64 { get; set; }
+        public string adjuntoBase64 { get; set; } = string.Empty;
 
         [JsonProperty("attachmentName")]
-        public string? nombreAdjunto { get; set; }
+        public string nombreAdjunto { get; set; } = string.Empty;
 
         [JsonProperty("attachmentType")]
-        public string? tipoAdjunto { get; set; }
-    }
+        public string tipoAdjunto { get; set; } = string.Empty;
+    } 
 
     public class ReqGuardarDoc
     {

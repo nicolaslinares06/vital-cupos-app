@@ -7,7 +7,7 @@ namespace Web.Models
     public class Cupos
     {
         public decimal? codigoCupo { get; set; }
-        public string autoridadEmiteResolucion { get; set; }
+        public string autoridadEmiteResolucion { get; set; } = string.Empty;
         public string? codigoZoocriadero { get; set; }
         public string? numeroResolucion { get; set; }
         public DateTime? fechaResolucion { get; set; }
@@ -43,7 +43,7 @@ namespace Web.Models
         public decimal? especie { get; set; }
         public decimal codigo { get; set; }
         public string? numeroCartaVendeFactura { get; set; }
-        public string quienVende { get; set; }
+        public string quienVende { get; set; } = string.Empty;
         public DateTime fechaVenta { get; set; }
         public int disponibilidadInventario { get; set; }
         public DateTime fechaProduccion { get; set; }
@@ -54,16 +54,16 @@ namespace Web.Models
     public class DatosEntidad
     {
         public decimal codigoEmpresa { get; set; }
-        public string nombreEntidad { get; set; }
-        public string nombreEmpresa { get; set; }
+        public string nombreEntidad { get; set; } = string.Empty;
+        public string nombreEmpresa { get; set; } = string.Empty;
         public decimal nit { get; set; }
-        public string tipoDocumento { get; set; }
+        public string tipoDocumento { get; set; } = string.Empty;
         public decimal telefono { get; set; }
-        public string correo { get; set; }
-        public string ciudad { get; set; }
-        public string departamento { get; set; }
-        public string pais { get; set; }
-        public string direccion { get; set; }
+        public string correo { get; set; } = string.Empty;
+        public string ciudad { get; set; } = string.Empty;
+        public string departamento { get; set; } = string.Empty;
+        public string pais { get; set; } = string.Empty;
+        public string direccion { get; set; } = string.Empty;
     }
 
     public class ElementTypes
@@ -74,8 +74,8 @@ namespace Web.Models
 
     public class resolutionQuota
     {
-        public cupoGuardar resolucionInfo { get; set; }
-        public exportSpecimenss especiesExportar { get; set; }
+        public cupoGuardar resolucionInfo { get; set; } = new cupoGuardar();
+        public exportSpecimenss especiesExportar { get; set; } = new exportSpecimenss();
     }
 
     public class soportDocuments
@@ -208,7 +208,7 @@ namespace Web.Models
     public class saveResolutionQuotas
     {
         [JsonProperty("dataToSave")]
-        public cupoGuardar datoGuardar { get; set; }
+        public cupoGuardar datoGuardar { get; set; } = new cupoGuardar();
 
         [JsonProperty("newExportSpeciesData")]
         public List<exportSpecimenss>? datosEspecieExportarNuevo { get; set; }

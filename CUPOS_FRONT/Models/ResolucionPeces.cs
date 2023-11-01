@@ -31,7 +31,7 @@ namespace Web.Models
             public DateTime fechaFin { get; set; }
 
             [JsonProperty("attachment")]
-            public soportsDocuments? adjunto { get; set; }
+            public soportsDocuments adjunto { get; set; } = new soportsDocuments();
 
             [JsonProperty("resolutionObject")]
             public string? objetoResolucion { get; set; }
