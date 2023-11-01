@@ -15,7 +15,7 @@ namespace Web.Controllers
     {
         private readonly ILogger<GestionAsignacionDeRolesController> _logger;
         private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -29,7 +29,7 @@ namespace Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public HttpClient getHttpClient()
+        public HttpClient GetHttpClient()
         {
             HttpClientHandler clientHandler = new HttpClientHandler();
             clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
@@ -94,7 +94,7 @@ namespace Web.Controllers
         ///// 
         ///// </summary>
         ///// <returns></returns>
-        public IActionResult AsignarRol(string enc = null)
+        public IActionResult AsignarRol(string enc)
         {
             try
             {
@@ -103,35 +103,32 @@ namespace Web.Controllers
                 enc = "eyJjb2RlIjoiMDUiLCJzdGF0dXMiOiJTdWNjZXNzIiwicGVybWlzc2lvbnMiOiJDSVRFUyIsIm1lc3NhZ2UiOm51bGwsIklEIjo2MjQ3NCwiVXNlciI6Ijc4Nzg3ODc4NzgiLCJOYW1lIjoiTWFkZXJhcyAgUHJ1ZWJhcyIsIkRvY3VtZW50IjoiNzg3ODc4Nzg3OCIsIkVNYWlsIjoiYWlwYXJyYUBtaW5hbWJpZW50ZS5nb3YuY28iLCJMYXN0TG9naW4iOiIyMDIzLTA4LTA0VDE1OjIwOjUyLjczNzAwMCIsIkFjdGl2ZSI6IlQiLCJFbmFibGVkIjoiVCIsIk1vZHVsZSI6IkNJVEVTIiwiVXJsIjoiaHR0cDovL3Rlc3Qtc3VubC1hcGkubWluYW1iaWVudGUuZ292LmNvL2FwaS8iLCJUb2tlbiI6IjlkNzczNDBjLWQzMDEtNGI4Ni1hMjhmLTkyMGFjODEzNzQxYyIsIlVybEVycm9yIjoiaHR0cDovL3ZpdGFsLm1pbmFtYmllbnRlLmdvdi5jby8ifQ==";
                 var datos = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(enc));
 
-                VitalReq datosVital = new VitalReq();
-                datosVital = JsonConvert.DeserializeObject<VitalReq>(datos.ToString());
+                VitalReq datosVital = new();
+                datosVital = JsonConvert.DeserializeObject<VitalReq>(datos.ToString() ?? "") ?? new VitalReq();
                 datosVital.rols = ConsultarRoles();
 
                 //Verificar si ya se encuentra en el sistema
                 string URI = UrlApi + "/AssignmentRequest/VerifyDocument?document=" + datosVital.Document;
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
 
                 var response = httpClient.GetAsync(URI).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
-                    if(respuesta != null)
+                    if (respuesta.Error)
                     {
-                        if (respuesta.Error)
+                        if (respuesta.Message.Contains("activa"))
                         {
-                            if (respuesta.Message.Contains("activa"))
-                            {
-                                ViewBag.mostrarModalAlerta = "false";
-                                ViewBag.mostrarModalCorreo = "true";
-                                ViewBag.mensajeModal = respuesta.Message;
-                            }
-                            else
-                            {
-                                ViewBag.mostrarModalAlerta = "true";
-                                ViewBag.mensajeModal = respuesta.Message;
-                            }
+                            ViewBag.mostrarModalAlerta = "false";
+                            ViewBag.mostrarModalCorreo = "true";
+                            ViewBag.mensajeModal = respuesta.Message;
+                        }
+                        else
+                        {
+                            ViewBag.mostrarModalAlerta = "true";
+                            ViewBag.mensajeModal = respuesta.Message;
                         }
                     }
                 }
@@ -156,14 +153,14 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<ReqGesAsigRoles> r = new List<ReqGesAsigRoles>();
+                List<ReqGesAsigRoles> r = new();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/AssignmentRequest/Consult?user=" + nombre;
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return r;
@@ -177,8 +174,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        r = JsonConvert.DeserializeObject<List<ReqGesAsigRoles>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        r = JsonConvert.DeserializeObject<List<ReqGesAsigRoles>>(respuesta.Response.ToString() ?? "") ?? new List<ReqGesAsigRoles>();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                         return r;
@@ -205,7 +202,7 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
 
-                List<string> r = new List<string>();
+                List<string> r = new();
 
 
                 if (HttpContext.Session.GetString("ActualizarAsignacionRol") != "True")
@@ -214,12 +211,12 @@ namespace Web.Controllers
                     return r;
                 }
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/AssignmentRequest/UpdateStatus";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return r;
@@ -233,7 +230,7 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
 
                         r.Add(respuesta.Message);
                         r.Add(respuesta.Error.ToString());
@@ -262,16 +259,16 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Rol/ConsultRolsAssign";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                List<ReqRoles> docs = JsonConvert.DeserializeObject<List<ReqRoles>>(respuesta.Response.ToString());
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                List<ReqRoles> docs = JsonConvert.DeserializeObject<List<ReqRoles>>(respuesta.Response.ToString() ?? "") ?? new List<ReqRoles>();
 
                 var resultadoListado = docs.Select(x => new SelectListItem(x.name, x.id.ToString())).ToList();
 
@@ -299,34 +296,36 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
 
-                AssignRol datos = new AssignRol();
-                datos.code = asignacion.code;
-                datos.status = asignacion.status;
-                datos.permissions = asignacion.permissions;
-                datos.message = asignacion.message;
-                datos.id = asignacion.ID;
-                datos.user = asignacion.User;
-                datos.name = asignacion.Name;
-                datos.document = asignacion.Document;
-                datos.eMail = asignacion.EMail;
-                datos.lastLogin = asignacion.LastLogin;
-                datos.active = asignacion.Active;
-                datos.enabled = asignacion.Enabled;
-                datos.module = asignacion.Module;
-                datos.url = asignacion.Url;
-                datos.token = asignacion.Token;
-                datos.urlError = asignacion.UrlError;
-                datos.rol = (int)asignacion.rol;
+                AssignRol datos = new()
+                {
+                    code = asignacion.code,
+                    status = asignacion.status,
+                    permissions = asignacion.permissions,
+                    message = asignacion.message,
+                    id = asignacion.ID,
+                    user = asignacion.User,
+                    name = asignacion.Name,
+                    document = asignacion.Document,
+                    eMail = asignacion.EMail,
+                    lastLogin = asignacion.LastLogin,
+                    active = asignacion.Active,
+                    enabled = asignacion.Enabled,
+                    module = asignacion.Module,
+                    url = asignacion.Url,
+                    token = asignacion.Token,
+                    urlError = asignacion.UrlError,
+                    rol = (int)asignacion.rol
+                };
 
                 string URI = UrlApi + "/AssignmentRequest/Assign";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
 
                 var response = httpClient.PostAsJsonAsync(URI, datos).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     if (resp.Error)
                     {
