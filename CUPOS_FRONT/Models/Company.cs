@@ -11,7 +11,7 @@ namespace Repository.Helpers.Models
     public class Company
     {
         public decimal Code { get; set; }
-        public string ReasonSocial { get; set; }
+        public string ReasonSocial { get; set; } = string.Empty;
         public decimal InitialBalanceBusiness { get; set; }
         public decimal FinalBalanceBusiness { get; set; }
     }
@@ -22,21 +22,21 @@ namespace Repository.Helpers.Models
         public decimal? idtipoDocumento { get; set; }
         public string? tipoDocumento { get; set; }
         public decimal idtipoEntidad { get; set; }
-        public string nombreEntidad { get; set; }
-        public string nombreEmpresa { get; set; }
+        public string nombreEntidad { get; set; } = string.Empty;
+        public string nombreEmpresa { get; set; } = string.Empty;
         public decimal nit { get; set; }
         public decimal telefono { get; set; }
-        public string correo { get; set; }
+        public string correo { get; set; } = string.Empty;
         public decimal idciudad { get; set; }
-        public string ciudad { get; set; }
+        public string ciudad { get; set; } = string.Empty;
         public decimal iddepartamento { get; set; }
-        public string departamento { get; set; }
+        public string departamento { get; set; } = string.Empty;
         public decimal idpais { get; set; }
-        public string pais { get; set; }
-        public string direccion { get; set; }
+        public string pais { get; set; } = string.Empty;
+        public string direccion { get; set; } = string.Empty;
         public string? matriculaMercantil { get; set; }
         public decimal idestado { get; set; }
-        public string estado { get; set; }
+        public string estado { get; set; } = string.Empty;
     }
 
     public class Novedad
@@ -44,12 +44,12 @@ namespace Repository.Helpers.Models
         public decimal codigo { get; set; }
         public decimal codigoEmpresa { get; set; }
         public decimal idTipoNovedad { get; set; }
-        public string nombreTipoNovedad { get; set; }
+        public string nombreTipoNovedad { get; set; } = string.Empty;
         public DateTime fechaRegistroNovedad { get; set; }
         public decimal idEstado { get; set; }
-        public string estado { get; set; }
+        public string estado { get; set; } = string.Empty;
         public decimal idEstadoEmpresa { get; set; }
-        public string estadoEmpresa { get; set; }
+        public string estadoEmpresa { get; set; } = string.Empty;
         public decimal? idEstadoEmisionCITES { get; set; }
         public string? estadoEmisionCITES { get; set; }
         public string? observaciones { get; set; }
