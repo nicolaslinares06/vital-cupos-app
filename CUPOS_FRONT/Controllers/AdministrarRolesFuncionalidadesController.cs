@@ -14,7 +14,7 @@ namespace Web.Controllers
     {
         private readonly ILogger<AdministrarRolesFuncionalidadesController> _logger;
         private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -86,7 +86,7 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Rol/ConsultByRol?rol=" + codRol + "&charge=" + nomCargo;
                 var httpClient = getHttpClient();
@@ -94,14 +94,14 @@ namespace Web.Controllers
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                 if (respuesta.Response == null)
                 {
                     return new List<ReqModulos>();
                 }
 
-                List<ReqModulos> modulos = JsonConvert.DeserializeObject<List<ReqModulos>>(respuesta.Response.ToString());
+                List<ReqModulos> modulos = JsonConvert.DeserializeObject<List<ReqModulos>>(respuesta.Response.ToString() ?? "") ?? new List<ReqModulos>();
 
                 return modulos;
             }
@@ -122,7 +122,7 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Module/Consult";
                 var httpClient = getHttpClient();
@@ -130,14 +130,14 @@ namespace Web.Controllers
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                 if (respuesta.Response == null)
                 {
                     return new List<ModulosReq>();
                 }
 
-                List<ModulosReq> modulos = JsonConvert.DeserializeObject<List<ModulosReq>>(respuesta.Response.ToString());
+                List<ModulosReq> modulos = JsonConvert.DeserializeObject<List<ModulosReq>>(respuesta.Response.ToString() ?? "") ?? new List<ModulosReq>();
 
                 return modulos;
             }
@@ -163,9 +163,9 @@ namespace Web.Controllers
                     return "El usuario no cuenta con los permisos para Actualizar funcionalidades";
                 }
                 string r = "";
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                 }
@@ -177,7 +177,7 @@ namespace Web.Controllers
                     var response = httpClient.PutAsJsonAsync(URI, _datos).Result;
 
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     r = resp.Message;
                     if (!resp.Error)
