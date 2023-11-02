@@ -18,7 +18,7 @@ namespace Web.Controllers
     {
         private readonly ILogger<UsuariosController> _logger;
         private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -32,10 +32,12 @@ namespace Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public HttpClient getHttpClient()
+        public HttpClient GetHttpClient()
         {
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            HttpClientHandler clientHandler = new()
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+            };
             return new HttpClient(clientHandler);
         }
         /// <summary>
@@ -52,7 +54,7 @@ namespace Web.Controllers
                 if (token == null)
                     return View("Views/Login/Index.cshtml");
 
-                ListaUsuarios listado = Filtrar(null);
+                ListaUsuarios listado = Filtrar("");
                 return View(listado);
             }
             catch (Exception ex)
@@ -111,8 +113,7 @@ namespace Web.Controllers
                     return View("Views/Login/Index.cshtml");
 
                 HttpContext.Session.SetString("idEdicionUsuario", id.ToString());
-                var model = new ReqUser();
-                model = ConsultarEdit();
+                ReqUser model = ConsultarEdit();
                 model.documentType = ObtenerTiposDocumentos();
                 model.dependenceType = ObtenerDependencia();
                 return View(model);
@@ -143,12 +144,12 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
                 string URI = UrlApi + "/User/Consult?stringSearch=" + nombre;
-                var httpClient = getHttpClient();
-                string token = HttpContext.Session.GetString("token");
+                var httpClient = GetHttpClient();
+                string token = HttpContext.Session.GetString("token") ?? "";
 
 
-                List<GestionUsuario> usuarios = new List<GestionUsuario>();
-                if (token == null)
+                List<GestionUsuario> usuarios = new();
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return usuarios;
@@ -162,8 +163,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        usuarios = JsonConvert.DeserializeObject<List<GestionUsuario>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        usuarios = JsonConvert.DeserializeObject<List<GestionUsuario>>(respuesta.Response.ToString() ?? "") ?? new List<GestionUsuario>();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                         return usuarios;
@@ -182,11 +183,11 @@ namespace Web.Controllers
         public ListaUsuarios Filtrar(string nombreBus)
         {
             string URI = UrlApi + "/User/Consult?stringSearch=" + nombreBus;
-            var httpClient = getHttpClient();
-            string token = HttpContext.Session.GetString("token");
+            var httpClient = GetHttpClient();
+            string token = HttpContext.Session.GetString("token") ?? "";
 
-            List<GestionUsuario> usuarios = new List<GestionUsuario>();
-            if (token == null)
+            List<GestionUsuario> usuarios = new();
+            if (token == "")
             {
                 HttpContext.Session.Remove("token");
             }
@@ -199,37 +200,43 @@ namespace Web.Controllers
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
                     string jsonInput = responseString;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                    usuarios = JsonConvert.DeserializeObject<List<GestionUsuario>>(respuesta.Response.ToString());
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                    usuarios = JsonConvert.DeserializeObject<List<GestionUsuario>>(respuesta.Response.ToString() ?? "") ?? new List<GestionUsuario>();
                     HttpContext.Session.SetString("token", respuesta.Token);
                 }
             }
 
-            ListaUsuarios listado = new ListaUsuarios();
-
-            listado.Usuarios = usuarios;
+            ListaUsuarios listado = new()
+            {
+                Usuarios = usuarios
+            };
 
             var rols = ConsultarRoles();
 
             foreach(var usuario in usuarios)
             {
-                var roles = usuario.roles.Split("|");
-                var stringRoles = "";
-                var cantidad = 0;
-                rols.ForEach(el =>
+                if (usuario.roles != null)
                 {
-                    if (roles.Contains(el.id.ToString()))
+                    var roles = usuario.roles.Split("|");
+                    var stringRoles = "";
+                    var cantidad = 0;
+                    rols.ForEach(el =>
                     {
-                        if (cantidad > 0)
+                        if (roles.Contains(el.id.ToString()))
                         {
-                            stringRoles += ", ";
+                            if (cantidad > 0)
+                            {
+                                stringRoles += ", ";
+                            }
+                            stringRoles += el.name;
+                            cantidad += 1;
                         }
-                        stringRoles += el.name;
-                        cantidad += 1;
-                    }
-                    
-                });
-                usuario.roles = stringRoles;
+
+                    });
+                    usuario.roles = stringRoles;
+                }
+                else
+                    usuario.roles = "";
             }
 
             return listado;
@@ -252,10 +259,10 @@ namespace Web.Controllers
                     return resp;
                 }
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string respuesta = "";
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     respuesta = "sin token";
@@ -264,12 +271,12 @@ namespace Web.Controllers
                 else
                 {
                     string URI = UrlApi + "/User/Create";
-                    var httpClient = getHttpClient();
+                    var httpClient = GetHttpClient();
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                     var response = httpClient.PostAsJsonAsync(URI, datosUsu).Result;
 
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -291,7 +298,7 @@ namespace Web.Controllers
         /// <param name="pass"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CambiarPass(actualizarRequest pass)
+        public IActionResult CambiarPass(actualizarRequest pass)
         {
             try
             {
@@ -302,12 +309,12 @@ namespace Web.Controllers
                     return View("CambiarContrasena");
                 }
 
-                string token = HttpContext.Session.GetString("token");
-                pass.code = Int32.Parse(HttpContext.Session.GetString("idEdicion"));
+                string token = HttpContext.Session.GetString("token") ?? "";
+                pass.code = Int32.Parse(HttpContext.Session.GetString("idEdicion") ?? "");
                 ViewBag.AlertPass = null;
                 pass.registrationStatus = true;
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     ViewBag.AlertaPass = "false";
@@ -320,12 +327,12 @@ namespace Web.Controllers
                     {
                         pass.dependence = null;
                         string URI = UrlApi + "/User/Update";
-                        var httpClient = getHttpClient();
+                        var httpClient = GetHttpClient();
                         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                         var response = httpClient.PutAsJsonAsync(URI, pass).Result;
 
                         string responseString = response.Content.ReadAsStringAsync().Result;
-                        Responses resp = JsonConvert.DeserializeObject<Responses>(responseString);
+                        Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                         ViewBag.RespuestaCambioPass = resp.Message;
                         if (!resp.Error)
@@ -358,16 +365,16 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Parametric/ConsultDocumentType";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                List<ReqDocumentType> docs = JsonConvert.DeserializeObject<List<ReqDocumentType>>(respuesta.Response.ToString());
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                List<ReqDocumentType> docs = JsonConvert.DeserializeObject<List<ReqDocumentType>>(respuesta.Response.ToString() ?? "") ?? new List<ReqDocumentType>();
 
 
                 return docs;
@@ -396,8 +403,6 @@ namespace Web.Controllers
                     return View("EditarUsuario");
                 }
 
-                string rols = ViewBag.Roles;
-
                 if (_users.estate == "ACTIVO")
                 {
                     _users.registrationStatus = true;
@@ -407,10 +412,9 @@ namespace Web.Controllers
                     _users.registrationStatus = false;
                 }
 
-                string r = "";
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     ViewBag.AlertaPass = "false";
@@ -419,12 +423,12 @@ namespace Web.Controllers
                 else
                 {
                     string URI = UrlApi + "/User/Update";
-                    var httpClient = getHttpClient();
+                    var httpClient = GetHttpClient();
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                     var response = httpClient.PutAsJsonAsync(URI, _users).Result;
 
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     ViewBag.msjEditarUsuario = resp.Message;
                     if (!resp.Error)
@@ -452,16 +456,16 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Rol/ConsultRols";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                List<ReqRoles> docs = JsonConvert.DeserializeObject<List<ReqRoles>>(respuesta.Response.ToString());
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                List<ReqRoles> docs = JsonConvert.DeserializeObject<List<ReqRoles>>(respuesta.Response.ToString() ?? "") ?? new List<ReqRoles>();
 
 
                 return docs;
@@ -482,13 +486,13 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                decimal id = Int32.Parse(HttpContext.Session.GetString("idEdicionUsuario"));
+                decimal id = Int32.Parse(HttpContext.Session.GetString("idEdicionUsuario") ?? "");
 
-                ReqUser r = new ReqUser();
+                ReqUser r = new();
                 string URI = UrlApi + "/User/ConsultEdit?id=" + id;
-                var httpClient = getHttpClient();
-                string token = HttpContext.Session.GetString("token");
-                if (token == null)
+                var httpClient = GetHttpClient();
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return r;
@@ -502,8 +506,8 @@ namespace Web.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        r = JsonConvert.DeserializeObject<ReqUser>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        r = JsonConvert.DeserializeObject<ReqUser>(respuesta.Response.ToString() ?? "") ?? new ReqUser();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                         return r;
@@ -527,16 +531,16 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Parametric/ConsultDocumentType";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                List<ReqDocumentType> docs = JsonConvert.DeserializeObject<List<ReqDocumentType>>(respuesta.Response.ToString());
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                List<ReqDocumentType> docs = JsonConvert.DeserializeObject<List<ReqDocumentType>>(respuesta.Response.ToString() ?? "") ?? new List<ReqDocumentType>();
 
                 var resultadoListado = docs.Select(x => new SelectListItem(x.type, x.id.ToString())).ToList();
 
@@ -554,16 +558,16 @@ namespace Web.Controllers
 
         private List<SelectListItem> ObtenerDependencia()
         {
-            string token = HttpContext.Session.GetString("token");
+            string token = HttpContext.Session.GetString("token") ?? "";
 
             string URI = UrlApi + "/Parametric/ConsultDependence";
-            var httpClient = getHttpClient();
+            var httpClient = GetHttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = httpClient.GetAsync(URI).Result;
 
             string responseString = response.Content.ReadAsStringAsync().Result;
-            Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-            List<ReqEstadoCertificado> docs = JsonConvert.DeserializeObject<List<ReqEstadoCertificado>>(respuesta.Response.ToString());
+            Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+            List<ReqEstadoCertificado> docs = JsonConvert.DeserializeObject<List<ReqEstadoCertificado>>(respuesta.Response.ToString() ?? "") ?? new List<ReqEstadoCertificado>();
 
             var resultadoListado = docs.Select(x => new SelectListItem(x.nombre, x.codigo.ToString())).ToList();
 

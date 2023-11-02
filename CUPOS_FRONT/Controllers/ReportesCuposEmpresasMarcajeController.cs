@@ -19,7 +19,7 @@ namespace CUPOS_FRONT.Controllers
         private readonly string rutaAPI;
         private readonly IPDFMetodos metodosPDF;
         private readonly IFiltrosDeBusqueda classFiltros;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
@@ -27,7 +27,7 @@ namespace CUPOS_FRONT.Controllers
         /// <param name="metodosPDF"></param>
         /// <param name="classFiltros"></param>
         /// <param name="logger"></param>
-        public ReportesCuposEmpresasMarcajeController(IConfiguration configuration, IPDFMetodos metodosPDF, IFiltrosDeBusqueda classFiltros, ILogger<ReportesCuposEmpresasMarcajeController> logger)
+        public ReportesCuposEmpresasMarcajeController(IPDFMetodos metodosPDF, IFiltrosDeBusqueda classFiltros, ILogger<ReportesCuposEmpresasMarcajeController> logger)
         {
             rutaAPI = string.IsNullOrEmpty(RUTAAPI) ? new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build().GetValue<string>("Variables:RutaApi") : RUTAAPI;
             this.metodosPDF = metodosPDF;
@@ -38,7 +38,7 @@ namespace CUPOS_FRONT.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public HttpClient getHttpClient()
+        public HttpClient GetHttpClient()
         {
             HttpClientHandler clientHandler = new HttpClientHandler();
             clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
@@ -48,14 +48,16 @@ namespace CUPOS_FRONT.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             try
             {
                 _logger.LogInformation("method called");
-                var modelo = new PropsViewModel();
-                modelo.TipoEstablecimientos = await ObtenerTiposEstablecimientosSelect();
-                modelo.Estados = await ObtenerEstadosParametricas();
+                var modelo = new PropsViewModel
+                {
+                    TipoEstablecimientos = ObtenerTiposEstablecimientosSelect(),
+                    Estados = ObtenerEstadosParametricas()
+                };
 
                 return View(modelo);
             }
@@ -76,23 +78,23 @@ namespace CUPOS_FRONT.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<DatosEmpresasModel> datos = new List<DatosEmpresasModel>();
+                List<DatosEmpresasModel> datos = new();
 
                 string? token = HttpContext.Session.GetString("token");
                 string URI = $"{rutaAPI}/CompanyCheckInsReports/ConsultDataReportCompany";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     if (!String.IsNullOrEmpty(respuesta.Token))
                     {
                         HttpContext.Session.SetString("token", respuesta.Token);
-                        datos = JsonConvert.DeserializeObject<List<DatosEmpresasModel>>(respuesta.Response.ToString());
+                        datos = JsonConvert.DeserializeObject<List<DatosEmpresasModel>>(respuesta.Response.ToString() ?? "") ?? new List<DatosEmpresasModel>();
                     }
                     else
                     {
@@ -100,7 +102,7 @@ namespace CUPOS_FRONT.Controllers
                     }
                 }
 
-                if (datos is null)
+                if (datos.Count == 0)
                     datos = new List<DatosEmpresasModel>();
 
                 return datos;
@@ -118,14 +120,14 @@ namespace CUPOS_FRONT.Controllers
         /// <param name="filtros"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> ObtenerDatosCuposEmpresas(ReporteCuposEmpresaViewModel filtros)
+        public JsonResult ObtenerDatosCuposEmpresas(ReporteCuposEmpresaViewModel filtros)
         {
             try
             {
                 _logger.LogInformation("method called");
                 filtros = NormalizarFiltros(filtros);
 
-                var datosEmpresas = await ObtenerDatosEmpresaAPI(filtros);
+                var datosEmpresas = ObtenerDatosEmpresaAPI(filtros);
 
                 return new JsonResult(new { listado = datosEmpresas });
             }
@@ -142,14 +144,14 @@ namespace CUPOS_FRONT.Controllers
         /// <param name="dataCuposActual"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<string> ExportarExcelDataEmpresas(ReporteCuposEmpresaViewModel dataCuposActual)
+        public string ExportarExcelDataEmpresas(ReporteCuposEmpresaViewModel dataCuposActual)
         {
             try
             {
                 _logger.LogInformation("method called");
                 var nombreArchivo = $"Listado de Cupos, Empresas y marcaje.xlsx";
                 dataCuposActual = NormalizarFiltros(dataCuposActual);
-                var lista = await ObtenerDatosEmpresaAPI(dataCuposActual);
+                var lista =  ObtenerDatosEmpresaAPI(dataCuposActual);
                 var fileArchivo = GenerarExcel(nombreArchivo, lista);
                 var archivoByte = fileArchivo.FileContents;
                 string base64String = Convert.ToBase64String(archivoByte, 0, archivoByte.Length);
@@ -168,30 +170,29 @@ namespace CUPOS_FRONT.Controllers
         /// <param name="dataCuposActual"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<string> ExportarPDFDataEmpresas(ReporteCuposEmpresaViewModel dataCuposActual)
+        public string ExportarPDFDataEmpresas(ReporteCuposEmpresaViewModel dataCuposActual)
         {
             try
             {
                 _logger.LogInformation("method called");
                 dataCuposActual = NormalizarFiltros(dataCuposActual);
-                var lista = await ObtenerDatosEmpresaAPI(dataCuposActual);
+                var lista = ObtenerDatosEmpresaAPI(dataCuposActual);
 
-                List<string> cabeceras = new List<string>
-            {
-                "Tipo de Empresa","Nombre de Empresa","NIT de Empresa","Estado de Cupo", "Emision Cites", "Numero Resolucion", "Fecha Emision Resolucion","Especie", "Machos", "Hembras", "Poblacion Total", "Año de Produccion", "Cupos Comercializacion", "Cuota Repoblacion",
-                 "Cupos Asignados", "Soportes Repoblacion", "Cupo Utilizado", "Cupo Disponible"
-            };
-
-                using (MemoryStream ms = new MemoryStream())
+                List<string> cabeceras = new()
                 {
-                    PdfWriter writer = new PdfWriter(ms);
-                    using (PdfDocument pdfDoc = new PdfDocument(writer))
-                    {
+                    "Tipo de Empresa","Nombre de Empresa","NIT de Empresa","Estado de Cupo", "Emision Cites", "Numero Resolucion", "Fecha Emision Resolucion","Especie", "Machos", "Hembras", "Poblacion Total", "Año de Produccion", "Cupos Comercializacion", "Cuota Repoblacion",
+                     "Cupos Asignados", "Soportes Repoblacion", "Cupo Utilizado", "Cupo Disponible"
+                };
 
-                        Document doc = new Document(pdfDoc, iText.Kernel.Geom.PageSize.A4.Rotate());
-                        doc.SetMargins(10, 10, 10, 10);
-                        metodosPDF.crearParrafo(doc, "Reporte Cupos Empresas", 20, "center");
-                        metodosPDF.crearTabla<DatosEmpresasModel>(doc, cabeceras, new List<float> { 10, 10, 10, 10, 10, 10, 10, 10 }, lista, new List<string>
+                using MemoryStream ms = new();
+                PdfWriter writer = new(ms);
+                using (PdfDocument pdfDoc = new(writer))
+                {
+
+                    Document doc = new(pdfDoc, iText.Kernel.Geom.PageSize.A4.Rotate());
+                    doc.SetMargins(10, 10, 10, 10);
+                    metodosPDF.crearParrafo(doc, "Reporte Cupos Empresas", 20, "center");
+                    metodosPDF.crearTabla<DatosEmpresasModel>(doc, cabeceras, new List<float> { 10, 10, 10, 10, 10, 10, 10, 10 }, lista, new List<string>
                     {
                         "TipoEmpresa","NombreEmpresa","NIT","Estado", "EstadoEmisionCITES", "NumeroResolucion", "FechaEmisionResolucion",
                         "Especies", "Machos", "Hembras", "PoblacionTotalParental", "AnioProduccion", "CuposComercializacion", "CuotaRepoblacion",
@@ -199,12 +200,11 @@ namespace CUPOS_FRONT.Controllers
                     });
 
 
-                        doc.Close();
-                        writer.Close();
+                    doc.Close();
+                    writer.Close();
 
-                    }
-                    return Convert.ToBase64String(ms.ToArray());
                 }
+                return Convert.ToBase64String(ms.ToArray());
             }
             catch (Exception ex)
             {
@@ -218,7 +218,7 @@ namespace CUPOS_FRONT.Controllers
         /// </summary>
         /// <param name="filtros"></param>
         /// <returns></returns>
-        private async Task<List<DatosEmpresasModel>> ObtenerDatosEmpresaAPI(ReporteCuposEmpresaViewModel filtros)
+        private List<DatosEmpresasModel> ObtenerDatosEmpresaAPI(ReporteCuposEmpresaViewModel filtros)
         {
             try
             {
@@ -227,14 +227,14 @@ namespace CUPOS_FRONT.Controllers
 
                 string? token = HttpContext.Session.GetString("token");
                 string URI = $"{rutaAPI}/CompanyCheckInsReports/ConsultDataQuotaBussiness";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var req = new
                 {
                     BusinessType = filtros.TipoEmpresa,
                     CompanyName = filtros.NombreEmpresa,
-                    NIT = filtros.NIT,
+                    filtros.NIT,
                     Status = filtros.Estado,
                     CITESIssuanceStatus = filtros.EstadoEmisionCITES,
                     ResolutionNumber = filtros.NumeroResolucion,
@@ -249,12 +249,12 @@ namespace CUPOS_FRONT.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     if (!String.IsNullOrEmpty(respuesta.Token))
                     {
                         HttpContext.Session.SetString("token", respuesta.Token);
-                        datosEmpresas = JsonConvert.DeserializeObject<List<DatosEmpresasModel>>(respuesta.Response.ToString());
+                        datosEmpresas = JsonConvert.DeserializeObject<List<DatosEmpresasModel>>(respuesta.Response.ToString() ?? "") ?? new List<DatosEmpresasModel>();
                     }
                     else
                     {
@@ -262,7 +262,7 @@ namespace CUPOS_FRONT.Controllers
                     }
                 }
 
-                if (datosEmpresas is null)
+                if (datosEmpresas.Count == 0)
                     datosEmpresas = new List<DatosEmpresasModel>();
 
                 return datosEmpresas;
@@ -285,7 +285,7 @@ namespace CUPOS_FRONT.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                DataTable dataTable = new DataTable("Cupos, Empresas y Marcaje");
+                DataTable dataTable = new("Cupos, Empresas y Marcaje");
                 dataTable.Columns.AddRange(new DataColumn[]
                 {
                 new DataColumn("Nombre Empresa"),
@@ -331,17 +331,13 @@ namespace CUPOS_FRONT.Controllers
                       );
                 }
 
-                using (XLWorkbook wb = new XLWorkbook())
-                {
-                    wb.Worksheets.Add(dataTable);
-                    using (MemoryStream stream = new MemoryStream())
-                    {
-                        wb.SaveAs(stream);
-                        return File(stream.ToArray(),
-                                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                    nombreArchivo);
-                    }
-                }
+                using XLWorkbook wb = new();
+                wb.Worksheets.Add(dataTable);
+                using MemoryStream stream = new();
+                wb.SaveAs(stream);
+                return File(stream.ToArray(),
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            nombreArchivo);
             }
             catch (Exception ex)
             {
@@ -360,13 +356,13 @@ namespace CUPOS_FRONT.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<FiltrosEmpresasBooleanos> datosPorDefectoFiltros = new List<FiltrosEmpresasBooleanos>();
+                List<FiltrosEmpresasBooleanos> datosPorDefectoFiltros = new();
 
 
 
                 var datosFiltrados = new FiltrosEmpresasBooleanos();
                 int combinaciones = 0;
-                DateTime fechaPordefecto = new DateTime();
+                DateTime fechaPordefecto = new();
                 fechaPordefecto = fechaPordefecto.AddDays(1);
 
                 if (filtros.TipoEmpresa > 0)
@@ -492,7 +488,7 @@ namespace CUPOS_FRONT.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                var fechaEstandar = new DateTime(fecha.Year, fecha.Month, fecha.Day);
+                DateTime fechaEstandar = new(fecha.Year, fecha.Month, fecha.Day);
                 return fechaEstandar;
             }
             catch (Exception ex)
@@ -535,16 +531,16 @@ namespace CUPOS_FRONT.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        private async Task<IEnumerable<SelectListItem>> ObtenerTiposEstablecimientosSelect()
+        private IEnumerable<SelectListItem> ObtenerTiposEstablecimientosSelect()
         {
             try
             {
                 _logger.LogInformation("method called");
-                List<GestionParametrica> tiposEstablecimientos = new List<GestionParametrica>();
+                List<GestionParametrica> tiposEstablecimientos = new();
 
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string URI = rutaAPI + "/VisitRecords/ConsultTypesOfEstablishments";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var response = httpClient.GetAsync(URI).Result;
@@ -552,12 +548,12 @@ namespace CUPOS_FRONT.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     if (!String.IsNullOrEmpty(respuesta.Token))
                     {
                         HttpContext.Session.SetString("token", respuesta.Token);
-                        tiposEstablecimientos = JsonConvert.DeserializeObject<List<GestionParametrica>>(respuesta.Response.ToString());
+                        tiposEstablecimientos = JsonConvert.DeserializeObject<List<GestionParametrica>>(respuesta.Response.ToString() ?? "") ?? new List<GestionParametrica>();
                     }
                     else
                     {
@@ -587,7 +583,7 @@ namespace CUPOS_FRONT.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        private async Task<IEnumerable<SelectListItem>> ObtenerEstadosParametricas()
+        private IEnumerable<SelectListItem> ObtenerEstadosParametricas()
         {
             try
             {
