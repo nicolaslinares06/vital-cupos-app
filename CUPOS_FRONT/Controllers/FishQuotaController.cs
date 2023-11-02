@@ -14,7 +14,7 @@ namespace Web.Controllers
     {
         private readonly ILogger<FishQuotaController> _logger;
         private readonly string urlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
 
         public FishQuotaController(ILogger<FishQuotaController> logger)
         {
@@ -47,7 +47,11 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -69,7 +73,11 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("FlujoNegocio", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -84,7 +92,7 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
                 List<FishQuota> fishesQuotasList = new List<FishQuota>();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string uri = "";
                 if (numberResolution == 0 && initialValidityDate == null && finalValidityDate == null)
                 {
@@ -103,10 +111,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    Responses responseData = JsonConvert.DeserializeObject<Responses>(jsonInput);
+                    Responses responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
                     if (responseData.Response != null)
                     {
-                        fishesQuotasList = JsonConvert.DeserializeObject<List<FishQuota>>(responseData.Response.ToString());
+                        fishesQuotasList = JsonConvert.DeserializeObject<List<FishQuota>>(responseData.Response.ToString() ?? "") ?? new List<FishQuota>();
                         HttpContext.Session.SetString("token", responseData.Token);
                     }
                 }
@@ -116,7 +124,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<FishQuota>();
             }
         }
         /// <summary>
@@ -130,7 +138,7 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
                 List<FishQuota> fishesQuotasList = new List<FishQuota>();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string uri = "";
 
                 uri = String.Format("{0}/FishQuota/GetFishQuotaByCode?code=" + code, urlApi);
@@ -142,10 +150,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    Responses responseData = JsonConvert.DeserializeObject<Responses>(jsonInput);
+                    Responses responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
                     if (responseData.Response != null)
                     {
-                        fishesQuotasList = JsonConvert.DeserializeObject<List<FishQuota>>(responseData.Response.ToString());
+                        fishesQuotasList = JsonConvert.DeserializeObject<List<FishQuota>>(responseData.Response.ToString() ?? "") ?? new List<FishQuota>();
                         HttpContext.Session.SetString("token", responseData.Token);
                     }
                 }
@@ -165,7 +173,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<FishQuota>();
             }
         }
         /// <summary>
@@ -178,7 +186,7 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string uri = String.Format("{0}/FishQuota/SaveFishQuota", urlApi);
                 var httpClient = GetHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -253,7 +261,7 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    responseData = JsonConvert.DeserializeObject<Responses>(jsonInput);
+                    responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
                     return responseData;
                 }
                 else
@@ -266,7 +274,11 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                Responses responseData = new Responses();
+                responseData.Error = true;
+                responseData.Message = ex.Message;
+                return responseData;
+
             }
         }
 
@@ -280,7 +292,7 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string uri = String.Format("{0}/FishQuota/DeleteFishQuota?code=" + code, urlApi);
 
                 var httpClient = GetHttpClient();
@@ -300,7 +312,7 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    responseData = JsonConvert.DeserializeObject<Responses>(jsonInput);
+                    responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
                     return responseData;
                 }
                 else
@@ -313,7 +325,10 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                Responses responseData = new Responses();
+                responseData.Error = true;
+                responseData.Message = ex.Message;
+                return responseData;
             }
         }
 
@@ -327,7 +342,7 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string uri = String.Format("{0}/FishQuota/UpdateFishQuota", urlApi);
                 var httpClient = GetHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -403,7 +418,7 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    responseData = JsonConvert.DeserializeObject<Responses>(jsonInput);
+                    responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
                     return responseData;
                 }
                 else
@@ -416,7 +431,10 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                Responses responseData = new Responses();
+                responseData.Error = true;
+                responseData.Message = ex.Message;
+                return responseData;
             }
         }
 
@@ -447,7 +465,7 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    Responses? responseData = JsonConvert.DeserializeObject<Responses>(jsonInput);
+                    Responses? responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
                     if (responseData.Response != null)
                     {
                         speciesList = JsonConvert.DeserializeObject<List<ElementTypesEspecies>>(responseData.Response.ToString() ?? "");
@@ -461,7 +479,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<ElementTypesEspecies>();
             }
         }
 
@@ -476,7 +494,7 @@ namespace Web.Controllers
             {
                 _logger.LogInformation("method called");
                 List<SupportDocuments> supportDocumentsList = new List<SupportDocuments>();
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
                 string uri = "";
 
                 uri = String.Format("{0}/FishQuota/GetSupportDocument?code=" + code, urlApi);
@@ -495,10 +513,10 @@ namespace Web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    Responses responseData = JsonConvert.DeserializeObject<Responses>(jsonInput);
+                    Responses responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
                     if (responseData.Response != null)
                     {
-                        supportDocumentsList = JsonConvert.DeserializeObject<List<SupportDocuments>>(responseData.Response.ToString());
+                        supportDocumentsList = JsonConvert.DeserializeObject<List<SupportDocuments>>(responseData.Response.ToString() ?? "")?? new List<SupportDocuments>();
                         HttpContext.Session.SetString("token", responseData.Token);
                     }
                 }
@@ -508,7 +526,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<SupportDocuments>();
             }
         }
     }

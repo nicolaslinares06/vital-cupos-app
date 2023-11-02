@@ -29,7 +29,7 @@ namespace Repository.Helpers.Models
         public string? SpeciesName { get; set; }
         public List<FishQuotaAmount>? FishQuotaAmounts { get; set; }
         public List<FishQuotaAmount>? FishQuotaAmountsRemoved { get; set; }
-        public List<SupportDocuments> SupportDocuments { get; set; }
+        public List<SupportDocuments> SupportDocuments { get; set; } = new List<SupportDocuments>();
         public List<SupportDocuments>? SupportDocumentsRemoved { get; set; }
     }
 }
