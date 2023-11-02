@@ -8,25 +8,24 @@ namespace CUPOS_FRONT.Controllers
     public class AdministrarServiciosController : Controller
     {
         private readonly ILogger<AdministrarServiciosController> _logger;
-        private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
         /// <summary>
         /// 
         /// </summary>
         /// <param name="logger"></param>
         public AdministrarServiciosController(ILogger<AdministrarServiciosController> logger)
         {
-            UrlApi = string.IsNullOrEmpty(RUTAAPI) ? new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build().GetValue<string>("Variables:RutaApi") : RUTAAPI;
             _logger = logger;
         }
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public HttpClient getHttpClient()
+        public HttpClient GetHttpClient()
         {
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            HttpClientHandler clientHandler = new()
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+            };
             return new HttpClient(clientHandler);
         }
         /// <summary>
@@ -38,9 +37,9 @@ namespace CUPOS_FRONT.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
-                if (token == null)
+                if (token == "")
                     return View("Views/AdministrarServicios/Index.cshtml");
 
                 return View();
@@ -60,9 +59,9 @@ namespace CUPOS_FRONT.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token");
+                string token = HttpContext.Session.GetString("token") ?? "";
 
-                if (token != null) { 
+                if (token != "") { 
                     ViewBag.name = name;
                     return View("Views/AdministrarServicios/Partials/DetalleServicio.cshtml");
                 }
@@ -108,17 +107,15 @@ namespace CUPOS_FRONT.Controllers
         {
             try
             {
-                using (var httpClient = new HttpClient())
+                using var httpClient = new HttpClient();
+                var response = httpClient.GetAsync(url).Result;
+                if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    var response = httpClient.GetAsync(url).Result;
-                    if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
             catch
