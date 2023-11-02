@@ -18,8 +18,8 @@ namespace CUPOS_FRONT.Models
 
         public class  ReportesPrecintosViewModel : FiltrosPrecintos
         {
-            public List<DatosPrecintosModel> listadoPrecintos { get; set; }
-            public IEnumerable<SelectListItem> Establecimientos { get; set; }
+            public List<DatosPrecintosModel> listadoPrecintos { get; set; } =  new List<DatosPrecintosModel>(); 
+            public IEnumerable<SelectListItem> Establecimientos { get; set; } = new List<SelectListItem>();
         }
 
         public class DatosPrecintosModel

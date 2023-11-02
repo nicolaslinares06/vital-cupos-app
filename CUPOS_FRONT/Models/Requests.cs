@@ -8,13 +8,13 @@ namespace CUPOS_FRONT.Models
     {
         public class ReqLogin
         {
-            public string user { get; set; }
-            public string password { get; set; }
+            public string user { get; set; } = string.Empty;
+            public string password { get; set; } = string.Empty;
         }
 
         public class ReqSimpleUser
         {
-            public string user { get; set; }
+            public string user { get; set; } = string.Empty;
         }
 
         public class ReqUser
@@ -50,14 +50,14 @@ namespace CUPOS_FRONT.Models
         public class ReqDocumentType
         {
             public decimal id { get; set; }
-            public string type { get; set; }
+            public string type { get; set; } = string.Empty;
         }
 
         public class ReqChangePassword
         {
-            public string user { get; set; }
-            public string password { get; set; }
-            public string newPassword { get; set; }
+            public string user { get; set; } = string.Empty;
+            public string password { get; set; } = string.Empty;
+            public string newPassword { get; set; } = string.Empty;
             public bool? acceptsTerms { get; set; }
             public bool? acceptsProcessingPersonalData { get; set; }
         }
@@ -69,47 +69,47 @@ namespace CUPOS_FRONT.Models
 
         public class Estados
         {
-            public List<ReqEstados> estateList { get; set; }
+            public List<ReqEstados> estateList { get; set; } = new List<ReqEstados>();
         }
 
         public class ReqEstados
         {
             public decimal pkT008codigo { get; set; }
             public decimal a008posicion { get; set; }
-            public string a008codigoParametricaEstado { get; set; }
-            public string a008descripcion { get; set; }
-            public string a008etapa { get; set; }
-            public string a008estadoRegistro { get; set; }
-            public List<SelectListItem> estate { get; set; }
-            public List<SelectListItem> stage { get; set; }
+            public string a008codigoParametricaEstado { get; set; } = string.Empty;
+            public string a008descripcion { get; set; } = string.Empty;
+            public string a008etapa { get; set; } = string.Empty;
+            public string a008estadoRegistro { get; set; } = string.Empty;
+            public List<SelectListItem> estate { get; set; } = new List<SelectListItem>();
+            public List<SelectListItem> stage { get; set; } = new List<SelectListItem>();
         }
 
         public class ReqEstado
         {
             public decimal id { get; set; }
             public decimal position { get; set; }
-            public string idEstate { get; set; }
-            public string description { get; set; }
-            public string stage { get; set; }
+            public string idEstate { get; set; } = string.Empty;
+            public string description { get; set; } = string.Empty;
+            public string stage { get; set; } = string.Empty;
             public bool estate { get; set; }
         }
 
         public class ReqRoles
         {
             public decimal id { get; set; }
-            public string estado { get; set; }
-            public string name { get; set; }
-            public string cargo { get; set; }
-            public string descripcion { get; set; }
-            public List<SelectListItem> estate { get; set; }
+            public string estado { get; set; } = string.Empty;
+            public string name { get; set; } = string.Empty;
+            public string cargo { get; set; } = string.Empty;
+            public string descripcion { get; set; } = string.Empty;
+            public List<SelectListItem> estate { get; set; } = new List<SelectListItem>();
         }
 
         public class ReqRol
         {
             public int rolId { get; set; }
-            public string name { get; set; }
-            public string position { get; set; }
-            public string description { get; set; }
+            public string name { get; set; } = string.Empty;
+            public string position { get; set; } = string.Empty;
+            public string description { get; set; } = string.Empty;
             public bool estate { get; set; }
         }
 
@@ -122,7 +122,7 @@ namespace CUPOS_FRONT.Models
             public bool update { get; set; }
             public bool delete { get; set; }
             public bool see { get; set; }
-            public string name { get; set; }
+            public string name { get; set; } = string.Empty;
         }
 
         public class ReqAssignment
@@ -140,15 +140,15 @@ namespace CUPOS_FRONT.Models
         public class ReqAssignmentUpdate
         {
             public decimal id { get; set; }
-            public string estadoSolicitud { get; set; }
+            public string estadoSolicitud { get; set; } = string.Empty;
         }
 
         public class ReqAdminTecnica
         {
             public decimal codigo { get; set; }
-            public string nombre { get; set; }
-            public string valor { get; set; }
-            public string descripcion { get; set; }
+            public string nombre { get; set; } = string.Empty;
+            public string valor { get; set; } = string.Empty;  
+            public string descripcion { get; set; } = string.Empty;
             public bool estadoRegistro { get; set; }
         }
         public class ReqEntidad
@@ -156,30 +156,30 @@ namespace CUPOS_FRONT.Models
             public decimal? codigoEmpresa { get; set; }
             public decimal? idtipoDocumento { get; set; }
             public decimal idtipoEntidad { get; set; }
-            public string nombreEmpresa { get; set; }
+            public string nombreEmpresa { get; set; } = string.Empty;
             public decimal nit { get; set; }
             public decimal idciudad { get; set; }
-            public string direccion { get; set; }
+            public string direccion { get; set; } = string.Empty;
             public decimal telefono { get; set; }
-            public string correo { get; set; }
+            public string correo { get; set; } = string.Empty;
             public string? matriculaMercantil { get; set; }
         }
         public class ReqModulos
         {
             public decimal rolId { get; set; }
-            public string moduleId { get; set; }
+            public string moduleId { get; set; } = string.Empty;
             public bool consult { get; set; }
             public bool create { get; set; }
             public bool update { get; set; }
             public bool delete { get; set; }
             public bool see { get; set; }
-            public string name { get; set; }
+            public string name { get; set; } = string.Empty;
         }
 
         public class ModulosReq
         {
             public decimal id { get; set; }
-            public string name { get; set; }
+            public string name { get; set; } = string.Empty;
         }
 
         public class ReqNovedad
@@ -206,13 +206,13 @@ namespace CUPOS_FRONT.Models
         public class ReqEstadoCertificado
         {
             public decimal codigo { get; set; }
-            public string nombre { get; set; }
+            public string nombre { get; set; } = string.Empty;
         }
 
         public class UpdateDocument
         {
             public decimal id { get; set; }
-            public string cambiosDoc { get; set; }
+            public string cambiosDoc { get; set; } = string.Empty;
         }
     }
 }

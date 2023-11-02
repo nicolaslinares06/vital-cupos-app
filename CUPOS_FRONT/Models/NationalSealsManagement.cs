@@ -21,10 +21,10 @@ namespace Repository.Helpers.Models
     }
     public class GenerateSealCodes
     {
-        public string code { get; set; }
+        public string code { get; set; } = string.Empty;
         public decimal codeSpecies { get; set; }
-        public string initialNumber { get; set; }
-        public string finalNumber { get; set; }
+        public string initialNumber { get; set; } = string.Empty;
+        public string finalNumber { get; set; } = string.Empty;
         public decimal color { get; set; }
         public decimal amount { get; set; }
         public decimal worth { get; set; }

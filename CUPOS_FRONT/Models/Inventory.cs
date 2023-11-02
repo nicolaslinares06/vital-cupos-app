@@ -11,10 +11,10 @@ namespace Repository.Helpers.Models
         public decimal quotaCode { get; set; }
         public decimal Code { get; set; }
         public string? NumberSaleCarte { get; set; }
-        public string ReasonSocial { get; set; }
+        public string ReasonSocial { get; set; } = string.Empty;
         public DateTime SaleDate { get; set; }
         public decimal AvailabilityInventory { get; set; }
-        public string Year { get; set; }
+        public string Year { get; set; } = string.Empty;
         public decimal AvailableInventory { get; set; }
         public decimal? InitialNumeration { get; set; }
         public decimal? FinalNumeration { get; set; }
