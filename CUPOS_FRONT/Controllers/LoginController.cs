@@ -15,27 +15,25 @@ namespace Web.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<LoginController> _logger;
-        private LoginRequest usuario;
+        private readonly LoginRequest usuario;
         private readonly string UrlApi;
         private readonly string secretKey;
         private readonly string secretKeySite;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
-        readonly string RECAPTCHAPRIVATEKEY = Environment.GetEnvironmentVariable("RECAPTCHAPRIVATEKEY");
-        readonly string RECAPTCHASITEKEY = Environment.GetEnvironmentVariable("RECAPTCHASITEKEY");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
+        readonly string RECAPTCHAPRIVATEKEY = Environment.GetEnvironmentVariable("RECAPTCHAPRIVATEKEY") ?? "";
+        readonly string RECAPTCHASITEKEY = Environment.GetEnvironmentVariable("RECAPTCHASITEKEY") ?? "";
         /// <summary>
         /// 
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="httpClientFactory"></param>
-        public LoginController(ILogger<LoginController> logger, IHttpClientFactory httpClientFactory)
+        public LoginController(ILogger<LoginController> logger)
         {
             UrlApi = string.IsNullOrEmpty(RUTAAPI) ? new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build().GetValue<string>("Variables:RutaApi") : RUTAAPI;
             secretKey = string.IsNullOrEmpty(RECAPTCHAPRIVATEKEY) ? new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build().GetValue<string>("Recaptcha:reCaptchaPrivateKey") : RECAPTCHAPRIVATEKEY;
             secretKeySite = string.IsNullOrEmpty(RECAPTCHASITEKEY) ? new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build().GetValue<string>("Recaptcha:reCaptchaSiteKey") : RECAPTCHASITEKEY;
             _logger = logger;
-            _httpClientFactory = httpClientFactory;
 
             if (usuario == null)
             {
@@ -46,9 +44,9 @@ namespace Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public HttpClient getHttpClient()
+        public HttpClient GetHttpClient()
         {
-            HttpClientHandler clientHandler = new HttpClientHandler();
+            HttpClientHandler clientHandler = new();
             clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
             return new HttpClient(clientHandler);
         }
@@ -56,7 +54,7 @@ namespace Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public IActionResult Index(string enc = null)
+        public IActionResult Index(string? enc = null)
         {
             try
             {
@@ -112,7 +110,7 @@ namespace Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public IActionResult EnvioCorreo()
+        public IActionResult EnvioCorreos()
         {
             try
             {
@@ -148,7 +146,7 @@ namespace Web.Controllers
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-                    LoginRequest datosIng = new LoginRequest
+                    LoginRequest datosIng = new()
                     {
                         user = _usuario.user,
                         password = _usuario.password
@@ -157,11 +155,11 @@ namespace Web.Controllers
                     if (IsReCaptchValid())
                     {
                         string URI = UrlApi + "/User/Authenticate";
-                        var httpClient = getHttpClient();
+                        var httpClient = GetHttpClient();
                         var response = httpClient.PostAsJsonAsync(URI, datosIng).Result;
 
                         string responseString = response.Content.ReadAsStringAsync().Result;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                         if (!respuesta.Error)
                         {
@@ -175,8 +173,8 @@ namespace Web.Controllers
                                 string URI2 = UrlApi + "/User/ConsultTerms?login=" + datosIng.user;
                                 var response2 = httpClient.GetAsync(URI2).Result;
                                 string responseString2 = response2.Content.ReadAsStringAsync().Result;
-                                Responses respuesta2 = JsonConvert.DeserializeObject<Responses>(responseString2);
-                                ReqAceptarCondiciones req = JsonConvert.DeserializeObject<ReqAceptarCondiciones>(respuesta2.Response.ToString());
+                                Responses respuesta2 = JsonConvert.DeserializeObject<Responses>(responseString2) ?? new Responses();
+                                ReqAceptarCondiciones req = JsonConvert.DeserializeObject<ReqAceptarCondiciones>(respuesta2.Response.ToString() ?? "") ?? new ReqAceptarCondiciones();
 
                                 if (req.A012aceptaTratamientoDatosPersonales && req.A012aceptaTerminos)
                                 {
@@ -231,18 +229,16 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 var result = false;
                 var captchaResponse = Request.Form["g-recaptcha-response"];
-                var apiUrl = "https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}";
+                string? apiUrl = "https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}";
                 var requestUrl = string.Format(apiUrl, secretKey, captchaResponse);
                 var request = (HttpWebRequest)WebRequest.Create(requestUrl);
 
                 using (WebResponse response = request.GetResponse())
                 {
-                    using (StreamReader stream = new StreamReader(response.GetResponseStream()))
-                    {
-                        JObject jResponse = JObject.Parse(stream.ReadToEnd());
-                        var isSuccess = jResponse.Value<bool>("success");
-                        result = (isSuccess) ? true : false;
-                    }
+                    using StreamReader stream = new(response.GetResponseStream());
+                    JObject jResponse = JObject.Parse(stream.ReadToEnd());
+                    var isSuccess = jResponse.Value<bool>("success");
+                    result = (isSuccess);
                 }
 
                 return result;
@@ -263,18 +259,18 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string user = HttpContext.Session.GetString("User");
-                string pass = HttpContext.Session.GetString("Password");
+                string user = HttpContext.Session.GetString("User") ?? "";
+                string pass = HttpContext.Session.GetString("Password") ?? "";
 
                 _datosPass.user = user;
                 _datosPass.password = pass;
 
                 string URI = UrlApi + "/User/ChangePassword";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
                 var response = httpClient.PostAsJsonAsync(URI, _datosPass).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                 if (!respuesta.Error)
                 {
@@ -304,20 +300,20 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<string> r = new List<string>();
+                List<string> r = new();
 
-                string user = HttpContext.Session.GetString("User");
-                string pass = HttpContext.Session.GetString("Password");
+                string user = HttpContext.Session.GetString("User") ?? "";
+                string pass = HttpContext.Session.GetString("Password") ?? "";
 
                 _datosPass.user = user;
                 _datosPass.password = pass;
 
                 string URI = UrlApi + "/User/ChangePassword";
-                var httpClient = getHttpClient();
+                var httpClient = GetHttpClient();
                 var response = httpClient.PostAsJsonAsync(URI, _datosPass).Result;
 
                 string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                 r.Add(respuesta.Message);
                 r.Add(respuesta.Error.ToString());
@@ -341,8 +337,8 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<string> r = new List<string>();
-                ReqSimpleUser usuarioRecu = new ReqSimpleUser
+                List<string> r = new();
+                ReqSimpleUser usuarioRecu = new()
                 {
                     user = user
                 };
@@ -354,11 +350,11 @@ namespace Web.Controllers
                 else
                 {
                     string URI = UrlApi + "/User/SendEmailChangePassword";
-                    var httpClient = getHttpClient();
+                    var httpClient = GetHttpClient();
                     var response = httpClient.PostAsJsonAsync(URI, usuarioRecu).Result;
 
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
 
                     if (!respuesta.Error)
                     {
