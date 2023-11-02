@@ -41,7 +41,7 @@ namespace Web.Models
         public string? tipoPermiso { get; set; }
 
         [JsonProperty("specimenProductImpExpType")]
-        public string tipoEspecimenProductoImpExp { get; set; }
+        public string tipoEspecimenProductoImpExp { get; set; } = string.Empty;
 
         [JsonProperty("certificateRemarks")]
         public string? observacionesCertificado { get; set; }
@@ -78,6 +78,6 @@ namespace Web.Models
     public class ReqGuardarDoc
     {
         public decimal id { get; set; }
-        public soportsDocuments archivo { get; set; }
+        public soportsDocuments archivo { get; set; } =  new soportsDocuments();
     }
 }

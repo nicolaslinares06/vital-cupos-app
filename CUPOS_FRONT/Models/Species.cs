@@ -9,9 +9,9 @@ namespace Web.Models
     public class Species
     {
         public int Code { get; set; }
-        public string CommonName { get; set; }
-        public string Name { get; set; }
-        public string NameFamily { get; set; }
+        public string CommonName { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string NameFamily { get; set; } = string.Empty;
         public string? ScientificName { get; set; }
     }
 }

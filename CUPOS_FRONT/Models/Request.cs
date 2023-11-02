@@ -6,34 +6,34 @@ namespace Web.Models
 {
     public class LoginRequest : ReqLogin
     {
-        public string user { get; set; }
-        public string password { get; set; }
-        public string newPassword { get; set; }
-        public bool acceptsTerms { get; set; }
+        public string user { get; set; } = string.Empty;
+        public string password { get; set; } = string.Empty;
+        public string newPassword { get; set; } = string.Empty;
+        public bool acceptsTerms { get; set; }  
         public bool acceptsProcessingPersonalData { get; set; }
-        public string captcha1 { get; set; }
-        public string captcha2 { get; set; }
+        public string captcha1 { get; set; } = string.Empty;
+        public string captcha2 { get; set; } = string.Empty;
     }
 
     public class CambioPasswordRequest : ReqChangePassword
     {
-        public string user { get; set; }
-        public string password { get; set; }
-        public string newPassword { get; set; }
-        public bool? acceptsTerms { get; set; }
+        public string user { get; set; } = string.Empty;
+        public string password { get; set; } = string.Empty;
+        public string newPassword { get; set; } = string.Empty;
+        public bool? acceptsTerms { get; set; } = false;
         public bool? acceptsProcessingPersonalData { get; set; }
     }
 
     public class UsuarioSimpleRequest : ReqSimpleUser
     {
-        public string User { get; set; }
+        public string User { get; set; } = string.Empty;
     }
 
     public class CreateRolRequest
     {
         public int rolId { get; set; }
-        public string name { get; set; }
-        public string position { get; set; }
+        public string name { get; set; } = string.Empty;
+        public string position { get; set; } = string.Empty;
         public string description { get; set; }
         public bool estate { get; set; }
     }
