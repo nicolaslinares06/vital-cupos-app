@@ -7,6 +7,7 @@ using Repository.Helpers.Models;
 using System;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Text;
 using WebFront.Models;
 using static CUPOS_FRONT.Models.Requests;
 
@@ -17,12 +18,12 @@ namespace WebFront.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly string UrlApi;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public HttpClient getHttpClient()
+        public HttpClient GetHttpClient()
         {
             HttpClientHandler clientHandler = new HttpClientHandler();
             clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
@@ -187,12 +188,12 @@ namespace WebFront.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<ModulosReq> r = new List<ModulosReq>();
-                List<string> u = new List<string>();
+                List<ModulosReq> r = new();
+                List<string> u = new();
 
                 string URI = UrlApi + "/Module/ConsultRols";
-                var httpClient = getHttpClient();
-                string token = HttpContext.Session.GetString("token");
+                var httpClient = GetHttpClient();
+                string token = HttpContext.Session.GetString("token") ?? "";
 
                 if (token == null)
                 {
@@ -208,14 +209,14 @@ namespace WebFront.Controllers
                     {
                         string responseString = response.Content.ReadAsStringAsync().Result;
                         string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                        r = JsonConvert.DeserializeObject<List<ModulosReq>>(respuesta.Response.ToString());
+                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                        r = JsonConvert.DeserializeObject<List<ModulosReq>>(respuesta.Response.ToString() ?? "") ?? new List<ModulosReq>();
                         HttpContext.Session.SetString("token", respuesta.Token);
 
                     }
                 }
 
-                List<string> html = new List<string>();
+                List<string> html = new();
 
                 //Reiniciar Etiquetas
                 //Administrador
@@ -254,22 +255,22 @@ namespace WebFront.Controllers
                 int contAdmin = 0;
                 int contFlujoNegocio = 0;
                 int contReportes = 0;
-                string htmlAdmin = "<li class='barnav-cell Administracion' id='BarraNavegacionAdmin'><a id='padre' onclick='Administracion()'>Administración</a><ul class='submenu'>";
-                string htmlFlujoNegocio = "<li class='barnav-cell FlujoNegocio' id='BarraNavegacionFlujoNegocio'><a id='padre' onclick='FlujoNegocio()'>Flujo de negocio</a><ul class='submenu'>";
-                string htmlReportes = "<li class='barnav-cell Reportes' id='BarraNavegacionReportes'><a id='padre' onclick='Reportes()'> Reportes </a><ul class='submenu'>";
+                StringBuilder htmlAdmin = new("<li class='barnav-cell Administracion' id='BarraNavegacionAdmin'><a id='padre' onclick='Administracion()'>Administración</a><ul class='submenu'>");
+                StringBuilder htmlFlujoNegocio = new("<li class='barnav-cell FlujoNegocio' id='BarraNavegacionFlujoNegocio'><a id='padre' onclick='FlujoNegocio()'>Flujo de negocio</a><ul class='submenu'>");
+                StringBuilder htmlReportes = new("<li class='barnav-cell Reportes' id='BarraNavegacionReportes'><a id='padre' onclick='Reportes()'> Reportes </a><ul class='submenu'>");
 
                 foreach (ModulosReq s in r)
                 {
-                    string token2 = HttpContext.Session.GetString("token");
+                    string token2 = HttpContext.Session.GetString("token") ?? "";
 
                     string URI2 = UrlApi + "/Rol/ConsultByRol?rol=" + (int)s.id + "&charge=" + s.name;
-                    var httpClient2 = getHttpClient();
+                    var httpClient2 = GetHttpClient();
                     httpClient2.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token2);
                     var response = httpClient2.GetAsync(URI2).Result;
 
                     string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString);
-                    List<ReqModulos> modulos = JsonConvert.DeserializeObject<List<ReqModulos>>(respuesta.Response.ToString());
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                    List<ReqModulos> modulos = JsonConvert.DeserializeObject<List<ReqModulos>>(respuesta.Response.ToString() ?? "") ?? new List<ReqModulos>();
 
                     foreach (ReqModulos a in modulos)
                     {
@@ -278,9 +279,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlAdmin.Contains(a.name))
+                                if (!htmlAdmin.ToString().Contains(a.name))
                                 {
-                                    htmlAdmin += "<li id='AdministrarRoles'><a onclick='AdministrarRoles()'>" + a.name + "</a></li>";
+                                    htmlAdmin.Append("<li id='AdministrarRoles'><a onclick='AdministrarRoles()'>" + a.name + "</a></li>");
                                     contAdmin++;
                                 }
                                 HttpContext.Session.SetString("ConsultarRoles", a.consult.ToString());
@@ -295,9 +296,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlAdmin.Contains(a.name))
+                                if (!htmlAdmin.ToString().Contains(a.name))
                                 {
-                                    htmlAdmin += "<li id='GestionAsignacionRoles'><a onclick='GestionAsignacionRoles()'>" + a.name + "</a></li>";
+                                    htmlAdmin.Append("<li id='GestionAsignacionRoles'><a onclick='GestionAsignacionRoles()'>" + a.name + "</a></li>");
                                     contAdmin++;
                                 }
                                 HttpContext.Session.SetString("ConsultarAsignacionRol", a.consult.ToString());
@@ -310,9 +311,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlAdmin.Contains(a.name))
+                                if (!htmlAdmin.ToString().Contains(a.name))
                                 {
-                                    htmlAdmin += "<li id='AdministrarEstados'><a onclick='AdministrarEstados()'>" + a.name + "</a></li>";
+                                    htmlAdmin.Append("<li id='AdministrarEstados'><a onclick='AdministrarEstados()'>" + a.name + "</a></li>");
                                     contAdmin++;
                                 }
                                 HttpContext.Session.SetString("ConsultarEstados", a.consult.ToString());
@@ -325,9 +326,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlAdmin.Contains(a.name))
+                                if (!htmlAdmin.ToString().Contains(a.name))
                                 {
-                                    htmlAdmin += "<li id='Parametrica'><a onclick='AdministrarTablasParametricas()'>" + a.name + "</a></li>";
+                                    htmlAdmin.Append("<li id='Parametrica'><a onclick='AdministrarTablasParametricas()'>" + a.name + "</a></li>");
                                     contAdmin++;
                                 }
                                 HttpContext.Session.SetString("ConsultarParametrica", a.consult.ToString());
@@ -338,9 +339,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlAdmin.Contains(a.name))
+                                if (!htmlAdmin.ToString().Contains(a.name))
                                 {
-                                    htmlAdmin += "<li id='Auditoria'><a onclick='GestionAuditoria()'>" + a.name + "</a></li>";
+                                    htmlAdmin.Append("<li id='Auditoria'><a onclick='GestionAuditoria()'>" + a.name + "</a></li>");
                                     contAdmin++;
                                 }
                                 HttpContext.Session.SetString("ConsultarAuditoria", a.consult.ToString());
@@ -353,9 +354,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlAdmin.Contains(a.name))
+                                if (!htmlAdmin.ToString().Contains(a.name))
                                 {
-                                    htmlAdmin += "<li id='GestionDocumental'><a onclick='GestionDocumental()'>" + a.name + "</a></li>";
+                                    htmlAdmin.Append("<li id='GestionDocumental'><a onclick='GestionDocumental()'>" + a.name + "</a></li>");
                                     contAdmin++;
                                 }
                                 HttpContext.Session.SetString("ConsultarDocumental", a.consult.ToString());
@@ -366,9 +367,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlAdmin.Contains(a.name))
+                                if (!htmlAdmin.ToString().Contains(a.name))
                                 {
-                                    htmlAdmin += "<li id='AdministracionTecnica'><a onclick='AdministracionTecnica()'>" + a.name + "</a></li>";
+                                    htmlAdmin.Append("<li id='AdministracionTecnica'><a onclick='AdministracionTecnica()'>" + a.name + "</a></li>");
                                     contAdmin++;
                                 }
                                 HttpContext.Session.SetString("ConsultarTecnica", a.consult.ToString());
@@ -385,9 +386,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlAdmin.Contains(a.name))
+                                if (!htmlAdmin.ToString().Contains(a.name))
                                 {
-                                    htmlAdmin += "<li id='GestionUsuario'><a onclick='GestionUsuarios()'>" + a.name + "</a></li>";
+                                    htmlAdmin.Append("<li id='GestionUsuario'><a onclick='GestionUsuarios()'>" + a.name + "</a></li>");
                                     contAdmin++;
                                 }
                                 HttpContext.Session.SetString("ConsultarUsuario", a.consult.ToString());
@@ -412,9 +413,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlAdmin.Contains(a.name))
+                                if (!htmlAdmin.ToString().Contains(a.name))
                                 {
-                                    htmlAdmin += "<li id='Servicios'><a onclick='AdministrarServicios()'>" + a.name + "</a></li>";
+                                    htmlAdmin.Append("<li id='Servicios'><a onclick='AdministrarServicios()'>" + a.name + "</a></li>");
                                     contAdmin++;
                                 }
                                 HttpContext.Session.SetString("ConsultarServicio", a.consult.ToString());
@@ -427,9 +428,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='resolucionCupos()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='resolucionCupos()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("ResAsignacionCUPOS", a.consult.ToString());
@@ -440,9 +441,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='RegistroDocumentosVenta()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='RegistroDocumentosVenta()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("DocumentosVenta", a.consult.ToString());
@@ -453,9 +454,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='GestionarEntidad()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='GestionarEntidad()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("GestionarEntidad", a.consult.ToString());
@@ -466,9 +467,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='hojadevida()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='hojadevida()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("HojaVidaEntidad", a.consult.ToString());
@@ -479,9 +480,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='FloraNoMaderable()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='FloraNoMaderable()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("FloraNoMaderable", a.consult.ToString());
@@ -492,9 +493,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='PresolucionesPecesNivelNacional()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='PresolucionesPecesNivelNacional()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("PresolucionesPecesNivelNacional", a.consult.ToString());
@@ -505,9 +506,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='ResolucionPecesEntidad()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='ResolucionPecesEntidad()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("ResolucionPecesEntidad", a.consult.ToString());
@@ -518,9 +519,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='PrecintosMarquillas()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='PrecintosMarquillas()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("PrecintosMarquillas", a.consult.ToString());
@@ -531,9 +532,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='BandejaSolicitudPrecintosNacionales()'>Bandeja de solicitud de precintos nacionales y marquillas - Usuario externo</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='BandejaSolicitudPrecintosNacionales()'>Bandeja de solicitud de precintos nacionales y marquillas - Usuario externo</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("PrecintosNacionales", a.consult.ToString());
@@ -544,12 +545,12 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a asp-controller='' asp-action=''>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a asp-controller='' asp-action=''>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
-                                //HttpContext.Session.SetString("", a.consult.ToString());
+                                HttpContext.Session.SetString("UsuarioInterno", a.consult.ToString());
                             }
                             HttpContext.Session.SetString("NombreBandejaTrabajoInterno", a.name);
                         }
@@ -557,9 +558,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='GestionPrencintosNacionalesAnalista()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='GestionPrencintosNacionalesAnalista()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("GestionPrecintosNacionalesAnalista", a.consult.ToString());
@@ -570,9 +571,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='GestionPrencintosNacionalesDirector()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='GestionPrencintosNacionalesDirector()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("GestionPrecintosNacionalesDirector", a.consult.ToString());
@@ -583,9 +584,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='RegistroActaVisitaCortes()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='RegistroActaVisitaCortes()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("ActaVisitaCortes", a.consult.ToString());
@@ -596,9 +597,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='GestionarPermisosCITES()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='GestionarPermisosCITES()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("SolicitudesPermisosCITES", a.consult.ToString());
@@ -609,9 +610,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlFlujoNegocio.Contains(a.name))
+                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
                                 {
-                                    htmlFlujoNegocio += "<li id=''><a onclick='CoordinadorGestionPrecintosNacionales()'>" + a.name + "</a></li>";
+                                    htmlFlujoNegocio.Append("<li id=''><a onclick='CoordinadorGestionPrecintosNacionales()'>" + a.name + "</a></li>");
                                     contFlujoNegocio++;
                                 }
                                 HttpContext.Session.SetString("CoordinadorGPNSolicitudes", a.consult.ToString());
@@ -624,9 +625,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlReportes.Contains(a.name))
+                                if (!htmlReportes.ToString().Contains(a.name))
                                 {
-                                    htmlReportes += "<li id='ReporteAnual'><a asp-controller='' asp-action=''>Reporte anual</a></li><li id='ReporteCITES'><a asp-controller='' asp-action=''>Reporte CITES</a></li><li id='ReporteInspecciones'><a asp-controller='' asp-action=''>Reporte inspecciones</a></li>";
+                                    htmlReportes.Append("<li id='ReporteAnual'><a asp-controller='' asp-action=''>Reporte anual</a></li><li id='ReporteCITES'><a asp-controller='' asp-action=''>Reporte CITES</a></li><li id='ReporteInspecciones'><a asp-controller='' asp-action=''>Reporte inspecciones</a></li>");
                                     contReportes++;
                                 }
                                 HttpContext.Session.SetString("consultReportes", a.consult.ToString());
@@ -638,9 +639,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlReportes.Contains(a.name))
+                                if (!htmlReportes.ToString().Contains(a.name))
                                 {
-                                    htmlReportes += "<li id='liReporteEmpresasMarcaje'><a onclick='ReportesEmpresasMarcaje()'>Reporte Establecimientos</a></li>";
+                                    htmlReportes.Append("<li id='liReporteEmpresasMarcaje'><a onclick='ReportesEmpresasMarcaje()'>Reporte Establecimientos</a></li>");
                                     contReportes++;
                                 }
                                 HttpContext.Session.SetString("consultReporteEmpresa", a.consult.ToString());
@@ -652,9 +653,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlReportes.Contains(a.name))
+                                if (!htmlReportes.ToString().Contains(a.name))
                                 {
-                                    htmlReportes += "<li id='liReportePrecintos'><a onclick='ReportesPrecintos()'>Reporte Precintos</a></li>";
+                                    htmlReportes.Append("<li id='liReportePrecintos'><a onclick='ReportesPrecintos()'>Reporte Precintos</a></li>");
                                     contReportes++;
                                 }
                                 HttpContext.Session.SetString("consultReportePrecintos", a.consult.ToString());
@@ -666,9 +667,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlReportes.Contains(a.name))
+                                if (!htmlReportes.ToString().Contains(a.name))
                                 {
-                                    htmlReportes += "<li id='liReportesMarquillas'><a onclick='ReportesMarquillas()'>Reporte Marquillas</a></li>";
+                                    htmlReportes.Append("<li id='liReportesMarquillas'><a onclick='ReportesMarquillas()'>Reporte Marquillas</a></li>");
                                     contReportes++;
                                 }
                                 HttpContext.Session.SetString("consultReportesMarquillas", a.consult.ToString());
@@ -680,9 +681,9 @@ namespace WebFront.Controllers
                         {
                             if (a.consult)
                             {
-                                if (!htmlReportes.Contains(a.name))
+                                if (!htmlReportes.ToString().Contains(a.name))
                                 {
-                                    htmlReportes += "<li id='liReportesCupos'><a onclick='ReportesCupos()'>Reporte Cupos</a></li>";
+                                    htmlReportes.Append("<li id='liReportesCupos'><a onclick='ReportesCupos()'>Reporte Cupos</a></li>");
                                     contReportes++;
                                 }
                                 HttpContext.Session.SetString("consultReportesCupos", a.consult.ToString());
@@ -692,31 +693,31 @@ namespace WebFront.Controllers
                     }
                 }
 
-                htmlAdmin += "<ul></li>";
-                htmlFlujoNegocio += "<ul></li>";
-                htmlReportes += "<ul></li>";
+                htmlAdmin.Append("<ul></li>");
+                htmlFlujoNegocio.Append("<ul></li>");
+                htmlReportes.Append("<ul></li>");
 
                 if (contAdmin == 0)
                 {
-                    htmlAdmin = "";
+                    htmlAdmin.Clear();
                 }
 
                 if (contFlujoNegocio == 0)
                 {
-                    htmlFlujoNegocio = "";
+                    htmlFlujoNegocio.Clear();
                 }
 
                 if (contReportes == 0)
                 {
-                    htmlReportes = "";
+                    htmlReportes.Clear();
                 }
 
                 HttpContext.Session.SetInt32("contAdmin", contAdmin);
                 HttpContext.Session.SetInt32("contFlujoNegocio", contFlujoNegocio);
 
-                html.Add(htmlAdmin);
-                html.Add(htmlFlujoNegocio);
-                html.Add(htmlReportes);
+                html.Add(htmlAdmin.ToString());
+                html.Add(htmlFlujoNegocio.ToString());
+                html.Add(htmlReportes.ToString());
                 html.Add(contAdmin.ToString());
                 html.Add(contFlujoNegocio.ToString());
                 html.Add(contReportes.ToString());
