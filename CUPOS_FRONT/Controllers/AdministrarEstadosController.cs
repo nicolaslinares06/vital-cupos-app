@@ -177,7 +177,7 @@ namespace Web.Controllers
                     resultadoListado.Insert(1, opcion2);
                 }
 
-                foreach (var estadoCert in estadosCertificado.Select(x => x.nombre)
+                foreach (var estadoCert in estadosCertificado.Select(x => x.nombre))
                 {
                     if (estadoCert == actividad.a008codigoParametricaEstado)
                     {
