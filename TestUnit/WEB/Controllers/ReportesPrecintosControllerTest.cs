@@ -27,7 +27,7 @@ namespace TestUnit.WEB
         public ReportesPrecintosControllerTest()
 		{
 
-			controller = new ReportesPrecintosController(null, null, new LoggerFactory().CreateLogger<ReportesPrecintosController>());
+			controller = new ReportesPrecintosController(new LoggerFactory().CreateLogger<ReportesPrecintosController>());
             _fixture = new Fixture();
 
             var claims = new List<Claim>
@@ -83,18 +83,7 @@ namespace TestUnit.WEB
 		//	Assert.NotNull(r);
 		//}
 
-		[Fact]
-		public void ExportarPDFDataPrecintos()
-		{
-			FiltrosPrecintos filtro = new FiltrosPrecintos();
-			filtro.ResolutionNumber = _fixture.Create<string>();
-			filtro.Establishment = _fixture.Create<int>();
-			filtro.NIT = _fixture.Create<int>();
-			filtro.SpecificSearch = _fixture.Create<int>();
-
-			var r = controller.ExportarPDFDataPrecintos(filtro);
-			Assert.NotNull(r);
-		}
+	
 
 		[Fact]
 		public void ObtenerDatosPrecintosAPI()

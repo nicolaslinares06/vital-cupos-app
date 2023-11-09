@@ -23,7 +23,7 @@ namespace TestUnit.WEB
 
         public ReportesCuposEmpresasMarcajeControllerTest()
 		{
-			controller = new ReportesCuposEmpresasMarcajeController(null, null, null, new LoggerFactory().CreateLogger<ReportesCuposEmpresasMarcajeController>());
+			controller = new ReportesCuposEmpresasMarcajeController(null, null, new LoggerFactory().CreateLogger<ReportesCuposEmpresasMarcajeController>());
             _fixture = new Fixture();
 
             var claims = new List<Claim>

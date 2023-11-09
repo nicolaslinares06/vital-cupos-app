@@ -20,7 +20,7 @@ namespace TestUnit.WEB.Controllers
 
         public ReportesMarquillasControllerTest()
         {
-            controller = new ReportesMarquillasController(null, null, new LoggerFactory().CreateLogger<ReportesMarquillasController>());
+            controller = new ReportesMarquillasController( new LoggerFactory().CreateLogger<ReportesMarquillasController>());
             _fixture = new Fixture();
 
             var claims = new List<Claim>

@@ -26,7 +26,7 @@ namespace TestUnit.WEB
         public LoginControllerTest()
 		{
 			_httpClientFactory = new Mock<IHttpClientFactory>();
-			controller = new LoginController(new LoggerFactory().CreateLogger<LoginController>(), null);
+			controller = new LoginController(new LoggerFactory().CreateLogger<LoginController>());
             _fixture = new Fixture();
 
             var claims = new List<Claim>
@@ -89,12 +89,12 @@ namespace TestUnit.WEB
 		[Fact]
 		public void EnvioCorreoView()
 		{
-			var r = controller.EnvioCorreo();
+			var r = controller.EnvioCorreo("");
             Assert.True(r != null);
 
             controller.ControllerContext.HttpContext.Session.SetString("token", token);
 
-            r = controller.EnvioCorreo();
+            r = controller.EnvioCorreo("");
             Assert.True(r != null);
         }
 

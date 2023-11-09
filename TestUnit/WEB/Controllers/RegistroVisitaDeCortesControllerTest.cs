@@ -22,7 +22,7 @@ namespace TestUnit.WEB
 
         public RegistroVisitaDeCortesControllerTest()
 		{
-			controller = new RegistroVisitaDeCortesController(null, null, new LoggerFactory().CreateLogger<RegistroVisitaDeCortesController>());
+			controller = new RegistroVisitaDeCortesController(null, new LoggerFactory().CreateLogger<RegistroVisitaDeCortesController>());
             _fixture = new Fixture();
 
             var claims = new List<Claim>
