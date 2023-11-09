@@ -927,7 +927,7 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="listaSolicitudes"></param>       
         /// <returns></returns>
-        private void ModificarFechas(List<CoordinadorGestionPrecintosNacionalesModel> listaSolicitudes)
+        private static void ModificarFechas(List<CoordinadorGestionPrecintosNacionalesModel> listaSolicitudes)
         {
             foreach (var item in listaSolicitudes)
             {

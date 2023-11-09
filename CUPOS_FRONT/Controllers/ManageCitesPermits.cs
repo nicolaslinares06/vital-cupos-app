@@ -5,16 +5,14 @@ namespace Web.Controllers
 {
     public class ManageCitesPermits : Controller
     {
-        private readonly string UrlApi;
-        private readonly ILogger<CvController> _logger;
-        readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI");
+        
+        private readonly ILogger<CvController> _logger;  
         /// <summary>
         /// 
         /// </summary>
         /// <param name="logger"></param>
         public ManageCitesPermits(ILogger<CvController> logger)
-        {
-            UrlApi = string.IsNullOrEmpty(RUTAAPI) ? new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build().GetValue<string>("Variables:RutaApi") : RUTAAPI;
+        {            
             _logger = logger;
         }
         /// <summary>

@@ -11,6 +11,13 @@
 }
 
 
+<style>
+
+    .hr-thick {
+        height: 5px; /* Esto define el grosor de la línea horizontal */
+    }
+</style>
+
 <body>
     <div class="row">
         <ul class="nav nav-tabs mt-4">
@@ -24,7 +31,7 @@
         <div class="tab-content">
             <div class="tab-pane container active p-2" id="solicitudRadicada">
                 <div class="row">
-                    <hr size="5" />
+                    <hr class="hr-thick" />
                     <h1>Información del establecimiento</h1>
                     <div class="col-md-3 mb-1">
                         <label for="ciudadSolicitud" class="form-label">Ciudad</label>
@@ -162,7 +169,7 @@
                             </div>
                         </div>
                     </div>
-                    <hr size="5" />
+                    <hr class="hr-thick" />
                     <div class="col-md-9 mb-1">
                         <label for="observaciones" class="form-label">Observaciones o descripción del requerimiento</label>
                         <textarea class="form-control" id="observaciones" rows="3" placeholder=" Observaciones" readonly></textarea>
@@ -180,7 +187,7 @@
             <div class="tab-pane container fade p-2" id="solicitudDesistimiento">
                 <h1>Desistimiento</h1>
                 <div class="row">
-                    <hr size="5" />
+                    <hr class="hr-thick" />
                     <div class="col-md-9 my-auto mb-1">
                         <div class="form-check form-check-inline">
                             <label class="form-check-label" for="inlineCheckbox1">Estado:</label>
@@ -197,7 +204,7 @@
                             <a id="fechaDesistimiento"></a>
                         </div>
                     </div>
-                    <hr size="5" />
+                    <hr class="hr-thick" />
                     <div class="col-md-9 mb-1">
                         <label for="observacionesDesistimiento" class="form-label">Observaciones</label>
                         <textarea class="form-control" id="observacionesDesistimiento" rows="3" placeholder=" Observaciones" readonly></textarea>

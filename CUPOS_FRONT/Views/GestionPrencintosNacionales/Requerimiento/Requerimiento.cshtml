@@ -10,9 +10,16 @@
     }
 }
 
+<style>
+
+    .hr-thick {
+        height: 5px; /* Esto define el grosor de la línea horizontal */
+    }
+</style>
+
 <body>
     <div class="row">
-        <hr size="5" />
+        <hr class="hr-thick" />
         <h1>Información del establecimiento</h1>
         <div class="col-md-3 mb-1">
             <label for="ciudadSolicitud" class="form-label">Ciudad</label>
@@ -150,7 +157,7 @@
                 </div>
             </div>
         </div>
-        <hr size="5" />
+        <hr class="hr-thick" />
         <div class="col-md-9 mb-4">
             <label for="observaciones" class="form-label">Observaciones o descripción del requerimiento</label>
             <textarea class="form-control" id="observaciones" rows="3" placeholder=" Observaciones" readonly></textarea>

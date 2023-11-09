@@ -65,7 +65,7 @@
 
 
    
-        tablaActas = $(`#TablaActas`).DataTable({
+       $(`#TablaActas`).DataTable({
             destroy: true,
             scrollX: true,
             lengthChange: true,

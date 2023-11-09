@@ -78,14 +78,14 @@ function adjuntoHTML(contenedor, Base64, tipoAdjunto, nombre, inputFile, codigo 
         ocultarElemento(inputFile, true);
     }
     $('#btnPrevisualizar').on('click', function () {
-        var newWindow = window.open();
+        let newWindow = window.open();
         newWindow.document.write('<iframe src=' + Base64 + ' style="height:100%; width:100%;"></iframe>');
     });
     $('#btnEliminarAdjunto').on('click', function () {
         contenedor.innerHTML = '';
         ocultarElemento(inputFile, false);
     });
-    var adjunto = {
+    let adjunto = {
         'Base64': Base64,
         'tipoAdjunto': tipoAdjunto,
         'nombre': nombre
@@ -101,10 +101,10 @@ async function mostrarAdjunto(file, contenedor, span, extencionesPermitidas, str
         return;
     }
     if (extencionesPermitidas.includes(file.type)) {
-        Base64 = await toBase64(file);
+        const Base64 = await toBase64(file);
         if (inputFile == null) {
             inc++;
-            var codigo = 0;
+            let codigo = 0;
             if (adjuntosMultipleFile.length > 0) {
                 adjuntosMultipleFile.forEach(el => {
                     if (codigo < el.codigo) {
@@ -137,10 +137,10 @@ $('#fileIndividualFile').on('change', async function () {
     IndividualFileBase64 = '';
     nombreIndividualFile = '';
     tipoAdjuntoIndividualFile = '';
-    var dato_archivo = $('#fileIndividualFile').prop("files")[0];
-    var extencionesPermitidas = ["application/pdf"];
-    var strExtenciones = ".pdf";
-    var adjunto = await mostrarAdjunto(dato_archivo, contenedorIndividualFile, spanFileIndividualFile, extencionesPermitidas, strExtenciones, fileContenedorIndividualFile);
+    let dato_archivo = $('#fileIndividualFile').prop("files")[0];
+    let extencionesPermitidas = ["application/pdf"];
+    let strExtenciones = ".pdf";
+    let adjunto = await mostrarAdjunto(dato_archivo, contenedorIndividualFile, spanFileIndividualFile, extencionesPermitidas, strExtenciones, fileContenedorIndividualFile);
     IndividualFileBase64 = adjunto.Base64;
     nombreIndividualFile = adjunto.nombre;
     tipoAdjuntoIndividualFile = adjunto.tipoAdjunto;

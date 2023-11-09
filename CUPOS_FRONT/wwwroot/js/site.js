@@ -15,7 +15,7 @@ $(document).ready(function () {
 let token = "";
 
 async function Post(url, params = null) {
-  var settings = {
+  let settings = {
     type: "POST",
     async: true,
     crossDomain: true,
@@ -164,13 +164,13 @@ async function traerCiudades(slt, url) {
   $(slt).select2({
     data: r,
     query: function (q) {
-      var pageSize = 10,
+      let pageSize = 10,
         results = this.data.filter(function (e) {
           return contains(e.text, q.term);
         });
 
       // Get a page sized slice of data from the results of filtering the data set.
-      var paged = results.slice((q.page - 1) * pageSize, q.page * pageSize);
+      let paged = results.slice((q.page - 1) * pageSize, q.page * pageSize);
 
       q.callback({
         results: paged,
@@ -417,7 +417,7 @@ function adjuntoHTML(
     ocultarElemento(inputFile, true);
   }
   $("#btnPrevisualizar").on("click", function () {
-    var newWindow = window.open();
+    let newWindow = window.open();
     newWindow.document.write(
       "<iframe src=" + Base64 + ' style="height:100%; width:100%;"></iframe>'
     );
@@ -426,7 +426,7 @@ function adjuntoHTML(
     contenedor.innerHTML = "";
     ocultarElemento(inputFile, false);
   });
-  var adjunto = {
+  let adjunto = {
     adjuntoBase64: Base64,
     tipoAdjunto: tipoAdjunto,
     nombreAdjunto: nombre,
@@ -577,6 +577,6 @@ const ocultarFondoProcesando = () => {
 }
 
 function ajustarColumnasTabla(idTabla) {
-    var table = $('#' + idTabla).DataTable();
+    let table = $('#' + idTabla).DataTable();
     table.columns.adjust().draw();
 }

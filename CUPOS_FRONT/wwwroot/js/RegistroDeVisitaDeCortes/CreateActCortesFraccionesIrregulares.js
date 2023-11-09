@@ -120,6 +120,7 @@ async function GuardarDatosCortesFraccionesIrregulares() {
     datosFormulario.ArchivoExcelPrecinto = archivoExcel;
     let url = `/RegistroVisitaDeCortes/CreateActaVisitaCorteIrregular`;
     let resp = await Get(url, datosFormulario);
+    let resultadoProceso = 0;
     if (resp !== null) {
         if (!resp.Error)
             resultadoProceso = 1;

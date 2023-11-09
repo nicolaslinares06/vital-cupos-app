@@ -107,6 +107,7 @@ async function EditarDatosCortesPielIrregulares() {
     datosFormulario.Archivos = ObtenerArchivosBase64();
     let url = `/RegistroVisitaDeCortes/EditActaVisitaCortesIrregulares`;
     let resp = await Get(url, datosFormulario);
+    let resultadoProceso = 0;
     if (resp !== null) {
         if (!resp.Error)
             resultadoProceso = 1;

@@ -45,7 +45,7 @@
         let resp = await Get(url, { codigoSolicitud: idSolicitud });
 
 
-        TablaSolicitudesAnalistas = $(`#TablaEspeciesDatos`).DataTable({
+       $(`#TablaEspeciesDatos`).DataTable({
             destroy: true,
             scrollX: true,
             lengthChange: true,
@@ -128,7 +128,7 @@
 
 
     const cargarTablaVisitaCortes = () => {
-        TablaSolicitudesAnalistas = $(`#TablaVisitaCortes`).DataTable({
+        $(`#TablaVisitaCortes`).DataTable({
             destroy: true,
             scrollX: true,
             lengthChange: true,

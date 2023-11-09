@@ -1,15 +1,5 @@
 ﻿
 document.addEventListener("DOMContentLoaded", () => {
-    //let btnAgregarArchivo = document.getElementById('btnAgregarArchivo');
-    //btnAgregarArchivo.addEventListener('click', () => {
-
-    //    btnAgregarArchivo.onchange = (e) => {
-
-    //        updateList();
-    //    }
-
-
-    //});
 
     let btnAddInputNrDocumento = document.getElementById("btnAgregarInputDocumento");
     let btnAgregarInputResolucionNro = document.getElementById('btnAgregarInputResolucionNro');
@@ -221,10 +211,9 @@ async function AgregarSeccionControlYSeguimientoTipoParte(propiedades) {
 
     let newDiv = document.createElement('div');
     let newDiv2 = document.createElement('div');
-    let newDiv3 = document.createElement('div');
-    let newDiv4 = document.createElement('div');
+    let newDiv3 = document.createElement('div');   
 
-    const opciones = await opcionesSelectTiposPartes();
+ 
 
     newDiv.setAttribute('class', 'DivInput mb-3');
     newDiv.innerHTML = `<input class="form-control inputSeccionCortesPieles" name="${propiedades.nameElementos1}" id="${propiedades.nameElementos1}_${ultimoInput}" placeholder="Inserte un tipo de Parte" />`;
@@ -254,9 +243,9 @@ function ValidarDatosFormulario() {
 
     let datosValidos = true;
     let SPANSValidation = document.querySelectorAll("input");
-    for (let i = 0; i < SPANSValidation.length; i++) {
-        SPANSValidation[i].classList.remove("required-validate");
-    }
+    SPANSValidation.forEach(span => {
+        span.classList.remove("required-validate");
+    });
 
     let selects = document.querySelectorAll("select");
     selects.forEach((el) => {
@@ -570,16 +559,7 @@ function ObtenerDatosTipoPiel() {
     let arrayDatosTipoPiel = [];
 
     let conteoRegistrosTipoPiel = document.getElementsByName('TipoPielidntificable');
-    if (conteoRegistrosTipoPiel.length > 0) {
-        //for (let i = 0; i < conteoRegistrosTipoPiel.length; i++) {
-        //    let datosTipoPiel = { }
-        //    datosTipoPiel.TipoPiel = document.getElementById('TipoPielidntificable_' + i).value;
-        //    datosTipoPiel.Cantidad = document.getElementById('CantidadTipoPielidntificable_' + i).value;
-        //    console.log(datosTipoPiel);
-        //    arrayDatosTipoPiel.push(datosTipoPiel);
-        //}
-
-
+    if (conteoRegistrosTipoPiel.length > 0) {   
         for (let i = 0; i < conteoRegistrosTipoPiel.length; i++) {
             arrayDatosTipoPiel[i] = {
                 TipoPiel: document.getElementById('TipoPielidntificable_' + i).value,
@@ -608,12 +588,7 @@ function ObtenerTipoParteIdentificable() {
         }
 
 
-        //for (let i = 0; i < conteoRegistrosTipoPiel.length; i++) {
-        //    arrayDatosTipoPiel[i] = {
-        //        TipoPiel: document.getElementById('TipoPielidntificable_' + i).value,
-        //        Cantidad: document.getElementById('CantidadTipoPielidntificable_' + i).value
-        //    };
-        //}
+      
 
     }
 
@@ -668,7 +643,7 @@ let IndividualFileBase64 = '';
 let nombreIndividualFile = '';
 let tipoAdjuntoIndividualFile = '';
 let inc = 0;
-var adjuntosMultipleFile = [];
+let adjuntosMultipleFile = [];
 
 
 function adjuntoHTML(contenedor, Base64, tipoAdjunto, nombre, inputFile, codigo = null) {
@@ -697,14 +672,14 @@ function adjuntoHTML(contenedor, Base64, tipoAdjunto, nombre, inputFile, codigo 
         ocultarElemento(inputFile, true);
     }
     $('#btnPrevisualizar').on('click', function () {
-        var newWindow = window.open();
+        let newWindow = window.open();
         newWindow.document.write('<iframe src=' + Base64 + ' style="height:100%; width:100%;"></iframe>');
     });
     $('#btnEliminarAdjunto').on('click', function () {
         contenedor.innerHTML = '';
         ocultarElemento(inputFile, false);
     });
-    var adjunto = {
+    let adjunto = {
         'Base64': Base64,
         'tipoAdjunto': tipoAdjunto,
         'nombre': nombre
@@ -738,10 +713,10 @@ async function mostrarAdjunto(file, contenedor, span, extencionesPermitidas, str
     });
 
     if (archivoValido !== undefined) {
-        Base64 = await toBase64(file);
+        const Base64 = await toBase64(file);
         if (inputFile == null) {
             inc++;
-            var codigo = 0;
+            let codigo = 0;
             if (adjuntosMultipleFile.length > 0) {
                 adjuntosMultipleFile.forEach(el => {
                     if (codigo < el.codigo) {
@@ -792,9 +767,9 @@ fileContenedorMultipleFile.addEventListener('drop', (e) => {
     e.preventDefault();
     ocultarElemento(spanFileMultipleFile, true);
     $(fileContenedorMultipleFile).removeClass('activeFile');
-    var files = e.dataTransfer.files;
-    var extencionesPermitidas = ["application/pdf"];
-    var strExtenciones = ".pdf";
+    let files = e.dataTransfer.files;
+    let extencionesPermitidas = ["application/pdf"];
+    let strExtenciones = ".pdf";
     console.log(files);
     for (const file of files) {
         mostrarAdjunto(file, contenedorMultipleFile, spanFileMultipleFile, extencionesPermitidas, strExtenciones, null, adjuntosMultipleFile);
@@ -803,28 +778,28 @@ fileContenedorMultipleFile.addEventListener('drop', (e) => {
 
 $('#fileMultipleFile').on('change', async function () {
     ocultarElemento(spanFileMultipleFile, true);
-    var dato_archivo = $('#fileMultipleFile').prop("files")[0];
-    var extencionesPermitidas = ["application/pdf"];
-    var strExtenciones = ".pdf";
+    let dato_archivo = $('#fileMultipleFile').prop("files")[0];
+    let extencionesPermitidas = ["application/pdf"];
+    let strExtenciones = ".pdf";
     await mostrarAdjunto(dato_archivo, contenedorMultipleFile, spanFileMultipleFile, extencionesPermitidas, strExtenciones, null, adjuntosMultipleFile);
     console.log(adjuntosMultipleFile);
 });
 
 $(contenedorMultipleFile).on('click', '.btnPrevisualizar', function (e) {
-    var cadena = e.target.parentElement.firstElementChild.id;
-    var id = cadena.replace(/btnPrevisualizar/i, "");
-    var adjunto = adjuntosMultipleFile.find(p => p.codigo == parseInt(id));
+    let cadena = e.target.parentElement.firstElementChild.id;
+    let id = cadena.replace(/btnPrevisualizar/i, "");
+    let adjunto = adjuntosMultipleFile.find(p => p.codigo == parseInt(id));
     console.log(adjunto);
-    var newWindow = window.open();
+    let newWindow = window.open();
     newWindow.document.write('<iframe src=' + adjunto.Base64 + ' style="height:100%; width:100%;"></iframe>');
 });
 
 $(contenedorMultipleFile).on('click', '.btnEliminarAdjunto', function (e) {
-    var cadena = e.target.parentElement.id;
-    var id = cadena.replace(/btnEliminarAdjunto/i, "");
-    var adjunto = adjuntosMultipleFile.find(p => p.codigo == parseInt(id));
+    let cadena = e.target.parentElement.id;
+    let id = cadena.replace(/btnEliminarAdjunto/i, "");
+    let adjunto = adjuntosMultipleFile.find(p => p.codigo == parseInt(id));
     adjuntosMultipleFile = adjuntosMultipleFile.filter(p => p.codigo != adjunto.codigo);
-    var hijo = document.getElementById(`divAdjunto${adjunto.codigo}`);
+    let hijo = document.getElementById(`divAdjunto${adjunto.codigo}`);
     contenedorMultipleFile.removeChild(hijo);
 });
 
@@ -832,13 +807,14 @@ function ObtenerArchivosBase64() {
 
     let arrayArchivosPDF = [];
     if (adjuntosMultipleFile.length > 0) {
-        for (let i = 0; i < adjuntosMultipleFile.length; i++) {
-            let archivoPDF = {};
-            archivoPDF.FileName = adjuntosMultipleFile[i].nombreAdjunto;
-            archivoPDF.FileType = adjuntosMultipleFile[i].tipoAdjunto;
-            archivoPDF.Base64String = adjuntosMultipleFile[i].Base64;
+        adjuntosMultipleFile.forEach(adjunto => {
+            let archivoPDF = {
+                FileName: adjunto.nombreAdjunto,
+                FileType: adjunto.tipoAdjunto,
+                Base64String: adjunto.Base64
+            };
             arrayArchivosPDF.push(archivoPDF);
-        }
+        });
     }
     console.log(arrayArchivosPDF);
     return arrayArchivosPDF;
@@ -861,8 +837,8 @@ async function validarArchivoPrecintos() {
             spanValidation.textContent = "el tamaño del archivo supera 2MB";
             return;
         }
-        var allowedExtensions = /(\.xlsx)$/i;
-        var filePath = input.value;
+        let allowedExtensions = /(\.xlsx)$/i;
+        let filePath = input.value;
 
         if (!allowedExtensions.exec(filePath)) {
             spanValidation.textContent = "el archivo debe ser Excel";
@@ -902,7 +878,7 @@ function MostrarAdjuntoExcel(contenedor, Base64, tipoArchivo, nombre, inputFile)
         ocultarElemento(inputFile, true);
     }
     $('#btnPrevisualizar').on('click', function () {
-        var newWindow = window.open();
+        let newWindow = window.open();
         newWindow.document.write('<iframe src=' + Base64 + ' style="height:100%; width:100%;"></iframe>');
     });
     $('#btnEliminarAdjunto').on('click', function () {
@@ -944,10 +920,10 @@ function soloNumeros(nombreElemento) {
 
 
     $(`${nombreElemento}`).on('keypress', function (evt) {
-        var regex = new RegExp("^[0-9]+$");
-        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        const regex = /^[0-9]+$/;
+        let key = String.fromCharCode(!evt.charCode ? evt.which : evt.charCode);
         if (!regex.test(key)) {
-            event.preventDefault();
+            evt.preventDefault();
             return false;
         }
     });
@@ -956,8 +932,8 @@ function soloNumeros(nombreElemento) {
 
 function soloLetras(elemento) {
     $(elemento).on('keypress', function (event) {
-        var regex = new RegExp("^[a-zA-Z \s]+$");
-        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        const regex = /^[a-zA-Z\s]+$/;
+        let key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
         if (!regex.test(key)) {
             event.preventDefault();
             return false;
@@ -1143,8 +1119,7 @@ const validarDatosExcelCupos = async (archivoExcel) => {
 
     await toBase64(archivoExcel).then((valorBase64) => base64Excel = valorBase64);
     let url = `/RegistroVisitaDeCortes/ValidarDatoslArchivoPrecintos`;
-    let resp = await Get(url, { base64ArchivoExcelPrecintos: base64Excel, nit: nitEmpresa });
-    let prueba = "";
+    let resp = await Get(url, { base64ArchivoExcelPrecintos: base64Excel, nit: nitEmpresa });   
     return resp;
 
 };

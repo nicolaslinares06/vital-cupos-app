@@ -39,7 +39,7 @@
         //        }
         //    },
         //    data: resp.listado,
-        var columns = [
+        let columns = [
             {
                 "data": "numeroRadicado"
             },
@@ -184,8 +184,8 @@
 
     const inputsSoloNumeros = (nombreElemento) => {
         $(`${nombreElemento}`).on('keypress', function (evt) {
-            var regex = new RegExp("^[0-9]+$");
-            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            let regex = new RegExp("^[0-9]+$");
+            let key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
             if (!regex.test(key)) {
                 event.preventDefault();
                 return false;
@@ -195,8 +195,8 @@
 
     const inputsSoloLetras = (elemento) => {
         $(elemento).on('keypress', function (event) {
-            var regex = new RegExp("^[a-zA-Z \s]+$");
-            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            let regex = new RegExp("^[a-zA-Z \s]+$");
+            let key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
             if (!regex.test(key)) {
                 event.preventDefault();
                 return false;
