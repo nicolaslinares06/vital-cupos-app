@@ -74,13 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
        
     });
 
-    RefrescarEventosTiposIrregulares();
-
-    //const hijosTipoPiel = parent.querySelectorAll('#divSeccionesPrimerControlYSeguimiento');
-    //hijosTipoPiel.classList.add('mb-3');
-
-    //const hijosTipoParte = parent.querySelectorAll('#divSeccionesPrimerControlYSeguimiento');
-    //hijosTipoParte.classList.add('mb-3');
+    RefrescarEventosTiposIrregulares(); 
 
     inputsTipoPielIrregular.forEach((input, index) => {
         habilitarEventoMultiplicar(index);
