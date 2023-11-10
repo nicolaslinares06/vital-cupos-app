@@ -103,7 +103,7 @@ namespace CUPOS_FRONT.Controllers
         /// </summary>
         /// <param name="url">URL a verificar.</param>
         /// <returns>True si la conexión es exitosa, False de lo contrario.</returns>
-        private bool VerificarConexion(string url)
+        static bool VerificarConexion(string url)
         {
             try
             {
