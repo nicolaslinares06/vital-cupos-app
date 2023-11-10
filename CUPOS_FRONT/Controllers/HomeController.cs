@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using CUPOS_FRONT.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -195,7 +196,7 @@ namespace WebFront.Controllers
                 var httpClient = GetHttpClient();
                 string token = HttpContext.Session.GetString("token") ?? "";
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return u;
@@ -275,421 +276,13 @@ namespace WebFront.Controllers
                     foreach (ReqModulos a in modulos)
                     {
                         //Modulos de Administracion
-                        if (a.moduleId == StringHelper.CodAdminRoles.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlAdmin.ToString().Contains(a.name))
-                                {
-                                    htmlAdmin.Append("<li id='AdministrarRoles'><a onclick='AdministrarRoles()'>" + a.name + "</a></li>");
-                                    contAdmin++;
-                                }
-                                HttpContext.Session.SetString("ConsultarRoles", a.consult.ToString());
-                            }
-                            if (a.create)
-                                HttpContext.Session.SetString("CrearRoles", a.create.ToString());
-                            if (a.update)
-                                HttpContext.Session.SetString("ActualizarRoles", a.update.ToString());
-                            HttpContext.Session.SetString("NombreRoles", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodGestionSolicitudesAsigRol.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlAdmin.ToString().Contains(a.name))
-                                {
-                                    htmlAdmin.Append("<li id='GestionAsignacionRoles'><a onclick='GestionAsignacionRoles()'>" + a.name + "</a></li>");
-                                    contAdmin++;
-                                }
-                                HttpContext.Session.SetString("ConsultarAsignacionRol", a.consult.ToString());
-                            }
-                            if (a.update)
-                                HttpContext.Session.SetString("ActualizarAsignacionRol", a.update.ToString());
-                            HttpContext.Session.SetString("NombreAsignacionRol", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodAdminEstados.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlAdmin.ToString().Contains(a.name))
-                                {
-                                    htmlAdmin.Append("<li id='AdministrarEstados'><a onclick='AdministrarEstados()'>" + a.name + "</a></li>");
-                                    contAdmin++;
-                                }
-                                HttpContext.Session.SetString("ConsultarEstados", a.consult.ToString());
-                            }
-                            if (a.update)
-                                HttpContext.Session.SetString("ActualizarEstados", a.update.ToString());
-                            HttpContext.Session.SetString("NombreEstados", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodAdminTablasParametricas.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlAdmin.ToString().Contains(a.name))
-                                {
-                                    htmlAdmin.Append("<li id='Parametrica'><a onclick='AdministrarTablasParametricas()'>" + a.name + "</a></li>");
-                                    contAdmin++;
-                                }
-                                HttpContext.Session.SetString("ConsultarParametrica", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreParametrica", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodGestionAuditoria.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlAdmin.ToString().Contains(a.name))
-                                {
-                                    htmlAdmin.Append("<li id='Auditoria'><a onclick='GestionAuditoria()'>" + a.name + "</a></li>");
-                                    contAdmin++;
-                                }
-                                HttpContext.Session.SetString("ConsultarAuditoria", a.consult.ToString());
-                            }
-                            if (a.see)
-                                HttpContext.Session.SetString("DetallesAuditoria", a.see.ToString());
-                            HttpContext.Session.SetString("NombreAuditoria", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodGestionDocumental.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlAdmin.ToString().Contains(a.name))
-                                {
-                                    htmlAdmin.Append("<li id='GestionDocumental'><a onclick='GestionDocumental()'>" + a.name + "</a></li>");
-                                    contAdmin++;
-                                }
-                                HttpContext.Session.SetString("ConsultarDocumental", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreDocumental", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodAdminTecnica.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlAdmin.ToString().Contains(a.name))
-                                {
-                                    htmlAdmin.Append("<li id='AdministracionTecnica'><a onclick='AdministracionTecnica()'>" + a.name + "</a></li>");
-                                    contAdmin++;
-                                }
-                                HttpContext.Session.SetString("ConsultarTecnica", a.consult.ToString());
-                            }
-                            if (a.update)
-                                HttpContext.Session.SetString("ActualizarTecnica", a.update.ToString());
-                            if (a.delete)
-                                HttpContext.Session.SetString("EliminarTecnica", a.delete.ToString());
-                            if (a.create)
-                                HttpContext.Session.SetString("CrearTecnica", a.create.ToString());
-                            HttpContext.Session.SetString("NombreTecnica", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodGestionUsuario.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlAdmin.ToString().Contains(a.name))
-                                {
-                                    htmlAdmin.Append("<li id='GestionUsuario'><a onclick='GestionUsuarios()'>" + a.name + "</a></li>");
-                                    contAdmin++;
-                                }
-                                HttpContext.Session.SetString("ConsultarUsuario", a.consult.ToString());
-                            }
-                            if (a.update)
-                                HttpContext.Session.SetString("ActualizarUsuario", a.update.ToString());
-                            if (a.create)
-                                HttpContext.Session.SetString("CrearUsuario", a.create.ToString());
-                            HttpContext.Session.SetString("NombreUsuario", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodAdminRolesFuncionalidades.ToString())
-                        {
-                            if (a.update)
-                                HttpContext.Session.SetString("ActualizarFuncionalidades", a.update.ToString());
-                            if (a.create)
-                                HttpContext.Session.SetString("CrearFuncionalidades", a.create.ToString());
-                            if (a.consult)
-                                HttpContext.Session.SetString("ConsultarFuncionalidades", a.consult.ToString());
-                            HttpContext.Session.SetString("NombreFuncionalidades", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodAdminTablasServicios.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlAdmin.ToString().Contains(a.name))
-                                {
-                                    htmlAdmin.Append("<li id='Servicios'><a onclick='AdministrarServicios()'>" + a.name + "</a></li>");
-                                    contAdmin++;
-                                }
-                                HttpContext.Session.SetString("ConsultarServicio", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreServicio", a.name);
-                        }
+                        contAdmin = ObtenerModulosAdministracion(contAdmin, htmlAdmin, a);
 
                         //Modulos de FLujo de Negocio
-                        if (a.moduleId == StringHelper.CodResolucionAsignacionCUPOS.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='resolucionCupos()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("ResAsignacionCUPOS", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreResAsignacionCUPOS", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodRegistroDocumentosVenta.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='RegistroDocumentosVenta()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("DocumentosVenta", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreDocumentosVenta", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodGestionarEntidad.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='GestionarEntidad()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("GestionarEntidad", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreGestionarEntidad", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodHojaVidaEntidad.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='hojadevida()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("HojaVidaEntidad", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreHojaVidaEntidad", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodFloraNoMaderable.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='FloraNoMaderable()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("FloraNoMaderable", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreFloraNoMaderable", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodPresolucionPecesNivelNacional.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='PresolucionesPecesNivelNacional()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("PresolucionesPecesNivelNacional", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombrePresolucionesPecesNivelNacional", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodResolucionPecesEntidad.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='ResolucionPecesEntidad()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("ResolucionPecesEntidad", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreResolucionPecesEntidad", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodPrecintosMarquillas.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='PrecintosMarquillas()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("PrecintosMarquillas", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombrePrecintosMarquillas", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodBandejaPrecintosNacional.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='BandejaSolicitudPrecintosNacionales()'>Bandeja de solicitud de precintos nacionales y marquillas - Usuario externo</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("PrecintosNacionales", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombrePrecintosNacionales", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodBandejaTrabajoUsuarioInterno.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a asp-controller='' asp-action=''>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("UsuarioInterno", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreBandejaTrabajoInterno", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodBandejaTrabajoValidacionSolicitud.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='GestionPrencintosNacionalesAnalista()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("GestionPrecintosNacionalesAnalista", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreGestionPrecintosNacionalesAnalista", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodBandejaTrabajoFirmaRespuestaSolicitante.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='GestionPrencintosNacionalesDirector()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("GestionPrecintosNacionalesDirector", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreGestionPrecintosNacionalesDirector", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodRegistroActaVisitaCortes.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='RegistroActaVisitaCortes()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("ActaVisitaCortes", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreActaVisitaCortes", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodGestionarSolicitudesPermisosCITES.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='GestionarPermisosCITES()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("SolicitudesPermisosCITES", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreSolicitudesPermisosCITES", a.name);
-                        }
-                        if (a.moduleId == StringHelper.CodCoordinadorGestionarPrecintos.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlFlujoNegocio.ToString().Contains(a.name))
-                                {
-                                    htmlFlujoNegocio.Append("<li id=''><a onclick='CoordinadorGestionPrecintosNacionales()'>" + a.name + "</a></li>");
-                                    contFlujoNegocio++;
-                                }
-                                HttpContext.Session.SetString("CoordinadorGPNSolicitudes", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreCoordinadorGPNSolicitudes", a.name);
-                        }
+                        contFlujoNegocio = ObtenerModulosFlujoNegocio(contFlujoNegocio, htmlFlujoNegocio, a);
 
                         //Modulos de Reportes
-                        if (a.moduleId == StringHelper.CodGenerarReportesInformes.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlReportes.ToString().Contains(a.name))
-                                {
-                                    htmlReportes.Append("<li id='ReporteAnual'><a asp-controller='' asp-action=''>Reporte anual</a></li><li id='ReporteCITES'><a asp-controller='' asp-action=''>Reporte CITES</a></li><li id='ReporteInspecciones'><a asp-controller='' asp-action=''>Reporte inspecciones</a></li>");
-                                    contReportes++;
-                                }
-                                HttpContext.Session.SetString("consultReportes", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreconsultReportes", a.name);
-                        }
-
-                        if (a.moduleId == StringHelper.codReportesEmpresasMarcajes.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlReportes.ToString().Contains(a.name))
-                                {
-                                    htmlReportes.Append("<li id='liReporteEmpresasMarcaje'><a onclick='ReportesEmpresasMarcaje()'>Reporte Establecimientos</a></li>");
-                                    contReportes++;
-                                }
-                                HttpContext.Session.SetString("consultReporteEmpresa", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreconsultReporteEmpresa", a.name);
-                        }
-
-                        if (a.moduleId == StringHelper.codReportesPrecintos.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlReportes.ToString().Contains(a.name))
-                                {
-                                    htmlReportes.Append("<li id='liReportePrecintos'><a onclick='ReportesPrecintos()'>Reporte Precintos</a></li>");
-                                    contReportes++;
-                                }
-                                HttpContext.Session.SetString("consultReportePrecintos", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreconsultReportePrecintos", a.name);
-                        }
-
-                        if (a.moduleId == StringHelper.codReportesMarquillas.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlReportes.ToString().Contains(a.name))
-                                {
-                                    htmlReportes.Append("<li id='liReportesMarquillas'><a onclick='ReportesMarquillas()'>Reporte Marquillas</a></li>");
-                                    contReportes++;
-                                }
-                                HttpContext.Session.SetString("consultReportesMarquillas", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreconsultReportesMarquillas", a.name);
-                        }
-
-                        if (a.moduleId == StringHelper.codReportesCupos.ToString())
-                        {
-                            if (a.consult)
-                            {
-                                if (!htmlReportes.ToString().Contains(a.name))
-                                {
-                                    htmlReportes.Append("<li id='liReportesCupos'><a onclick='ReportesCupos()'>Reporte Cupos</a></li>");
-                                    contReportes++;
-                                }
-                                HttpContext.Session.SetString("consultReportesCupos", a.consult.ToString());
-                            }
-                            HttpContext.Session.SetString("NombreconsultReportesCupos", a.name);
-                        }
+                        contReportes = ObtenerModulosReportes(contReportes, htmlReportes, a);
                     }
                 }
 
@@ -729,6 +322,274 @@ namespace WebFront.Controllers
                 _logger.LogError(ex, "An error occurred in the method.");
                 throw;
             }
+        }
+
+        private int ObtenerModulosReportes(int contReportes, StringBuilder htmlReportes, ReqModulos a)
+        {
+            if (a.moduleId == StringHelper.CodGenerarReportesInformes.ToString() && a.consult)
+            {
+                contReportes = ValidacionReportes(contReportes, htmlReportes, a, "<li id='ReporteAnual'><a asp-controller='' asp-action=''>Reporte anual</a></li><li id='ReporteCITES'><a asp-controller='' asp-action=''>Reporte CITES</a></li><li id='ReporteInspecciones'><a asp-controller='' asp-action=''>Reporte inspecciones</a></li>");
+                HttpContext.Session.SetString("consultReportes", a.consult.ToString());
+                HttpContext.Session.SetString("NombreconsultReportes", a.name);
+            }
+
+            if (a.moduleId == StringHelper.codReportesEmpresasMarcajes.ToString() && a.consult)
+            {
+                contReportes = ValidacionReportes(contReportes, htmlReportes, a, "<li id='liReporteEmpresasMarcaje'><a onclick='ReportesEmpresasMarcaje()'>Reporte Establecimientos</a></li>");
+                HttpContext.Session.SetString("consultReporteEmpresa", a.consult.ToString());
+                HttpContext.Session.SetString("NombreconsultReporteEmpresa", a.name);
+            }
+
+            if (a.moduleId == StringHelper.codReportesPrecintos.ToString() && a.consult)
+            {
+                contReportes = ValidacionReportes(contReportes, htmlReportes, a, "<li id='liReportePrecintos'><a onclick='ReportesPrecintos()'>Reporte Precintos</a></li>");
+                HttpContext.Session.SetString("consultReportePrecintos", a.consult.ToString());
+                HttpContext.Session.SetString("NombreconsultReportePrecintos", a.name);
+            }
+
+            if (a.moduleId == StringHelper.codReportesMarquillas.ToString() && a.consult)
+            {
+                contReportes = ValidacionReportes(contReportes, htmlReportes, a, "<li id='liReportesMarquillas'><a onclick='ReportesMarquillas()'>Reporte Marquillas</a></li>");
+                HttpContext.Session.SetString("consultReportesMarquillas", a.consult.ToString());
+                HttpContext.Session.SetString("NombreconsultReportesMarquillas", a.name);
+            }
+
+            if (a.moduleId == StringHelper.codReportesCupos.ToString() && a.consult)
+            {
+                contReportes = ValidacionReportes(contReportes, htmlReportes, a, "<li id='liReportesCupos'><a onclick='ReportesCupos()'>Reporte Cupos</a></li>");
+                HttpContext.Session.SetString("consultReportesCupos", a.consult.ToString());
+                HttpContext.Session.SetString("NombreconsultReportesCupos", a.name);
+            }
+
+            return contReportes;
+        }
+
+        private int ObtenerModulosFlujoNegocio(int contFlujoNegocio, StringBuilder htmlFlujoNegocio, ReqModulos a)
+        {
+            if (a.moduleId == StringHelper.CodResolucionAsignacionCUPOS.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='resolucionCupos()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("ResAsignacionCUPOS", a.consult.ToString());
+                HttpContext.Session.SetString("NombreResAsignacionCUPOS", a.name);
+            }
+            if (a.moduleId == StringHelper.CodRegistroDocumentosVenta.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='RegistroDocumentosVenta()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("DocumentosVenta", a.consult.ToString());
+                HttpContext.Session.SetString("NombreDocumentosVenta", a.name);
+            }
+            if (a.moduleId == StringHelper.CodGestionarEntidad.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='GestionarEntidad()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("GestionarEntidad", a.consult.ToString());
+                HttpContext.Session.SetString("NombreGestionarEntidad", a.name);
+            }
+            if (a.moduleId == StringHelper.CodHojaVidaEntidad.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='hojadevida()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("HojaVidaEntidad", a.consult.ToString());
+                HttpContext.Session.SetString("NombreHojaVidaEntidad", a.name);
+            }
+            if (a.moduleId == StringHelper.CodFloraNoMaderable.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='FloraNoMaderable()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("FloraNoMaderable", a.consult.ToString());
+                HttpContext.Session.SetString("NombreFloraNoMaderable", a.name);
+            }
+            if (a.moduleId == StringHelper.CodPresolucionPecesNivelNacional.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='PresolucionesPecesNivelNacional()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("PresolucionesPecesNivelNacional", a.consult.ToString());
+                HttpContext.Session.SetString("NombrePresolucionesPecesNivelNacional", a.name);
+            }
+            if (a.moduleId == StringHelper.CodResolucionPecesEntidad.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='ResolucionPecesEntidad()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("ResolucionPecesEntidad", a.consult.ToString());
+                HttpContext.Session.SetString("NombreResolucionPecesEntidad", a.name);
+            }
+
+            contFlujoNegocio = ObtenerModulosFlujoNegocio2(contFlujoNegocio, htmlFlujoNegocio, a);
+            contFlujoNegocio = ObtenerModulosFlujoNegocio3(contFlujoNegocio, htmlFlujoNegocio, a);
+
+            return contFlujoNegocio;
+        }
+
+        private int ObtenerModulosFlujoNegocio2(int contFlujoNegocio, StringBuilder htmlFlujoNegocio, ReqModulos a)
+        {
+            if (a.moduleId == StringHelper.CodPrecintosMarquillas.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='PrecintosMarquillas()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("PrecintosMarquillas", a.consult.ToString());
+                HttpContext.Session.SetString("NombrePrecintosMarquillas", a.name);
+            }
+            if (a.moduleId == StringHelper.CodBandejaPrecintosNacional.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='BandejaSolicitudPrecintosNacionales()'>Bandeja de solicitud de precintos nacionales y marquillas - Usuario externo</a></li>");
+                HttpContext.Session.SetString("PrecintosNacionales", a.consult.ToString());
+                HttpContext.Session.SetString("NombrePrecintosNacionales", a.name);
+            }
+            if (a.moduleId == StringHelper.CodBandejaTrabajoUsuarioInterno.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a asp-controller='' asp-action=''>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("UsuarioInterno", a.consult.ToString());
+                HttpContext.Session.SetString("NombreBandejaTrabajoInterno", a.name);
+            }
+            if (a.moduleId == StringHelper.CodBandejaTrabajoValidacionSolicitud.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='GestionPrencintosNacionalesAnalista()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("GestionPrecintosNacionalesAnalista", a.consult.ToString());
+                HttpContext.Session.SetString("NombreGestionPrecintosNacionalesAnalista", a.name);
+            }
+            if (a.moduleId == StringHelper.CodBandejaTrabajoFirmaRespuestaSolicitante.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='GestionPrencintosNacionalesDirector()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("GestionPrecintosNacionalesDirector", a.consult.ToString());
+                HttpContext.Session.SetString("NombreGestionPrecintosNacionalesDirector", a.name);
+            }
+            if (a.moduleId == StringHelper.CodRegistroActaVisitaCortes.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='RegistroActaVisitaCortes()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("ActaVisitaCortes", a.consult.ToString());
+                HttpContext.Session.SetString("NombreActaVisitaCortes", a.name);
+            }
+            if (a.moduleId == StringHelper.CodGestionarSolicitudesPermisosCITES.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='GestionarPermisosCITES()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("SolicitudesPermisosCITES", a.consult.ToString());
+                HttpContext.Session.SetString("NombreSolicitudesPermisosCITES", a.name);
+            }
+
+            return contFlujoNegocio;
+        }
+
+        private int ObtenerModulosFlujoNegocio3(int contFlujoNegocio, StringBuilder htmlFlujoNegocio, ReqModulos a)
+        {
+            if (a.moduleId == StringHelper.CodCoordinadorGestionarPrecintos.ToString() && a.consult)
+            {
+                contFlujoNegocio = ValidacionFN(contFlujoNegocio, htmlFlujoNegocio, a, "<li id=''><a onclick='CoordinadorGestionPrecintosNacionales()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("CoordinadorGPNSolicitudes", a.consult.ToString());
+                HttpContext.Session.SetString("NombreCoordinadorGPNSolicitudes", a.name);
+            }
+
+            return contFlujoNegocio;
+        }
+
+        private int ObtenerModulosAdministracion(int contAdmin, StringBuilder htmlAdmin, ReqModulos a)
+        {
+            if (a.moduleId == StringHelper.CodAdminRoles.ToString() && a.consult)
+            {
+                contAdmin = ValidacionAdmin(contAdmin, htmlAdmin, a, "<li id='AdministrarRoles'><a onclick='AdministrarRoles()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("ConsultarRoles", a.consult.ToString());
+                HttpContext.Session.SetString("CrearRoles", a.create.ToString());
+                HttpContext.Session.SetString("ActualizarRoles", a.update.ToString());
+                HttpContext.Session.SetString("NombreRoles", a.name);
+            }
+            if (a.moduleId == StringHelper.CodGestionSolicitudesAsigRol.ToString() && a.consult)
+            {
+                contAdmin = ValidacionAdmin(contAdmin, htmlAdmin, a, "<li id='GestionAsignacionRoles'><a onclick='GestionAsignacionRoles()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("ConsultarAsignacionRol", a.consult.ToString());
+                HttpContext.Session.SetString("ActualizarAsignacionRol", a.update.ToString());
+                HttpContext.Session.SetString("NombreAsignacionRol", a.name);
+            }
+            if (a.moduleId == StringHelper.CodAdminEstados.ToString() && a.consult)
+            {
+                contAdmin = ValidacionAdmin(contAdmin, htmlAdmin, a, "<li id='AdministrarEstados'><a onclick='AdministrarEstados()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("ConsultarEstados", a.consult.ToString());
+                HttpContext.Session.SetString("ActualizarEstados", a.update.ToString());
+                HttpContext.Session.SetString("NombreEstados", a.name);
+            }
+            if (a.moduleId == StringHelper.CodAdminTablasParametricas.ToString() && a.consult)
+            {
+                contAdmin = ValidacionAdmin(contAdmin, htmlAdmin, a, "<li id='Parametrica'><a onclick='AdministrarTablasParametricas()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("ConsultarParametrica", a.consult.ToString());
+                HttpContext.Session.SetString("NombreParametrica", a.name);
+            }
+            if (a.moduleId == StringHelper.CodGestionAuditoria.ToString() && a.consult)
+            {
+                contAdmin = ValidacionAdmin(contAdmin, htmlAdmin, a, "<li id='Auditoria'><a onclick='GestionAuditoria()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("ConsultarAuditoria", a.consult.ToString());
+                HttpContext.Session.SetString("DetallesAuditoria", a.see.ToString());
+                HttpContext.Session.SetString("NombreAuditoria", a.name);
+            }
+            if (a.moduleId == StringHelper.CodGestionDocumental.ToString() && a.consult)
+            {
+                contAdmin = ValidacionAdmin(contAdmin, htmlAdmin, a, "<li id='GestionDocumental'><a onclick='GestionDocumental()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("ConsultarDocumental", a.consult.ToString());
+                HttpContext.Session.SetString("NombreDocumental", a.name);
+            }
+            if (a.moduleId == StringHelper.CodAdminTecnica.ToString() && a.consult)
+            {
+                contAdmin = ValidacionAdmin(contAdmin, htmlAdmin, a, "<li id='AdministracionTecnica'><a onclick='AdministracionTecnica()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("ConsultarTecnica", a.consult.ToString());
+                HttpContext.Session.SetString("ActualizarTecnica", a.update.ToString());
+                HttpContext.Session.SetString("EliminarTecnica", a.delete.ToString());
+                HttpContext.Session.SetString("CrearTecnica", a.create.ToString());
+                HttpContext.Session.SetString("NombreTecnica", a.name);
+            }
+            contAdmin = ObtenerModulosAdministracion2(contAdmin, htmlAdmin, a);
+
+            return contAdmin;
+        }
+
+        private int ObtenerModulosAdministracion2(int contAdmin, StringBuilder htmlAdmin, ReqModulos a)
+        {
+            if (a.moduleId == StringHelper.CodGestionUsuario.ToString() && a.consult)
+            {
+                contAdmin = ValidacionAdmin(contAdmin, htmlAdmin, a, "<li id='GestionUsuario'><a onclick='GestionUsuarios()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("ConsultarUsuario", a.consult.ToString());
+                HttpContext.Session.SetString("ActualizarUsuario", a.update.ToString());
+                HttpContext.Session.SetString("CrearUsuario", a.create.ToString());
+                HttpContext.Session.SetString("NombreUsuario", a.name);
+            }
+            if (a.moduleId == StringHelper.CodAdminRolesFuncionalidades.ToString())
+            {
+                HttpContext.Session.SetString("ActualizarFuncionalidades", a.update.ToString());
+                HttpContext.Session.SetString("CrearFuncionalidades", a.create.ToString());
+                HttpContext.Session.SetString("ConsultarFuncionalidades", a.consult.ToString());
+                HttpContext.Session.SetString("NombreFuncionalidades", a.name);
+            }
+            if (a.moduleId == StringHelper.CodAdminTablasServicios.ToString() && a.consult)
+            {
+                contAdmin = ValidacionAdmin(contAdmin, htmlAdmin, a, "<li id='Servicios'><a onclick='AdministrarServicios()'>" + a.name + "</a></li>");
+                HttpContext.Session.SetString("ConsultarServicio", a.consult.ToString());
+                HttpContext.Session.SetString("NombreServicio", a.name);
+            }
+
+            return contAdmin;
+        }
+
+        private static int ValidacionAdmin(int contAdmin, StringBuilder htmlAdmin, ReqModulos a, string cadenaAñadir)
+        {
+            if (!htmlAdmin.ToString().Contains(a.name))
+            {
+                htmlAdmin.Append(cadenaAñadir);
+                contAdmin++;
+            }
+
+            return contAdmin;
+        }
+
+        private static int ValidacionFN(int contFlujoNegocio, StringBuilder htmlFlujoNegocio, ReqModulos a, string cadenaAñadir)
+        {
+            if (!htmlFlujoNegocio.ToString().Contains(a.name))
+            {
+                htmlFlujoNegocio.Append(cadenaAñadir);
+                contFlujoNegocio++;
+            }
+
+            return contFlujoNegocio;
+        }
+
+        static int ValidacionReportes(int contReportes, StringBuilder htmlReportes, ReqModulos a, string cadenaAñadir)
+        {
+            if (!htmlReportes.ToString().Contains(a.name))
+            {
+                htmlReportes.Append(cadenaAñadir);
+                contReportes++;
+            }
+
+            return contReportes;
         }
     }
 }

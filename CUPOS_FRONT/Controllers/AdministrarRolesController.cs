@@ -50,7 +50,7 @@ namespace Web.Controllers
                 if (token == null)
                     return View("Views/Login/Index.cshtml");
 
-                rolesList rolesList = cargueInicial();
+                RolesList rolesList = cargueInicial();
                 return View(rolesList);
             }
             catch (Exception ex)
@@ -111,7 +111,7 @@ namespace Web.Controllers
         /// <param name="nombreRol"></param>
         /// <param name="valEstado"></param>
         /// <returns></returns>
-        public rolesList cargueInicial()
+        public RolesList cargueInicial()
         {
             List<ReqRoles> r = new List<ReqRoles>();
 
@@ -162,7 +162,7 @@ namespace Web.Controllers
                 rol.estate = resultadoListado;
             }
 
-            rolesList listado = new rolesList();
+            RolesList listado = new RolesList();
 
             listado.rolsList = r;
 

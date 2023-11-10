@@ -2,17 +2,21 @@
 @{
     Layout = "_LayoutBandejaReceptor";
 }
-
+<style>
+    .text-left {
+        text-align: left;
+    }
+</style>
 <div class="tab-pane container active p-2">
     <form asp-controller="GestionAsignacionDeRoles" asp-action="SolicitarRol" method="post" id="">
         <div class="col-form-label mt-1 mb-1">
             <h1>Solicitar Rol</h1>
         </div>
         <div class="mt-1 mb-1">
-            <p align="left">
+            <p class="text-left">
                 Estimado @Model.Name, le damos la bienvenida a la ventanilla de CITES.
             </p>
-            <p align="left">
+            <p class="text-left">
                 Para iniciar con el uso de la ventanilla de CITES, por favor seleccione el tipo de usuario que va a utilizar
                 (Está información será validada por el administrador del sistema).
             </p>

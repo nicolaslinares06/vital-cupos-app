@@ -2,7 +2,7 @@
 
 namespace Web.Models
 {
-    public class rolesList
+    public class RolesList
     {
         public List<ReqRoles> rolsList { get; set; } = new List<ReqRoles>();
     }

@@ -25,8 +25,8 @@ namespace CUPOS_FRONT.Models
 
         public class PropsViewModel : ReporteCuposEmpresaViewModel
         {
-            public IEnumerable<SelectListItem> TipoEstablecimientos { get; set; }
-            public IEnumerable<SelectListItem> Estados { get; set; }
+            public IEnumerable<SelectListItem> TipoEstablecimientos { get; set; } = Enumerable.Empty<SelectListItem>();
+            public IEnumerable<SelectListItem> Estados { get; set; } = Enumerable.Empty<SelectListItem>();
 
 
 

@@ -18,9 +18,11 @@ namespace Web.Controllers
         private readonly ILogger<LoginController> _logger;
         private readonly LoginRequest usuario;
         private readonly string UrlApi;
+        private readonly string UrlRecaptcha;
         private readonly string secretKey;
         private readonly string secretKeySite;
         readonly string RUTAAPI = Environment.GetEnvironmentVariable("RUTAAPI") ?? "";
+        readonly string RUTARECAPTCHA = Environment.GetEnvironmentVariable("RUTARECAPTCHA") ?? "";
         readonly string RECAPTCHAPRIVATEKEY = Environment.GetEnvironmentVariable("RECAPTCHAPRIVATEKEY") ?? "";
         readonly string RECAPTCHASITEKEY = Environment.GetEnvironmentVariable("RECAPTCHASITEKEY") ?? "";
         /// <summary>
@@ -31,6 +33,7 @@ namespace Web.Controllers
         public LoginController(ILogger<LoginController> logger)
         {
             UrlApi = string.IsNullOrEmpty(RUTAAPI) ? new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build().GetValue<string>("Variables:RutaApi") : RUTAAPI;
+            UrlRecaptcha = string.IsNullOrEmpty(RUTARECAPTCHA) ? new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build().GetValue<string>("Recaptcha:UrlRecaptcha") : RUTAAPI;
             secretKey = string.IsNullOrEmpty(RECAPTCHAPRIVATEKEY) ? new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build().GetValue<string>("Recaptcha:reCaptchaPrivateKey") : RECAPTCHAPRIVATEKEY;
             secretKeySite = string.IsNullOrEmpty(RECAPTCHASITEKEY) ? new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build().GetValue<string>("Recaptcha:reCaptchaSiteKey") : RECAPTCHASITEKEY;
             _logger = logger;
@@ -137,11 +140,11 @@ namespace Web.Controllers
                 if (_usuario.user != null && _usuario.password != null)
                 {
                     var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, _usuario.user),
-                    new Claim("Usuario", _usuario.user),
-                    new Claim(ClaimTypes.Role, "Administrador")
-                };
+                    {
+                        new Claim(ClaimTypes.Name, _usuario.user),
+                        new Claim("Usuario", _usuario.user),
+                        new Claim(ClaimTypes.Role, "Administrador")
+                    };
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
@@ -168,33 +171,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            if (respuesta.Message.Contains(StringHelper.estadoValidarCorreo.ToString()))
-                            {
-                                string URI2 = UrlApi + "/User/ConsultTerms?login=" + datosIng.user;
-                                var response2 = httpClient.GetAsync(URI2).Result;
-                                string responseString2 = response2.Content.ReadAsStringAsync().Result;
-                                Responses respuesta2 = JsonConvert.DeserializeObject<Responses>(responseString2) ?? new Responses();
-                                ReqAceptarCondiciones req = JsonConvert.DeserializeObject<ReqAceptarCondiciones>(respuesta2.Response.ToString() ?? "") ?? new ReqAceptarCondiciones();
-
-                                if (req.A012aceptaTratamientoDatosPersonales && req.A012aceptaTerminos)
-                                {
-                                    HttpContext.Session.SetString("User", datosIng.user);
-                                    HttpContext.Session.SetString("Password", datosIng.password);
-                                    return RedirectToAction("CambioContrasenaOlvido", "Login");
-                                }
-                                else
-                                {
-                                    HttpContext.Session.SetString("User", datosIng.user);
-                                    HttpContext.Session.SetString("Password", datosIng.password);
-                                    return RedirectToAction("CambioContrasena", "Login");
-                                }
-                            }
-                            else
-                            {
-                                ViewBag.SecretKeySite = secretKeySite;
-                                ViewBag.Alert = respuesta.Message;
-                                return View("Index");
-                            }
+                            return ValidarCambioContrasena(datosIng, httpClient, respuesta);
                         }
                     }
                     else
@@ -218,6 +195,38 @@ namespace Web.Controllers
                 throw;
             }
         }
+
+        private IActionResult ValidarCambioContrasena(LoginRequest datosIng, HttpClient httpClient, Responses respuesta)
+        {
+            if (respuesta.Message.Contains(StringHelper.estadoValidarCorreo.ToString()))
+            {
+                string URI2 = UrlApi + "/User/ConsultTerms?login=" + datosIng.user;
+                var response2 = httpClient.GetAsync(URI2).Result;
+                string responseString2 = response2.Content.ReadAsStringAsync().Result;
+                Responses respuesta2 = JsonConvert.DeserializeObject<Responses>(responseString2) ?? new Responses();
+                ReqAceptarCondiciones req = JsonConvert.DeserializeObject<ReqAceptarCondiciones>(respuesta2.Response.ToString() ?? "") ?? new ReqAceptarCondiciones();
+
+                if (req.A012aceptaTratamientoDatosPersonales && req.A012aceptaTerminos)
+                {
+                    HttpContext.Session.SetString("User", datosIng.user);
+                    HttpContext.Session.SetString("Password", datosIng.password);
+                    return RedirectToAction("CambioContrasenaOlvido", "Login");
+                }
+                else
+                {
+                    HttpContext.Session.SetString("User", datosIng.user);
+                    HttpContext.Session.SetString("Password", datosIng.password);
+                    return RedirectToAction("CambioContrasena", "Login");
+                }
+            }
+            else
+            {
+                ViewBag.SecretKeySite = secretKeySite;
+                ViewBag.Alert = respuesta.Message;
+                return View("Index");
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -229,7 +238,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 var result = false;
                 var captchaResponse = Request.Form["g-recaptcha-response"];
-                string? apiUrl = "https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}";
+                string? apiUrl = UrlRecaptcha + "?secret={0}&response={1}";
                 var requestUrl = string.Format(apiUrl, secretKey, captchaResponse);
                 var request = (HttpWebRequest)WebRequest.Create(requestUrl);
 

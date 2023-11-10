@@ -215,32 +215,38 @@ namespace Web.Controllers
 
             foreach(var usuario in usuarios)
             {
-                if (usuario.roles != null)
-                {
-                    var roles = usuario.roles.Split("|");
-                    var stringRoles = "";
-                    var cantidad = 0;
-                    rols.ForEach(el =>
-                    {
-                        if (roles.Contains(el.id.ToString()))
-                        {
-                            if (cantidad > 0)
-                            {
-                                stringRoles += ", ";
-                            }
-                            stringRoles += el.name;
-                            cantidad += 1;
-                        }
-
-                    });
-                    usuario.roles = stringRoles;
-                }
-                else
-                    usuario.roles = "";
+                ConsultarRoles(rols, usuario);
             }
 
             return listado;
         }
+
+        private static void ConsultarRoles(List<ReqRoles> rols, GestionUsuario usuario)
+        {
+            if (usuario.roles != null)
+            {
+                var roles = usuario.roles.Split("|");
+                var stringRoles = "";
+                var cantidad = 0;
+                rols.ForEach(el =>
+                {
+                    if (roles.Contains(el.id.ToString()))
+                    {
+                        if (cantidad > 0)
+                        {
+                            stringRoles += ", ";
+                        }
+                        stringRoles += el.name;
+                        cantidad += 1;
+                    }
+
+                });
+                usuario.roles = stringRoles;
+            }
+            else
+                usuario.roles = "";
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -298,7 +304,7 @@ namespace Web.Controllers
         /// <param name="pass"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult CambiarPass(actualizarRequest pass)
+        public IActionResult CambiarPass(ActualizarRequest pass)
         {
             try
             {

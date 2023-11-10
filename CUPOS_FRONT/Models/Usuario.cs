@@ -53,30 +53,30 @@ namespace Web.Models
         public string rol { get; set; } = string.Empty;
     }
 
-    public class actualizarRequest : ReqUser
+    public class ActualizarRequest : ReqUser
     {
-        public decimal code { get; set; }
-        public decimal? cityAddress { get; set; }
-        public decimal? codeParametricDocumentType { get; set; }
-        public decimal? codeParametricUserType { get; set; }
-        public string? dependence { get; set; }
-        public bool? acceptsTerms { get; set; }
-        public bool? acceptsProcessingPersonalData { get; set; }
-        public decimal identification { get; set; }
-        public string? firstName { get; set; }
-        public string? secondName { get; set; }
-        public string? firstLastName { get; set; }
-        public string? SecondLastName { get; set; }
-        public string? login { get; set; }
-        public string? address { get; set; }
-        public decimal? phone { get; set; }
-        public string? email { get; set; }
-        public string? celular { get; set; }
-        public string? password { get; set; }
-        public string? digitalSignature { get; set; }
-        public DateTime? contractStartDate { get; set; }
-        public DateTime? contractFinishDate { get; set; }
-        public bool? registrationStatus { get; set; }
+        new public decimal code { get; set; }
+        new public decimal? cityAddress { get; set; }
+        new public decimal? codeParametricDocumentType { get; set; }
+        new public decimal? codeParametricUserType { get; set; }
+        new public string? dependence { get; set; }
+        new public bool? acceptsTerms { get; set; }
+        new public bool? acceptsProcessingPersonalData { get; set; }
+        new public decimal identification { get; set; }
+        new public string? firstName { get; set; }
+        new public string? secondName { get; set; }
+        new public string? firstLastName { get; set; }
+        new public string? SecondLastName { get; set; }
+        new public string? login { get; set; }
+        new public string? address { get; set; }
+        new public decimal? phone { get; set; }
+        new public string? email { get; set; }
+        new public string? celular { get; set; }
+        new public string? password { get; set; }
+        new public string? digitalSignature { get; set; }
+        new public DateTime? contractStartDate { get; set; }
+        new public DateTime? contractFinishDate { get; set; }
+        new public bool? registrationStatus { get; set; }
     }
 
     public class ConsultDocument
