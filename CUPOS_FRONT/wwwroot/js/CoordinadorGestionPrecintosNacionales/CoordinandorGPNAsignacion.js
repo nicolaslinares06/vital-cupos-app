@@ -146,51 +146,7 @@ $('#fileIndividualFile').on('change', async function () {
     tipoAdjuntoIndividualFile = adjunto.tipoAdjunto;
 });
 
-//fileContenedorIndividualFile.addEventListener('dragover', (e) => {
-//    e.preventDefault();
-//    ocultarElemento(spanFileIndividualFile, true);
-//    $(fileContenedorIndividualFile).addClass('activeFile');
-//});
 
-//fileContenedorIndividualFile.addEventListener('dragleave', (e) => {
-//    e.preventDefault();
-//    ocultarElemento(spanFileIndividualFile, true);
-//    $(fileContenedorIndividualFile).removeClass('activeFile');
-//});
-
-//fileContenedorIndividualFile.addEventListener('drop', (e) => {
-//    e.preventDefault();
-//    contenedorIndividualFile.innerHTML = "";
-//    ocultarElemento(spanFileIndividualFile, true);
-//    $(fileContenedorIndividualFile).removeClass('activeFile');
-//    var files = e.dataTransfer.files;
-//    if (files.length > 1) {
-//        spanFileIndividualFile.innerText = 'Solo se admite un adjunto.';
-//        ocultarElemento(spanFileIndividualFile, false);
-//        return
-//    }
-//    var extencionesPermitidas = ["application/pdf"];
-//    var strExtenciones = ".pdf";
-//    var adjunto = mostrarAdjunto(files[0], contenedorIndividualFile, spanFileIndividualFile, extencionesPermitidas, strExtenciones, fileContenedorIndividualFile);
-//    IndividualFileBase64 = adjunto.Base64;
-//    nombreIndividualFile = adjunto.nombre;
-//    tipoAdjuntoIndividualFile = adjunto.tipoAdjunto;
-//});
-
-//function show() {
-//    var rowId =
-//        event.target.parentNode.parentNode.id;
-//    //this gives id of tr whose button was clicked
-//    var data =
-//        document.getElementById(rowId).querySelectorAll(".row-data");
-//    /*returns array of all elements with 
-//    "row-data" class within the row with given id*/
-
-//    var name = data[0].innerHTML;
-//    var age = data[1].innerHTML;
-
-//    alert("Name: " + name + "\nAge: " + age);
-//}
 
 $("#tablaAnalistasAsignacion tr").click(function () {
     let hiddenTRSeleccionado = document.getElementById('HiddenTRSeleccionado');
@@ -206,7 +162,7 @@ async function EnviarDatosAsignacionAnalista() {
     let spanTablaAnalistaSeleccion = document.getElementById('spanTablaAnalistaSeleccion');
     spanTablaAnalistaSeleccion.textContent = "";
 
-    if (!(valorAnalistaSeleccionado > 0)) {
+    if (valorAnalistaSeleccionado <= 0) {
         spanTablaAnalistaSeleccion.textContent = "Debe Seleccionar un registro";
         ocultarFondoProcesando();
         return;

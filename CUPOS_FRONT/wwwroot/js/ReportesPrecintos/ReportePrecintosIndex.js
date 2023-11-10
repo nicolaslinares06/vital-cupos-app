@@ -4,7 +4,7 @@
         //btnExportarExcel = document.querySelector('#btnExportarExcel'),
         //btnExportarPDF = document.querySelector('#btnExportarPDF');
 
-    let dataPrecintosParameters;
+    
 
     const tablaReportes = async () => {
 
@@ -13,7 +13,7 @@
         let urlBase = window.location.origin;
         let url = `${urlBase}/ReportesPrecintos/ObtenerDatosPrecintos`;
         let resp = await Get(url, { filtros: parametros });
-        dataPrecintosParameters = datosInput();
+        let dataPrecintosParameters = datosInput();
 
         console.log(resp.listado);
        
@@ -126,108 +126,20 @@
     });
 
 
-    //btnExportarExcel.addEventListener("click", async () => {
-      
-    //    let urlBase = window.location.origin;
-    //    let urlPost = `${urlBase}/ReportesPrecintos/ExportarExcelDataPrecintos`;
-    //    const resp = await Get(urlPost, { filtros: dataPrecintosParameters });
 
-
-    //    let bytes = Base64ToBytes(resp);       
-    //    let blob = new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-
-  
-    //    let isIE = false || !!document.documentMode;
-    //    if (isIE) {
-    //        window.navigator.msSaveBlob(blob, "Listado de Cupos, Empresas y marcaje.xlsx");
-    //    } else {
-    //        let url = window.URL || window.webkitURL;
-    //        let link = url.createObjectURL(blob);
-    //        let a = $("<a />");
-    //        a.attr("download", "Listado de Precintos.xlsx");
-    //        a.attr("href", link);
-    //        $("body").append(a);
-    //        a[0].click();
-    //        $("body").remove(a);
-    //    }
-
-
-
-    //    //console.log(resp);
-    //    //const aElement = document.createElement('a');
-    //    //aElement.setAttribute('download', "Listado de Cupos, Empresas y marcaje");
-    //    //const href = URL.createObjectURL(resp);
-    //    //aElement.href = href;
-    //    //aElement.setAttribute('target', '_blank');
-    //    //aElement.click();
-    //    //URL.revokeObjectURL(href);
-
-
-    //    //let urlBase = window.location.origin;
-    //    //let url = `${urlBase}/ReportesCuposEmpresasMarcaje/ExportarExcelDataEmpresas`;
-    //    //fetch(url, {
-
-    //    //    method: 'POST', 
-    //    //    headers: {
-    //    //        'Content-Type': 'application/json',
-    //    //    },
-    //    //    body: JSON.stringify(dataCuposActual),
-
-
-    //    //}).then(response => response.blob())
-    //    //    .then((data) => {
-
-    //    //    });
-
-
-    //});
 
     const inputsSoloNumeros = (nombreElemento) => {
         $(`${nombreElemento}`).on('keypress', function (evt) {
-            let regex = new RegExp("^[0-9]+$");
-            let key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            let regex = /^[0-9]+$/;
+            let key = String.fromCharCode(!evt.charCode ? evt.which : evt.charCode);
             if (!regex.test(key)) {
-                event.preventDefault();
+                evt.preventDefault();
                 return false;
             }
         });
     }
 
-    const inputsSoloLetras = (elemento) => {
-        $(elemento).on('keypress', function (event) {
-            let regex = new RegExp("^[a-zA-Z \s]+$");
-            let key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
-            if (!regex.test(key)) {
-                event.preventDefault();
-                return false;
-            }
-        });
-    }
 
-    //btnExportarPDF.addEventListener("click", async () => {
-
-
-    //    await archivoPDFBase64();
-
-    //});
-     
-
-    //const archivoPDFBase64 = async () => {
-
-    //    const datos = datosInput();
-    //    let urlBase = window.location.origin;
-    //    let url = `${urlBase}/ReportesPrecintos/ExportarPDFDataPrecintos`;
-    //    let resp = await Get(url, { filtros: dataPrecintosParameters });
-
-    //    const data = await resp;
-    //    let a = document.createElement("a");
-    //    a.href = "data:application/pdf;base64," + data;
-    //    a.download = "Reportes Precintos.pdf";
-    //    a.click();
-
-
-
-    //}
 
     const inicializar = () => {
 
@@ -235,17 +147,6 @@
         inputsSoloNumeros('#NIT');
 
     }
-
-
-    const Base64ToBytes = (base64) => {
-        let s = window.atob(base64);
-        let bytes = new Uint8Array(s.length);
-        for (let i = 0; i < s.length; i++) {
-            bytes[i] = s.charCodeAt(i);
-        }
-        return bytes;
-    };
-
 
 
 

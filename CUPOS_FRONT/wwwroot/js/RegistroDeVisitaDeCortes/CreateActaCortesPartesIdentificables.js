@@ -72,10 +72,8 @@ async function GuardarDatosRecortesIdentificables() {
     datosFormulario.VisitaNumero2 = document.getElementById("radioVisita2").checked;
     datosFormulario.TipoEstablecimiento = document.getElementById('TipoEstablecimiento').value;
     datosFormulario.EstablecimientoID = document.getElementById('EstablecimientoID').value;
-    datosFormulario.CantidadPielACortar = document.getElementById('CantidadPielACortar').value;
-   /* datosFormulario.PrecintoIdentificacion = document.getElementById('PrecintoIdentificacion').value;*/
-    datosFormulario.EstadoPiel = ObtenerValorEstadoPiel();
-    //datosFormulario.FuncionarioAutoridadCites = document.getElementById('FuncionarioAutoridadCites').value;
+    datosFormulario.CantidadPielACortar = document.getElementById('CantidadPielACortar').value;  
+    datosFormulario.EstadoPiel = ObtenerValorEstadoPiel();   
     datosFormulario.RepresentanteEstablecimiento = document.getElementById('RepresentanteEstablecimiento').value;
     datosFormulario.DocumentoRepresentante = 0;
     datosFormulario.Ciudad = document.getElementById('Ciudad').value;

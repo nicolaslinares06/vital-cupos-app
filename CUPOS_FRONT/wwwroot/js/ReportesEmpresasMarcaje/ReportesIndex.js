@@ -6,7 +6,7 @@
         btnFechaEmisionResolucionHasta = document.querySelector('#FechaEmisionResolucionHasta'),
         btnFechaFechaEmisionResolucionDesde = document.querySelector('#FechaEmisionResolucionDesde');
 
-    let datosPorDefecto;
+
 
     const tablaReportes = async () => {
 
@@ -15,7 +15,7 @@
         let urlBase = window.location.origin;
         let url = `${urlBase}/ReportesCuposEmpresasMarcaje/ObtenerDatosCuposEmpresas`;
         let resp = await Get(url, { filtros: parametros });        
-        datosPorDefecto = datosInput();
+        let datosPorDefecto = datosInput();
 
         console.log(resp.listado);
 
@@ -145,7 +145,7 @@
             let regex = new RegExp("^[0-9]+$");
             let key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
             if (!regex.test(key)) {
-                event.preventDefault();
+                evt.preventDefault();
                 return false;
             }
         });

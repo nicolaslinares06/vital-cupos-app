@@ -16,13 +16,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         habilitarEventoMultiplicar(index);
     });
 
-
-    //let hiddenRadioNumeroVisita = parseInt(document.getElementById('HiddenVisitaNro').value);
-    //let radioButtonNumeroVisita = document.getElementById(`radioVisita${hiddenRadioNumeroVisita}`);
-    //radioButtonNumeroVisita.checked = true;
-
-
-
     btnEditarFormularioCorteIrregular.addEventListener('click', function () {
         const DatosValidos = ValidarDatosFormularioIrregulares();
         if (DatosValidos)
@@ -129,7 +122,6 @@ function ObtenerDatosActaVisita() {
     datosActaVisita.TipoEstablecimiento = document.getElementById('TipoEstablecimiento').value;
     datosActaVisita.EstablecimientoID = document.getElementById('EstablecimientoID').value;
     datosActaVisita.CantidadPielACortar = document.getElementById('CantidadPielACortar').value;
-    /* datosActaVisita.PrecintoIdentificacion = document.getElementById('PrecintoIdentificacion').value;*/
     datosActaVisita.EstadoPiel = ObtenerValorEstadoPiel();
     datosActaVisita.RepresentanteEstablecimiento = document.getElementById('RepresentanteEstablecimiento').value;
     datosActaVisita.DocumentoRepresentante = 0;
