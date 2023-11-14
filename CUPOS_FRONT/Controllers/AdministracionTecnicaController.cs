@@ -189,7 +189,7 @@ namespace Web.Controllers
                 string URI = UrlApi + "/TechnicalAdmin/Consult?value=" + nombreValor;
                 var httpClient = getHttpClient();
 
-                if (token == null)
+                if (token == "")
                 {
                     HttpContext.Session.Remove("token");
                     return r;
