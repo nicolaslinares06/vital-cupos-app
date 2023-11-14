@@ -49,11 +49,7 @@ namespace WebFront.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                string token = HttpContext.Session.GetString("token") ?? "";
-                if (!String.IsNullOrEmpty(token))
-                    return RedirectToAction("FlujoNegocio", "Home");
-                else
-                    return RedirectToAction("Index", "Login");
+                return ManejoIActionResultException(ex);
             }
         }
 
@@ -66,21 +62,15 @@ namespace WebFront.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
 
-                if (token != null)
+                if (IsTokenValid())
                     return View("Views/NonTimberFloraCertificate/Partials/Ayuda.cshtml");
 
                 return View();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                string token = HttpContext.Session.GetString("token") ?? "";
-                if (!String.IsNullOrEmpty(token))
-                    return RedirectToAction("FlujoNegocio", "Home");
-                else
-                    return RedirectToAction("Index", "Login");
+                return ManejoIActionResultException(ex);
             }
         }
         /// <summary>
@@ -92,31 +82,14 @@ namespace WebFront.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<ElementTypes>? Authority = new List<ElementTypes>();
                 string? token = HttpContext.Session.GetString("token");
                 string URI = UrlApi + "/NonTimberFloraCertificate/ConsultAuthority";
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        Authority = JsonConvert.DeserializeObject<List<ElementTypes>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
+                var respuesta = ProcessHttpResponse<List<ElementTypes>>(response);
 
-                return Authority ?? new object { };
+                return respuesta ?? new object { };
             }
             catch (Exception ex)
             {
@@ -135,32 +108,14 @@ namespace WebFront.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<ElementTypes>? EspecimensProductsType = new List<ElementTypes>();
                 string? token = HttpContext.Session.GetString("token");
                 string URI = UrlApi + "/NonTimberFloraCertificate/ConsultEspecimensProductsType";
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        EspecimensProductsType = JsonConvert.DeserializeObject<List<ElementTypes>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
+                var respuesta = ProcessHttpResponse<List<ElementTypes>>(response);
 
-                }
-
-                return EspecimensProductsType ?? new object { };
+                return respuesta ?? new object { };
             }
             catch (Exception ex)
             {
@@ -179,32 +134,14 @@ namespace WebFront.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<ElementTypes>? DocumentsTypes = new List<ElementTypes>();
                 string? token = HttpContext.Session.GetString("token");
                 string URI = UrlApi + "/NonTimberFloraCertificate/ConsultDocumentsTypes";
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        DocumentsTypes = JsonConvert.DeserializeObject<List<ElementTypes>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
+                var respuesta = ProcessHttpResponse<List<ElementTypes>>(response);
 
-                }
-
-                return DocumentsTypes ?? new object { };
+                return respuesta ?? new object { };
             }
             catch (Exception ex)
             {
@@ -223,34 +160,16 @@ namespace WebFront.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<CertificadosFloraNoMaderable>? certificados = new List<CertificadosFloraNoMaderable>();
-
                 string? token = HttpContext.Session.GetString("token");
                 string URI = UrlApi + "/NonTimberFloraCertificate/ConsultCertificates";
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
 
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        certificados = JsonConvert.DeserializeObject<List<CertificadosFloraNoMaderable>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
+                var respuesta = ProcessHttpResponse<List<CertificadosFloraNoMaderable>>(response);
 
-                }
+                return respuesta ?? new object { };
 
-                return certificados ?? new object { };
             }
             catch (Exception ex)
             {
@@ -271,31 +190,16 @@ namespace WebFront.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<DatosEntidad>? datos = new List<DatosEntidad>();
                 string? token = HttpContext.Session.GetString("token");
                 string URI = UrlApi + "/NonTimberFloraCertificate/ConsultEntityDates?nitBussines=" + DocumentNumber + "&documentType=" + documentType;
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        datos = JsonConvert.DeserializeObject<List<DatosEntidad>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
 
-                }
-                return datos ?? new object { };
+                var respuesta = ProcessHttpResponse<List<DatosEntidad>>(response);
+
+                return respuesta ?? new object { };
+
             }
             catch (Exception ex)
             {
@@ -312,7 +216,7 @@ namespace WebFront.Controllers
         /// <param name="DocumentNumber"></param>
         /// <param name="CertificateNumber"></param>
         /// <returns></returns>
-        public object ConsultCertificatesForNit(decimal documentType, decimal DocumentNumber=0, string CertificateNumber="0")
+        public object ConsultCertificatesForNit(decimal documentType, decimal DocumentNumber = 0, string CertificateNumber = "0")
         {
             List<CertificadosFloraNoMaderable>? certificates = new List<CertificadosFloraNoMaderable>();
             string? token = HttpContext.Session.GetString("token");
@@ -320,25 +224,11 @@ namespace WebFront.Controllers
             var httpClient = getHttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = httpClient.GetAsync(URI).Result;
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            {
-                return new
-                {
-                    volverInicio = true
-                };
-            }
-            if (response.IsSuccessStatusCode)
-            {
-                string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                if (respuesta.Response != null)
-                {
-                    certificates = JsonConvert.DeserializeObject<List<CertificadosFloraNoMaderable>>(respuesta.Response.ToString() ?? "");
-                    HttpContext.Session.SetString("token", respuesta.Token);
-                }
 
-            }
-            return certificates ?? new object { };
+            var respuesta = ProcessHttpResponse<List<CertificadosFloraNoMaderable>>(response);
+
+            return respuesta ?? new object { };
+
         }
 
         /// <summary>
@@ -356,25 +246,11 @@ namespace WebFront.Controllers
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        EspecimentsTypes = JsonConvert.DeserializeObject<List<ElementTypesEspecies>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
 
-                }
-                return EspecimentsTypes ?? new object { };
+                var respuesta = ProcessHttpResponse<List<ElementTypesEspecies>>(response);
+
+                return respuesta ?? new object { };
+
             }
             catch (Exception ex)
             {
@@ -399,65 +275,11 @@ namespace WebFront.Controllers
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var req = new
-                {
-                    code = datosGuardar.codigo,
-                    issuingAuthority = datosGuardar.autoridadEmiteCertificacion,
-                    certificateNumber = datosGuardar.numeroCertificado,
-                    certificationDate = datosGuardar.fechaCertificacion,
-                    certificationValidity = datosGuardar.vigenciaCertificacion,
-                    permissionType = datosGuardar.tipoPermiso,
-                    specimenProductImpExpType = datosGuardar.tipoEspecimenProductoImpExp,
-                    certificateRemarks = datosGuardar.observacionesCertificado,
-                    companyNit = datosGuardar.nitEmpresa,
-                    supportingDocuments = datosGuardar.documentosSoporte?.Select(d => new
-                    {
-                        code = d.codigo,
-                        base64Attachment = d.adjuntoBase64,
-                        attachmentName = d.nombreAdjunto,
-                        attachmentType = d.tipoAdjunto
-                    }).ToList(),
-                    newSupportingDocuments = datosGuardar.documentosSoporteNuevo?.Select(d => new
-                    {
-                        code = d.codigo,
-                        base64Attachment = d.adjuntoBase64,
-                        attachmentName = d.nombreAdjunto,
-                        attachmentType = d.tipoAdjunto
-                    }).ToList(),
-                    deletedSupportingDocuments = datosGuardar.documentosSoporteEliminar?.Select(d => new
-                    {
-                        code = d.codigo,
-                        base64Attachment = d.adjuntoBase64,
-                        attachmentName = d.nombreAdjunto,
-                        attachmentType = d.tipoAdjunto
-                    }).ToList()
-                };
-
-
+                var req = ObjetoFormulario(datosGuardar);
                 var response = httpClient.PostAsJsonAsync(URI, req).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
 
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
+                return ProcesarPeticion(response);
 
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
             }
             catch (Exception ex)
             {
@@ -482,24 +304,11 @@ namespace WebFront.Controllers
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        certificates = JsonConvert.DeserializeObject<CertificatesDatas>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return certificates ?? new object { };
+
+                var respuesta = ProcessHttpResponse<CertificatesDatas>(response);
+
+                return respuesta ?? new object { };
+
             }
             catch (Exception ex)
             {
@@ -524,65 +333,10 @@ namespace WebFront.Controllers
                 var httpClient = getHttpClient();
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var req = new
-                {
-                    code = datosGuardar.codigo,
-                    issuingAuthority = datosGuardar.autoridadEmiteCertificacion,
-                    certificateNumber = datosGuardar.numeroCertificado,
-                    certificationDate = datosGuardar.fechaCertificacion,
-                    certificationValidity = datosGuardar.vigenciaCertificacion,
-                    permissionType = datosGuardar.tipoPermiso,
-                    specimenProductImpExpType = datosGuardar.tipoEspecimenProductoImpExp,
-                    certificateRemarks = datosGuardar.observacionesCertificado,
-                    companyNit = datosGuardar.nitEmpresa,
-                    supportingDocuments = datosGuardar.documentosSoporte?.Select(d => new
-                    {
-                        code = d.codigo,
-                        base64Attachment = d.adjuntoBase64,
-                        attachmentName = d.nombreAdjunto,
-                        attachmentType = d.tipoAdjunto
-                    }).ToList(),
-                    newSupportingDocuments = datosGuardar.documentosSoporteNuevo?.Select(d => new
-                    {
-                        code = d.codigo,
-                        base64Attachment = d.adjuntoBase64,
-                        attachmentName = d.nombreAdjunto,
-                        attachmentType = d.tipoAdjunto
-                    }).ToList(),
-                    deletedSupportingDocuments = datosGuardar.documentosSoporteEliminar?.Select(d => new
-                    {
-                        code = d.codigo,
-                        base64Attachment = d.adjuntoBase64,
-                        attachmentName = d.nombreAdjunto,
-                        attachmentType = d.tipoAdjunto
-                    }).ToList()
-                };
+                var req = ObjetoFormulario(datosGuardar);
 
                 var response = httpClient.PostAsJsonAsync(URI, req).Result;
-
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return ProcesarPeticion(response);
             }
             catch (Exception ex)
             {
@@ -607,33 +361,114 @@ namespace WebFront.Controllers
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var response = httpClient.PostAsJsonAsync(URI, codeCertificate).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return ProcesarPeticion(response);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
+                return false;
+            }
+        }
+
+        private bool IsTokenValid()
+        {
+            string token = HttpContext.Session.GetString("token") ?? "";
+            return !String.IsNullOrEmpty(token);
+        }
+
+        private IActionResult ManejoIActionResultException(Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred in the method.");
+            if (IsTokenValid())
+                return RedirectToAction("FlujoNegocio", "Home");
+            else
+                return RedirectToAction("Index", "Login");
+        }
+
+        private object ObjetoFormulario(CertificatesDatas datosGuardar)
+        {
+            var req = new
+            {
+                code = datosGuardar.codigo,
+                issuingAuthority = datosGuardar.autoridadEmiteCertificacion,
+                certificateNumber = datosGuardar.numeroCertificado,
+                certificationDate = datosGuardar.fechaCertificacion,
+                certificationValidity = datosGuardar.vigenciaCertificacion,
+                permissionType = datosGuardar.tipoPermiso,
+                specimenProductImpExpType = datosGuardar.tipoEspecimenProductoImpExp,
+                certificateRemarks = datosGuardar.observacionesCertificado,
+                companyNit = datosGuardar.nitEmpresa,
+                supportingDocuments = datosGuardar.documentosSoporte?.Select(d => new
+                {
+                    code = d.codigo,
+                    base64Attachment = d.adjuntoBase64,
+                    attachmentName = d.nombreAdjunto,
+                    attachmentType = d.tipoAdjunto
+                }).ToList(),
+                newSupportingDocuments = datosGuardar.documentosSoporteNuevo?.Select(d => new
+                {
+                    code = d.codigo,
+                    base64Attachment = d.adjuntoBase64,
+                    attachmentName = d.nombreAdjunto,
+                    attachmentType = d.tipoAdjunto
+                }).ToList(),
+                deletedSupportingDocuments = datosGuardar.documentosSoporteEliminar?.Select(d => new
+                {
+                    code = d.codigo,
+                    base64Attachment = d.adjuntoBase64,
+                    attachmentName = d.nombreAdjunto,
+                    attachmentType = d.tipoAdjunto
+                }).ToList()
+            };
+
+            return req;
+        }
+
+        private object ProcessHttpResponse<T>(HttpResponseMessage response) where T : new()
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                return new { volverInicio = true };
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseString = response.Content.ReadAsStringAsync().Result;
+                Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+
+                if (respuesta.Response != null)
+                {
+                    HttpContext.Session.SetString("token", respuesta.Token);
+                    return JsonConvert.DeserializeObject<T>(respuesta.Response.ToString() ?? "") ?? new T();
+                }
+            }
+
+            return new T();
+        }
+
+        private object ProcesarPeticion(HttpResponseMessage response)
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                return new
+                {
+                    volverInicio = true
+                };
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseString = response.Content.ReadAsStringAsync().Result;
+                Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                if (respuesta.Response != null)
+                {
+                    HttpContext.Session.SetString("token", respuesta.Token);
+                }
+
+                return true;
+            }
+            else
+            {
                 return false;
             }
         }
