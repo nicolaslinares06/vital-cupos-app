@@ -218,7 +218,7 @@ namespace WebFront.Controllers
         /// <returns></returns>
         public object ConsultCertificatesForNit(decimal documentType, decimal DocumentNumber = 0, string CertificateNumber = "0")
         {
-            List<CertificadosFloraNoMaderable>? certificates = new List<CertificadosFloraNoMaderable>();
+            
             string? token = HttpContext.Session.GetString("token");
             string URI = UrlApi + "/NonTimberFloraCertificate/ConsultCertificatesForNit?nitBussines=" + DocumentNumber + "&documentType=" + documentType + "&CertificateNumber=" + CertificateNumber;
             var httpClient = getHttpClient();
@@ -239,8 +239,7 @@ namespace WebFront.Controllers
         {
             try
             {
-                _logger.LogInformation("method called");
-                List<ElementTypesEspecies>? EspecimentsTypes = new List<ElementTypesEspecies>();
+                _logger.LogInformation("method called");               
                 string? token = HttpContext.Session.GetString("token");
                 string URI = UrlApi + "/NonTimberFloraCertificate/ConsultEspecimensTypes";
                 var httpClient = getHttpClient();
@@ -297,8 +296,7 @@ namespace WebFront.Controllers
         {
             try
             {
-                _logger.LogInformation("method called");
-                CertificatesDatas? certificates = new CertificatesDatas();
+                _logger.LogInformation("method called");          
                 string? token = HttpContext.Session.GetString("token");
                 string URI = UrlApi + "/NonTimberFloraCertificate/ConsultDatasCertificate?codeCertificate=" + codeCertificate;
                 var httpClient = getHttpClient();
