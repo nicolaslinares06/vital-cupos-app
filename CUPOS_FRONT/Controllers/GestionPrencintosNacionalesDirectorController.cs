@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using iTextSharp.text.pdf;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repository.Helpers;
 using Repository.Helpers.Models;
@@ -34,45 +35,18 @@ namespace Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public List<CuposV002GestionPrecintosNacionales> ConsultarPendiente()
+        public async Task<List<CuposV002GestionPrecintosNacionales>> ConsultarPendiente()
         {
             try
             {
                 _logger.LogInformation("method called");
                 string URI = UrlApi + "/NationalSealsManagement/ConsultPendingDirector";
-                var httpClient = getHttpClient();
-                string? token = HttpContext.Session.GetString("token");
-
-                List<CuposV002GestionPrecintosNacionales> listaDatos = new List<CuposV002GestionPrecintosNacionales>();
-                if (token == null)
-                {
-                    HttpContext.Session.Remove("token");
-                    return listaDatos;
-                }
-                else
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        listaDatos = JsonConvert.DeserializeObject<List<CuposV002GestionPrecintosNacionales>>(respuesta.Response.ToString() ?? "") ?? new List<CuposV002GestionPrecintosNacionales>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        return listaDatos;
-                    }
-
-                    return listaDatos;
-                }
+                return await ObtenerDataDeApi<List<CuposV002GestionPrecintosNacionales>>(URI);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                List<CuposV002GestionPrecintosNacionales> listaDatos = new List<CuposV002GestionPrecintosNacionales>();
-                return listaDatos;
+                return new List<CuposV002GestionPrecintosNacionales>();               
             }
         }
         /// <summary>
@@ -80,45 +54,18 @@ namespace Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public List<CuposV002GestionPrecintosNacionales> ConsultarFirmada()
+        public async  Task<List<CuposV002GestionPrecintosNacionales>> ConsultarFirmada()
         {
             try
             {
                 _logger.LogInformation("method called");
                 string URI = UrlApi + "/NationalSealsManagement/ConsulSignedDirector";
-                var httpClient = getHttpClient();
-                string? token = HttpContext.Session.GetString("token");
-
-                List<CuposV002GestionPrecintosNacionales> listaDatos = new List<CuposV002GestionPrecintosNacionales>();
-                if (token == null)
-                {
-                    HttpContext.Session.Remove("token");
-                    return listaDatos;
-                }
-                else
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        listaDatos = JsonConvert.DeserializeObject<List<CuposV002GestionPrecintosNacionales>>(respuesta.Response.ToString() ?? "") ?? new List<CuposV002GestionPrecintosNacionales>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        return listaDatos;
-                    }
-
-                    return listaDatos;
-                }
+                return await ObtenerDataDeApi<List<CuposV002GestionPrecintosNacionales>>(URI);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                List<CuposV002GestionPrecintosNacionales> listaDatos = new List<CuposV002GestionPrecintosNacionales>();
-                return listaDatos;
+                return new List<CuposV002GestionPrecintosNacionales>(); 
             }
         }
         /// <summary>
@@ -126,45 +73,18 @@ namespace Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public List<CuposV002GestionPrecintosNacionales> ConsultarAprobada()
+        public async Task<List<CuposV002GestionPrecintosNacionales>> ConsultarAprobada()
         {
             try
             {
                 _logger.LogInformation("method called");
                 string URI = UrlApi + "/NationalSealsManagement/ConsultApprovedDirector";
-                var httpClient = getHttpClient();
-                string? token = HttpContext.Session.GetString("token");
-
-                List<CuposV002GestionPrecintosNacionales> listaDatos = new List<CuposV002GestionPrecintosNacionales>();
-                if (token == null)
-                {
-                    HttpContext.Session.Remove("token");
-                    return listaDatos;
-                }
-                else
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        listaDatos = JsonConvert.DeserializeObject<List<CuposV002GestionPrecintosNacionales>>(respuesta.Response.ToString() ?? "") ?? new List<CuposV002GestionPrecintosNacionales>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        return listaDatos;
-                    }
-
-                    return listaDatos;
-                }
+                return await ObtenerDataDeApi<List<CuposV002GestionPrecintosNacionales>>(URI);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                List<CuposV002GestionPrecintosNacionales> listaDatos = new List<CuposV002GestionPrecintosNacionales>();
-                return listaDatos;
+                return new List<CuposV002GestionPrecintosNacionales>();
             }
         }
         /// <summary>
@@ -172,45 +92,18 @@ namespace Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public List<CuposV002GestionPrecintosNacionales> ConsultarDesistimiento()
+        public async Task<List<CuposV002GestionPrecintosNacionales>> ConsultarDesistimiento()
         {
             try
             {
                 _logger.LogInformation("method called");
                 string URI = UrlApi + "/NationalSealsManagement/ConsultWithdrawalDirector";
-                var httpClient = getHttpClient();
-                string? token = HttpContext.Session.GetString("token");
-
-                List<CuposV002GestionPrecintosNacionales> listaDatos = new List<CuposV002GestionPrecintosNacionales>();
-                if (token == null)
-                {
-                    HttpContext.Session.Remove("token");
-                    return listaDatos;
-                }
-                else
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        listaDatos = JsonConvert.DeserializeObject<List<CuposV002GestionPrecintosNacionales>>(respuesta.Response.ToString() ?? "") ?? new List<CuposV002GestionPrecintosNacionales>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        return listaDatos;
-                    }
-
-                    return listaDatos;
-                }
+                return await ObtenerDataDeApi<List<CuposV002GestionPrecintosNacionales>>(URI);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                List<CuposV002GestionPrecintosNacionales> listaDatos = new List<CuposV002GestionPrecintosNacionales>();
-                return listaDatos;
+                return new List<CuposV002GestionPrecintosNacionales>();
             }
         }
         /// <summary>
@@ -220,19 +113,13 @@ namespace Web.Controllers
         public IActionResult Index()
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
+            {            
 
-                if (token == null)
-                    return View("Views/GestionPrencintosNacionalesDirector/Index.cshtml");
-
-                return View();
+                return ProcesarView("Views/GestionPrencintosNacionalesDirector/Index.cshtml");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                return View("Views/GestionPrencintosNacionalesDirector/Index.cshtml");
+                return ManejarErrorEnVista(ex);
             }
         }
         /// <summary>
@@ -243,18 +130,12 @@ namespace Web.Controllers
         {
             try
             {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token != null)
-                    return View("Views/GestionPrencintosNacionalesDirector/Partials/Ayuda.cshtml");
-
-                return View();
+                return ProcesarView("Views/GestionPrencintosNacionalesDirector/Partials/Ayuda.cshtml");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                return View("Views/GestionPrencintosNacionalesDirector/Index.cshtml");
+               
+                return ManejarErrorEnVista(ex);
             }
         }
         /// <summary>
@@ -265,21 +146,12 @@ namespace Web.Controllers
         {
             try
             {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token != null)
-                {
-                    ViewBag.idSolicitud = idSolicitud;
-                    return View("Views/GestionPrencintosNacionalesDirector/Pendientes/CartaSolicitantePendiente.cshtml");
-                }
-
-                return View();
+                ViewBag.idSolicitud = idSolicitud;    
+                return ProcesarView("Views/GestionPrencintosNacionalesDirector/Pendientes/CartaSolicitantePendiente.cshtml");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                return View("Views/GestionPrencintosNacionalesDirector/Index.cshtml");
+                return ManejarErrorEnVista(ex);
             }
         }
         /// <summary>
@@ -289,59 +161,38 @@ namespace Web.Controllers
         public IActionResult VisualizarCartaFirmadaSolicitud(int idSolicitud)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token != null)
-                {
-                    ViewBag.idSolicitud = idSolicitud;
-                    return View("Views/GestionPrencintosNacionalesDirector/Firmadas/CartaFirmadaSolicitud.cshtml");
-                }
-
-                return View();
+            {              
+                ViewBag.idSolicitud = idSolicitud;
+                return ProcesarView("Views/GestionPrencintosNacionalesDirector/Firmadas/CartaFirmadaSolicitud.cshtml");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                return View("Views/GestionPrencintosNacionalesDirector/Index.cshtml");
+                return ManejarErrorEnVista(ex);
             }
         }
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public IActionResult SolicitudRadicadaAprobada(int idSolicitud)
+        public async Task<IActionResult> SolicitudRadicadaAprobada(int idSolicitud)
         {
             try
             {
-                var parametricasTipoSolicitudJson = configuration.GetSection("ParametricasTipoSolicitud").Get<List<ParametricaTipoSolicitud>>();
-                if (parametricasTipoSolicitudJson is null)
-                    parametricasTipoSolicitudJson = new List<ParametricaTipoSolicitud>();
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
 
-                if (token != null)
-                {
-                    var model = ObtenerInfoSolicitud(idSolicitud);
-                    model.ListaTiposSolicitud = parametricasTipoSolicitudJson;
-                    ViewBag.idSolicitud = idSolicitud;
-                    return View("Views/GestionPrencintosNacionalesDirector/SolicitudesAprobadas/SolicitudRadicada.cshtml", model);
-                }
-
-                return View();
+                ViewBag.idSolicitud = idSolicitud;
+                return await ProcesarViewInformacion(idSolicitud, "Views/GestionPrencintosNacionalesDirector/SolicitudesAprobadas/SolicitudRadicada.cshtml");
+        
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                return View("Views/GestionPrencintosNacionalesDirector/Index.cshtml");
+                return ManejarErrorEnVista(ex);
             }
         }
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public IActionResult FirmarCartaSolicitud(int code)
+        public async Task<IActionResult> FirmarCartaSolicitud(int code)
         {
             try
             {
@@ -353,22 +204,23 @@ namespace Web.Controllers
                     return RedirectToAction("Index", "Login");
                 }
 
-                var requestDetail = DetalleSolicitud(code);
+                var requestDetail = await DetalleSolicitud(code);
                 List<RequestCutting> RequestCutting = new List<RequestCutting>();
 
-                var consulta = ConsultarColorPrecinto(code).FirstOrDefault();
+                var consulta =  await ConsultarColorPrecinto(code);
                 if (consulta != null)
                 {
-                    var color = consulta.a008valor;
+                    var consultaUnidad = consulta.FirstOrDefault();
+                    var color = consultaUnidad.a008valor;
                     ViewBag.color = color;
                 }
 
-                var codigos = ConsultarCodigosPrecintos(code).FirstOrDefault();
+                var codigos = await ConsultarCodigosPrecintos(code);
 
                 var typeRequest = requestDetail.FirstOrDefault();
                 if (typeRequest != null && typeRequest.TYPEREQUESTCODE == 20207)
                 {
-                    List<valCutMail> valCuting = ConsultarCodigosMarquillas(code);
+                    List<valCutMail> valCuting = await ConsultarCodigosMarquillas(code);
 
                     foreach (var item in requestDetail)
                     {
@@ -439,9 +291,10 @@ namespace Web.Controllers
 
                 if (codigos != null)
                 {
-                    ViewBag.numeracionInicialPrecintos = codigos.A006numeroInicial;
-                    ViewBag.numeracionFinalPrecintos = codigos.A006numeroFinal;
-                    ViewBag.numeracionCantidaPrecintos = codigos.A019Cantidad;
+                    var codigo = codigos.FirstOrDefault();
+                    ViewBag.numeracionInicialPrecintos = codigo.A006numeroInicial;
+                    ViewBag.numeracionFinalPrecintos = codigo.A006numeroFinal;
+                    ViewBag.numeracionCantidaPrecintos = codigo.A019Cantidad;
                 }
 
                 if (typeRequest != null)
@@ -454,8 +307,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                return View("Views/GestionPrencintosNacionalesDirector/Index.cshtml");
+                return ManejarErrorEnVista(ex);
             }
         }
 
@@ -507,7 +359,7 @@ namespace Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<RequestCutting> FirmarCartaSolicitudMin(int code)
+        public async Task<List<RequestCutting>> FirmarCartaSolicitudMin(int code)
         {
             try
             {
@@ -521,12 +373,12 @@ namespace Web.Controllers
                     return RequestCutting;
                 }
 
-                var requestDetail = DetalleSolicitud(code);
+                var requestDetail = await DetalleSolicitud(code);
                 var request = requestDetail.FirstOrDefault();
 
                 if (request != null && request.TYPEREQUESTCODE == 20207)
                 {
-                    List<valCutMail> valCuting = ConsultarCodigosMarquillas(code);
+                    List<valCutMail> valCuting = await ConsultarCodigosMarquillas(code);
 
                     foreach (var item in requestDetail)
                     {
@@ -596,9 +448,8 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                List<RequestCutting> RequestCutting = new List<RequestCutting>();
-                return RequestCutting;
+                _logger.LogError(ex, "An error occurred in the method.");             
+                return new List<RequestCutting>();
             }
         }
 
@@ -607,48 +458,19 @@ namespace Web.Controllers
 		/// </summary>
 		/// <param name="nit"></param>
 		/// <returns></returns>
-		public List<ConsultCodes> ConsultarCodigosPrecintos(int code)
+		public async Task <List<ConsultCodes>> ConsultarCodigosPrecintos(int code)
         {
             try
             {
                 _logger.LogInformation("method called");
                 string URI = UrlApi + "/NationalSealsManagement/ConsultCodes?code=" + code;
-                var httpClient = getHttpClient();
-                string? token = HttpContext.Session.GetString("token");
-
-                List<ConsultCodes> datos = new List<ConsultCodes>();
-
-
-                if (token == null)
-                {
-                    HttpContext.Session.Remove("token");
-                    return datos;
-                }
-                else
-                {
-
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        datos = JsonConvert.DeserializeObject<List<ConsultCodes>>(respuesta.Response.ToString() ?? "") ?? new List<ConsultCodes>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        return datos;
-                    }
-
-                    return datos;
-                }
+                return await ObtenerDataDeApi<List<ConsultCodes>>(URI);
+               
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                List<ConsultCodes> datos = new List<ConsultCodes>();
-                return datos;
+                _logger.LogError(ex, "An error occurred in the method.");               
+                return new List<ConsultCodes>();
             }
         }
 
@@ -658,45 +480,19 @@ namespace Web.Controllers
         /// <param name="idSolicitud"></param>
         /// <returns></returns>
         [HttpPost]
-        public List<ColorPrecinto> ConsultarColorPrecinto(int idSolicitud)
+        public async Task<List<ColorPrecinto>> ConsultarColorPrecinto(int idSolicitud)
         {
             try
             {
                 _logger.LogInformation("method called");
                 string URI = UrlApi + "/NationalSealsManagement/ConsultSealColor?requestType=" + idSolicitud;
-                var httpClient = getHttpClient();
-                string? token = HttpContext.Session.GetString("token");
-
-                List<ColorPrecinto> datos = new List<ColorPrecinto>();
-                if (token == null)
-                {
-                    HttpContext.Session.Remove("token");
-                    return datos;
-                }
-                else
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses? respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        datos = JsonConvert.DeserializeObject<List<ColorPrecinto>>(respuesta.Response.ToString() ?? "") ?? new List<ColorPrecinto>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        return datos;
-                    }
-
-                    return datos;
-                }
+                return await ObtenerDataDeApi<List<ColorPrecinto>>(URI);
+                
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                List<ColorPrecinto> datos = new List<ColorPrecinto>();
-                return datos;
+                _logger.LogError(ex, "An error occurred in the method.");              
+                return new List<ColorPrecinto>();
             }
         }
 
@@ -705,47 +501,19 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="nit"></param>
         /// <returns></returns>
-        public List<valCutMail> ConsultarCodigosMarquillas(int code)
+        public async Task<List<valCutMail>> ConsultarCodigosMarquillas(int code)
         {
             try
             {
                 _logger.LogInformation("method called");
                 string URI = UrlApi + "/NationalSealsManagement/CheckCodesSealsMin?code=" + code;
-                var httpClient = getHttpClient();
-                string? token = HttpContext.Session.GetString("token");
-
-                List<valCutMail> datos = new List<valCutMail>();
-
-                if (token == null)
-                {
-                    HttpContext.Session.Remove("token");
-                    return datos;
-                }
-                else
-                {
-
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        datos = JsonConvert.DeserializeObject<List<valCutMail>>(respuesta.Response.ToString() ?? "") ?? new List<valCutMail>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        return datos;
-                    }
-
-                    return datos;
-                }
+                return await ObtenerDataDeApi<List<valCutMail>>(URI);
+          
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                List<valCutMail> datos = new List<valCutMail>();
-                return datos;
+                _logger.LogError(ex, "An error occurred in the method.");           
+                return new List<valCutMail>();
             }
         }
 
@@ -754,47 +522,19 @@ namespace Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public List<CuposV003SolicitudPrecintosNacionales> DetalleSolicitud(int id)
+        public async Task<List<CuposV003SolicitudPrecintosNacionales>> DetalleSolicitud(int id)
         {
             try
             {
                 _logger.LogInformation("method called");
                 string URI = UrlApi + "/NationalSealsManagement/ConsultDetail?id=" + id;
-                var httpClient = getHttpClient();
-                string? token = HttpContext.Session.GetString("token");
-
-                List<CuposV003SolicitudPrecintosNacionales> listaDatos = new List<CuposV003SolicitudPrecintosNacionales>();
-                ViewBag.listaDatos = listaDatos;
-
-                if (token == null)
-                {
-                    HttpContext.Session.Remove("token");
-                    return listaDatos;
-                }
-                else
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses? respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        listaDatos = JsonConvert.DeserializeObject<List<CuposV003SolicitudPrecintosNacionales>>(respuesta.Response.ToString() ?? "") ?? new List<CuposV003SolicitudPrecintosNacionales>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        return listaDatos;
-                    }
-
-                    return listaDatos;
-                }
+                return await ObtenerDataDeApi<List<CuposV003SolicitudPrecintosNacionales>>(URI);
+               
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                List<CuposV003SolicitudPrecintosNacionales> listaDatos = new List<CuposV003SolicitudPrecintosNacionales>();
-                return listaDatos;
+                _logger.LogError(ex, "An error occurred in the method.");         
+                return new List<CuposV003SolicitudPrecintosNacionales>();
             }
         }
 
@@ -802,26 +542,12 @@ namespace Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public IActionResult SolicitudRadicadaDesistimiento(int idSolicitud)
+        public async Task<IActionResult> SolicitudRadicadaDesistimiento(int idSolicitud)
         {
             try
             {
-                var parametricasTipoSolicitudJson = configuration.GetSection("ParametricasTipoSolicitud").Get<List<ParametricaTipoSolicitud>>();
-                if (parametricasTipoSolicitudJson is null)
-                    parametricasTipoSolicitudJson = new List<ParametricaTipoSolicitud>();
-
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token != null)
-                {
-                    var model = ObtenerInfoSolicitud(idSolicitud);
-                    model.ListaTiposSolicitud = parametricasTipoSolicitudJson;
-                    ViewBag.idSolicitud = idSolicitud;
-                    return View("Views/GestionPrencintosNacionalesDirector/Desistimiento/SolicitudRadicada.cshtml", model);
-                }
-
-                return View();
+                ViewBag.idSolicitud = idSolicitud;
+                return await ProcesarViewInformacion(idSolicitud, "Views/GestionPrencintosNacionalesDirector/Desistimiento/SolicitudRadicada.cshtml");               
             }
             catch (Exception ex)
             {
@@ -836,17 +562,8 @@ namespace Web.Controllers
         public IActionResult CartaFirmadaSolicitud(int code)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token != null)
-                {
-                    ViewBag.idSolicitud = code;
-                    return View("Views/GestionPrencintosNacionalesDirector/Pendientes/CartaFirmadaSolicitud.cshtml");
-                }
-
-                return View();
+            {  
+                return ProcesarView("Views/GestionPrencintosNacionalesDirector/Pendientes/CartaFirmadaSolicitud.cshtml");
             }
             catch (Exception ex)
             {
@@ -973,44 +690,82 @@ namespace Web.Controllers
             }
         }
 
-        private InformacionSolicitud ObtenerInfoSolicitud(decimal codigoSolicitud)
+        private async Task<InformacionSolicitud> ObtenerInfoSolicitud(decimal codigoSolicitud)
         {
             try
             {
-                _logger.LogInformation("method called");
-                var informacionSolicitud = new InformacionSolicitud();
-
-                string token = HttpContext.Session.GetString("token") ?? "";
+                _logger.LogInformation("method called");  
                 string URI = $"{UrlApi}/CoordinatorAssignRequestAnalystGPN/ConsultRequerimentUnit?requestCode={codigoSolicitud}";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                return await ObtenerDataDeApi<InformacionSolicitud>(URI);
 
-                var response = httpClient.GetAsync(URI).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-
-                    if (!String.IsNullOrEmpty(respuesta.Token))
-                    {
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                        informacionSolicitud = JsonConvert.DeserializeObject<InformacionSolicitud>(respuesta.Response.ToString() ?? "") ?? new InformacionSolicitud();
-                    }
-                    else
-                    {
-                        HttpContext.Session.SetString("token", "");
-                    }
-                }
-
-                return informacionSolicitud;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                var informacionSolicitud = new InformacionSolicitud();
-                return informacionSolicitud;
+                _logger.LogError(ex, "An error occurred in the method.");                
+                return new InformacionSolicitud();
             }
+        }
+
+
+        private async Task<T> ObtenerDataDeApi<T>(string URI) where T : new()
+        {
+            string? token = HttpContext.Session.GetString("token");
+            if (token == null)
+            {
+                HttpContext.Session.Remove("token");
+                return new T();
+            }
+
+            var httpClient = getHttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await httpClient.GetAsync(URI);
+            if (!response.IsSuccessStatusCode)
+            {
+                return new T();
+            }
+
+            string responseString = await response.Content.ReadAsStringAsync();
+            var respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+            HttpContext.Session.SetString("token", respuesta.Token);
+
+            return JsonConvert.DeserializeObject<T>(respuesta.Response.ToString() ?? "") ?? new T();
+        }
+
+        private IActionResult ProcesarView(string rutaView)
+        {
+            _logger.LogInformation("method called");
+            string? token = HttpContext.Session.GetString("token");
+
+            if (token != null)
+                return View(rutaView);
+
+            return View();
+        }
+        private IActionResult ManejarErrorEnVista(Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred in the method.");
+            return View("Views/GestionPrencintosNacionalesDirector/Index.cshtml");
+        }
+
+        private async  Task<IActionResult> ProcesarViewInformacion(decimal idSolicitud, string rutaView)
+        {
+
+            var parametricasTipoSolicitudJson = configuration.GetSection("ParametricasTipoSolicitud").Get<List<ParametricaTipoSolicitud>>();
+            if (parametricasTipoSolicitudJson is null)
+                parametricasTipoSolicitudJson = new List<ParametricaTipoSolicitud>();
+            _logger.LogInformation("method called");
+            string? token = HttpContext.Session.GetString("token");
+
+            if (token != null)
+            {
+                var model = await ObtenerInfoSolicitud(idSolicitud);
+                model.ListaTiposSolicitud = parametricasTipoSolicitudJson;
+                return View(rutaView , model);
+            }
+
+            return View();
+
         }
     }
 
