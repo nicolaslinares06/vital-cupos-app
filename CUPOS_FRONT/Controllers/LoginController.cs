@@ -171,7 +171,33 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            return ValidarCambioContrasena(datosIng, httpClient, respuesta);
+                            if (respuesta.Message.Contains(StringHelper.estadoValidarCorreo.ToString()))
+                            {
+                                string URI2 = UrlApi + "/User/ConsultTerms?login=" + datosIng.user;
+                                var response2 = httpClient.GetAsync(URI2).Result;
+                                string responseString2 = response2.Content.ReadAsStringAsync().Result;
+                                Responses respuesta2 = JsonConvert.DeserializeObject<Responses>(responseString2);
+                                ReqAceptarCondiciones req = JsonConvert.DeserializeObject<ReqAceptarCondiciones>(respuesta2.Response.ToString());
+
+                                if (req.A012aceptaTratamientoDatosPersonales && req.A012aceptaTerminos)
+                                {
+                                    HttpContext.Session.SetString("User", datosIng.user);
+                                    HttpContext.Session.SetString("Password", datosIng.password);
+                                    return RedirectToAction("CambioContrasenaOlvido", "Login");
+                                }
+                                else
+                                {
+                                    HttpContext.Session.SetString("User", datosIng.user);
+                                    HttpContext.Session.SetString("Password", datosIng.password);
+                                    return RedirectToAction("CambioContrasena", "Login");
+                                }
+                            }
+                            else
+                            {
+                                ViewBag.SecretKeySite = secretKeySite;
+                                ViewBag.Alert = respuesta.Message;
+                                return View("Index");
+                            }
                         }
                     }
                     else
