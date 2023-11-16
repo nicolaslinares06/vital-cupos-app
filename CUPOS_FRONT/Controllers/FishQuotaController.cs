@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repository.Helpers;
 using Repository.Helpers.Models;
+using System;
 using System.Net.Http.Headers;
 using Web.Models;
 
@@ -39,19 +40,13 @@ namespace Web.Controllers
         {
             try
             {
-
                 var model = new List<FishQuota>();
                 _logger.LogInformation("method called");
                 return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                string token = HttpContext.Session.GetString("token") ?? "";
-                if (!String.IsNullOrEmpty(token))
-                    return RedirectToAction("FlujoNegocio", "Home");
-                else
-                    return RedirectToAction("Index", "Login");
+                return ManejarExcepcion(ex);
             }
         }
         /// <summary>
@@ -72,12 +67,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                string token = HttpContext.Session.GetString("token") ?? "";
-                if (!String.IsNullOrEmpty(token))
-                    return RedirectToAction("FlujoNegocio", "Home");
-                else
-                    return RedirectToAction("Index", "Login");
+                return ManejarExcepcion(ex);
             }
         }
         /// <summary>
@@ -89,10 +79,7 @@ namespace Web.Controllers
         public List<FishQuota> GetFishesQuotas(DateTime? initialValidityDate, DateTime? finalValidityDate, decimal numberResolution = 0)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<FishQuota> fishesQuotasList = new List<FishQuota>();
-                string token = HttpContext.Session.GetString("token") ?? "";
+            {               
                 string uri = "";
                 if (numberResolution == 0 && initialValidityDate == null && finalValidityDate == null)
                 {
@@ -103,23 +90,8 @@ namespace Web.Controllers
                     uri = String.Format("{0}/FishQuota/GetFishesQuotas?initialValidityDate={1}&finalValidityDate={2}&numberResolution={3}", urlApi, initialValidityDate, finalValidityDate, numberResolution);
 
                 }
-
-                var httpClient = GetHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(uri).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    Responses responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                    if (responseData.Response != null)
-                    {
-                        fishesQuotasList = JsonConvert.DeserializeObject<List<FishQuota>>(responseData.Response.ToString() ?? "") ?? new List<FishQuota>();
-                        HttpContext.Session.SetString("token", responseData.Token);
-                    }
-                }
-
-                return fishesQuotasList;
+                var resultado = ProcesarDataApiGet<List<FishQuota>>(uri);
+                return resultado ?? new List<FishQuota>();              
             }
             catch (Exception ex)
             {
@@ -135,30 +107,11 @@ namespace Web.Controllers
         public List<FishQuota> GetFishQuotaByCode(decimal code)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<FishQuota> fishesQuotasList = new List<FishQuota>();
-                string token = HttpContext.Session.GetString("token") ?? "";
+            {             
                 string uri = "";
-
                 uri = String.Format("{0}/FishQuota/GetFishQuotaByCode?code=" + code, urlApi);
-
-                var httpClient = GetHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(uri).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    Responses responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                    if (responseData.Response != null)
-                    {
-                        fishesQuotasList = JsonConvert.DeserializeObject<List<FishQuota>>(responseData.Response.ToString() ?? "") ?? new List<FishQuota>();
-                        HttpContext.Session.SetString("token", responseData.Token);
-                    }
-                }
-
-                foreach (var l in fishesQuotasList)
+                var resultado = ProcesarDataApiGet<List<FishQuota>>(uri) ?? new List<FishQuota>();   
+                foreach (var l in resultado)
                 {
                     if (l.Quota == 0)
                     {
@@ -167,8 +120,7 @@ namespace Web.Controllers
                         l.SpeciesName = null;
                     }
                 }
-
-                return fishesQuotasList;
+                return resultado;
             }
             catch (Exception ex)
             {
@@ -184,101 +136,15 @@ namespace Web.Controllers
         public Responses SaveFishQuota(FishQuota fishQuota)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token") ?? "";
+            {              
                 string uri = String.Format("{0}/FishQuota/SaveFishQuota", urlApi);
-                var httpClient = GetHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var req = new
-                {
-                    Code = fishQuota.Code,
-                    Type = fishQuota.Type,
-                    NumberResolution = fishQuota.NumberResolution,
-                    ResolutionDate = fishQuota.ResolutionDate,
-                    ValidityDate = fishQuota.ValidityDate,
-                    ValidityYear = fishQuota.ValidityYear,
-                    ResolutionObject = fishQuota.ResolutionObject,
-                    Document = fishQuota.Document,
-                    InitialValidityDate = fishQuota.InitialValidityDate,
-                    FinalValidityDate = fishQuota.FinalValidityDate,
-                    CodeFishQuotaAmount = fishQuota.CodeFishQuotaAmount,
-                    Group = fishQuota.Group,
-                    GroupName = fishQuota.GroupName,
-                    speciesNameComun = fishQuota.speciesNameComun,
-                    SpeciesCode = fishQuota.SpeciesCode,
-                    Quota = fishQuota.Quota,
-                    Total = fishQuota.Total,
-                    Region = fishQuota.Region,
-                    SpeciesName = fishQuota.SpeciesName,
-                    FishQuotaAmounts = fishQuota.FishQuotaAmounts?.Select(a => new
-                    {
-                        CodeFishQuotaAmount = a.CodeFishQuotaAmount,
-                        Group = a.Group,
-                        SpeciesCode = a.SpeciesCode,
-                        SpeciesName = a.SpeciesName,
-                        speciesNameComun = a.speciesNameComun,
-                        Quota = a.Quota,
-                        Total = a.Total,
-                        NameRegion = a.NameRegion,
-                        Region = a.Region,
-                        ActionTemp = a.ActionTemp
-                    }).ToList(),
-                    FishQuotaAmountsRemoved = fishQuota.FishQuotaAmountsRemoved?.Select(a => new
-                    {
-                        CodeFishQuotaAmount = a.CodeFishQuotaAmount,
-                        Group = a.Group,
-                        SpeciesCode = a.SpeciesCode,
-                        SpeciesName = a.SpeciesName,
-                        speciesNameComun = a.speciesNameComun,
-                        Quota = a.Quota,
-                        Total = a.Total,
-                        NameRegion = a.NameRegion,
-                        Region = a.Region,
-                        ActionTemp = a.ActionTemp
-                    }).ToList(),
-                    SupportDocuments = fishQuota.SupportDocuments?.Select(a => new
-                    {
-                        code = a.codigo,
-                        base64Attachment = a.adjuntoBase64,
-                        attachmentName = a.nombreAdjunto,
-                        attachmentType = a.tipoAdjunto
-                    }).ToList(),
-                    SupportDocumentsRemoved = fishQuota.SupportDocumentsRemoved?.Select(a => new
-                    {
-                        code = a.codigo,
-                        base64Attachment = a.adjuntoBase64,
-                        attachmentName = a.nombreAdjunto,
-                        attachmentType = a.tipoAdjunto
-                    }).ToList()
-                };
-
-                var response = httpClient.PostAsJsonAsync(uri, req).Result;
-
-                Responses responseData = new Responses();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                    return responseData;
-                }
-                else
-                {
-                    responseData.Message = "No se pudo consumir save servicio API CUPOS";
-                    responseData.Error = true;
-                    return responseData;
-                }
+                var req = ObtenerObjetoData(fishQuota);
+                var respuesta = ProcesarDataApiPost(uri, req, "No se pudo consumir save servicio API CUPOS");
+                return respuesta;   
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                Responses responseData = new Responses();
-                responseData.Error = true;
-                responseData.Message = ex.Message;
-                return responseData;
-
+                return ManejarExcepcionResponses(ex);
             }
         }
 
@@ -287,48 +153,23 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public object DeleteFishQuota(int code)
+        public Responses DeleteFishQuota(int code)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token") ?? "";
+            {                
                 string uri = String.Format("{0}/FishQuota/DeleteFishQuota?code=" + code, urlApi);
-
-                var httpClient = GetHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(uri).Result;
-
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                var resultado = ProcesarDataApiGet<Responses>(uri) ?? new Responses();
+              
+                if(resultado.Error)
                 {
-                    return new
-                    {
-                        volverInicio = true
-                    };
+                    resultado.Message = "No se pudo consumir delete servicio API CUPOS";
                 }
 
-                Responses responseData = new Responses();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                    return responseData;
-                }
-                else
-                {
-                    responseData.Message = "No se pudo consumir delete servicio API CUPOS";
-                    responseData.Error = true;
-                    return responseData;
-                }
+                return resultado;               
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                Responses responseData = new Responses();
-                responseData.Error = true;
-                responseData.Message = ex.Message;
-                return responseData;
+                return ManejarExcepcionResponses(ex);
             }
         }
 
@@ -340,101 +181,15 @@ namespace Web.Controllers
         public Responses UpdateFishQuota(FishQuota fishQuota)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token") ?? "";
+            {               
                 string uri = String.Format("{0}/FishQuota/UpdateFishQuota", urlApi);
-                var httpClient = GetHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var req = new
-                {
-                    Code = fishQuota.Code,
-                    Type = fishQuota.Type,
-                    NumberResolution = fishQuota.NumberResolution,
-                    ResolutionDate = fishQuota.ResolutionDate,
-                    ValidityDate = fishQuota.ValidityDate,
-                    ValidityYear = fishQuota.ValidityYear,
-                    ResolutionObject = fishQuota.ResolutionObject,
-                    Document = fishQuota.Document,
-                    InitialValidityDate = fishQuota.InitialValidityDate,
-                    FinalValidityDate = fishQuota.FinalValidityDate,
-                    CodeFishQuotaAmount = fishQuota.CodeFishQuotaAmount,
-                    Group = fishQuota.Group,
-                    GroupName = fishQuota.GroupName,
-                    speciesNameComun = fishQuota.speciesNameComun,
-                    SpeciesCode = fishQuota.SpeciesCode,
-                    Quota = fishQuota.Quota,
-                    Total = fishQuota.Total,
-                    Region = fishQuota.Region,
-                    SpeciesName = fishQuota.SpeciesName,
-                    FishQuotaAmounts = fishQuota.FishQuotaAmounts?.Select(a => new
-                    {
-                        CodeFishQuotaAmount = a.CodeFishQuotaAmount,
-                        Group = a.Group,
-                        SpeciesCode = a.SpeciesCode,
-                        SpeciesName = a.SpeciesName,
-                        speciesNameComun = a.speciesNameComun,
-                        Quota = a.Quota,
-                        Total = a.Total,
-                        NameRegion = a.NameRegion,
-                        Region = a.Region,
-                        ActionTemp = a.ActionTemp
-                    }).ToList(),
-                    FishQuotaAmountsRemoved = fishQuota.FishQuotaAmountsRemoved?.Select(a => new
-                    {
-                        CodeFishQuotaAmount = a.CodeFishQuotaAmount,
-                        Group = a.Group,
-                        SpeciesCode = a.SpeciesCode,
-                        SpeciesName = a.SpeciesName,
-                        speciesNameComun = a.speciesNameComun,
-                        Quota = a.Quota,
-                        Total = a.Total,
-                        NameRegion = a.NameRegion,
-                        Region = a.Region,
-                        ActionTemp = a.ActionTemp
-                    }).ToList(),
-                    SupportDocuments = fishQuota.SupportDocuments?.Select(a => new
-                    {
-                        code = a.codigo,
-                        base64Attachment = a.adjuntoBase64,
-                        attachmentName = a.nombreAdjunto,
-                        attachmentType = a.tipoAdjunto,
-                        tempAction = a.ActionTemp
-                    }).ToList(),
-                    SupportDocumentsRemoved = fishQuota.SupportDocumentsRemoved?.Select(a => new
-                    {
-                        code = a.codigo,
-                        base64Attachment = a.adjuntoBase64,
-                        attachmentName = a.nombreAdjunto,
-                        attachmentType = a.tipoAdjunto
-                    }).ToList()
-                };
-
-                var response = httpClient.PutAsJsonAsync(uri, req).Result;
-
-                Responses responseData = new Responses();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                    return responseData;
-                }
-                else
-                {
-                    responseData.Message = "No se pudo consumir save servicio API CUPOS";
-                    responseData.Error = true;
-                    return responseData;
-                }
+                var req = ObtenerObjetoData(fishQuota);
+                var respuesta = ProcesarDataApiPost(uri, req, "No se pudo consumir update servicio API CUPOS");
+                return respuesta;            
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                Responses responseData = new Responses();
-                responseData.Error = true;
-                responseData.Message = ex.Message;
-                return responseData;
+                return ManejarExcepcionResponses(ex);
             }
         }
 
@@ -442,39 +197,13 @@ namespace Web.Controllers
         /// Obtiene especies
         /// </summary>
         /// <returns></returns>
-        public object GetSpecies()
+        public List<ElementTypesEspecies> GetSpecies()
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<ElementTypesEspecies>? speciesList = new List<ElementTypesEspecies>();
-
-                string? token = HttpContext.Session.GetString("token");
+            {  
                 string uri = String.Format("{0}/FishQuota/GetSpecies", urlApi);
-                var httpClient = GetHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(uri).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    Responses? responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                    if (responseData.Response != null)
-                    {
-                        speciesList = JsonConvert.DeserializeObject<List<ElementTypesEspecies>>(responseData.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", responseData.Token);
-                    }
-                }
-
-
-                return speciesList ?? new object { };
+                var resultado = ProcesarDataApiGet<List<ElementTypesEspecies>>(uri) ?? new List<ElementTypesEspecies>();
+                return resultado;
             }
             catch (Exception ex)
             {
@@ -488,46 +217,182 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public object GetSupportDocument(decimal code)
+        public List<SupportDocuments> GetSupportDocument(decimal code)
         {
             try
             {
-                _logger.LogInformation("method called");
-                List<SupportDocuments> supportDocumentsList = new List<SupportDocuments>();
-                string token = HttpContext.Session.GetString("token") ?? "";
+              
                 string uri = "";
-
                 uri = String.Format("{0}/FishQuota/GetSupportDocument?code=" + code, urlApi);
-
-                var httpClient = GetHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(uri).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    Responses responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                    if (responseData.Response != null)
-                    {
-                        supportDocumentsList = JsonConvert.DeserializeObject<List<SupportDocuments>>(responseData.Response.ToString() ?? "")?? new List<SupportDocuments>();
-                        HttpContext.Session.SetString("token", responseData.Token);
-                    }
-                }
-
-                return supportDocumentsList;
+                var resultado = ProcesarDataApiGet<List<SupportDocuments>>(uri) ?? new List<SupportDocuments>();
+                return resultado;               
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
                 return new List<SupportDocuments>();
             }
+        }
+
+        private IActionResult ManejarExcepcion(Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred in the method.");
+            string token = HttpContext.Session.GetString("token") ?? "";
+            if (!String.IsNullOrEmpty(token))
+                return RedirectToAction("FlujoNegocio", "Home");
+            else
+                return RedirectToAction("Index", "Login");
+        }
+
+        private T ProcesarDataApiGet<T>(string URI) where T : new()
+        {
+
+            var httpClient = ConfigurarHttpClient();
+            var response = httpClient.GetAsync(URI).Result;
+            var data = ProcessHttpResponse<T>(response);
+            return data;
+        }
+
+        private Responses ProcesarDataApiPost<T>(string URI, T req, string mensajeError) 
+        {
+
+            var httpClient = ConfigurarHttpClient();
+            var response = httpClient.PostAsJsonAsync(URI, req).Result;
+            var data = ProcessHttpResponsePost(response, mensajeError);
+            return data ?? new Responses();
+        }
+
+        private T ProcessHttpResponse<T>(HttpResponseMessage response) where T : new()
+        {
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                return new T();
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseString = response.Content.ReadAsStringAsync().Result;
+                Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+
+                if (respuesta.Response != null)
+                {
+                    HttpContext.Session.SetString("token", respuesta.Token);
+                    return JsonConvert.DeserializeObject<T>(respuesta.Response.ToString() ?? "") ?? new T();
+                }
+            }
+
+            return new T();
+        }
+
+        private Responses ProcessHttpResponsePost(HttpResponseMessage response, string mensajeError)
+        {
+            Responses responseData = new Responses();
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonInput = response.Content.ReadAsStringAsync().Result;
+                responseData = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                return responseData;
+            }
+            else
+            {
+                responseData.Message = mensajeError;
+                responseData.Error = true;
+                return responseData;
+            }
+        }
+
+        private HttpClient ConfigurarHttpClient()
+        {
+            string? token = HttpContext.Session.GetString("token");
+            var httpClient = GetHttpClient();
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            return httpClient;
+        }
+
+        private object ObtenerObjetoData(FishQuota fishQuota)
+        {
+            var req = new
+            {
+                Code = fishQuota.Code,
+                Type = fishQuota.Type,
+                NumberResolution = fishQuota.NumberResolution,
+                ResolutionDate = fishQuota.ResolutionDate,
+                ValidityDate = fishQuota.ValidityDate,
+                ValidityYear = fishQuota.ValidityYear,
+                ResolutionObject = fishQuota.ResolutionObject,
+                Document = fishQuota.Document,
+                InitialValidityDate = fishQuota.InitialValidityDate,
+                FinalValidityDate = fishQuota.FinalValidityDate,
+                CodeFishQuotaAmount = fishQuota.CodeFishQuotaAmount,
+                Group = fishQuota.Group,
+                GroupName = fishQuota.GroupName,
+                speciesNameComun = fishQuota.speciesNameComun,
+                SpeciesCode = fishQuota.SpeciesCode,
+                Quota = fishQuota.Quota,
+                Total = fishQuota.Total,
+                Region = fishQuota.Region,
+                SpeciesName = fishQuota.SpeciesName,
+                FishQuotaAmounts = fishQuota.FishQuotaAmounts?.Select(a => new
+                {
+                    CodeFishQuotaAmount = a.CodeFishQuotaAmount,
+                    Group = a.Group,
+                    SpeciesCode = a.SpeciesCode,
+                    SpeciesName = a.SpeciesName,
+                    speciesNameComun = a.speciesNameComun,
+                    Quota = a.Quota,
+                    Total = a.Total,
+                    NameRegion = a.NameRegion,
+                    Region = a.Region,
+                    ActionTemp = a.ActionTemp
+                }).ToList(),
+                FishQuotaAmountsRemoved = fishQuota.FishQuotaAmountsRemoved?.Select(a => new
+                {
+                    CodeFishQuotaAmount = a.CodeFishQuotaAmount,
+                    Group = a.Group,
+                    SpeciesCode = a.SpeciesCode,
+                    SpeciesName = a.SpeciesName,
+                    speciesNameComun = a.speciesNameComun,
+                    Quota = a.Quota,
+                    Total = a.Total,
+                    NameRegion = a.NameRegion,
+                    Region = a.Region,
+                    ActionTemp = a.ActionTemp
+                }).ToList(),
+                SupportDocuments = fishQuota.SupportDocuments?.Select(a => new
+                {
+                    code = a.codigo,
+                    base64Attachment = a.adjuntoBase64,
+                    attachmentName = a.nombreAdjunto,
+                    attachmentType = a.tipoAdjunto,
+                    tempAction = a.ActionTemp
+                }).ToList(),
+                SupportDocumentsRemoved = fishQuota.SupportDocumentsRemoved?.Select(a => new
+                {
+                    code = a.codigo,
+                    base64Attachment = a.adjuntoBase64,
+                    attachmentName = a.nombreAdjunto,
+                    attachmentType = a.tipoAdjunto
+                }).ToList()
+            };
+
+            return req;
+        }
+
+        private Responses ManejarExcepcionResponses(Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred in the method.");
+            Responses responseData = new Responses();
+            responseData.Error = true;
+            responseData.Message = ex.Message;
+            return responseData;
+
         }
     }
 }
