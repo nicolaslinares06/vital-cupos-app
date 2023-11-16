@@ -6,8 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repository.Helpers;
 using Repository.Helpers.Models;
+using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
+using System.Security.Policy;
 using System.Xml.Linq;
 using Web.Models;
 using static Web.Models.TrayForNationalSealsExternUsers;
@@ -101,45 +104,15 @@ namespace Web.Controllers
         public object ConsultDocumentsTypes()
         {
             try
-            {
-                _logger.LogInformation("method called");
-
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                List<ElementTypes>? DocumentsTypes = new List<ElementTypes>();
+            {  
                 string URI = UrlApi + "/NonTimberFloraCertificate/ConsultDocumentsTypes";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        DocumentsTypes = JsonConvert.DeserializeObject<List<ElementTypes>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                }
-
-                return DocumentsTypes ?? new object { };
+                var respuesta = ProcesarDataApiGet<List<ElementTypes>>(URI);
+                return respuesta;                
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                List<ElementTypes>? DocumentsTypes = new List<ElementTypes>();
-                return DocumentsTypes;
+                _logger.LogError(ex, "An error occurred in the method.");                
+                return new List<ElementTypes>();
             }
         }
 
@@ -150,38 +123,15 @@ namespace Web.Controllers
         public object ConsultRequestTypes()
         {
             try
-            {
-                _logger.LogInformation("method called");
-
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                List<ElementTypes>? datos = new List<ElementTypes>();
+            {               
                 string URI = UrlApi + "/TrayForNationalSealsExternUsers/ConsultRequestTypes";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        datos = JsonConvert.DeserializeObject<List<ElementTypes>>(respuesta.Response.ToString() ?? "") ?? new List<ElementTypes>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                }
-                return datos;
+                var respuesta = ProcesarDataApiGet<List<ElementTypes>>(URI);
+                return respuesta;               
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                List<ElementTypes>? datos = new List<ElementTypes>();
-                return datos;
+                _logger.LogError(ex, "An error occurred in the method.");                
+                return new List<ElementTypes>(); 
             }
         }
 
@@ -192,44 +142,15 @@ namespace Web.Controllers
         public object ConsultBussiness()
         {
             try
-            {
-                _logger.LogInformation("method called");
-
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                List<ElementTypes>? datos = new List<ElementTypes>();
+            {              
                 string URI = UrlApi + "/TrayForNationalSealsExternUsers/ConsultBussiness";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        datos = JsonConvert.DeserializeObject<List<ElementTypes>>(respuesta.Response.ToString() ?? "") ?? new List<ElementTypes>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                }
-                return datos;
+                var respuesta = ProcesarDataApiGet<List<ElementTypes>>(URI);
+                return respuesta;               
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                List<ElementTypes>? datos = new List<ElementTypes>();
-                return datos;
+                _logger.LogError(ex, "An error occurred in the method.");              
+                return new List<ElementTypes>(); 
             }
         }
 
@@ -240,44 +161,15 @@ namespace Web.Controllers
         public object ConsultBussinesAndLegalRepresentant(decimal codigoEmpresa)
         {
             try
-            {
-                _logger.LogInformation("method called");
-
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                RepresentaeLegalEmpresa? datos = new RepresentaeLegalEmpresa();
+            {    
                 string URI = UrlApi + "/TrayForNationalSealsExternUsers/ConsultBussinesAndLegalRepresentant?codeBussines=" + codigoEmpresa;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        datos = JsonConvert.DeserializeObject<RepresentaeLegalEmpresa>(respuesta.Response.ToString() ?? "") ?? new RepresentaeLegalEmpresa();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return datos;
+                var respuesta = ProcesarDataApiGet<RepresentaeLegalEmpresa>(URI);
+                return respuesta;               
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                RepresentaeLegalEmpresa? datos = new RepresentaeLegalEmpresa();
-                return datos;
-
+                _logger.LogError(ex, "An error occurred in the method.");               
+                return new RepresentaeLegalEmpresa(); 
             }
         }
 
@@ -288,43 +180,15 @@ namespace Web.Controllers
         public object ConsultCities()
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                List<ElementTypesEspecies>? cities = new List<ElementTypesEspecies>();
+            {               
                 string URI = UrlApi + "/TrayForNationalSealsExternUsers/ConsultCities";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        cities = JsonConvert.DeserializeObject<List<ElementTypesEspecies>>(respuesta.Response.ToString() ?? "") ?? new List<ElementTypesEspecies>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                }
-                return cities;
+                var respuesta = ProcesarDataApiGet<List<ElementTypesEspecies>>(URI);
+                return respuesta;                
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                List<ElementTypesEspecies>? cities = new List<ElementTypesEspecies>();
-                return cities;
+                return new List<ElementTypesEspecies>();
 
             }
         }
@@ -337,116 +201,11 @@ namespace Web.Controllers
         public object RegisterRequest(Request request)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                string URI = UrlApi + "/TrayForNationalSealsExternUsers/RegisterRequest";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var req = new
-                {
-                    companyCode = request.codigoEmpresa,
-                    requestCode = request.codigoSolicitud,
-                    date = request.fecha,
-                    representativeCity = request.ciudadRepresentante,
-                    deliveryAddress = request.direccionEntrega,
-                    quantity = request.cantidad,
-                    specimens = request.especimenes,
-                    initialSkinCode = request.codigoInicialPieles,
-                    finalSkinCode = request.codigoFinalPieles,
-                    minorLength = request.longitudMenor,
-                    majorLength = request.longitudMayor,
-                    generateSealsForConsignation = false,
-                    representativeDate = request.fechaRepresentante,
-                    observations = request.observaciones,
-                    response = request.respuesta,
-                    requestStatus = request.estadoSolicitud,
-                    registrationDate = request.fechaRadicado,
-                    requestType = request.tipoSolicitud,
-                    statusChangeDate = request.fechaCambioEstado,
-                    withdrawalObservations = request.observacionesDesistimiento,
-                    numerations = request.numeraciones?.Select(n => new
-                    {
-                        code = n.codigo,
-                        initial = n.inicial,
-                        final = n.final,
-                        origen = n.origen
-                    }).ToList(),
-                    invoiceAttachment = new
-                    {
-                        code = request.facturaAdjunto.codigo,
-                        base64Attachment = request.facturaAdjunto.adjuntoBase64,
-                        attachmentName = request.facturaAdjunto.nombreAdjunto,
-                        attachmentType = request.facturaAdjunto.tipoAdjunto
-                    },
-                    letterAttachment = request.adjuntoCarta != null ? new
-                    {
-                        code = request.adjuntoCarta.codigo,
-                        base64Attachment = request.adjuntoCarta.adjuntoBase64,
-                        attachmentName = request.adjuntoCarta.nombreAdjunto,
-                        attachmentType = request.adjuntoCarta.tipoAdjunto
-                    } : null,
-                    attachedAnnexes = request.AnexosAdjuntos?.Select(a => new
-                    {
-                        code = a.codigo,
-                        base64Attachment = a.adjuntoBase64,
-                        attachmentName = a.nombreAdjunto,
-                        attachmentType = a.tipoAdjunto
-                    }).ToList(),
-                    attachedAnnexesToDelete = request.anexosAdjuntosEliminar?.Select(a => new
-                    {
-                        code = a.codigo,
-                        base64Attachment = a.adjuntoBase64,
-                        attachmentName = a.nombreAdjunto,
-                        attachmentType = a.tipoAdjunto
-                    }).ToList(),
-                    responseAttachments = request.adjuntosRespuesta?.Select(a => new
-                    {
-                        code = a.codigo,
-                        base64Attachment = a.adjuntoBase64,
-                        attachmentName = a.nombreAdjunto,
-                        attachmentType = a.tipoAdjunto
-                    }).ToList(),
-                    responseAttachmentsToDelete = request.adjuntosRespuestaEliminar?.Select(a => new
-                    {
-                        code = a.codigo,
-                        base64Attachment = a.adjuntoBase64,
-                        attachmentName = a.nombreAdjunto,
-                        attachmentType = a.tipoAdjunto
-                    }).ToList(),
-                    representativeDepartment = request.departamentoRepresentante,
-                    safeGuardNumbers = request.safeGuardNumbers,
-                    cuttingSave = request.cuttingSave
-                };
-
-                var response = httpClient.PostAsJsonAsync(URI, req).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+            {  
+                string URI = UrlApi + "/TrayForNationalSealsExternUsers/RegisterRequest";    
+                var req = ObtenerDataObjeto(request);
+                var respuesta = ProcesarDataApiPost(URI, req);
+                return respuesta;                
             }
             catch (Exception ex)
             {
@@ -464,42 +223,15 @@ namespace Web.Controllers
         public object ConsultRegisteredRecuest(decimal codigoEmpresa)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                List<solicitudes>? RegisteredRecuests = new List<solicitudes>();
+            {             
                 string URI = UrlApi + "/TrayForNationalSealsExternUsers/ConsultRegisteredRecuest?companyCode=" + codigoEmpresa;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        RegisteredRecuests = JsonConvert.DeserializeObject<List<solicitudes>>(respuesta.Response.ToString() ?? "") ?? new List<solicitudes>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return RegisteredRecuests;
+                var respuesta = ProcesarDataApiGet<List<solicitudes>>(URI);
+                return respuesta;               
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                List<solicitudes>? RegisteredRecuests = new List<solicitudes>();
-                return RegisteredRecuests;
+                _logger.LogError(ex, "An error occurred in the method.");               
+                return new List<solicitudes>();
             }
         }
 
@@ -511,42 +243,15 @@ namespace Web.Controllers
         public object ConsultRequirements(decimal codigoEmpresa)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                List<solicitudes>? RegisteredRecuests = new List<solicitudes>();
+            {               
                 string URI = UrlApi + "/TrayForNationalSealsExternUsers/ConsultRequirements?companyCode=" + codigoEmpresa;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        RegisteredRecuests = JsonConvert.DeserializeObject<List<solicitudes>>(respuesta.Response.ToString() ?? "") ?? new List<solicitudes>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return RegisteredRecuests;
+                var respuesta = ProcesarDataApiGet<List<solicitudes>>(URI);
+                return respuesta;               
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                List<solicitudes>? RegisteredRecuests = new List<solicitudes>();
-                return RegisteredRecuests;
+                _logger.LogError(ex, "An error occurred in the method.");               
+                return new List<solicitudes>();
             }
         }
 
@@ -558,36 +263,10 @@ namespace Web.Controllers
         public object ConsultApproved(decimal codigoEmpresa)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                List<solicitudes>? RegisteredRecuests = new List<solicitudes>();
+            {              
                 string URI = UrlApi + "/TrayForNationalSealsExternUsers/ConsultApproved?companyCode=" + codigoEmpresa;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        RegisteredRecuests = JsonConvert.DeserializeObject<List<solicitudes>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return RegisteredRecuests ?? new object { };
+                var respuesta = ProcesarDataApiGet<List<solicitudes>>(URI);
+                return respuesta;               
             }
             catch (Exception ex)
             {
@@ -604,42 +283,15 @@ namespace Web.Controllers
         public object ConsultDesisted(decimal codigoEmpresa)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                List<solicitudes>? RegisteredRecuests = new List<solicitudes>();
+            {               
                 string URI = UrlApi + "/TrayForNationalSealsExternUsers/ConsultDesisted?companyCode=" + codigoEmpresa;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        RegisteredRecuests = JsonConvert.DeserializeObject<List<solicitudes>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return RegisteredRecuests ?? new object { };
+                var respuesta = ProcesarDataApiGet<List<solicitudes>>(URI);
+                return respuesta;                
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                List<solicitudes>? RegisteredRecuests = new List<solicitudes>();
-                return RegisteredRecuests;
+                return new List<solicitudes>();
             }
         }
 
@@ -651,42 +303,15 @@ namespace Web.Controllers
         public object ConsultOnePendientRegister(decimal codigoSolicitud)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                Request? solicitud = new Request();
+            {               
                 string URI = UrlApi + "/TrayForNationalSealsExternUsers/ConsultOnePendientRegister?codeRequest=" + codigoSolicitud;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        solicitud = JsonConvert.DeserializeObject<Request>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return solicitud ?? new object { };
+                var respuesta = ProcesarDataApiGet<Request> (URI);
+                return respuesta;               
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                Request? solicitud = new Request();
-                return solicitud;
+                _logger.LogError(ex, "An error occurred in the method.");               
+                return new Request(); 
             }
         }
 
@@ -698,115 +323,11 @@ namespace Web.Controllers
         public object EditRequest(Request request)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
+            { 
                 string URI = UrlApi + "/TrayForNationalSealsExternUsers/EditRequest";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var req = new
-                {
-
-                    companyCode = request.codigoEmpresa,
-                    requestCode = request.codigoSolicitud,
-                    date = request.fecha,
-                    representativeCity = request.ciudadRepresentante,
-                    deliveryAddress = request.direccionEntrega,
-                    quantity = request.cantidad,
-                    specimens = request.especimenes,
-                    initialSkinCode = request.codigoInicialPieles,
-                    finalSkinCode = request.codigoFinalPieles,
-                    minorLength = request.longitudMenor,
-                    majorLength = request.longitudMayor,
-                    generateSealsForConsignation = false,
-                    representativeDate = request.fechaRepresentante,
-                    observations = request.observaciones,
-                    response = request.respuesta,
-                    requestStatus = request.estadoSolicitud,
-                    registrationDate = request.fechaRadicado,
-                    requestType = request.tipoSolicitud,
-                    statusChangeDate = request.fechaCambioEstado,
-                    withdrawalObservations = request.observacionesDesistimiento,
-                    numerations = request.numeraciones?.Select(n => new
-                    {
-                        code = n.codigo,
-                        initial = n.inicial,
-                        final = n.final,
-                        origen = n.origen
-                    }).ToList(),
-                    invoiceAttachment = new
-                    {
-                        code = request.facturaAdjunto.codigo,
-                        base64Attachment = request.facturaAdjunto.adjuntoBase64,
-                        attachmentName = request.facturaAdjunto.nombreAdjunto,
-                        attachmentType = request.facturaAdjunto.tipoAdjunto
-                    },
-                    letterAttachment = request.adjuntoCarta != null ? new
-                    {
-                        code = request.adjuntoCarta.codigo,
-                        base64Attachment = request.adjuntoCarta.adjuntoBase64,
-                        attachmentName = request.adjuntoCarta.nombreAdjunto,
-                        attachmentType = request.adjuntoCarta.tipoAdjunto
-                    } : null,
-                    attachedAnnexes = request.AnexosAdjuntos?.Select(a => new
-                    {
-                        code = a.codigo,
-                        base64Attachment = a.adjuntoBase64,
-                        attachmentName = a.nombreAdjunto,
-                        attachmentType = a.tipoAdjunto
-                    }).ToList(),
-                    attachedAnnexesToDelete = request.anexosAdjuntosEliminar?.Select(a => new
-                    {
-                        code = a.codigo,
-                        base64Attachment = a.adjuntoBase64,
-                        attachmentName = a.nombreAdjunto,
-                        attachmentType = a.tipoAdjunto
-                    }).ToList(),
-                    responseAttachments = request.adjuntosRespuesta?.Select(a => new
-                    {
-                        code = a.codigo,
-                        base64Attachment = a.adjuntoBase64,
-                        attachmentName = a.nombreAdjunto,
-                        attachmentType = a.tipoAdjunto
-                    }).ToList(),
-                    responseAttachmentsToDelete = request.adjuntosRespuestaEliminar?.Select(a => new
-                    {
-                        code = a.codigo,
-                        base64Attachment = a.adjuntoBase64,
-                        attachmentName = a.nombreAdjunto,
-                        attachmentType = a.tipoAdjunto
-                    }).ToList(),
-                    representativeDepartment = request.departamentoRepresentante
-                };
-
-                var response = httpClient.PostAsJsonAsync(URI, req).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                var req = ObtenerDataObjeto(request);
+                var respuesta = ProcesarDataApiPost(URI, req);
+                return respuesta;                
             }
             catch (Exception ex)
             {
@@ -822,38 +343,10 @@ namespace Web.Controllers
         public object GetQuotas(string documentNumber, string especie)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<Quota>? quotaList = new List<Quota>();
-
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
+            {   
                 string uri = String.Format("{0}/TrayForNationalSealsExternUsers/GetQuotas?documentNumber={1}&species={2}", UrlApi, documentNumber, especie);
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(uri).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    Responses? responseData = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                    if (responseData != null)
-                    {
-                        quotaList = JsonConvert.DeserializeObject<List<Quota>>(responseData.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", responseData.Token);
-                    }
-                }
-
-                return quotaList ?? new object { };
+                var respuesta = ProcesarDataApiGet<List<Quota>>(uri);
+                return respuesta;                
             }
             catch (Exception ex)
             {
@@ -869,38 +362,10 @@ namespace Web.Controllers
         public object GetInventory(string documentNumber, string especie)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<Inventory>? inventario = new List<Inventory>();
-
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
+            { 
                 string uri = String.Format("{0}/TrayForNationalSealsExternUsers/GetInventory?documentNumber={1}&species={2}", UrlApi, documentNumber, especie);
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(uri).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    Responses? responseData = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                    if (responseData != null)
-                    {
-                        inventario = JsonConvert.DeserializeObject<List<Inventory>>(responseData.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", responseData.Token);
-                    }
-                }
-
-                return inventario ?? new object { };
+                var respuesta = ProcesarDataApiGet<List<Inventory>>(uri);
+                return respuesta;                
             }
             catch (Exception ex)
             {
@@ -916,43 +381,15 @@ namespace Web.Controllers
         public object ConsultDepartments()
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<ElementTypesEspecies>? departments = new List<ElementTypesEspecies>();
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
+            {   
                 string URI = UrlApi + "/TrayForNationalSealsExternUsers/ConsultDepartments";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        departments = JsonConvert.DeserializeObject<List<ElementTypesEspecies>>(respuesta.Response.ToString() ?? "") ?? new List<ElementTypesEspecies>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                }
-                return departments;
+                var respuesta = ProcesarDataApiGet<List<ElementTypesEspecies>>(URI);
+                return respuesta;                
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                List<ElementTypesEspecies>? departments = new List<ElementTypesEspecies>();
-                return departments;
+                _logger.LogError(ex, "An error occurred in the method.");               
+                return new List<ElementTypesEspecies>(); 
             }
         }
 
@@ -964,43 +401,15 @@ namespace Web.Controllers
         public object ConsultCitiesByDepartmentId(decimal departamentoId)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<ElementTypesEspecies>? cities = new List<ElementTypesEspecies>();
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
+            {  
                 string URI = UrlApi + "/TrayForNationalSealsExternUsers/ConsultCitiesByIdDepartment?idDepartment=" + departamentoId;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        cities = JsonConvert.DeserializeObject<List<ElementTypesEspecies>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                }
-                return cities ?? new object { };
+                var respuesta = ProcesarDataApiGet<List<ElementTypesEspecies>>(URI);
+                return respuesta;                
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                List<ElementTypesEspecies>? cities = new List<ElementTypesEspecies>();
-                return cities;
+                _logger.LogError(ex, "An error occurred in the method.");               
+                return new List<ElementTypesEspecies>(); 
             }
         }
 
@@ -1010,18 +419,7 @@ namespace Web.Controllers
         public object getNumbersRequest(ConsultUnableNumbersModel data)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<numbers>? numbers = new List<numbers>();
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                string URI = UrlApi + "/TrayForNationalSealsExternUsers/getNumbersRequest";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
+            {   
                 var req = new
                 {
                     code = data.code,
@@ -1030,32 +428,15 @@ namespace Web.Controllers
                     inventory = data.inventario
                 };
 
-                var response = httpClient.PostAsJsonAsync(URI, req).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                    if (respuesta.Response != null)
-                    {
-                        numbers = JsonConvert.DeserializeObject<List<numbers>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                }
-                return numbers ?? new object { };
+                string URI = UrlApi + "/TrayForNationalSealsExternUsers/getNumbersRequest";
+                var respuesta = ObtenerDataApiPost<List<numbers>>(URI, req);
+                return respuesta;
+               
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                List<numbers>? numbers = new List<numbers>();
-                return numbers;
+                return new List<numbers>(); 
             }
         }
 
@@ -1066,17 +447,7 @@ namespace Web.Controllers
         public object ValidateNumbers(validateNumbersModel numbers)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                string uri = String.Format("{0}/TrayForNationalSealsExternUsers/ValidateNumbers", UrlApi);
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
+            { 
                 var req = new
                 {
                     codeCompany = numbers.codeCompany,
@@ -1087,28 +458,9 @@ namespace Web.Controllers
                     } : null,
                     origin = numbers.origen
                 };
-
-                var response = httpClient.PostAsJsonAsync(uri, req).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonInput = response.Content.ReadAsStringAsync().Result;
-                    Responses? responseData = JsonConvert.DeserializeObject<Responses>(jsonInput);
-                    if (responseData != null)
-                    {
-                        HttpContext.Session.SetString("token", responseData.Token);
-                        return responseData.Response;
-                    }
-                }
-
-                return new object { };
+                string uri = String.Format("{0}/TrayForNationalSealsExternUsers/ValidateNumbers", UrlApi);
+                var respuesta = ObtenerDataApiPost<object>(uri, req);
+                return respuesta;                
             }
             catch (Exception ex)
             {
@@ -1124,35 +476,9 @@ namespace Web.Controllers
         /// <returns></returns>
         public object getActaData(string documentNumber)
         {
-            List<cuttingReport>? datos = new List<cuttingReport>();
-            string? token = HttpContext.Session.GetString("token");
-
-            if (token == null)
-                return View("Views/Login/Index.cshtml");
-
             string URI = UrlApi + "/TrayForNationalSealsExternUsers/getActaData?documentNumber=" + documentNumber;
-            var httpClient = getHttpClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = httpClient.GetAsync(URI).Result;
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            {
-                return new
-                {
-                    volverInicio = true
-                };
-            }
-            if (response.IsSuccessStatusCode)
-            {
-                string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                if (respuesta.Response != null)
-                {
-                    datos = JsonConvert.DeserializeObject<List<cuttingReport>>(respuesta.Response.ToString() ?? "");
-                    HttpContext.Session.SetString("token", respuesta.Token);
-                }
-
-            }
-            return datos ?? new object { };
+            var respuesta = ProcesarDataApiGet<List<cuttingReport>>(URI);
+            return respuesta;           
         }
 
         /// <summary>
@@ -1161,36 +487,10 @@ namespace Web.Controllers
         /// <param name="cuttingCode"></param>
         /// <returns></returns>
         public object getFractions(int cuttingCode)
-        {
-            List<cutting>? datos = new List<cutting>();
-            string? token = HttpContext.Session.GetString("token");
-
-            if (token == null)
-                return View("Views/Login/Index.cshtml");
-
+        {           
             string URI = UrlApi + "/TrayForNationalSealsExternUsers/getFractions?cuttingCode=" + cuttingCode;
-            var httpClient = getHttpClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = httpClient.GetAsync(URI).Result;
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            {
-                return new
-                {
-                    volverInicio = true
-                };
-            }
-            if (response.IsSuccessStatusCode)
-            {
-                string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                if (respuesta.Response != null)
-                {
-                    datos = JsonConvert.DeserializeObject<List<cutting>>(respuesta.Response.ToString() ?? "");
-                    HttpContext.Session.SetString("token", respuesta.Token);
-                }
-
-            }
-            return datos ?? new object { };
+            var respuesta = ProcesarDataApiGet<List<cutting>>(URI);
+            return respuesta;           
         }
 
         /// <summary>
@@ -1199,17 +499,77 @@ namespace Web.Controllers
         /// <param name="cuttingCode"></param>
         /// <returns></returns>
         public object getSafeguard(int reportCode)
-        {
-            List<Safeguard>? datos = new List<Safeguard>();
-            string? token = HttpContext.Session.GetString("token");
-
-            if (token == null)
-                return View("Views/Login/Index.cshtml");
-
+        {  
             string URI = UrlApi + "/TrayForNationalSealsExternUsers/getSafeguard?reportCode=" + reportCode;
-            var httpClient = getHttpClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var respuesta = ProcesarDataApiGet<List<Safeguard>>(URI);
+            return respuesta;            
+        }
+
+        private object ProcesarDataApiGet<T>(string URI) where T : new()
+        {
+
+            var httpClient = ConfigurarHttpClient();
             var response = httpClient.GetAsync(URI).Result;
+            var data = ProcessHttpResponse<T>(response);
+            return data ?? new object { };
+        }
+
+        private object ProcesarDataApiPost<T>(string URI, T req)
+        {
+
+            var httpClient = ConfigurarHttpClient();
+            var response = httpClient.PostAsJsonAsync(URI, req).Result;
+            var data = ProcesarPeticion(response);
+            return data ?? new object { };
+        }
+
+        private object ObtenerDataApiPost<T>(string URI, object req) where T : new()
+        {
+
+            var httpClient = ConfigurarHttpClient();
+            var response = httpClient.PostAsJsonAsync(URI, req).Result;
+            var data = ProcessHttpResponse<T>(response);
+            return data ?? new object { };
+        }
+
+        private HttpClient ConfigurarHttpClient()
+        {
+            string? token = HttpContext.Session.GetString("token");
+            var httpClient = getHttpClient();
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            return httpClient;
+        }
+
+
+        private object ProcessHttpResponse<T>(HttpResponseMessage response) where T : new()
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                return new { volverInicio = true };
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseString = response.Content.ReadAsStringAsync().Result;
+                Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+
+                if (respuesta.Response != null)
+                {
+                    HttpContext.Session.SetString("token", respuesta.Token);
+                    return JsonConvert.DeserializeObject<T>(respuesta.Response.ToString() ?? "") ?? new T();
+                }
+            }
+
+            return new T();
+        }
+
+        private object ProcesarPeticion(HttpResponseMessage response)
+        {
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
                 return new
@@ -1217,18 +577,104 @@ namespace Web.Controllers
                     volverInicio = true
                 };
             }
+
             if (response.IsSuccessStatusCode)
             {
                 string responseString = response.Content.ReadAsStringAsync().Result;
                 Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
                 if (respuesta.Response != null)
                 {
-                    datos = JsonConvert.DeserializeObject<List<Safeguard>>(respuesta.Response.ToString() ?? "");
                     HttpContext.Session.SetString("token", respuesta.Token);
                 }
 
+                return true;
             }
-            return datos ?? new object { };
+            else
+            {
+                return false;
+            }
+        }
+
+        private object ObtenerDataObjeto(Request request)
+        {
+            var req = new
+            {
+                companyCode = request.codigoEmpresa,
+                requestCode = request.codigoSolicitud,
+                date = request.fecha,
+                representativeCity = request.ciudadRepresentante,
+                deliveryAddress = request.direccionEntrega,
+                quantity = request.cantidad,
+                specimens = request.especimenes,
+                initialSkinCode = request.codigoInicialPieles,
+                finalSkinCode = request.codigoFinalPieles,
+                minorLength = request.longitudMenor,
+                majorLength = request.longitudMayor,
+                generateSealsForConsignation = false,
+                representativeDate = request.fechaRepresentante,
+                observations = request.observaciones,
+                response = request.respuesta,
+                requestStatus = request.estadoSolicitud,
+                registrationDate = request.fechaRadicado,
+                requestType = request.tipoSolicitud,
+                statusChangeDate = request.fechaCambioEstado,
+                withdrawalObservations = request.observacionesDesistimiento,
+                numerations = request.numeraciones?.Select(n => new
+                {
+                    code = n.codigo,
+                    initial = n.inicial,
+                    final = n.final,
+                    origen = n.origen
+                }).ToList(),
+                invoiceAttachment = new
+                {
+                    code = request.facturaAdjunto.codigo,
+                    base64Attachment = request.facturaAdjunto.adjuntoBase64,
+                    attachmentName = request.facturaAdjunto.nombreAdjunto,
+                    attachmentType = request.facturaAdjunto.tipoAdjunto
+                },
+                letterAttachment = request.adjuntoCarta != null ? new
+                {
+                    code = request.adjuntoCarta.codigo,
+                    base64Attachment = request.adjuntoCarta.adjuntoBase64,
+                    attachmentName = request.adjuntoCarta.nombreAdjunto,
+                    attachmentType = request.adjuntoCarta.tipoAdjunto
+                } : null,
+                attachedAnnexes = request.AnexosAdjuntos?.Select(a => new
+                {
+                    code = a.codigo,
+                    base64Attachment = a.adjuntoBase64,
+                    attachmentName = a.nombreAdjunto,
+                    attachmentType = a.tipoAdjunto
+                }).ToList(),
+                attachedAnnexesToDelete = request.anexosAdjuntosEliminar?.Select(a => new
+                {
+                    code = a.codigo,
+                    base64Attachment = a.adjuntoBase64,
+                    attachmentName = a.nombreAdjunto,
+                    attachmentType = a.tipoAdjunto
+                }).ToList(),
+                responseAttachments = request.adjuntosRespuesta?.Select(a => new
+                {
+                    code = a.codigo,
+                    base64Attachment = a.adjuntoBase64,
+                    attachmentName = a.nombreAdjunto,
+                    attachmentType = a.tipoAdjunto
+                }).ToList(),
+                responseAttachmentsToDelete = request.adjuntosRespuestaEliminar?.Select(a => new
+                {
+                    code = a.codigo,
+                    base64Attachment = a.adjuntoBase64,
+                    attachmentName = a.nombreAdjunto,
+                    attachmentType = a.tipoAdjunto
+                }).ToList(),
+                representativeDepartment = request.departamentoRepresentante,
+                safeGuardNumbers = request.safeGuardNumbers,
+                cuttingSave = request.cuttingSave
+            };
+
+            return req;
+
         }
 
     }
