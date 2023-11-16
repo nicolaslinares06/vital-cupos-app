@@ -171,33 +171,7 @@ namespace Web.Controllers
                         }
                         else
                         {
-                            if (respuesta.Message.Contains(StringHelper.estadoValidarCorreo.ToString()))
-                            {
-                                string URI2 = UrlApi + "/User/ConsultTerms?login=" + datosIng.user;
-                                var response2 = httpClient.GetAsync(URI2).Result;
-                                string responseString2 = response2.Content.ReadAsStringAsync().Result;
-                                Responses respuesta2 = JsonConvert.DeserializeObject<Responses>(responseString2);
-                                ReqAceptarCondiciones req = JsonConvert.DeserializeObject<ReqAceptarCondiciones>(respuesta2.Response.ToString());
-
-                                if (req.A012aceptaTratamientoDatosPersonales && req.A012aceptaTerminos)
-                                {
-                                    HttpContext.Session.SetString("User", datosIng.user);
-                                    HttpContext.Session.SetString("Password", datosIng.password);
-                                    return RedirectToAction("CambioContrasenaOlvido", "Login");
-                                }
-                                else
-                                {
-                                    HttpContext.Session.SetString("User", datosIng.user);
-                                    HttpContext.Session.SetString("Password", datosIng.password);
-                                    return RedirectToAction("CambioContrasena", "Login");
-                                }
-                            }
-                            else
-                            {
-                                ViewBag.SecretKeySite = secretKeySite;
-                                ViewBag.Alert = respuesta.Message;
-                                return View("Index");
-                            }
+                            return ValidarCambioContrasena(datosIng, httpClient, respuesta);
                         }
                     }
                     else
@@ -264,7 +238,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 var result = false;
                 var captchaResponse = Request.Form["g-recaptcha-response"];
-                string? apiUrl = UrlRecaptcha + "?secret={0}&response={1}";
+                string? apiUrl = "https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}";
                 var requestUrl = string.Format(apiUrl, secretKey, captchaResponse);
                 var request = (HttpWebRequest)WebRequest.Create(requestUrl);
 

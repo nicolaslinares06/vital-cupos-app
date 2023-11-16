@@ -31,7 +31,7 @@
                     }
                 </div>
                 <div>
-                    <button type="submit" id="btn-ingreso" class="btn btn-primary" title="Ingresar">Ingresar</button>
+                    <button type="button" id="btn-ingreso" class="btn btn-primary" title="Ingresar">Ingresar</button>
                 </div>
             </form>
             <div>
@@ -44,6 +44,10 @@
 <script>
 $("#btn-olvidar-contrasena").click(function () {
     document.location.href = "/Login/EnvioCorreo";
+});
+
+$("#btn-ingreso").click(function() {
+    $("#formulario-ingreso").submit();
 });
 
 $(document).ready(function () {
