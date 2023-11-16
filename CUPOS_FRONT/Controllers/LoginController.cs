@@ -238,7 +238,7 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 var result = false;
                 var captchaResponse = Request.Form["g-recaptcha-response"];
-                string? apiUrl = UrlRecaptcha + "?secret={0}&response={1}";
+                string? apiUrl = "https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}";
                 var requestUrl = string.Format(apiUrl, secretKey, captchaResponse);
                 var request = (HttpWebRequest)WebRequest.Create(requestUrl);
 
