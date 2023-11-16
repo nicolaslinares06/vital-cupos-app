@@ -1,10 +1,13 @@
 ﻿using DocumentFormat.OpenXml.Office2016.Drawing.Command;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Ocsp;
 using Repository.Helpers;
 using Repository.Helpers.Models;
+using System.Collections.Generic;
 using System.Data;
 using System.Net.Http.Headers;
 using Web.Models;
@@ -60,12 +63,7 @@ namespace WebFront.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                string token = HttpContext.Session.GetString("token") ?? "";
-                if (!String.IsNullOrEmpty(token))
-                    return RedirectToAction("FlujoNegocio", "Home");
-                else
-                    return RedirectToAction("Index", "Login");
+                return ManejarExcepcion(ex);
             }
         }
         /// <summary>
@@ -90,12 +88,7 @@ namespace WebFront.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred in the method.");
-                string token = HttpContext.Session.GetString("token") ?? "";
-                if (!String.IsNullOrEmpty(token))
-                    return RedirectToAction("FlujoNegocio", "Home");
-                else
-                    return RedirectToAction("Index", "Login");
+              return ManejarExcepcion(ex);
             }
         }
         /// consultar datos de entidad
@@ -108,35 +101,16 @@ namespace WebFront.Controllers
         {
             try
             {
-                _logger.LogInformation("method called");
-                List<Entidad>? datos = new List<Entidad>();
-                string? token = HttpContext.Session.GetString("token");
                 string URI = UrlApi + "/ResolutionRegister/ConsultEntityDates?documentType=" + documentType + "&nitBussines=" + nitBussines + (entityType == null ? "" : "&entityType=" + entityType);
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-          
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                   if (respuesta.Response != null)
-                    {
-                        datos = JsonConvert.DeserializeObject<List<Entidad>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                if (datos is null)
-                    datos = new List<Entidad>();
-
-                return datos;
+                var resultado = ProcesarDataApiGet<List<Entidad>>(URI);   
+                List<Entidad> listado =  (List<Entidad>)resultado;
+                return listado ?? new List<Entidad>();
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<Entidad>();
             }
         }
 
@@ -148,40 +122,10 @@ namespace WebFront.Controllers
         public object ConsultQuotas(string nitBussines)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<Cupos>? cupos = new List<Cupos>();
-                string? token = HttpContext.Session.GetString("token");
+            {   
                 string URI = UrlApi + "/ResolutionRegister/ConsultQuotas?nitBussines=" + nitBussines;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                   if (respuesta.Response != null)
-                    {
-                        cupos = JsonConvert.DeserializeObject<List<Cupos>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                    if (cupos != null && cupos.Count > 0)
-                    {
-                        cupos.ForEach(el =>
-                        {
-                            el.anioProduccion = el.fechaProduccion.Year;
-                        });
-
-                    }
-                }
-                return cupos ?? new object { };
+                var resultado = ProcesarDataApiGet<List<Cupos>>(URI);
+                return resultado ?? new List<Cupos>();               
             }
             catch (Exception ex)
             {
@@ -198,40 +142,11 @@ namespace WebFront.Controllers
         public object SearchQuotas(decimal ResolutionNumbre)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<Cupos>? cupos = new List<Cupos>();
-                string? token = HttpContext.Session.GetString("token");
+            {             
                 string URI = UrlApi + "/ResolutionRegister/SearchQuotas?resolutionNumber=" + ResolutionNumbre;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                   if (respuesta.Response != null)
-                    {
-                        cupos = JsonConvert.DeserializeObject<List<Cupos>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                    if (cupos != null && cupos.Count > 0)
-                    {
-                        cupos.ForEach(el =>
-                        {
-                            el.anioProduccion = el.fechaProduccion.Year;
-                        });
-
-                    }
-                }
-                return cupos ?? new object { };
+                var resultado = ProcesarDataApiGet<List<Cupos>>(URI);
+                return resultado ?? new List<Cupos>();
+               
             }
             catch (Exception ex)
             {
@@ -247,40 +162,10 @@ namespace WebFront.Controllers
         public object ConsultInventory()
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<InventarioCupos>? inventario = new List<InventarioCupos>();
-                string? token = HttpContext.Session.GetString("token");
+            {            
                 string URI = UrlApi + "/ResolutionRegister/ConsultInventory";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                   if (respuesta.Response != null)
-                    {
-                        inventario = JsonConvert.DeserializeObject<List<InventarioCupos>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                    if (inventario != null && inventario.Count > 0)
-                    {
-                        inventario.ForEach(el =>
-                        {
-                            el.anio = el.fechaProduccion.Year;
-                        });
-
-                    }
-                }
-                return inventario ?? new object { };
+                var resultado = ProcesarDataApiGet<List<InventarioCupos>>(URI);
+                return resultado ?? new List<InventarioCupos>();               
             }
             catch (Exception ex)
             {
@@ -296,32 +181,10 @@ namespace WebFront.Controllers
         public object ConsultMarkingType()
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<ElementTypes>? markingType = new List<ElementTypes>();
-                string? token = HttpContext.Session.GetString("token");
+            {             
                 string URI = UrlApi + "/ResolutionRegister/ConsultMarkingType";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                   if (respuesta.Response != null)
-                    {
-                        markingType = JsonConvert.DeserializeObject<List<ElementTypes>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return markingType ?? new object { };
+                var resultado = ProcesarDataApiGet<List<ElementTypes>>(URI);
+                return resultado ?? new List<ElementTypes>();                
             }
             catch (Exception ex)
             {
@@ -337,32 +200,11 @@ namespace WebFront.Controllers
         public object ConsultEntityTypes()
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<ElementTypes>? EntityTypes = new List<ElementTypes>();
-                string? token = HttpContext.Session.GetString("token");
+            {            
                 string URI = UrlApi + "/ResolutionRegister/ConsultEntityTypes";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                   if (respuesta.Response != null)
-                    {
-                        EntityTypes = JsonConvert.DeserializeObject<List<ElementTypes>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return EntityTypes ?? new object { };
+                var resultado = ProcesarDataApiGet<List<ElementTypes>>(URI);
+                return resultado ?? new List<ElementTypes>();
+               
             }
             catch (Exception ex)
             {
@@ -378,32 +220,11 @@ namespace WebFront.Controllers
         public object ConsultRepoblationPay()
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<ElementTypes>? RepoblationPay = new List<ElementTypes>();
-                string? token = HttpContext.Session.GetString("token");
+            {              
                 string URI = UrlApi + "/ResolutionRegister/ConsultRepoblationPay";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                   if (respuesta.Response != null)
-                    {
-                        RepoblationPay = JsonConvert.DeserializeObject<List<ElementTypes>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return RepoblationPay ?? new object { };
+                var resultado = ProcesarDataApiGet<List<ElementTypes>>(URI);
+                return resultado ?? new List<ElementTypes>();
+               
             }
             catch (Exception ex)
             {
@@ -419,32 +240,10 @@ namespace WebFront.Controllers
         public object ConsultEspecimensTypes()
         {
             try
-            {
-                _logger.LogInformation("method called");
-                List<ElementTypesEspecies>? EspecimentsTypes = new List<ElementTypesEspecies>();
-                string? token = HttpContext.Session.GetString("token");
+            {               
                 string URI = UrlApi + "/ResolutionRegister/ConsultEspecimensTypes";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                   if (respuesta.Response != null)
-                    {
-                        EspecimentsTypes = JsonConvert.DeserializeObject<List<ElementTypesEspecies>>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return EspecimentsTypes ?? new object { };
+                var resultado = ProcesarDataApiGet<List<ElementTypesEspecies>>(URI);
+                return resultado ?? new List<ElementTypesEspecies>();                
             }
             catch (Exception ex)
             {
@@ -461,32 +260,10 @@ namespace WebFront.Controllers
         public object ConsultOneQuota(decimal quotaCode)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                resolutionQuota? resolutionQuota = new resolutionQuota();
-                string? token = HttpContext.Session.GetString("token");
+            {             
                 string URI = UrlApi + "/ResolutionRegister/ConsultOneQuota?quotaCode=" + quotaCode;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                   if (respuesta.Response != null)
-                    {
-                        resolutionQuota = JsonConvert.DeserializeObject<resolutionQuota>(respuesta.Response.ToString() ?? "");
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return resolutionQuota ?? new object { };
+                var resultado = ProcesarDataApiGet<resolutionQuota>(URI);
+                return resultado ?? new resolutionQuota();                
             }
             catch (Exception ex)
             {
@@ -503,111 +280,13 @@ namespace WebFront.Controllers
         public object EditaEliminarResolucionEspecieExportar(saveResolutionQuotas datos)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-                string URI = UrlApi + "/ResolutionRegister/EditDeleteResolutionQuota";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            { 
+                string URI = UrlApi + "/ResolutionRegister/EditDeleteResolutionQuota";               
+                var req = ObtenerDatosObject(datos);
+                var resultado = ProcesarDataApiPost(URI, req);
+                return resultado ?? false;
 
-                var req = new
-                {
-                    dataToSave = new
-                    {
-                        quotaCode = datos.datoGuardar.codigoCupo,
-                        issuingAuthority = datos.datoGuardar.autoridadEmiteResolucion,
-                        zoocriaderoCode = datos.datoGuardar.codigoZoocriadero,
-                        resolutionNumber = datos.datoGuardar.numeroResolucion,
-                        resolutionDate = datos.datoGuardar.fechaResolucion,
-                        resolutionRegistrationDate = datos.datoGuardar.fechaRegistroResolucion,
-                        observations = datos.datoGuardar.observaciones,
-                        companyNit = datos.datoGuardar.nitEmpresa
-                    },
-                    newExportSpeciesData = datos.datosEspecieExportarNuevo?.Select(especie => new
-                    {
-                        PkT005code = especie.PkT005codigo,
-                        quotaCode = especie.codigoCupo,
-                        year = especie.anio,
-                        quotas = especie.cupos,
-                        id = especie.id,
-                        markingTypeParametricCode = especie.codigoParametricaTipoMarcaje,
-                        speciesCode = especie.codigoEspecie,
-                        repopulationQuotaPaymentParametricCode = especie.codigoParametricaPagoCuotaDerepoblacion,
-                        filingDate = especie.fechaRadicado,
-                        specimenType = especie.tipoEspecimen,
-                        productionYear = especie.añoProduccion,
-                        batchCode = especie.marcaLote,
-                        markingConditions = especie.condicionesMarcaje,
-                        parentalPopulationMale = especie.poblacionParentalMacho,
-                        parentalPopulationFemale = especie.poblacionParentalHembra,
-                        totalParentalPopulation = especie.poblacionParentalTotal,
-                        populationFromIncubator = especie.poblacionSalioDeIncubadora,
-                        populationAvailableForQuotas = especie.poblacionDisponibleParaCupos,
-                        individualsForRepopulation = especie.individuosDestinadosARepoblacion,
-                        grantedUtilizationQuotas = especie.cupoAprovechamientoOtorgados,
-                        replacementRate = especie.tasaReposicion,
-                        mortalityNumber = especie.numeroMortalidad,
-                        repopulationQuotaForUtilization = especie.cuotaRepoblacionParaAprovechamiento,
-                        grantedPaidUtilizationQuotas = especie.cupoAprovechamientoOtorgadosPagados,
-                        observations = especie.observaciones,
-                        repopulationQuota = especie.cuotaRepoblacion,
-                        initialRepopulationQuotaInternalNumber = especie.numeroInternoInicialCuotaRepoblacion,
-                        finalRepopulationQuotaInternalNumber = especie.numeroInternoFinalCuotaRepoblacion,
-                        initialInternalNumber = especie.numeroInternoInicial,
-                        finalInternalNumber = especie.numeroInternoFinal,
-                        totalQuotas = especie.totalCupos,
-                        availableQuotas = especie.cuposDisponibles,
-                        repopulationQuotaPaid = especie.sePagoCuotaRepoblacion,
-                        speciesRegisteredForCommercialization = especie.seRegistroEspecieComercializar,
-                        supportingDocuments = especie.documentosSoporte?.Select(doc => new
-                        {
-                            code = doc.codigo,
-                            base64Attachment = doc.adjuntoBase64,
-                            attachmentName = doc.nombreAdjunto,
-                            attachmentType = doc.tipoAdjunto
-                        }).ToList(),
-                        newSupportingDocuments = especie.documentosSoporteNuevos
-                            ?.Select(doc => new
-                            {
-                                code = doc.codigo,
-                                base64Attachment = doc.adjuntoBase64,
-                                attachmentName = doc.nombreAdjunto,
-                                attachmentType = doc.tipoAdjunto
-                            }).ToList(),
-                        deletedSupportingDocuments = especie.documentosSoporteEliminar?.Select(doc => new
-                        {
-                            code = doc.codigo,
-                            base64Attachment = doc.adjuntoBase64,
-                            attachmentName = doc.nombreAdjunto,
-                            attachmentType = doc.tipoAdjunto
-                        }).ToList()
-                    }).ToList()
-                };
-
-                var response = httpClient.PostAsJsonAsync(URI, req).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                   if (respuesta.Response != null)
-                    {
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+               
             }
             catch (Exception ex)
             {
@@ -625,110 +304,12 @@ namespace WebFront.Controllers
         {
             try
             {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-                string URI = UrlApi + "/ResolutionRegister/saveResolutionQuota";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var req = new
-                {
-                    dataToSave = new
-                    {
-                        quotaCode = datos.datoGuardar.codigoCupo,
-                        issuingAuthority = datos.datoGuardar.autoridadEmiteResolucion,
-                        zoocriaderoCode = datos.datoGuardar.codigoZoocriadero,
-                        resolutionNumber = datos.datoGuardar.numeroResolucion,
-                        resolutionDate = datos.datoGuardar.fechaResolucion,
-                        resolutionRegistrationDate = datos.datoGuardar.fechaRegistroResolucion,
-                        observations = datos.datoGuardar.observaciones,
-                        companyNit = datos.datoGuardar.nitEmpresa
-                    },
-                    newExportSpeciesData = datos.datosEspecieExportarNuevo?.Select(especie => new
-                    {
-                        PkT005code = especie.PkT005codigo,
-                        quotaCode = especie.codigoCupo,
-                        year = especie.anio,
-                        quotas = especie.cupos,
-                        id = especie.id,
-                        markingTypeParametricCode = especie.codigoParametricaTipoMarcaje,
-                        speciesCode = especie.codigoEspecie,
-                        repopulationQuotaPaymentParametricCode = especie.codigoParametricaPagoCuotaDerepoblacion,
-                        filingDate = especie.fechaRadicado,
-                        specimenType = especie.tipoEspecimen,
-                        productionYear = especie.añoProduccion,
-                        batchCode = especie.marcaLote,
-                        markingConditions = especie.condicionesMarcaje,
-                        parentalPopulationMale = especie.poblacionParentalMacho,
-                        parentalPopulationFemale = especie.poblacionParentalHembra,
-                        totalParentalPopulation = especie.poblacionParentalTotal,
-                        populationFromIncubator = especie.poblacionSalioDeIncubadora,
-                        populationAvailableForQuotas = especie.poblacionDisponibleParaCupos,
-                        individualsForRepopulation = especie.individuosDestinadosARepoblacion,
-                        grantedUtilizationQuotas = especie.cupoAprovechamientoOtorgados,
-                        replacementRate = especie.tasaReposicion,
-                        mortalityNumber = especie.numeroMortalidad,
-                        repopulationQuotaForUtilization = especie.cuotaRepoblacionParaAprovechamiento,
-                        grantedPaidUtilizationQuotas = especie.cupoAprovechamientoOtorgadosPagados,
-                        observations = especie.observaciones,
-                        repopulationQuota = especie.cuotaRepoblacion,
-                        initialRepopulationQuotaInternalNumber = especie.numeroInternoInicialCuotaRepoblacion,
-                        finalRepopulationQuotaInternalNumber = especie.numeroInternoFinalCuotaRepoblacion,
-                        initialInternalNumber = especie.numeroInternoInicial,
-                        finalInternalNumber = especie.numeroInternoFinal,
-                        totalQuotas = especie.totalCupos,
-                        availableQuotas = especie.cuposDisponibles,
-                        repopulationQuotaPaid = especie.sePagoCuotaRepoblacion,
-                        speciesRegisteredForCommercialization = especie.seRegistroEspecieComercializar,
-                        supportingDocuments = especie.documentosSoporte?.Select(doc => new
-                        {
-                            code = doc.codigo,
-                            base64Attachment = doc.adjuntoBase64,
-                            attachmentName = doc.nombreAdjunto,
-                            attachmentType = doc.tipoAdjunto
-                        }).ToList(),
-                        newSupportingDocuments = especie.documentosSoporteNuevos
-                            ?.Select(doc => new
-                            {
-                                code = doc.codigo,
-                                base64Attachment = doc.adjuntoBase64,
-                                attachmentName = doc.nombreAdjunto,
-                                attachmentType = doc.tipoAdjunto
-                            }).ToList(),
-                        deletedSupportingDocuments = especie.documentosSoporteEliminar?.Select(doc => new
-                        {
-                            code = doc.codigo,
-                            base64Attachment = doc.adjuntoBase64,
-                            attachmentName = doc.nombreAdjunto,
-                            attachmentType = doc.tipoAdjunto
-                        }).ToList()
-                    }).ToList()
-                };
-
-                var response = httpClient.PostAsJsonAsync(URI, req).Result;
-
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                   if (respuesta.Response != null)
-                    {
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                
+                string URI = UrlApi + "/ResolutionRegister/saveResolutionQuota";    
+                var req = ObtenerDatosObject(datos);
+                var resultado = ProcesarDataApiPost(URI, req);
+                return resultado ?? false;
+               
             }
             catch (Exception ex)
             {
@@ -745,30 +326,11 @@ namespace WebFront.Controllers
         public object DisableResolution(decimal quotaCode)
         {
             try
-            {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
+            {               
                 string URI = UrlApi + "/ResolutionRegister/DisableResolution?quotaCode=" + quotaCode;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return new
-                    {
-                        volverInicio = true
-                    };
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                   if (respuesta.Response != null)
-                    {
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
-                return true;
+                var resultado = ProcesarDataApiGet<bool>(URI);
+                return resultado ?? false;
+               
             }
             catch (Exception ex)
             {
@@ -776,5 +338,178 @@ namespace WebFront.Controllers
                 return false;
             }
         }
+
+        private object ProcessHttpResponse<T>(HttpResponseMessage response) where T : new()
+        {
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                return new { volverInicio = true };
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseString = response.Content.ReadAsStringAsync().Result;
+                Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+
+                if (respuesta.Response != null)
+                {
+                    HttpContext.Session.SetString("token", respuesta.Token);
+                    return JsonConvert.DeserializeObject<T>(respuesta.Response.ToString() ?? "") ?? new T();
+                }
+            }
+
+            return new T();
+        }
+
+
+        private object ProcessHttpResponsePost(HttpResponseMessage response) 
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                return new
+                {
+                    volverInicio = true
+                };
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseString = response.Content.ReadAsStringAsync().Result;
+                Responses? respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                if (respuesta.Response != null)
+                {
+                    HttpContext.Session.SetString("token", respuesta.Token);
+                }
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private object ProcesarDataApiGet<T>(string URI) where T : new()
+        {             
+         
+            var httpClient = ConfigurarHttpClient();           
+            var response = httpClient.GetAsync(URI).Result;
+            var data = ProcessHttpResponse<T>(response);        
+            return data ?? new object { };
+        }
+
+
+        private object ProcesarDataApiPost<T>(string URI, T req)
+        {
+
+            var httpClient = ConfigurarHttpClient();
+            var response = httpClient.PostAsJsonAsync(URI, req).Result;
+            var data = ProcessHttpResponsePost(response);
+            return data ?? new object { };
+        }
+
+        private HttpClient ConfigurarHttpClient()
+        {
+            string? token = HttpContext.Session.GetString("token");
+            var httpClient = getHttpClient();
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            return httpClient;
+        }
+
+        private IActionResult ManejarExcepcion(Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred in the method.");
+            string token = HttpContext.Session.GetString("token") ?? "";
+            if (!String.IsNullOrEmpty(token))
+                return RedirectToAction("FlujoNegocio", "Home");
+            else
+                return RedirectToAction("Index", "Login");
+        }
+
+        private object ObtenerDatosObject(saveResolutionQuotas datos)
+        {
+            var req = new
+            {
+                dataToSave = new
+                {
+                    quotaCode = datos.datoGuardar.codigoCupo,
+                    issuingAuthority = datos.datoGuardar.autoridadEmiteResolucion,
+                    zoocriaderoCode = datos.datoGuardar.codigoZoocriadero,
+                    resolutionNumber = datos.datoGuardar.numeroResolucion,
+                    resolutionDate = datos.datoGuardar.fechaResolucion,
+                    resolutionRegistrationDate = datos.datoGuardar.fechaRegistroResolucion,
+                    observations = datos.datoGuardar.observaciones,
+                    companyNit = datos.datoGuardar.nitEmpresa
+                },
+                newExportSpeciesData = datos.datosEspecieExportarNuevo?.Select(especie => new
+                {
+                    PkT005code = especie.PkT005codigo,
+                    quotaCode = especie.codigoCupo,
+                    year = especie.anio,
+                    quotas = especie.cupos,
+                    id = especie.id,
+                    markingTypeParametricCode = especie.codigoParametricaTipoMarcaje,
+                    speciesCode = especie.codigoEspecie,
+                    repopulationQuotaPaymentParametricCode = especie.codigoParametricaPagoCuotaDerepoblacion,
+                    filingDate = especie.fechaRadicado,
+                    specimenType = especie.tipoEspecimen,
+                    productionYear = especie.añoProduccion,
+                    batchCode = especie.marcaLote,
+                    markingConditions = especie.condicionesMarcaje,
+                    parentalPopulationMale = especie.poblacionParentalMacho,
+                    parentalPopulationFemale = especie.poblacionParentalHembra,
+                    totalParentalPopulation = especie.poblacionParentalTotal,
+                    populationFromIncubator = especie.poblacionSalioDeIncubadora,
+                    populationAvailableForQuotas = especie.poblacionDisponibleParaCupos,
+                    individualsForRepopulation = especie.individuosDestinadosARepoblacion,
+                    grantedUtilizationQuotas = especie.cupoAprovechamientoOtorgados,
+                    replacementRate = especie.tasaReposicion,
+                    mortalityNumber = especie.numeroMortalidad,
+                    repopulationQuotaForUtilization = especie.cuotaRepoblacionParaAprovechamiento,
+                    grantedPaidUtilizationQuotas = especie.cupoAprovechamientoOtorgadosPagados,
+                    observations = especie.observaciones,
+                    repopulationQuota = especie.cuotaRepoblacion,
+                    initialRepopulationQuotaInternalNumber = especie.numeroInternoInicialCuotaRepoblacion,
+                    finalRepopulationQuotaInternalNumber = especie.numeroInternoFinalCuotaRepoblacion,
+                    initialInternalNumber = especie.numeroInternoInicial,
+                    finalInternalNumber = especie.numeroInternoFinal,
+                    totalQuotas = especie.totalCupos,
+                    availableQuotas = especie.cuposDisponibles,
+                    repopulationQuotaPaid = especie.sePagoCuotaRepoblacion,
+                    speciesRegisteredForCommercialization = especie.seRegistroEspecieComercializar,
+                    supportingDocuments = especie.documentosSoporte?.Select(doc => new
+                    {
+                        code = doc.codigo,
+                        base64Attachment = doc.adjuntoBase64,
+                        attachmentName = doc.nombreAdjunto,
+                        attachmentType = doc.tipoAdjunto
+                    }).ToList(),
+                    newSupportingDocuments = especie.documentosSoporteNuevos
+                        ?.Select(doc => new
+                        {
+                            code = doc.codigo,
+                            base64Attachment = doc.adjuntoBase64,
+                            attachmentName = doc.nombreAdjunto,
+                            attachmentType = doc.tipoAdjunto
+                        }).ToList(),
+                    deletedSupportingDocuments = especie.documentosSoporteEliminar?.Select(doc => new
+                    {
+                        code = doc.codigo,
+                        base64Attachment = doc.adjuntoBase64,
+                        attachmentName = doc.nombreAdjunto,
+                        attachmentType = doc.tipoAdjunto
+                    }).ToList()
+                }).ToList()
+            };
+
+            return req;
+        }
+
+
     }
 }
