@@ -42,13 +42,16 @@ namespace Web.Controllers
         {
             try
             {
-                _logger.LogInformation("method called");
-                return View();
+                return Vistas();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("Administracion", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -59,18 +62,16 @@ namespace Web.Controllers
         {
             try
             {
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                _logger.LogInformation("method called");
-                return View();
+                return Vistas();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("Administracion", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -89,7 +90,11 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("Administracion", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -101,12 +106,16 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-            return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("Administracion", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -127,36 +136,14 @@ namespace Web.Controllers
                 var httpClient = getHttpClient();
                 string token = HttpContext.Session.GetString("token") ?? "";
 
-                List<Auditoria> r = new();
-
-                if (token == "")
-                {
-                    HttpContext.Session.Remove("token");
-                    return r;
-                }
-                else
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        r = JsonConvert.DeserializeObject<List<Auditoria>>(respuesta.Response.ToString() ?? "") ?? new List<Auditoria>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        return r;
-                    }
-                }
+                var r = Consultas(token, httpClient, URI);
 
                 return r;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<Auditoria>();
             }
         }
         /// <summary>
@@ -173,36 +160,46 @@ namespace Web.Controllers
                 var httpClient = getHttpClient();
                 string token = HttpContext.Session.GetString("token") ?? "";
 
-                List<Auditoria> r = new();
-
-                if (token == "")
-                {
-                    HttpContext.Session.Remove("token");
-                    return r;
-                }
-                else
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        r = JsonConvert.DeserializeObject<List<Auditoria>>(respuesta.Response.ToString() ?? "") ?? new List<Auditoria>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        return r;
-                    }
-                }
+                var r = Consultas(token, httpClient, URI);
 
                 return r;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<Auditoria>();
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private List<Auditoria> Consultas(string token, HttpClient httpClient, string URI)
+        {
+            List<Auditoria> r = new();
+
+            if (token == "")
+            {
+                HttpContext.Session.Remove("token");
+                return r;
+            }
+            else
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = httpClient.GetAsync(URI).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseString = response.Content.ReadAsStringAsync().Result;
+                    string jsonInput = responseString;
+                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                    r = JsonConvert.DeserializeObject<List<Auditoria>>(respuesta.Response.ToString() ?? "") ?? new List<Auditoria>();
+                    HttpContext.Session.SetString("token", respuesta.Token);
+
+                    return r;
+                }
+
+                return r;
             }
         }
         /// <summary>
@@ -236,8 +233,22 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<ModulosReq>();
             }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private IActionResult Vistas()
+        {
+            string? token = HttpContext.Session.GetString("token");
+
+            if (token == null)
+                return View("Views/Login/Index.cshtml");
+
+            _logger.LogInformation("method called");
+            return View();
         }
     }
 }

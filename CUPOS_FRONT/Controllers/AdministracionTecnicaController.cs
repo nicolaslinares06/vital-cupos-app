@@ -48,8 +48,7 @@ namespace Web.Controllers
                 if (token == null)
                     return View("Views/Login/Index.cshtml");
 
-                Technical technical = filtradoInicial();
-                return View(technical);
+                return View(filtradoInicial());
             }
             catch (Exception ex)
             {
@@ -65,13 +64,7 @@ namespace Web.Controllers
         {
             try
             {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                return View();
+                return Vistas();
             }
             catch (Exception ex)
             {
@@ -82,12 +75,15 @@ namespace Web.Controllers
 
         public IActionResult Ayuda()
         {
-            string? token = HttpContext.Session.GetString("token");
-
-            if (token == null)
-                return View("Views/Login/Index.cshtml");
-
-            return View();
+            try
+            {
+                return Vistas();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in the method.");
+                return StatusCode(500, "An error occurred");
+            }
         }
         /// <summary>
         /// 
@@ -116,31 +112,9 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<ReqValorTecnica> r = new List<ReqValorTecnica>();
-
-                string token = HttpContext.Session.GetString("token") ?? "";
-
+                
                 string URI = UrlApi + "/TechnicalAdmin/Consult";
-                var httpClient = getHttpClient();
-
-                if (token == "")
-                {
-                    HttpContext.Session.Remove("token");
-                }
-                else
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        r = JsonConvert.DeserializeObject<List<ReqValorTecnica>>(respuesta.Response.ToString() ?? "") ?? new List<ReqValorTecnica>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-                    }
-                }
+                var r = Busquedas(URI);
 
                 foreach (var tecnico in r)
                 {
@@ -164,16 +138,17 @@ namespace Web.Controllers
                     tecnico.estate = resultadoListado;
                 }
 
-                Technical listado = new Technical();
-
-                listado.technicalList = r;
+                Technical listado = new()
+                {
+                    technicalList = r
+                };
 
                 return listado;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new Technical();
             }
         }
 
@@ -182,41 +157,16 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<ReqValorTecnica> r = new List<ReqValorTecnica>();
-
-                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/TechnicalAdmin/Consult?value=" + nombreValor;
-                var httpClient = getHttpClient();
-
-                if (token == "")
-                {
-                    HttpContext.Session.Remove("token");
-                    return r;
-                }
-                else
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        r = JsonConvert.DeserializeObject<List<ReqValorTecnica>>(respuesta.Response.ToString() ?? "") ?? new List<ReqValorTecnica>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        return r;
-                    }
-
-                    return r;
-                }
+                var r = Busquedas(URI);
+                
+                return r;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<ReqValorTecnica>();
             }
         }
         /// <summary>
@@ -232,16 +182,11 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 if (HttpContext.Session.GetString("ActualizarTecnica") != "True")
                 {
-                    return "El usuario no cuenta con los permisos para Actualizar la información";
+                    return StringHelper.msgNoPermisoActualizar;
                 }
 
                 string r = "";
-                string token = HttpContext.Session.GetString("token") ?? "";
-
                 string URI = UrlApi + "/TechnicalAdmin/Update";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
                 var req = new
                 {
                     code = _datosAct.codigo,
@@ -251,19 +196,14 @@ namespace Web.Controllers
                     registrationStatus = _datosAct.estadoRegistro
                 };
 
-                var response = httpClient.PutAsJsonAsync(URI, req).Result;
-
-                string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-                HttpContext.Session.SetString("token", respuesta.Token);
-
+                var respuesta = Respuesta(URI, false, req);
                 r = respuesta.Message;
                 return r;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return "";
             }
         }
         /// <summary>
@@ -279,19 +219,12 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 if (HttpContext.Session.GetString("EliminarTecnica") != "True")
                 {
-                    return "El usuario no cuenta con los permisos para Eliminar la información";
+                    return StringHelper.msgNoPermisoEliminar;
                 }
 
                 string r = "";
-                string token = HttpContext.Session.GetString("token") ?? "";
-
                 string URI = UrlApi + "/TechnicalAdmin/Delete";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.PostAsJsonAsync(URI, idEliminar).Result;
-
-                string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                var respuesta = Respuesta(URI, false, idEliminar);
                 HttpContext.Session.SetString("token", respuesta.Token);
 
                 r = respuesta.Message;
@@ -300,7 +233,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return "";
             }
         }
         /// <summary>
@@ -317,16 +250,11 @@ namespace Web.Controllers
                 if (HttpContext.Session.GetString("ActualizarTecnica") != "True")
                 {
                     ViewBag.ErrorCreacion = "false";
-                    ViewBag.RespuestaCreacionTabla = "El usuario no cuenta con los permisos para Actualizar la información";
+                    ViewBag.RespuestaCreacionTabla = StringHelper.msgNoPermisoActualizar;
                     return View("AgregarValor");
                 }
 
-                string token = HttpContext.Session.GetString("token") ?? "";
-
                 string URI = UrlApi + "/TechnicalAdmin/Create";
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
                 var req = new
                 {
                     code = _datosCreacion.codigo,
@@ -335,11 +263,7 @@ namespace Web.Controllers
                     description = _datosCreacion.descripcion,
                     registrationStatus = _datosCreacion.estadoRegistro
                 };
-
-                var response = httpClient.PostAsJsonAsync(URI, req).Result;
-
-                string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                var respuesta = Respuesta(URI, false, req);
                 HttpContext.Session.SetString("token", respuesta.Token);
 
                 if (!respuesta.Error)
@@ -357,7 +281,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return StatusCode(500, "An error occurred.");
             }
         }
         /// <summary>
@@ -371,19 +295,11 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<string> valores = new List<string>();
+                List<string> valores = new();
 
                 string term = HttpContext.Request.Query["term"].ToString();
-
-                string token = HttpContext.Session.GetString("token") ?? "";
-
                 string URI = UrlApi + "/TechnicalAdmin/ConsultTechnicalValues?parameter=" + term;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-
-                string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                var respuesta = Respuesta(URI, true);
                 List<ValorEstado> datos = JsonConvert.DeserializeObject<List<ValorEstado>>(respuesta.Response.ToString() ?? "") ?? new List<ValorEstado>();
 
                 foreach (var etapa in datos)
@@ -396,8 +312,74 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<string>();
             }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private IActionResult Vistas()
+        {
+            string? token = HttpContext.Session.GetString("token");
+
+            if (token == null)
+                return View("Views/Login/Index.cshtml");
+
+            _logger.LogInformation("method called");
+            return View();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private List<ReqValorTecnica> Busquedas(string URI)
+        {
+            _logger.LogInformation("method called");
+
+            var respuesta = Respuesta(URI, true);
+            List<ReqValorTecnica> r = JsonConvert.DeserializeObject<List<ReqValorTecnica>>(respuesta.Response.ToString() ?? "") ?? new List<ReqValorTecnica>();
+            HttpContext.Session.SetString("token", respuesta.Token);
+
+            return r;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private Responses Respuesta(string URI, bool get, Object data = null)
+        {
+            var httpClient = getHttpClient();
+            string token = HttpContext.Session.GetString("token") ?? "";
+
+            if (token == "")
+            {
+                HttpContext.Session.Remove("token");
+                return new Responses();
+            }
+            else
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                HttpResponseMessage response;
+
+                if (get)
+                {
+                    response = httpClient.GetAsync(URI).Result;
+                }
+                else
+                {
+                    response = httpClient.PutAsJsonAsync(URI, data).Result;
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseString = response.Content.ReadAsStringAsync().Result;
+                    string jsonInput = responseString;
+                    return JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                }
+            }
+
+            return new Responses();
         }
     }
 }
