@@ -90,6 +90,10 @@ namespace Repository.Helpers
         public const string msgEstadoObligatorio = "Estado es obligatorio para la consulta";
         public const string msgYaExisteElRol = "Ya existe el rol con el nombre: ";
         public const string msgCamposIncompletos = "Campos incompletos";
+        public const string msgNoPermisoActualizar = "El usuario no cuenta con los permisos para Actualizar";
+        public const string msgNoPermisoEliminar = "El usuario no cuenta con los permisos para Eliminar información";
+        public const string msgCrearRoles = "El usuario no cuenta con los permisos para Crear Roles";
+        public const string msgCrearUsuarios = "El usuario no cuenta con los permisos para Crear Usuarios";
 
         public const string msgCodigoEstadoNoEncontrado = "Código de estado no encontrado";
 

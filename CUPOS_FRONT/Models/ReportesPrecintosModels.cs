@@ -9,9 +9,9 @@ namespace CUPOS_FRONT.Models
         {
             public string ResolutionNumber { get; set; } = "";
             public decimal Establishment { get; set; } = 0;
-            public decimal NIT { get; set; } = 0;
+            public decimal? NIT { get; set; }
             [DataType(DataType.Date)]
-            public DateTime RadicationDate { get; set; }
+            public DateTime? RadicationDate { get; set; }
             public int SpecificSearch { get; set; }
         }
 

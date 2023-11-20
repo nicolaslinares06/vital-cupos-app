@@ -50,7 +50,11 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("GestionUsuarios", "Usuarios");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -67,42 +71,31 @@ namespace Web.Controllers
                 if (HttpContext.Session.GetString("CrearUsuario") != "True")
                 {
                     ViewBag.MostrarMensaje = "true";
-                    ViewBag.Mensaje = "El usuario no cuenta con los permisos para Crear Usuarios";
+                    ViewBag.Mensaje = StringHelper.msgCrearUsuarios;
 
                     return View("CreacionUsuario");
                 }
 
-                string token = HttpContext.Session.GetString("token") ?? "";
+                string URI = UrlApi + "/User/Create";
+                var resp = Respuesta(URI, false, _datosUsu);
 
-                if (token == "")
+                if (resp.Message != null)
                 {
-                    HttpContext.Session.Remove("token");
-                    return RedirectToAction("Index", "Login");
-                }
-                else
-                {
-                    string URI = UrlApi + "/User/Create";
-                    var httpClient = GetHttpClient();
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.PostAsJsonAsync(URI, _datosUsu).Result;
-
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        HttpContext.Session.SetString("token", resp.Token);
-                        ViewBag.MostrarMensaje = "true";
-                        ViewBag.Mensaje = resp.Message;
-                        return View("CreacionUsuario");
-                    }
+                    HttpContext.Session.SetString("token", resp.Token);
+                    ViewBag.MostrarMensaje = "true";
+                    ViewBag.Mensaje = resp.Message;
                     return View("CreacionUsuario");
                 }
+                return View("CreacionUsuario");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("Index", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -115,24 +108,17 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Parametric/ConsultDocumentType";
-                var httpClient = GetHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-
-                string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                var respuesta = Respuesta(URI, true);
                 List<ReqDocumentType> docs = JsonConvert.DeserializeObject<List<ReqDocumentType>>(respuesta.Response.ToString() ?? "") ?? new List<ReqDocumentType>();
-
 
                 return docs;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<ReqDocumentType>();
             }
         }
         /// <summary>
@@ -144,25 +130,56 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Parametric/ConsultDependence";
-                var httpClient = GetHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-
-                string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                var respuesta = Respuesta(URI, true);
                 List<ReqEstadoCertificado> docs = JsonConvert.DeserializeObject<List<ReqEstadoCertificado>>(respuesta.Response.ToString() ?? "") ?? new List<ReqEstadoCertificado>();
-
 
                 return docs;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<ReqEstadoCertificado>();
             }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private Responses Respuesta(string URI, bool get, Object data = null)
+        {
+            var httpClient = GetHttpClient();
+            string token = HttpContext.Session.GetString("token") ?? "";
+
+            if (token == "")
+            {
+                HttpContext.Session.Remove("token");
+                return new Responses();
+            }
+            else
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                HttpResponseMessage response;
+
+                if (get)
+                {
+                    response = httpClient.GetAsync(URI).Result;
+                }
+                else
+                {
+                    response = httpClient.PutAsJsonAsync(URI, data).Result;
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseString = response.Content.ReadAsStringAsync().Result;
+                    string jsonInput = responseString;
+                    return JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                }
+            }
+
+            return new Responses();
         }
     }
 }

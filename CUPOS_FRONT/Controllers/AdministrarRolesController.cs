@@ -50,13 +50,16 @@ namespace Web.Controllers
                 if (token == null)
                     return View("Views/Login/Index.cshtml");
 
-                RolesList rolesList = cargueInicial();
-                return View(rolesList);
+                return View(cargueInicial());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("Administracion", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -67,29 +70,22 @@ namespace Web.Controllers
         {
             try
             {
-                _logger.LogInformation("method called");
-                string? token = HttpContext.Session.GetString("token");
-
-                if (token == null)
-                    return View("Views/Login/Index.cshtml");
-
-                return View();
+                return Vistas();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("Index", "AdministrarRoles");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
 
         public IActionResult Ayuda()
         {
-            string? token = HttpContext.Session.GetString("token");
-
-            if (token == null)
-                return View("Views/Login/Index.cshtml");
-
-            return View();
+            return Vistas();
         }
 
         public IActionResult returnAdministracion()
@@ -102,7 +98,11 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("Index", "AdministrarRoles");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -113,32 +113,9 @@ namespace Web.Controllers
         /// <returns></returns>
         public RolesList cargueInicial()
         {
-            List<ReqRoles> r = new List<ReqRoles>();
-
-            string token = HttpContext.Session.GetString("token") ?? "";
-
             string URI = UrlApi + "/Rol/Consult";
 
-            var httpClient = getHttpClient();
-
-            if (token == "")
-            {
-                HttpContext.Session.Remove("token");
-            }
-            else
-            {
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    string jsonInput = responseString;
-                    Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                    r = JsonConvert.DeserializeObject<List<ReqRoles>>(respuesta.Response.ToString() ?? "") ?? new List<ReqRoles>();
-                    HttpContext.Session.SetString("token", respuesta.Token);
-                }
-            }
+            var r = Busquedas(URI);
 
             foreach (var rol in r)
             {
@@ -162,9 +139,10 @@ namespace Web.Controllers
                 rol.estate = resultadoListado;
             }
 
-            RolesList listado = new RolesList();
-
-            listado.rolsList = r;
+            RolesList listado = new()
+            {
+                rolsList = r
+            };
 
             return listado;
         }
@@ -174,42 +152,15 @@ namespace Web.Controllers
             try
             {
                 _logger.LogInformation("method called");
-                List<ReqRoles> r = new List<ReqRoles>();
-
-                string token = HttpContext.Session.GetString("token") ?? "";
 
                 string URI = UrlApi + "/Rol/Consult?searchQuery=" + nombreRol + "&state=" + valEstado;
 
-                var httpClient = getHttpClient();
-
-                if (token == "")
-                {
-                    HttpContext.Session.Remove("token");
-                    return r;
-                }
-                else
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.GetAsync(URI).Result;
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseString = response.Content.ReadAsStringAsync().Result;
-                        string jsonInput = responseString;
-                        Responses respuesta = JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
-                        r = JsonConvert.DeserializeObject<List<ReqRoles>>(respuesta.Response.ToString() ?? "") ?? new List<ReqRoles>();
-                        HttpContext.Session.SetString("token", respuesta.Token);
-
-                        return r;
-                    }
-
-                    return r;
-                }
+                return Busquedas(URI);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<ReqRoles>();
             }
         }
         /// <summary>
@@ -225,43 +176,31 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 if (HttpContext.Session.GetString("ActualizarRoles") != "True")
                 {
-                    return "El usuario no cuenta con los permisos para Actualizar";
+                    return StringHelper.msgNoPermisoActualizar;
                 }
 
                 string r = "";
-                string token = HttpContext.Session.GetString("token") ?? "";
 
                 if (_datosAct.description == null)
                 {
                     _datosAct.description = "";
                 }
 
-                if (token == "")
-                {
-                    HttpContext.Session.Remove("token");
-                }
-                else
-                {
-                    string URI = UrlApi + "/Rol/Update";
-                    var httpClient = getHttpClient();
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.PutAsJsonAsync(URI, _datosAct).Result;
+                string URI = UrlApi + "/Rol/Update";
+                var resp = Respuesta(URI, false, _datosAct);
+                r = resp.Message;
 
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
-
-                    r = resp.Message;
-                    if (!resp.Error)
-                    {
-                        HttpContext.Session.SetString("token", resp.Token);
-                    }
+                if (!resp.Error)
+                {
+                    HttpContext.Session.SetString("token", resp.Token);
                 }
+
                 return r;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return "";
             }
         }
         /// <summary>
@@ -277,44 +216,35 @@ namespace Web.Controllers
                 _logger.LogInformation("method called");
                 if (HttpContext.Session.GetString("CrearRoles") != "True")
                 {
-                    ViewBag.RespuestaCreacionRol = "El usuario no cuenta con los permisos para Crear Roles";
+                    ViewBag.RespuestaCreacionRol = StringHelper.msgCrearRoles;
                     ViewBag.ErrorCreacion = "false";
 
                     return View("CrearRol");
                 }
 
-                string token = HttpContext.Session.GetString("token") ?? "";
-
                 _datosCreacion.description = "";
 
-                if (token == "")
-                {
-                    HttpContext.Session.Remove("token");
-                }
-                else
-                {
-                    string URL = UrlApi + "/Rol/Create";
-                    var httpClient = getHttpClient();
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = httpClient.PostAsJsonAsync(URL, _datosCreacion).Result;
+                string URL = UrlApi + "/Rol/Create";
 
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-                    Responses resp = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                var resp = Respuesta(URL, false, _datosCreacion);
 
-                    if (!resp.Error)
-                    {
-                        HttpContext.Session.SetString("token", resp.Token);
-                    }
-                    ViewBag.RespuestaCreacionRol = resp.Message;
-                    ViewBag.ErrorCreacion = "false";
+                if (!resp.Error)
+                {
+                    HttpContext.Session.SetString("token", resp.Token);
                 }
+                ViewBag.RespuestaCreacionRol = resp.Message;
+                ViewBag.ErrorCreacion = "false";
 
                 return View("CrearRol");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                string token = HttpContext.Session.GetString("token") ?? "";
+                if (!String.IsNullOrEmpty(token))
+                    return RedirectToAction("Index", "Home");
+                else
+                    return RedirectToAction("Index", "Login");
             }
         }
         /// <summary>
@@ -332,15 +262,9 @@ namespace Web.Controllers
 
                 string term = HttpContext.Request.Query["term"].ToString();
 
-                string token = HttpContext.Session.GetString("token") ?? "";
-
                 string URI = UrlApi + "/Rol/ConsultAllRols?parameter=" + term;
-                var httpClient = getHttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = httpClient.GetAsync(URI).Result;
 
-                string responseString = response.Content.ReadAsStringAsync().Result;
-                Responses respuesta = JsonConvert.DeserializeObject<Responses>(responseString) ?? new Responses();
+                var respuesta = Respuesta(URI, true);
                 List<ValorEstado> datos = JsonConvert.DeserializeObject<List<ValorEstado>>(respuesta.Response.ToString() ?? "") ?? new List<ValorEstado>();
 
                 foreach (var etapa in datos)
@@ -353,8 +277,74 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in the method.");
-                throw;
+                return new List<string>();
             }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private IActionResult Vistas()
+        {
+            _logger.LogInformation("method called");
+            string? token = HttpContext.Session.GetString("token");
+
+            if (token == null)
+                return View("Views/Login/Index.cshtml");
+
+            return View();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private List<ReqRoles> Busquedas(string URI)
+        {
+            _logger.LogInformation("method called");
+
+            var respuesta = Respuesta(URI, true);
+            List<ReqRoles> r = JsonConvert.DeserializeObject<List<ReqRoles>>(respuesta.Response.ToString() ?? "") ?? new List<ReqRoles>();
+            HttpContext.Session.SetString("token", respuesta.Token);
+
+            return r;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private Responses Respuesta(string URI, bool get, Object data = null)
+        {
+            var httpClient = getHttpClient();
+            string token = HttpContext.Session.GetString("token") ?? "";
+
+            if (token == "")
+            {
+                HttpContext.Session.Remove("token");
+                return new Responses();
+            }
+            else
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                HttpResponseMessage response;
+
+                if (get)
+                {
+                    response = httpClient.GetAsync(URI).Result;
+                }
+                else
+                {
+                    response = httpClient.PutAsJsonAsync(URI, data).Result;
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseString = response.Content.ReadAsStringAsync().Result;
+                    string jsonInput = responseString;
+                    return JsonConvert.DeserializeObject<Responses>(jsonInput) ?? new Responses();
+                }
+            }
+
+            return new Responses();
         }
     }
 }
