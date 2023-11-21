@@ -200,7 +200,7 @@ namespace CUPOS_FRONT.Models
             public string? otroCual { get; set; }
             public string? observacionesDetalle { get; set; }
             public List<Archivo>? documentos { get; set; }
-            public List<Archivo>? documentosAeliminar { get; set; }
+            public List<Archivo>? documentosAeliminar { get; set; } = new List<Archivo>();
         }
 
         public class ReqEstadoCertificado
