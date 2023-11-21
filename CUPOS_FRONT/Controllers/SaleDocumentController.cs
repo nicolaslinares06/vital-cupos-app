@@ -445,7 +445,7 @@ namespace Web.Controllers
             {              
                 var req = ConversionDatoObject(saleDocument);
                 string uri = String.Format("{0}/SaleDocument/UpdateSaleDocument", urlApi);
-                var respuesta = (bool)ProcesarDataApiPostReturnBool(uri, req);
+                var respuesta = (bool)ProcesarDataApiPutReturnBool(uri, req);
                 return respuesta;
           
             }
@@ -540,6 +540,15 @@ namespace Web.Controllers
 
             var httpClient = ConfigurarHttpClient();
             var response = httpClient.PostAsJsonAsync(URI, req).Result;
+            var data = ProcesarPeticion(response);
+            return data;
+        }
+
+        private object ProcesarDataApiPutReturnBool<T>(string URI, T req)
+        {
+
+            var httpClient = ConfigurarHttpClient();
+            var response = httpClient.PutAsJsonAsync(URI, req).Result;
             var data = ProcesarPeticion(response);
             return data;
         }
