@@ -184,7 +184,7 @@ namespace Web.Controllers
             {               
                 string uri = String.Format("{0}/FishQuota/UpdateFishQuota", urlApi);
                 var req = ObtenerObjetoData(fishQuota);
-                var respuesta = ProcesarDataApiPost(uri, req, "No se pudo consumir update servicio API CUPOS");
+                var respuesta = ProcesarDataApiPut(uri, req, "No se pudo consumir update servicio API CUPOS");
                 return respuesta;            
             }
             catch (Exception ex)
@@ -258,6 +258,15 @@ namespace Web.Controllers
 
             var httpClient = ConfigurarHttpClient();
             var response = httpClient.PostAsJsonAsync(URI, req).Result;
+            var data = ProcessHttpResponsePost(response, mensajeError);
+            return data ?? new Responses();
+        }
+
+        private Responses ProcesarDataApiPut<T>(string URI, T req, string mensajeError)
+        {
+
+            var httpClient = ConfigurarHttpClient();
+            var response = httpClient.PutAsJsonAsync(URI, req).Result;
             var data = ProcessHttpResponsePost(response, mensajeError);
             return data ?? new Responses();
         }
