@@ -542,7 +542,7 @@ namespace WebFront.Controllers
                 HttpContext.Session.SetString("CrearUsuario", a.create.ToString());
                 HttpContext.Session.SetString("NombreUsuario", a.name);
             }
-            if (a.moduleId == StringHelper.CodAdminRolesFuncionalidades.ToString())
+            if (a.moduleId == StringHelper.CodAdminRolesFuncionalidades.ToString() && a.consult)
             {
                 HttpContext.Session.SetString("ActualizarFuncionalidades", a.update.ToString());
                 HttpContext.Session.SetString("CrearFuncionalidades", a.create.ToString());
