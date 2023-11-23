@@ -1113,7 +1113,7 @@
 
     $('#tableresolucioncuposhj tbody').on('click', '.btnDetalle', async function () {
         ocultarElemento(especieexportar, true);
-        tituloAccionResolucion.innerText = 'Ver resolucion';
+        tituloAccionResolucion.innerText = 'Ver resolución';
 
         idCupoEditar = $(this).parents("tr").find("td")[0].innerText;
         var url = `@Url.Action("ConsultOneQuota2", "Cv")` + `?quotaCode=${idCupoEditar}`;
