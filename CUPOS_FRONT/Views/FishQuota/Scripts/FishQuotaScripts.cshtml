@@ -402,8 +402,8 @@ function LoadFishQuotaFormControls(data, documents, action){
         typeSelectForm = "Continental - Agua Dulce";             
         HiddeElement(waterSweetContinentalDiv,false);
         HiddeElement(sailorDiv,true);  
-        data.forEach(element => {
-            fishQuotaAmountListTempWC.push(element);
+        data.forEach(element => {        
+            fishQuotaAmountListTempWC.push(element);            
         });          
     }else{
         TypeSelectTxt.selectedIndex = 2;      
@@ -423,7 +423,8 @@ function LoadFishQuotaFormControls(data, documents, action){
         FishQuotaDisabledForm();   
     }else{
         HiddeFormsControls(false);
-        TypeSelectTxt.disabled = true;      
+        TypeSelectTxt.disabled = true; 
+        fileContenedorMultipleFile.classList.remove('d-none');
     }    
 }
 
@@ -436,6 +437,7 @@ function FishQuotaDisabledForm(){
     finalVigencyDateTxt.disabled = true;
     resolutionObjectTxt.disabled = true; 
     fileMultipleFile.disabled = true; 
+    fileContenedorMultipleFile.classList.add('d-none');
 }
 
 //oculta elementos html
@@ -1260,30 +1262,25 @@ async function GetSpecies() {
         confSelectScrollInfite("#ResourceTxtCS", responseJsonSpecies);
         confSelectScrollInfite("#ResourceTxtOP", responseJsonSpecies);
         confSelectScrollInfite("#ResourceTxtArc", responseJsonSpecies);
-        $.each(responseJsonSpecies, function (key, value) {
-            $("#CommonNameTxtWC").append("<option value=" + value.id + ">" + value.commonName + "</option>");
-        });        
+        let optionsCommonName = responseJsonSpecies.map(value => `<option value="${value.id}">${value.commonName}</option>`).join('');        
+        $("#CommonNameTxtWC").append(optionsCommonName);        
         listAllSpecies.forEach(el=>{
             var validarRepetido= familias.find(p=>p.nameFamily==el.nameFamily);
             if(validarRepetido==null && validarRepetido==undefined){
                 familias.push(el);
             }
         });
-        $.each(familias, function (key, value){
-            $("#GroupTxtWC").append("<option value=" + value.id + ">" + value.nameFamily + "</option>");
-        });
+       let optionsFamilies = familias.map(value => `<option value="${value.id}">${value.nameFamily}</option>`).join('');
+        $("#GroupTxtWC").append(optionsFamilies);
         $('#GroupTxtWC').select2();
     }
-
-
-
 }
 
 $('#TableFishesQuotas tbody').on('click', '#btnViewDetail', async function () { 
     codeDetailsViewId = $(this).parents("tr").find("td")[0].innerText;   
     HiddeElement(quotasTable,true);     
     HiddeElement(document.getElementById('SaveDiv'),false);  
-    document.getElementById('titleSaveDiv').innerText = 'Registrar resolución cuotas globales de pesca';
+    document.getElementById('titleSaveDiv').innerText = 'Ver resolución cuotas globales de pesca';
     document.getElementById('TitleSaveDivPanel').innerText = 'Ver detalle';      
     let url = `@Url.Action("GetFishQuotaByCode", "FishQuota")` + `?code=${codeDetailsViewId}`;
     let response = await Get(url);
@@ -1540,11 +1537,10 @@ function GetSpeciesByGroup(){
         if(groupSelect != "Seleccione grupo..."){
             let speciesByGruoup = listAllSpecies.filter(element=>{ 
                 return element.nameFamily == groupSelect;
-            });
-
+            });          
             RemoveAllItems(specieTxtWC);
-            RemoveAllItems(commonNameTxtWC);
-            AddSpeciesByGroupItem(speciesByGruoup);
+            RemoveAllItems(commonNameTxtWC);          
+            AddSpeciesByGroupItem(speciesByGruoup);          
         }else{
             confSelectScrollInfite("#SpecieTxtWC", listAllSpecies);
             $('CommonNameTxtWC').val('0').trigger('change');
@@ -1565,27 +1561,26 @@ function RemoveAllItems(selectBox) {
 
 //Agrega elementos especies por grupo a controles select
 function AddSpeciesByGroupItem(speciesByGruoupList){
-    $("#SpecieTxtWC").append("<option value=''>Seleccione</option>");
-    $.each(speciesByGruoupList, function (key, value) {
-        $("#SpecieTxtWC").append("<option value=" + value.id + ">" + value.text + "</option>");
-    });   
+        let optionsSpecie = "<option value=''>Seleccione</option>";
+        let optionsCommonName = "<option value=''></option>";
 
-    $("#CommonNameTxtWC").append("<option value=''></option>");
-    $.each(speciesByGruoupList, function (key, value) {
-        $("#CommonNameTxtWC").append("<option value=" + value.id + ">" + value.commonName + "</option>");
-    });       
-}
+        $.each(speciesByGruoupList, function (key, value) {
+            optionsSpecie += "<option value='" + value.id + "'>" + value.text + "</option>";
+            optionsCommonName += "<option value='" + value.id + "'>" + value.commonName + "</option>";
+        });
+
+        $("#SpecieTxtWC").html(optionsSpecie);
+        $("#CommonNameTxtWC").html(optionsCommonName);
+    }
 
 //Carga o establece valor en el select nombre comun
 function SetCommonName(){
-    if(!validarCambioGrupos){
-        for (var i, j = 0; i = commonNameTxtWC.options[j]; j++) {
-            if (i.value == specieTxtWC.value) {
-                commonNameTxtWC.selectedIndex = j;      
-                break;
+        if (!validarCambioGrupos) {
+            var index = Array.from(commonNameTxtWC.options).findIndex(option => option.value == specieTxtWC.value);
+            if (index !== -1) {
+                commonNameTxtWC.selectedIndex = index;
             }
-        }  
-    }
+        }
 }
 
 //Muestra campo otro

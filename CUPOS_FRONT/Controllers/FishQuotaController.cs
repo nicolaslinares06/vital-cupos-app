@@ -181,7 +181,27 @@ namespace Web.Controllers
         public Responses UpdateFishQuota(FishQuota fishQuota)
         {
             try
-            {               
+            {
+                var config = new ConfigurationBuilder()
+                                .SetBasePath(Directory.GetCurrentDirectory())
+                                .AddJsonFile("appsettings.json")
+                                .Build();
+                var listaRegiones = new List<ParametricaRegion>();
+                                     config.GetSection("ParametricaRegion").Bind(listaRegiones);
+
+                if (fishQuota.FishQuotaAmounts.Any())
+                {
+                    foreach(var item in fishQuota.FishQuotaAmounts)
+                    {
+                        var nombreRegion = listaRegiones
+                                            .Where(r => r.IdRegion == item.Region)
+                                            .Select(nombre => nombre.NombreRegion)
+                                            .FirstOrDefault() ?? "";
+                        item.NameRegion = nombreRegion;
+
+                    }
+                }
+
                 string uri = String.Format("{0}/FishQuota/UpdateFishQuota", urlApi);
                 var req = ObtenerObjetoData(fishQuota);
                 var respuesta = ProcesarDataApiPut(uri, req, "No se pudo consumir update servicio API CUPOS");
