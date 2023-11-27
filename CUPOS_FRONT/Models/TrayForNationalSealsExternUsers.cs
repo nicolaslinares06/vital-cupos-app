@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using Repository.Helpers.Models;
+using static Web.Models.TrayForNationalSealsExternUsers;
 
 namespace Web.Models
 {
@@ -38,6 +40,9 @@ namespace Web.Models
 
             [JsonProperty("majorLength")]
             public decimal longitudMayor { get; set; }
+
+            [JsonProperty("generateSealsForConsignation")]
+            public bool generateSealsForConsignation { get; set; }
 
             [JsonProperty("representativeDate")]
             public DateTime fechaRepresentante { get; set; }
@@ -86,7 +91,9 @@ namespace Web.Models
 
             [JsonProperty("representativeDepartment")]
             public decimal departamentoRepresentante { get; set; }
+            [JsonProperty("safeGuardNumbers")]
             public List<safeGuardNumbersModel>? safeGuardNumbers { get; set; }
+            [JsonProperty("cuttingSave")]
             public List<cuttingSaveModel>? cuttingSave { get; set; }
         }
 
@@ -235,7 +242,7 @@ namespace Web.Models
             public decimal? code { get; set; }
             public decimal codSafeguard { get; set; }
 
-        }
+        } 
 
     }
 

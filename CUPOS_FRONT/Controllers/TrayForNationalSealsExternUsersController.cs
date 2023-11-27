@@ -561,6 +561,8 @@ namespace Web.Controllers
                 if (respuesta.Response != null)
                 {
                     HttpContext.Session.SetString("token", respuesta.Token);
+                    if(respuesta.Response is bool)
+                        return respuesta.Response;
                     return JsonConvert.DeserializeObject<T>(respuesta.Response.ToString() ?? "") ?? new T();
                 }
             }

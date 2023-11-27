@@ -1645,6 +1645,8 @@
                 return true;
             }
             var camposObligatorios = [];
+            let validarsltEspecimes = validar(sltEspecimes, validacionsltEspecimes);
+
             if (!validartxtDireccionEntrega) {
                 camposObligatorios.push('Dirección de entrega');
             }
@@ -1691,6 +1693,8 @@
             && validartxtFechaRepresentante && sltTipoSolicitud && validarFileFactura) {
             return true;
         }
+
+        let validarsltEspecimes = validar(sltEspecimes, validacionsltEspecimes);
         var camposObligatorios = [];
         if (!validartxtDireccionEntrega) {
             camposObligatorios.push('Dirección de entrega');
@@ -1903,6 +1907,7 @@
             return;
         }
 
+       
         let urlCiudades = '@Url.Action("ConsultCitiesByDepartmentId", "TrayForNationalSealsExternUsers")?departamentoId='+ datos.departamentoRepresentante;
         await traerCiudades(sltCiudadRepresentante, urlCiudades);
 
@@ -1915,7 +1920,7 @@
         $(txtLongitudMenor).val(datos.longitudMenor);
         $(txtLongitudMayor).val(datos.longitudMayor);
         $(txtFechaRepresentante).val(moment(datos.fechaRepresentante).format('yyyy-MM-DD'));
-        $(sltTipoSolicitud).val(datos.tipoSolicitud);
+        $(sltTipoSolicitud).val(datos.tipoSolicitud); 
         adjuntoHTML(contenedorFactura, datos.facturaAdjunto.adjuntoBase64, datos.facturaAdjunto.tipoAdjunto, datos.facturaAdjunto.nombreAdjunto, fileContenedorFactura, null, !enRequerimiento);
         codigoAdjuntoFactura = datos.facturaAdjunto.codigo;
         facturaBase64 = datos.facturaAdjunto.adjuntoBase64;
